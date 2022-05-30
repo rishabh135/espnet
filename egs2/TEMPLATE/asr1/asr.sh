@@ -35,8 +35,29 @@ num_nodes=1          # The number of nodes.
 nj=32                # The number of parallel jobs.
 inference_nj=32      # The number of parallel jobs in decoding.
 gpu_inference=false  # Whether to perform gpu decoding.
-dumpdir=dump         # Directory to dump features.
-expdir=exp           # Directory to save experiments.
+
+
+global_dir=/home/rgupta/dev/espnet/egs2/librispeech/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
+experiment_n=pyt_1 # name of the experiment, just change it to create differnet folders
+
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/dump # Directory to dump features.
+expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/exp # Directory to save experiments.
+data_dd= ${data_dd} # determines all the files creating folder as in the data folder
+
+
+echo "\n******************************\n"
+
+echo "$dumpdir"
+echo "$expdir"
+echo "********\n Important setting data direcotry  *********** \n"
+echo "\n data directory : ${data_dd}  \n"
+echo "\n****************************\n"
+
+
+
+
+# dumpdir=dump         # Directory to dump features.
+# expdir=exp           # Directory to save experiments.
 python=python3       # Specify python to execute espnet commands.
 
 # Data preparation related
@@ -293,11 +314,14 @@ fi
 # Use the text of the 1st evaldir if lm_test is not specified
 [ -z "${lm_test_text}" ] && lm_test_text="${data_feats}/${test_sets%% *}/text"
 
+
+
+
 # Check tokenization type
 if [ "${lang}" != noinfo ]; then
-    token_listdir=data/${lang}_token_list
+    token_listdir=${data_dd}/${lang}_token_list
 else
-    token_listdir=data/token_list
+    token_listdir=${data_dd}/token_list
 fi
 bpedir="${token_listdir}/bpe_${bpemode}${nbpe}"
 bpeprefix="${bpedir}"/bpe
@@ -440,24 +464,24 @@ fi
 
 if ! "${skip_data_prep}"; then
     if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
-        log "Stage 1: Data preparation for data/${train_set}, data/${valid_set}, etc."
+        log "Stage 1: Data preparation for ${data_dd}/${train_set}, ${data_dd}/${valid_set}, etc."
         # [Task dependent] Need to create data.sh for new corpus
         local/data.sh ${local_data_opts}
     fi
 
     if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
         if [ -n "${speed_perturb_factors}" ]; then
-           log "Stage 2: Speed perturbation: data/${train_set} -> data/${train_set}_sp"
+           log "Stage 2: Speed perturbation: ${data_dd}/${train_set} -> ${data_dd}/${train_set}_sp"
            for factor in ${speed_perturb_factors}; do
                if [[ $(bc <<<"${factor} != 1.0") == 1 ]]; then
-                   scripts/utils/perturb_data_dir_speed.sh "${factor}" "data/${train_set}" "data/${train_set}_sp${factor}"
-                   _dirs+="data/${train_set}_sp${factor} "
+                   scripts/utils/perturb_data_dir_speed.sh "${factor}" "${data_dd}/${train_set}" "${data_dd}/${train_set}_sp${factor}"
+                   _dirs+="${data_dd}/${train_set}_sp${factor} "
                else
                    # If speed factor is 1, same as the original
-                   _dirs+="data/${train_set} "
+                   _dirs+="${data_dd}/${train_set} "
                fi
            done
-           utils/combine_data.sh "data/${train_set}_sp" ${_dirs}
+           utils/combine_data.sh "${data_dd}/${train_set}_sp" ${_dirs}
         else
            log "Skip stage 2: Speed perturbation"
         fi
@@ -469,7 +493,7 @@ if ! "${skip_data_prep}"; then
 
     if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
         if [ "${feats_type}" = raw ]; then
-            log "Stage 3: Format wav.scp: data/ -> ${data_feats}"
+            log "Stage 3: Format wav.scp: ${data_dd}/ -> ${data_feats}"
 
             # ====== Recreating "wav.scp" ======
             # Kaldi-wav.scp, which can describe the file path with unix-pipe, like "cat /some/path |",
@@ -485,27 +509,27 @@ if ! "${skip_data_prep}"; then
                 else
                     _suf=""
                 fi
-                utils/copy_data_dir.sh --validate_opts --non-print data/"${dset}" "${data_feats}${_suf}/${dset}"
+                utils/copy_data_dir.sh --validate_opts --non-print ${data_dd}/"${dset}" "${data_feats}${_suf}/${dset}"
                 rm -f ${data_feats}${_suf}/${dset}/{segments,wav.scp,reco2file_and_channel,reco2dur}
                 _opts=
-                if [ -e data/"${dset}"/segments ]; then
+                if [ -e ${data_dd}/"${dset}"/segments ]; then
                     # "segments" is used for splitting wav files which are written in "wav".scp
                     # into utterances. The file format of segments:
                     #   <segment_id> <record_id> <start_time> <end_time>
                     #   "e.g. call-861225-A-0050-0065 call-861225-A 5.0 6.5"
                     # Where the time is written in seconds.
-                    _opts+="--segments data/${dset}/segments "
+                    _opts+="--segments ${data_dd}/${dset}/segments "
                 fi
                 # shellcheck disable=SC2086
                 scripts/audio/format_wav_scp.sh --nj "${nj}" --cmd "${train_cmd}" \
                     --audio-format "${audio_format}" --fs "${fs}" ${_opts} \
-                    "data/${dset}/wav.scp" "${data_feats}${_suf}/${dset}"
+                    "${data_dd}/${dset}/wav.scp" "${data_feats}${_suf}/${dset}"
 
                 echo "${feats_type}" > "${data_feats}${_suf}/${dset}/feats_type"
             done
 
         elif [ "${feats_type}" = fbank_pitch ]; then
-            log "[Require Kaldi] Stage 3: ${feats_type} extract: data/ -> ${data_feats}"
+            log "[Require Kaldi] Stage 3: ${feats_type} extract: ${data_dd}/ -> ${data_feats}"
 
             for dset in "${train_set}" "${valid_set}" ${test_sets}; do
                 if [ "${dset}" = "${train_set}" ] || [ "${dset}" = "${valid_set}" ]; then
@@ -514,7 +538,7 @@ if ! "${skip_data_prep}"; then
                     _suf=""
                 fi
                 # 1. Copy datadir
-                utils/copy_data_dir.sh --validate_opts --non-print data/"${dset}" "${data_feats}${_suf}/${dset}"
+                utils/copy_data_dir.sh --validate_opts --non-print ${data_dd}/"${dset}" "${data_feats}${_suf}/${dset}"
 
                 # 2. Feature extract
                 _nj=$(min "${nj}" "$(<"${data_feats}${_suf}/${dset}/utt2spk" wc -l)")
@@ -534,12 +558,12 @@ if ! "${skip_data_prep}"; then
             done
 
         elif [ "${feats_type}" = fbank ]; then
-            log "Stage 3: ${feats_type} extract: data/ -> ${data_feats}"
+            log "Stage 3: ${feats_type} extract: ${data_dd}/ -> ${data_feats}"
             log "${feats_type} is not supported yet."
             exit 1
 
         elif  [ "${feats_type}" = extracted ]; then
-            log "Stage 3: ${feats_type} extract: data/ -> ${data_feats}"
+            log "Stage 3: ${feats_type} extract: ${data_dd} -> ${data_feats}"
             # Assumming you don't have wav.scp, but feats.scp is created by local/data.sh instead.
 
             for dset in "${train_set}" "${valid_set}" ${test_sets}; do
@@ -549,8 +573,8 @@ if ! "${skip_data_prep}"; then
                     _suf=""
                 fi
                 # Generate dummy wav.scp to avoid error by copy_data_dir.sh
-                <data/"${dset}"/cmvn.scp awk ' { print($1,"<DUMMY>") }' > data/"${dset}"/wav.scp
-                utils/copy_data_dir.sh --validate_opts --non-print data/"${dset}" "${data_feats}${_suf}/${dset}"
+                <${data_dd}/"${dset}"/cmvn.scp awk ' { print($1,"<DUMMY>") }' > ${data_dd}/"${dset}"/wav.scp
+                utils/copy_data_dir.sh --validate_opts --non-print ${data_dd}/"${dset}" "${data_feats}${_suf}/${dset}"
 
                 # Derive the the frame length and feature dimension
                 _nj=$(min "${nj}" "$(<"${data_feats}${_suf}/${dset}/utt2spk" wc -l)")
@@ -571,7 +595,7 @@ if ! "${skip_data_prep}"; then
 
 
     if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
-        log "Stage 4: Remove long/short data: ${data_feats}/org -> ${data_feats}"
+        log "Stage 4: Remove long/short ${data_dd}: ${data_feats}/org -> ${data_feats}"
 
         # NOTE(kamo): Not applying to test_sets to keep original data
         for dset in "${train_set}" "${valid_set}"; do
@@ -967,6 +991,11 @@ if ! "${skip_train}"; then
         # NOTE: --*_shape_file doesn't require length information if --batch_type=unsorted,
         #       but it's used only for deciding the sample ids.
 
+
+        log "\n *********************** changing directories **************************\n"
+        cd "${global_dir}"
+        cd "../../../"
+
         # shellcheck disable=SC2046,SC2086
         ${train_cmd} JOB=1:"${_nj}" "${_logdir}"/stats.JOB.log \
             ${python} -m espnet2.bin.asr_train \
@@ -1087,6 +1116,10 @@ if ! "${skip_train}"; then
         else
             jobname="${asr_exp}/train.log"
         fi
+
+        log "\n *********************** changing directories Stage 11 **************************\n"
+        cd "${global_dir}"
+        cd "../../../"
 
         # shellcheck disable=SC2086
         ${python} -m espnet2.bin.launch \
