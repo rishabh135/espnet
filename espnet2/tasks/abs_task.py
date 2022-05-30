@@ -65,6 +65,7 @@ from espnet.utils.cli_utils import get_commandline_args
 
 try:
     import wandb
+    wandb.init(project="espnet_default", entity="inria_marc")
 except Exception:
     wandb = None
 
@@ -997,6 +998,11 @@ class AbsTask(ABC):
         if args is None:
             parser = cls.get_parser()
             args = parser.parse_args(cmd)
+            # adding parser args to wandb
+            if(args.use_wandb):
+                wandb.config = args 
+ 
+
         args.version = __version__
         if args.pretrain_path is not None:
             raise RuntimeError("--pretrain_path is deprecated. Use --init_param")
