@@ -10,8 +10,17 @@ valid_set="dev"
 test_sets="test_clean test_other dev_clean dev_other"
 
 asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
-asr_config=conf/train_asr.yaml
-inference_config=conf/decode_asr.yaml
+
+
+# asr_config=conf/train_asr.yaml
+# inference_config=conf/decode_asr.yaml
+
+# srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}
+# experiment_n=pyt_1
+data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data # determines all the files creating folder as in the data folder
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml
+inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
+
 
 ./asr.sh \
     --skip_data_prep false \
@@ -33,5 +42,6 @@ inference_config=conf/decode_asr.yaml
     --train_set "${train_set}" \
     --valid_set "${valid_set}" \
     --test_sets "${test_sets}" \
-    --lm_train_text "data/${train_set}/text" \
-    --bpe_train_text "data/${train_set}/text" "$@"
+    --data_dd "${data_dd}"
+    --lm_train_text "${data_dd}/${train_set}/text" \
+    --bpe_train_text "${data_dd}/${train_set}/text" "$@"
