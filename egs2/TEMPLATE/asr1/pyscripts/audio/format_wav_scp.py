@@ -13,6 +13,9 @@ import soundfile
 from tqdm import tqdm
 from typeguard import check_argument_types
 
+
+import os, sys
+sys.path.append("/home/rgupta/dev/espnet/")
 from espnet2.fileio.read_text import read_2column_text
 from espnet2.fileio.sound_scp import SoundScpWriter
 from espnet.utils.cli_utils import get_commandline_args
