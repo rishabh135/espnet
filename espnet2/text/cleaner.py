@@ -1,15 +1,15 @@
 from typing import Collection
 
-import tacotron_cleaner.cleaners
+# import tacotron_cleaner.cleaners
 from jaconv import jaconv
 from typeguard import check_argument_types
 
-try:
-    from vietnamese_cleaner import vietnamese_cleaners
-except ImportError:
-    vietnamese_cleaners = None
+# try:
+#     from vietnamese_cleaner import vietnamese_cleaners
+# except ImportError:
+#     vietnamese_cleaners = None
 
-from espnet2.text.korean_cleaner import KoreanCleaner
+# from espnet2.text.korean_cleaner import KoreanCleaner
 
 
 class TextCleaner:

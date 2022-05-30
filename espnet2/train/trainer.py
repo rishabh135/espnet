@@ -569,6 +569,7 @@ class Trainer:
 
                 loss /= accum_grad
 
+            
             reporter.register(stats, weight)
 
             with reporter.measure_time("backward_time"):
@@ -610,6 +611,8 @@ class Trainer:
                 if not isinstance(grad_norm, torch.Tensor):
                     grad_norm = torch.tensor(grad_norm)
 
+
+                logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
                 if not torch.isfinite(grad_norm):
                     logging.warning(
                         f"The grad norm is {grad_norm}. Skipping updating the model."
