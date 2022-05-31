@@ -229,8 +229,7 @@ optional arguments:
 </section>
 <section id="asr-align-py">
 <span id="id3"></span><h2>asr_align.py<a class="headerlink" href="#asr-align-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-[nltk_data] Downloading package averaged_perceptron_tagger to
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[nltk_data] Downloading package averaged_perceptron_tagger to
 [nltk_data]     /home/runner/nltk_data...
 [nltk_data]   Unzipping taggers/averaged_perceptron_tagger.zip.
 [nltk_data] Downloading package cmudict to /home/runner/nltk_data...
@@ -333,8 +332,7 @@ Input/output arguments:
 </section>
 <section id="asr-inference-py">
 <span id="id4"></span><h2>asr_inference.py<a class="headerlink" href="#asr-inference-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: asr_inference.py [-h] [--config CONFIG]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: asr_inference.py [-h] [--config CONFIG]
                         [--log_level {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
                         --output_dir OUTPUT_DIR [--ngpu NGPU] [--seed SEED]
                         [--dtype {float16,float32,float64}]
@@ -457,8 +455,7 @@ Text converter related:
 </section>
 <section id="asr-inference-streaming-py">
 <span id="id5"></span><h2>asr_inference_streaming.py<a class="headerlink" href="#asr-inference-streaming-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: asr_inference_streaming.py [-h] [--config CONFIG]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: asr_inference_streaming.py [-h] [--config CONFIG]
                                   [--log_level {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
                                   --output_dir OUTPUT_DIR [--ngpu NGPU]
                                   [--seed SEED]
@@ -556,8 +553,7 @@ Text converter related:
 </section>
 <section id="asr-train-py">
 <span id="id6"></span><h2>asr_train.py<a class="headerlink" href="#asr-train-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: asr_train.py [-h] [--config CONFIG] [--print_config]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: asr_train.py [-h] [--config CONFIG] [--print_config]
                     [--log_level {ERROR,WARNING,INFO,DEBUG,NOTSET}]
                     [--dry_run DRY_RUN]
                     [--iterator_type {sequence,chunk,task,none}]
@@ -754,7 +750,7 @@ Trainer related:
                         The number of gradient accumulation (default: 1)
   --no_forward_run NO_FORWARD_RUN
                         Just only iterating data loading without model forwarding and training (default: False)
-  --resume RESUME       Enable resuming if checkpoint is existing (default: False)
+  --resume RESUME       Enable resuming if checkpoint is existing (default: True)
   --train_dtype {float16,float32,float64}
                         Data type for training. (default: float32)
   --use_amp USE_AMP     Enable Automatic Mixed Precision. This feature requires pytorch&gt;=1.6 (default: False)
@@ -765,7 +761,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: False)
+                        Enable wandb logging (default: True)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -1041,8 +1037,7 @@ Optimizer related:
 </section>
 <section id="diar-inference-py">
 <span id="id7"></span><h2>diar_inference.py<a class="headerlink" href="#diar-inference-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: diar_inference.py [-h] [--config CONFIG]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: diar_inference.py [-h] [--config CONFIG]
                          [--log_level {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
                          --output_dir OUTPUT_DIR [--ngpu NGPU] [--seed SEED]
                          [--dtype {float16,float32,float64}] [--fs FS]
@@ -1105,8 +1100,7 @@ Diarize speech related:
 </section>
 <section id="diar-train-py">
 <span id="id8"></span><h2>diar_train.py<a class="headerlink" href="#diar-train-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: diar_train.py [-h] [--config CONFIG] [--print_config]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: diar_train.py [-h] [--config CONFIG] [--print_config]
                      [--log_level {ERROR,WARNING,INFO,DEBUG,NOTSET}]
                      [--dry_run DRY_RUN]
                      [--iterator_type {sequence,chunk,task,none}]
@@ -1273,7 +1267,7 @@ Trainer related:
                         The number of gradient accumulation (default: 1)
   --no_forward_run NO_FORWARD_RUN
                         Just only iterating data loading without model forwarding and training (default: False)
-  --resume RESUME       Enable resuming if checkpoint is existing (default: False)
+  --resume RESUME       Enable resuming if checkpoint is existing (default: True)
   --train_dtype {float16,float32,float64}
                         Data type for training. (default: float32)
   --use_amp USE_AMP     Enable Automatic Mixed Precision. This feature requires pytorch&gt;=1.6 (default: False)
@@ -1284,7 +1278,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: False)
+                        Enable wandb logging (default: True)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -1550,8 +1544,7 @@ Optimizer related:
 </section>
 <section id="enh-inference-py">
 <span id="id9"></span><h2>enh_inference.py<a class="headerlink" href="#enh-inference-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: enh_inference.py [-h] [--config CONFIG]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: enh_inference.py [-h] [--config CONFIG]
                         [--log_level {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
                         --output_dir OUTPUT_DIR [--ngpu NGPU] [--seed SEED]
                         [--dtype {float16,float32,float64}] [--fs FS]
@@ -1636,8 +1629,7 @@ SeparateSpeech related:
 </section>
 <section id="enh-s2t-train-py">
 <span id="id10"></span><h2>enh_s2t_train.py<a class="headerlink" href="#enh-s2t-train-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: enh_s2t_train.py [-h] [--config CONFIG] [--print_config]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: enh_s2t_train.py [-h] [--config CONFIG] [--print_config]
                         [--log_level {ERROR,WARNING,INFO,DEBUG,NOTSET}]
                         [--dry_run DRY_RUN]
                         [--iterator_type {sequence,chunk,task,none}]
@@ -1848,7 +1840,7 @@ Trainer related:
                         The number of gradient accumulation (default: 1)
   --no_forward_run NO_FORWARD_RUN
                         Just only iterating data loading without model forwarding and training (default: False)
-  --resume RESUME       Enable resuming if checkpoint is existing (default: False)
+  --resume RESUME       Enable resuming if checkpoint is existing (default: True)
   --train_dtype {float16,float32,float64}
                         Data type for training. (default: float32)
   --use_amp USE_AMP     Enable Automatic Mixed Precision. This feature requires pytorch&gt;=1.6 (default: False)
@@ -1859,7 +1851,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: False)
+                        Enable wandb logging (default: True)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -2210,8 +2202,7 @@ Input data related:
 </section>
 <section id="enh-train-py">
 <span id="id12"></span><h2>enh_train.py<a class="headerlink" href="#enh-train-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: enh_train.py [-h] [--config CONFIG] [--print_config]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: enh_train.py [-h] [--config CONFIG] [--print_config]
                     [--log_level {ERROR,WARNING,INFO,DEBUG,NOTSET}]
                     [--dry_run DRY_RUN]
                     [--iterator_type {sequence,chunk,task,none}]
@@ -2370,7 +2361,7 @@ Trainer related:
                         The number of gradient accumulation (default: 1)
   --no_forward_run NO_FORWARD_RUN
                         Just only iterating data loading without model forwarding and training (default: False)
-  --resume RESUME       Enable resuming if checkpoint is existing (default: False)
+  --resume RESUME       Enable resuming if checkpoint is existing (default: True)
   --train_dtype {float16,float32,float64}
                         Data type for training. (default: float32)
   --use_amp USE_AMP     Enable Automatic Mixed Precision. This feature requires pytorch&gt;=1.6 (default: False)
@@ -2381,7 +2372,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: False)
+                        Enable wandb logging (default: True)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -2631,8 +2622,7 @@ Optimizer related:
 </section>
 <section id="gan-tts-train-py">
 <span id="id13"></span><h2>gan_tts_train.py<a class="headerlink" href="#gan-tts-train-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: gan_tts_train.py [-h] [--config CONFIG] [--print_config]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: gan_tts_train.py [-h] [--config CONFIG] [--print_config]
                         [--log_level {ERROR,WARNING,INFO,DEBUG,NOTSET}]
                         [--dry_run DRY_RUN]
                         [--iterator_type {sequence,chunk,task,none}]
@@ -2821,7 +2811,7 @@ Trainer related:
                         The number of gradient accumulation (default: 1)
   --no_forward_run NO_FORWARD_RUN
                         Just only iterating data loading without model forwarding and training (default: False)
-  --resume RESUME       Enable resuming if checkpoint is existing (default: False)
+  --resume RESUME       Enable resuming if checkpoint is existing (default: True)
   --train_dtype {float16,float32,float64}
                         Data type for training. (default: float32)
   --use_amp USE_AMP     Enable Automatic Mixed Precision. This feature requires pytorch&gt;=1.6 (default: False)
@@ -2832,7 +2822,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: False)
+                        Enable wandb logging (default: True)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -3107,8 +3097,7 @@ Optimizer related:
 </section>
 <section id="hubert-train-py">
 <span id="id14"></span><h2>hubert_train.py<a class="headerlink" href="#hubert-train-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: hubert_train.py [-h] [--config CONFIG] [--print_config]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: hubert_train.py [-h] [--config CONFIG] [--print_config]
                        [--log_level {ERROR,WARNING,INFO,DEBUG,NOTSET}]
                        [--dry_run DRY_RUN]
                        [--iterator_type {sequence,chunk,task,none}]
@@ -3315,7 +3304,7 @@ Trainer related:
                         The number of gradient accumulation (default: 1)
   --no_forward_run NO_FORWARD_RUN
                         Just only iterating data loading without model forwarding and training (default: False)
-  --resume RESUME       Enable resuming if checkpoint is existing (default: False)
+  --resume RESUME       Enable resuming if checkpoint is existing (default: True)
   --train_dtype {float16,float32,float64}
                         Data type for training. (default: float32)
   --use_amp USE_AMP     Enable Automatic Mixed Precision. This feature requires pytorch&gt;=1.6 (default: False)
@@ -3326,7 +3315,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: False)
+                        Enable wandb logging (default: True)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -3641,8 +3630,7 @@ optional arguments:
 </section>
 <section id="lm-calc-perplexity-py">
 <span id="id16"></span><h2>lm_calc_perplexity.py<a class="headerlink" href="#lm-calc-perplexity-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: lm_calc_perplexity.py [-h] [--config CONFIG]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: lm_calc_perplexity.py [-h] [--config CONFIG]
                              [--log_level {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
                              --output_dir OUTPUT_DIR [--ngpu NGPU]
                              [--seed SEED] [--dtype {float16,float32,float64}]
@@ -3685,8 +3673,7 @@ The model configuration related:
 </section>
 <section id="lm-train-py">
 <span id="id17"></span><h2>lm_train.py<a class="headerlink" href="#lm-train-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: lm_train.py [-h] [--config CONFIG] [--print_config]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: lm_train.py [-h] [--config CONFIG] [--print_config]
                    [--log_level {ERROR,WARNING,INFO,DEBUG,NOTSET}]
                    [--dry_run DRY_RUN]
                    [--iterator_type {sequence,chunk,task,none}]
@@ -3850,7 +3837,7 @@ Trainer related:
                         The number of gradient accumulation (default: 1)
   --no_forward_run NO_FORWARD_RUN
                         Just only iterating data loading without model forwarding and training (default: False)
-  --resume RESUME       Enable resuming if checkpoint is existing (default: False)
+  --resume RESUME       Enable resuming if checkpoint is existing (default: True)
   --train_dtype {float16,float32,float64}
                         Data type for training. (default: float32)
   --use_amp USE_AMP     Enable Automatic Mixed Precision. This feature requires pytorch&gt;=1.6 (default: False)
@@ -3861,7 +3848,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: False)
+                        Enable wandb logging (default: True)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -4104,8 +4091,7 @@ Optimizer related:
 </section>
 <section id="mt-inference-py">
 <span id="id18"></span><h2>mt_inference.py<a class="headerlink" href="#mt-inference-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: mt_inference.py [-h] [--config CONFIG]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: mt_inference.py [-h] [--config CONFIG]
                        [--log_level {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
                        --output_dir OUTPUT_DIR [--ngpu NGPU] [--seed SEED]
                        [--dtype {float16,float32,float64}]
@@ -4196,8 +4182,7 @@ Text converter related:
 </section>
 <section id="mt-train-py">
 <span id="id19"></span><h2>mt_train.py<a class="headerlink" href="#mt-train-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: mt_train.py [-h] [--config CONFIG] [--print_config]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: mt_train.py [-h] [--config CONFIG] [--print_config]
                    [--log_level {ERROR,WARNING,INFO,DEBUG,NOTSET}]
                    [--dry_run DRY_RUN]
                    [--iterator_type {sequence,chunk,task,none}]
@@ -4372,7 +4357,7 @@ Trainer related:
                         The number of gradient accumulation (default: 1)
   --no_forward_run NO_FORWARD_RUN
                         Just only iterating data loading without model forwarding and training (default: False)
-  --resume RESUME       Enable resuming if checkpoint is existing (default: False)
+  --resume RESUME       Enable resuming if checkpoint is existing (default: True)
   --train_dtype {float16,float32,float64}
                         Data type for training. (default: float32)
   --use_amp USE_AMP     Enable Automatic Mixed Precision. This feature requires pytorch&gt;=1.6 (default: False)
@@ -4383,7 +4368,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: False)
+                        Enable wandb logging (default: True)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -4687,8 +4672,7 @@ optional arguments:
 </section>
 <section id="st-inference-py">
 <span id="id22"></span><h2>st_inference.py<a class="headerlink" href="#st-inference-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: st_inference.py [-h] [--config CONFIG]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: st_inference.py [-h] [--config CONFIG]
                        [--log_level {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
                        --output_dir OUTPUT_DIR [--ngpu NGPU] [--seed SEED]
                        [--dtype {float16,float32,float64}]
@@ -4781,8 +4765,7 @@ Text converter related:
 </section>
 <section id="st-train-py">
 <span id="id23"></span><h2>st_train.py<a class="headerlink" href="#st-train-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: st_train.py [-h] [--config CONFIG] [--print_config]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: st_train.py [-h] [--config CONFIG] [--print_config]
                    [--log_level {ERROR,WARNING,INFO,DEBUG,NOTSET}]
                    [--dry_run DRY_RUN]
                    [--iterator_type {sequence,chunk,task,none}]
@@ -4982,7 +4965,7 @@ Trainer related:
                         The number of gradient accumulation (default: 1)
   --no_forward_run NO_FORWARD_RUN
                         Just only iterating data loading without model forwarding and training (default: False)
-  --resume RESUME       Enable resuming if checkpoint is existing (default: False)
+  --resume RESUME       Enable resuming if checkpoint is existing (default: True)
   --train_dtype {float16,float32,float64}
                         Data type for training. (default: float32)
   --use_amp USE_AMP     Enable Automatic Mixed Precision. This feature requires pytorch&gt;=1.6 (default: False)
@@ -4993,7 +4976,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: False)
+                        Enable wandb logging (default: True)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -5338,8 +5321,7 @@ write_vocabulary mode related:
 </section>
 <section id="tts-inference-py">
 <span id="id25"></span><h2>tts_inference.py<a class="headerlink" href="#tts-inference-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: tts_inference.py [-h] [--config CONFIG]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: tts_inference.py [-h] [--config CONFIG]
                         [--log_level {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}]
                         --output_dir OUTPUT_DIR [--ngpu NGPU] [--seed SEED]
                         [--dtype {float16,float32,float64}]
@@ -5438,8 +5420,7 @@ Vocoder related:
 </section>
 <section id="tts-train-py">
 <span id="id26"></span><h2>tts_train.py<a class="headerlink" href="#tts-train-py" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>wandb: ERROR api_key not configured (no-tty). call wandb.login(key=[your_api_key])
-usage: tts_train.py [-h] [--config CONFIG] [--print_config]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: tts_train.py [-h] [--config CONFIG] [--print_config]
                     [--log_level {ERROR,WARNING,INFO,DEBUG,NOTSET}]
                     [--dry_run DRY_RUN]
                     [--iterator_type {sequence,chunk,task,none}]
@@ -5617,7 +5598,7 @@ Trainer related:
                         The number of gradient accumulation (default: 1)
   --no_forward_run NO_FORWARD_RUN
                         Just only iterating data loading without model forwarding and training (default: False)
-  --resume RESUME       Enable resuming if checkpoint is existing (default: False)
+  --resume RESUME       Enable resuming if checkpoint is existing (default: True)
   --train_dtype {float16,float32,float64}
                         Data type for training. (default: float32)
   --use_amp USE_AMP     Enable Automatic Mixed Precision. This feature requires pytorch&gt;=1.6 (default: False)
@@ -5628,7 +5609,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: False)
+                        Enable wandb logging (default: True)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)

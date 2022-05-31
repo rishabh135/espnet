@@ -304,6 +304,33 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">extract_feats_in_collect_stats</span> <span class="o">=</span> <span class="n">extract_feats_in_collect_stats</span>
 
+
+    <span class="c1">#################################################################################################################################################################################################################################</span>
+    <span class="c1">#################################################################################################################################################################################################################################</span>
+    <span class="c1">#################################################################################################################################################################################################################################</span>
+    <span class="c1">### adding a adversarial branch  as done here https://github.com/espnet/espnet/blob/876c75f40a159fb41f82267b64a5bd7d55de1a96/espnet/nets/e2e_asr_th.py#L457</span>
+    <span class="c1"># For training the adverarial branch, encoder must be frozen</span>
+    <span class="c1"># self.enc_frozen = False</span>
+
+    
+    <span class="c1"># def freeze_encoder(self):</span>
+    <span class="c1">#     if not self.enc_frozen:</span>
+    <span class="c1">#         for param in self.enc.parameters():</span>
+    <span class="c1">#             param.requires_grad = False</span>
+    <span class="c1">#         self.enc_frozen = True</span>
+
+    <span class="c1"># def unfreeze_encoder(self):</span>
+    <span class="c1">#     if self.enc_frozen:</span>
+    <span class="c1">#         for param in self.enc.parameters():</span>
+    <span class="c1">#             param.requires_grad = True</span>
+    <span class="c1">#         self.enc_frozen = False</span>
+
+
+
+    <span class="c1">#################################################################################################################################################################################################################################</span>
+    <span class="c1">#################################################################################################################################################################################################################################</span>
+    <span class="c1">#################################################################################################################################################################################################################################</span>
+
 <div class="viewcode-block" id="ESPnetASRModel.forward"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.espnet_model.ESPnetASRModel.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">speech</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
