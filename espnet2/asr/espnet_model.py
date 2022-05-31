@@ -9,6 +9,9 @@ from typeguard import check_argument_types
 from espnet2.asr.ctc import CTC
 from espnet2.asr.decoder.abs_decoder import AbsDecoder
 from espnet2.asr.encoder.abs_encoder import AbsEncoder
+
+from espnet2.asr.AbsAdversarial import SpeakerAdv
+
 from espnet2.asr.frontend.abs_frontend import AbsFrontend
 from espnet2.asr.postencoder.abs_postencoder import AbsPostEncoder
 from espnet2.asr.preencoder.abs_preencoder import AbsPreEncoder
@@ -32,6 +35,14 @@ else:
     @contextmanager
     def autocast(enabled=True):
         yield
+
+
+
+
+
+
+
+
 
 
 class ESPnetASRModel(AbsESPnetModel):
@@ -82,6 +93,9 @@ class ESPnetASRModel(AbsESPnetModel):
         self.preencoder = preencoder
         self.postencoder = postencoder
         self.encoder = encoder
+        self.adversarial_branch = adversarial_branch
+
+
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
             self.encoder.interctc_use_conditioning = False
@@ -171,6 +185,21 @@ class ESPnetASRModel(AbsESPnetModel):
     #         for param in self.enc.parameters():
     #             param.requires_grad = True
     #         self.enc_frozen = False
+
+
+
+
+    # if adv_mode == 'spk':
+    #     self.model.module.predictor.freeze_encoder()
+    #     loss = loss_adv
+    # elif adv_mode == 'asr':
+    #     self.model.module.predictor.unfreeze_encoder()
+    #     loss = loss_asr
+    # else:
+    #     self.model.module.predictor.unfreeze_encoder()
+    #     loss = loss_asr + loss_adv
+
+
 
 
 
