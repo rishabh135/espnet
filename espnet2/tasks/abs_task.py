@@ -63,9 +63,13 @@ from espnet2.utils.types import (
 from espnet2.utils.yaml_no_alias_safe_dump import yaml_no_alias_safe_dump
 from espnet.utils.cli_utils import get_commandline_args
 
+
+from datetime import date
+
 try:
     import wandb
-    wandb.init(project="espnet_default", entity="inria_marc")
+    logging.info("******* Setting up wandb hook to connect the project *****\n")
+    # wandb.init(project="espnet_default", entity="inria_marc")
 except Exception:
     wandb = None
 
@@ -535,7 +539,7 @@ class AbsTask(ABC):
         group.add_argument(
             "--resume",
             type=str2bool,
-            default=False,
+            default=True,
             help="Enable resuming if checkpoint is existing",
         )
         group.add_argument(
@@ -573,7 +577,7 @@ class AbsTask(ABC):
         group.add_argument(
             "--use_wandb",
             type=str2bool,
-            default=False,
+            default=True,
             help="Enable wandb logging",
         )
         group.add_argument(
@@ -891,6 +895,7 @@ class AbsTask(ABC):
 
         # This method is used only for --print_config
         assert check_argument_types()
+        
         parser = cls.get_parser()
         args, _ = parser.parse_known_args()
         config = vars(args)
@@ -1116,6 +1121,10 @@ class AbsTask(ABC):
             torch.autograd.set_detect_anomaly(args.detect_anomaly)
 
         # 2. Build model
+
+        # display PYTHONPATH
+        logging.info('python path = ' + os.environ.get('PYTHONPATH', '(None)'))
+
         model = cls.build_model(args=args)
         if not isinstance(model, AbsESPnetModel):
             raise RuntimeError(
@@ -1288,7 +1297,16 @@ class AbsTask(ABC):
                         project = args.wandb_project
 
                     if args.wandb_name is None:
-                        name = str(Path(".").resolve()).replace("/", "_")
+                        today = date.today()
+                        d2 = today.strftime("Run_from_%B_%d_default_espnet____")
+                        name = d2 +  str(Path(".").resolve() ).replace("/", "_") 
+                        # # dd/mm/YY
+                        # d1 = today.strftime("%d/%m/%Y")
+                        # print("d1 =", d1)
+
+                        # Textual month, day and year	
+                        # print("d2 =", d2)
+
                     else:
                         name = args.wandb_name
 
