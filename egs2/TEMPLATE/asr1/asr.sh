@@ -37,12 +37,17 @@ inference_nj=32      # The number of parallel jobs in decoding.
 gpu_inference=false  # Whether to perform gpu decoding.
 
 
+
+###################################################################################################################################################################################################
+###################################################################################################################################################################################################
+###################################################################################################################################################################################################
+
 global_dir=/home/rgupta/dev/espnet/egs2/librispeech/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
 experiment_n=pyt_1 # name of the experiment, just change it to create differnet folders
 
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/dump # Directory to dump features.
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/exp # Directory to save experiments.
-data_dd= ${data_dd} # determines all the files creating folder as in the data folder
+data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data # determines all the files creating folder as in the data folder
 
 
 echo "\n******************************\n"
@@ -53,6 +58,9 @@ echo "********\n Important setting data direcotry  *********** \n"
 echo "\n data directory : ${data_dd}  \n"
 echo "\n****************************\n"
 
+###################################################################################################################################################################################################
+###################################################################################################################################################################################################
+###################################################################################################################################################################################################
 
 
 
@@ -1271,10 +1279,13 @@ if ! "${skip_eval}"; then
                 split_scps+=" ${_logdir}/keys.${n}.scp"
             done
             # shellcheck disable=SC2086
-            utils/split_scp.pl "${key_file}" ${split_scps}
+            ${global_dir}/utils/split_scp.pl "${key_file}" ${split_scps}
 
             # 2. Submit decoding jobs
             log "Decoding started... log: '${_logdir}/asr_inference.*.log'"
+            log "\n *********************** changing directories Stage 12 **************************\n"
+            cd "${global_dir}"
+            cd "../../../"
             # shellcheck disable=SC2046,SC2086
             ${_cmd} --gpu "${_ngpu}" JOB=1:"${_nj}" "${_logdir}"/asr_inference.JOB.log \
                 ${python} -m ${asr_inference_tool} \
@@ -1301,6 +1312,9 @@ if ! "${skip_eval}"; then
 
     if [ ${stage} -le 13 ] && [ ${stop_stage} -ge 13 ]; then
         log "Stage 13: Scoring"
+        log "\n *********************** changing directories Stage 13 **************************\n"
+        cd "${global_dir}"
+        cd "../../../"
         if [ "${token_type}" = phn ]; then
             log "Error: Not implemented for token_type=phn"
             exit 1
@@ -1440,6 +1454,11 @@ if [ -z "${download_model}" ]; then
         if [ "${nlsyms_txt}" != none ]; then
             _opts+="--option ${nlsyms_txt} "
         fi
+
+        log "\n *********************** changing directories Stage 14 **************************\n"
+        cd "${global_dir}"
+        cd "../../../"
+        
         # shellcheck disable=SC2086
         ${python} -m espnet2.bin.pack asr \
             --asr_train_config "${asr_exp}"/config.yaml \
