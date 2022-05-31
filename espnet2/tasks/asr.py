@@ -18,6 +18,11 @@ from espnet2.asr.decoder.transformer_decoder import (
     TransformerDecoder,
 )
 from espnet2.asr.encoder.abs_encoder import AbsEncoder
+from espnet2.asr.AbsAdversarial import SpeakerAdv
+
+
+
+
 from espnet2.asr.encoder.conformer_encoder import ConformerEncoder
 from espnet2.asr.encoder.contextual_block_conformer_encoder import (
     ContextualBlockConformerEncoder,
@@ -42,6 +47,9 @@ from espnet2.asr.frontend.s3prl import S3prlFrontend
 from espnet2.asr.frontend.windowing import SlidingWindow
 from espnet2.asr.maskctc_model import MaskCTCModel
 from espnet2.asr.postencoder.abs_postencoder import AbsPostEncoder
+
+
+
 from espnet2.asr.postencoder.hugging_face_transformers_postencoder import (
     HuggingFaceTransformersPostEncoder,
 )
@@ -382,6 +390,8 @@ class ASRTask(AbsTask):
         assert check_return_type(retval)
         return retval
 
+
+
     @classmethod
     def build_model(cls, args: argparse.Namespace) -> ESPnetASRModel:
         assert check_argument_types()
@@ -437,6 +447,23 @@ class ASRTask(AbsTask):
         # 4. Encoder
         encoder_class = encoder_choices.get_class(args.encoder)
         encoder = encoder_class(input_size=input_size, **args.encoder_conf)
+
+        ################################################################################################################
+        ################################################################################################################
+        # TO DO rishabh create adversarial branch and link it with the encoder
+
+        ################################################################################################################
+        ################################################################################################################
+
+        # 4.1 Adversarial branch
+
+        self.grlalpha = args.grlalpha
+        
+        # :param int odim_adv: dimension of outputs for adversarial class (default None)
+        adversarial_branch = SpeakerAdv(odim_adv, args.eprojs, args.adv_units,
+                                  args.adv_layers, dropout_rate=args.dropout_rate)
+
+
 
         # 5. Post-encoder block
         # NOTE(kan-bayashi): Use getattr to keep the compatibility
