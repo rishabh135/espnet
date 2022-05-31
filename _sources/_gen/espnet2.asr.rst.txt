@@ -48,6 +48,17 @@ espnet2.asr.__init__
     :show-inheritance:
 
 
+.. _espnet2.asr.AbsAdversarial:
+
+espnet2.asr.AbsAdversarial
+--------------------------
+
+.. automodule:: espnet2.asr.AbsAdversarial
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.asr.specaug.abs_specaug:
 
 espnet2.asr.specaug.abs_specaug

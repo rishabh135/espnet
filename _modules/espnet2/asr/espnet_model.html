@@ -162,6 +162,9 @@
 <span class="kn">from</span> <span class="nn">espnet2.asr.ctc</span> <span class="kn">import</span> <span class="n">CTC</span>
 <span class="kn">from</span> <span class="nn">espnet2.asr.decoder.abs_decoder</span> <span class="kn">import</span> <span class="n">AbsDecoder</span>
 <span class="kn">from</span> <span class="nn">espnet2.asr.encoder.abs_encoder</span> <span class="kn">import</span> <span class="n">AbsEncoder</span>
+
+<span class="kn">from</span> <span class="nn">espnet2.asr.AbsAdversarial</span> <span class="kn">import</span> <span class="n">SpeakerAdv</span>
+
 <span class="kn">from</span> <span class="nn">espnet2.asr.frontend.abs_frontend</span> <span class="kn">import</span> <span class="n">AbsFrontend</span>
 <span class="kn">from</span> <span class="nn">espnet2.asr.postencoder.abs_postencoder</span> <span class="kn">import</span> <span class="n">AbsPostEncoder</span>
 <span class="kn">from</span> <span class="nn">espnet2.asr.preencoder.abs_preencoder</span> <span class="kn">import</span> <span class="n">AbsPreEncoder</span>
@@ -185,6 +188,14 @@
     <span class="nd">@contextmanager</span>
     <span class="k">def</span> <span class="nf">autocast</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">yield</span>
+
+
+
+
+
+
+
+
 
 
 <div class="viewcode-block" id="ESPnetASRModel"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.espnet_model.ESPnetASRModel">[docs]</a><span class="k">class</span> <span class="nc">ESPnetASRModel</span><span class="p">(</span><span class="n">AbsESPnetModel</span><span class="p">):</span>
@@ -235,6 +246,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">preencoder</span> <span class="o">=</span> <span class="n">preencoder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">postencoder</span> <span class="o">=</span> <span class="n">postencoder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">encoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span> <span class="o">=</span> <span class="n">adversarial_branch</span>
+
+
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">,</span> <span class="s2">&quot;interctc_use_conditioning&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">interctc_use_conditioning</span> <span class="o">=</span> <span class="kc">False</span>
@@ -324,6 +338,21 @@
     <span class="c1">#         for param in self.enc.parameters():</span>
     <span class="c1">#             param.requires_grad = True</span>
     <span class="c1">#         self.enc_frozen = False</span>
+
+
+
+
+    <span class="c1"># if adv_mode == &#39;spk&#39;:</span>
+    <span class="c1">#     self.model.module.predictor.freeze_encoder()</span>
+    <span class="c1">#     loss = loss_adv</span>
+    <span class="c1"># elif adv_mode == &#39;asr&#39;:</span>
+    <span class="c1">#     self.model.module.predictor.unfreeze_encoder()</span>
+    <span class="c1">#     loss = loss_asr</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     self.model.module.predictor.unfreeze_encoder()</span>
+    <span class="c1">#     loss = loss_asr + loss_adv</span>
+
+
 
 
 

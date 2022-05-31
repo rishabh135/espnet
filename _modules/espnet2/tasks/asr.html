@@ -171,6 +171,11 @@
     <span class="n">TransformerDecoder</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">espnet2.asr.encoder.abs_encoder</span> <span class="kn">import</span> <span class="n">AbsEncoder</span>
+<span class="kn">from</span> <span class="nn">espnet2.asr.AbsAdversarial</span> <span class="kn">import</span> <span class="n">SpeakerAdv</span>
+
+
+
+
 <span class="kn">from</span> <span class="nn">espnet2.asr.encoder.conformer_encoder</span> <span class="kn">import</span> <span class="n">ConformerEncoder</span>
 <span class="kn">from</span> <span class="nn">espnet2.asr.encoder.contextual_block_conformer_encoder</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ContextualBlockConformerEncoder</span><span class="p">,</span>
@@ -195,6 +200,9 @@
 <span class="kn">from</span> <span class="nn">espnet2.asr.frontend.windowing</span> <span class="kn">import</span> <span class="n">SlidingWindow</span>
 <span class="kn">from</span> <span class="nn">espnet2.asr.maskctc_model</span> <span class="kn">import</span> <span class="n">MaskCTCModel</span>
 <span class="kn">from</span> <span class="nn">espnet2.asr.postencoder.abs_postencoder</span> <span class="kn">import</span> <span class="n">AbsPostEncoder</span>
+
+
+
 <span class="kn">from</span> <span class="nn">espnet2.asr.postencoder.hugging_face_transformers_postencoder</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">HuggingFaceTransformersPostEncoder</span><span class="p">,</span>
 <span class="p">)</span>
@@ -535,6 +543,8 @@
         <span class="k">assert</span> <span class="n">check_return_type</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">retval</span></div>
 
+
+
 <div class="viewcode-block" id="ASRTask.build_model"><a class="viewcode-back" href="../../../_gen/espnet2.tasks.html#espnet2.tasks.asr.ASRTask.build_model">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">build_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ESPnetASRModel</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">check_argument_types</span><span class="p">()</span>
@@ -590,6 +600,23 @@
         <span class="c1"># 4. Encoder</span>
         <span class="n">encoder_class</span> <span class="o">=</span> <span class="n">encoder_choices</span><span class="o">.</span><span class="n">get_class</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">encoder</span><span class="p">)</span>
         <span class="n">encoder</span> <span class="o">=</span> <span class="n">encoder_class</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="n">input_size</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="o">.</span><span class="n">encoder_conf</span><span class="p">)</span>
+
+        <span class="c1">################################################################################################################</span>
+        <span class="c1">################################################################################################################</span>
+        <span class="c1"># TO DO rishabh create adversarial branch and link it with the encoder</span>
+
+        <span class="c1">################################################################################################################</span>
+        <span class="c1">################################################################################################################</span>
+
+        <span class="c1"># 4.1 Adversarial branch</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grlalpha</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">grlalpha</span>
+        
+        <span class="c1"># :param int odim_adv: dimension of outputs for adversarial class (default None)</span>
+        <span class="n">adversarial_branch</span> <span class="o">=</span> <span class="n">SpeakerAdv</span><span class="p">(</span><span class="n">odim_adv</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">eprojs</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_units</span><span class="p">,</span>
+                                  <span class="n">args</span><span class="o">.</span><span class="n">adv_layers</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">dropout_rate</span><span class="p">)</span>
+
+
 
         <span class="c1"># 5. Post-encoder block</span>
         <span class="c1"># NOTE(kan-bayashi): Use getattr to keep the compatibility</span>
