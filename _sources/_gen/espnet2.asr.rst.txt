@@ -26,6 +26,17 @@ espnet2.asr.maskctc_model
     :show-inheritance:
 
 
+.. _espnet2.asr.adversarial_branch:
+
+espnet2.asr.adversarial_branch
+------------------------------
+
+.. automodule:: espnet2.asr.adversarial_branch
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 .. _espnet2.asr.ctc:
 
 espnet2.asr.ctc
@@ -43,17 +54,6 @@ espnet2.asr.__init__
 --------------------
 
 .. automodule:: espnet2.asr.__init__
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-.. _espnet2.asr.AbsAdversarial:
-
-espnet2.asr.AbsAdversarial
---------------------------
-
-.. automodule:: espnet2.asr.AbsAdversarial
     :members:
     :undoc-members:
     :show-inheritance:

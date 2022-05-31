@@ -115,9 +115,9 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">espnet2.asr package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#espnet2-asr-espnet-model">espnet2.asr.espnet_model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#espnet2-asr-maskctc-model">espnet2.asr.maskctc_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#espnet2-asr-adversarial-branch">espnet2.asr.adversarial_branch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#espnet2-asr-ctc">espnet2.asr.ctc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#espnet2-asr-init">espnet2.asr.__init__</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#espnet2-asr-absadversarial">espnet2.asr.AbsAdversarial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#espnet2-asr-specaug-abs-specaug">espnet2.asr.specaug.abs_specaug</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#espnet2-asr-specaug-specaug">espnet2.asr.specaug.specaug</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#espnet2-asr-specaug-init">espnet2.asr.specaug.__init__</a></li>
@@ -228,7 +228,7 @@
 <span id="id1"></span><h2>espnet2.asr.espnet_model<a class="headerlink" href="#espnet2-asr-espnet-model" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-espnet2.asr.espnet_model"></span><dl class="class">
 <dt id="espnet2.asr.espnet_model.ESPnetASRModel">
-<em class="property">class </em><code class="sig-prename descclassname">espnet2.asr.espnet_model.</code><code class="sig-name descname">ESPnetASRModel</code><span class="sig-paren">(</span><em class="sig-param">vocab_size: int, token_list: Union[Tuple[str, ...], List[str]], frontend: Optional[espnet2.asr.frontend.abs_frontend.AbsFrontend], specaug: Optional[espnet2.asr.specaug.abs_specaug.AbsSpecAug], normalize: Optional[espnet2.layers.abs_normalize.AbsNormalize], preencoder: Optional[espnet2.asr.preencoder.abs_preencoder.AbsPreEncoder], encoder: espnet2.asr.encoder.abs_encoder.AbsEncoder, postencoder: Optional[espnet2.asr.postencoder.abs_postencoder.AbsPostEncoder], decoder: espnet2.asr.decoder.abs_decoder.AbsDecoder, ctc: espnet2.asr.ctc.CTC, joint_network: Optional[torch.nn.modules.module.Module], ctc_weight: float = 0.5, interctc_weight: float = 0.0, ignore_id: int = -1, lsm_weight: float = 0.0, length_normalized_loss: bool = False, report_cer: bool = True, report_wer: bool = True, sym_space: str = '&lt;space&gt;', sym_blank: str = '&lt;blank&gt;', extract_feats_in_collect_stats: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/espnet_model.html#ESPnetASRModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.espnet_model.ESPnetASRModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.asr.espnet_model.</code><code class="sig-name descname">ESPnetASRModel</code><span class="sig-paren">(</span><em class="sig-param">vocab_size: int, token_list: Union[Tuple[str, ...], List[str]], frontend: Optional[espnet2.asr.frontend.abs_frontend.AbsFrontend], specaug: Optional[espnet2.asr.specaug.abs_specaug.AbsSpecAug], normalize: Optional[espnet2.layers.abs_normalize.AbsNormalize], preencoder: Optional[espnet2.asr.preencoder.abs_preencoder.AbsPreEncoder], encoder: espnet2.asr.encoder.abs_encoder.AbsEncoder, adversarial_branch: Optional[espnet2.asr.adversarial_branch.SpeakerAdv], postencoder: Optional[espnet2.asr.postencoder.abs_postencoder.AbsPostEncoder], decoder: espnet2.asr.decoder.abs_decoder.AbsDecoder, ctc: espnet2.asr.ctc.CTC, joint_network: Optional[torch.nn.modules.module.Module], ctc_weight: float = 0.5, interctc_weight: float = 0.0, ignore_id: int = -1, lsm_weight: float = 0.0, length_normalized_loss: bool = False, report_cer: bool = True, report_wer: bool = True, sym_space: str = '&lt;space&gt;', sym_blank: str = '&lt;blank&gt;', extract_feats_in_collect_stats: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/espnet_model.html#ESPnetASRModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.espnet_model.ESPnetASRModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="espnet2.train.html#espnet2.train.abs_espnet_model.AbsESPnetModel" title="espnet2.train.abs_espnet_model.AbsESPnetModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">espnet2.train.abs_espnet_model.AbsESPnetModel</span></code></a></p>
 <p>CTC-attention hybrid Encoder-Decoder model</p>
 <dl class="method">
@@ -383,8 +383,93 @@ GPU memory usage</p>
 </dd></dl>
 
 </section>
+<section id="espnet2-asr-adversarial-branch">
+<span id="id3"></span><h2>espnet2.asr.adversarial_branch<a class="headerlink" href="#espnet2-asr-adversarial-branch" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-espnet2.asr.adversarial_branch"></span><dl class="class">
+<dt id="espnet2.asr.adversarial_branch.ReverseLayerF">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.asr.adversarial_branch.</code><code class="sig-name descname">ReverseLayerF</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#ReverseLayerF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.ReverseLayerF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.autograd.function.Function</span></code></p>
+<dl class="method">
+<dt id="espnet2.asr.adversarial_branch.ReverseLayerF.backward">
+<em class="property">static </em><code class="sig-name descname">backward</code><span class="sig-paren">(</span><em class="sig-param">ctx</em>, <em class="sig-param">grad_output</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#ReverseLayerF.backward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.ReverseLayerF.backward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines a formula for differentiating the operation with backward mode
+automatic differentiation.</p>
+<p>This function is to be overridden by all subclasses.</p>
+<p>It must accept a context <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> as the first argument, followed by
+as many outputs as the <a class="reference internal" href="#espnet2.asr.adversarial_branch.ReverseLayerF.forward" title="espnet2.asr.adversarial_branch.ReverseLayerF.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> returned (None will be passed in
+for non tensor outputs of the forward function),
+and it should return as many tensors, as there were inputs to
+<a class="reference internal" href="#espnet2.asr.adversarial_branch.ReverseLayerF.forward" title="espnet2.asr.adversarial_branch.ReverseLayerF.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>. Each argument is the gradient w.r.t the given output,
+and each returned value should be the gradient w.r.t. the
+corresponding input. If an input is not a Tensor or is a Tensor not
+requiring grads, you can just pass None as a gradient for that input.</p>
+<p>The context can be used to retrieve tensors saved during the forward
+pass. It also has an attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx.needs_input_grad</span></code> as a tuple
+of booleans representing whether each input needs gradient. E.g.,
+<a class="reference internal" href="#espnet2.asr.adversarial_branch.ReverseLayerF.backward" title="espnet2.asr.adversarial_branch.ReverseLayerF.backward"><code class="xref py py-func docutils literal notranslate"><span class="pre">backward()</span></code></a> will have <code class="docutils literal notranslate"><span class="pre">ctx.needs_input_grad[0]</span> <span class="pre">=</span> <span class="pre">True</span></code> if the
+first input to <a class="reference internal" href="#espnet2.asr.adversarial_branch.ReverseLayerF.forward" title="espnet2.asr.adversarial_branch.ReverseLayerF.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> needs gradient computated w.r.t. the
+output.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet2.asr.adversarial_branch.ReverseLayerF.forward">
+<em class="property">static </em><code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">ctx</em>, <em class="sig-param">x</em>, <em class="sig-param">alpha</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#ReverseLayerF.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.ReverseLayerF.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs the operation.</p>
+<p>This function is to be overridden by all subclasses.</p>
+<p>It must accept a context ctx as the first argument, followed by any
+number of arguments (tensors or other types).</p>
+<p>The context can be used to store arbitrary data that can be then
+retrieved during the backward pass.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="espnet2.asr.adversarial_branch.SpeakerAdv">
+<em class="property">class </em><code class="sig-prename descclassname">espnet2.asr.adversarial_branch.</code><code class="sig-name descname">SpeakerAdv</code><span class="sig-paren">(</span><em class="sig-param">odim</em>, <em class="sig-param">eprojs</em>, <em class="sig-param">advunits</em>, <em class="sig-param">advlayers</em>, <em class="sig-param">dropout_rate=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#SpeakerAdv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.SpeakerAdv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Speaker adversarial module
+:param int odim: dimension of outputs
+:param int eprojs: number of encoder projection units
+:param float dropout_rate: dropout rate (0.0 ~ 1.0)</p>
+<dl class="attribute">
+<dt id="espnet2.asr.adversarial_branch.SpeakerAdv.advnet">
+<code class="sig-name descname">advnet</code><em class="property"> = None</em><a class="headerlink" href="#espnet2.asr.adversarial_branch.SpeakerAdv.advnet" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>linears = [torch.nn.Linear(eprojs, advunits), torch.nn.ReLU(),</dt><dd><p>torch.nn.Dropout(p=dropout_rate)]</p>
+</dd>
+<dt>for l in six.moves.range(1, self.advlayers):</dt><dd><dl class="simple">
+<dt>linears.extend([torch.nn.Linear(advunits, advunits),</dt><dd><p>torch.nn.ReLU(), torch.nn.Dropout(p=dropout_rate)])</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>self.advnet = torch.nn.Sequential(<a href="#id4"><span class="problematic" id="id5">*</span></a>linears)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet2.asr.adversarial_branch.SpeakerAdv.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">hs_pad</em>, <em class="sig-param">hlens</em>, <em class="sig-param">y_adv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#SpeakerAdv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.SpeakerAdv.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adversarial branch forward
+:param torch.Tensor hs_pad: batch of padded hidden state sequences (B, Tmax, D)
+:param torch.Tensor hlens: batch of lengths of hidden state sequences (B)
+:param torch.Tensor y_adv: batch of speaker class (B, #Speakers)
+:return: loss value
+:rtype: torch.Tensor
+:return: accuracy
+:rtype: float</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="espnet2.asr.adversarial_branch.SpeakerAdv.zero_state">
+<code class="sig-name descname">zero_state</code><span class="sig-paren">(</span><em class="sig-param">hs_pad</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#SpeakerAdv.zero_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.SpeakerAdv.zero_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="espnet2-asr-ctc">
-<span id="id3"></span><h2>espnet2.asr.ctc<a class="headerlink" href="#espnet2-asr-ctc" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2>espnet2.asr.ctc<a class="headerlink" href="#espnet2-asr-ctc" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-espnet2.asr.ctc"></span><dl class="class">
 <dt id="espnet2.asr.ctc.CTC">
 <em class="property">class </em><code class="sig-prename descclassname">espnet2.asr.ctc.</code><code class="sig-name descname">CTC</code><span class="sig-paren">(</span><em class="sig-param">odim: int</em>, <em class="sig-param">encoder_output_size: int</em>, <em class="sig-param">dropout_rate: float = 0.0</em>, <em class="sig-param">ctc_type: str = 'builtin'</em>, <em class="sig-param">reduce: bool = True</em>, <em class="sig-param">ignore_nan_grad: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/ctc.html#CTC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.ctc.CTC" title="Permalink to this definition">¶</a></dt>
@@ -477,93 +562,8 @@ GPU memory usage</p>
 
 </section>
 <section id="espnet2-asr-init">
-<span id="id4"></span><h2>espnet2.asr.__init__<a class="headerlink" href="#espnet2-asr-init" title="Permalink to this headline">¶</a></h2>
+<span id="id7"></span><h2>espnet2.asr.__init__<a class="headerlink" href="#espnet2-asr-init" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-espnet2.asr.__init__"></span></section>
-<section id="espnet2-asr-absadversarial">
-<span id="id5"></span><h2>espnet2.asr.AbsAdversarial<a class="headerlink" href="#espnet2-asr-absadversarial" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-espnet2.asr.AbsAdversarial"></span><dl class="class">
-<dt id="espnet2.asr.AbsAdversarial.ReverseLayerF">
-<em class="property">class </em><code class="sig-prename descclassname">espnet2.asr.AbsAdversarial.</code><code class="sig-name descname">ReverseLayerF</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/AbsAdversarial.html#ReverseLayerF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.AbsAdversarial.ReverseLayerF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.autograd.function.Function</span></code></p>
-<dl class="method">
-<dt id="espnet2.asr.AbsAdversarial.ReverseLayerF.backward">
-<em class="property">static </em><code class="sig-name descname">backward</code><span class="sig-paren">(</span><em class="sig-param">ctx</em>, <em class="sig-param">grad_output</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/AbsAdversarial.html#ReverseLayerF.backward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.AbsAdversarial.ReverseLayerF.backward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines a formula for differentiating the operation with backward mode
-automatic differentiation.</p>
-<p>This function is to be overridden by all subclasses.</p>
-<p>It must accept a context <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> as the first argument, followed by
-as many outputs as the <a class="reference internal" href="#espnet2.asr.AbsAdversarial.ReverseLayerF.forward" title="espnet2.asr.AbsAdversarial.ReverseLayerF.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> returned (None will be passed in
-for non tensor outputs of the forward function),
-and it should return as many tensors, as there were inputs to
-<a class="reference internal" href="#espnet2.asr.AbsAdversarial.ReverseLayerF.forward" title="espnet2.asr.AbsAdversarial.ReverseLayerF.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>. Each argument is the gradient w.r.t the given output,
-and each returned value should be the gradient w.r.t. the
-corresponding input. If an input is not a Tensor or is a Tensor not
-requiring grads, you can just pass None as a gradient for that input.</p>
-<p>The context can be used to retrieve tensors saved during the forward
-pass. It also has an attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx.needs_input_grad</span></code> as a tuple
-of booleans representing whether each input needs gradient. E.g.,
-<a class="reference internal" href="#espnet2.asr.AbsAdversarial.ReverseLayerF.backward" title="espnet2.asr.AbsAdversarial.ReverseLayerF.backward"><code class="xref py py-func docutils literal notranslate"><span class="pre">backward()</span></code></a> will have <code class="docutils literal notranslate"><span class="pre">ctx.needs_input_grad[0]</span> <span class="pre">=</span> <span class="pre">True</span></code> if the
-first input to <a class="reference internal" href="#espnet2.asr.AbsAdversarial.ReverseLayerF.forward" title="espnet2.asr.AbsAdversarial.ReverseLayerF.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> needs gradient computated w.r.t. the
-output.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="espnet2.asr.AbsAdversarial.ReverseLayerF.forward">
-<em class="property">static </em><code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">ctx</em>, <em class="sig-param">x</em>, <em class="sig-param">alpha</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/AbsAdversarial.html#ReverseLayerF.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.AbsAdversarial.ReverseLayerF.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs the operation.</p>
-<p>This function is to be overridden by all subclasses.</p>
-<p>It must accept a context ctx as the first argument, followed by any
-number of arguments (tensors or other types).</p>
-<p>The context can be used to store arbitrary data that can be then
-retrieved during the backward pass.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="espnet2.asr.AbsAdversarial.SpeakerAdv">
-<em class="property">class </em><code class="sig-prename descclassname">espnet2.asr.AbsAdversarial.</code><code class="sig-name descname">SpeakerAdv</code><span class="sig-paren">(</span><em class="sig-param">odim</em>, <em class="sig-param">eprojs</em>, <em class="sig-param">advunits</em>, <em class="sig-param">advlayers</em>, <em class="sig-param">dropout_rate=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/AbsAdversarial.html#SpeakerAdv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.AbsAdversarial.SpeakerAdv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>Speaker adversarial module
-:param int odim: dimension of outputs
-:param int eprojs: number of encoder projection units
-:param float dropout_rate: dropout rate (0.0 ~ 1.0)</p>
-<dl class="attribute">
-<dt id="espnet2.asr.AbsAdversarial.SpeakerAdv.advnet">
-<code class="sig-name descname">advnet</code><em class="property"> = None</em><a class="headerlink" href="#espnet2.asr.AbsAdversarial.SpeakerAdv.advnet" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>linears = [torch.nn.Linear(eprojs, advunits), torch.nn.ReLU(),</dt><dd><p>torch.nn.Dropout(p=dropout_rate)]</p>
-</dd>
-<dt>for l in six.moves.range(1, self.advlayers):</dt><dd><dl class="simple">
-<dt>linears.extend([torch.nn.Linear(advunits, advunits),</dt><dd><p>torch.nn.ReLU(), torch.nn.Dropout(p=dropout_rate)])</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p>self.advnet = torch.nn.Sequential(<a href="#id6"><span class="problematic" id="id7">*</span></a>linears)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="espnet2.asr.AbsAdversarial.SpeakerAdv.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">hs_pad</em>, <em class="sig-param">hlens</em>, <em class="sig-param">y_adv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/AbsAdversarial.html#SpeakerAdv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.AbsAdversarial.SpeakerAdv.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adversarial branch forward
-:param torch.Tensor hs_pad: batch of padded hidden state sequences (B, Tmax, D)
-:param torch.Tensor hlens: batch of lengths of hidden state sequences (B)
-:param torch.Tensor y_adv: batch of speaker class (B, #Speakers)
-:return: loss value
-:rtype: torch.Tensor
-:return: accuracy
-:rtype: float</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="espnet2.asr.AbsAdversarial.SpeakerAdv.zero_state">
-<code class="sig-name descname">zero_state</code><span class="sig-paren">(</span><em class="sig-param">hs_pad</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/AbsAdversarial.html#SpeakerAdv.zero_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.AbsAdversarial.SpeakerAdv.zero_state" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</section>
 <section id="espnet2-asr-specaug-abs-specaug">
 <span id="id8"></span><h2>espnet2.asr.specaug.abs_specaug<a class="headerlink" href="#espnet2-asr-specaug-abs-specaug" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-espnet2.asr.specaug.abs_specaug"></span><dl class="class">
