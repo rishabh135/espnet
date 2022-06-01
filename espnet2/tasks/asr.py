@@ -458,6 +458,7 @@ class ASRTask(AbsTask):
         # 4.1 Adversarial branch
 
         self.grlalpha = args.grlalpha
+        
         # :param int odim_adv: dimension of outputs for adversarial class (default None)
         adversarial_branch = SpeakerAdv(odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.dropout_rate)
 

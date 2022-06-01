@@ -1,0 +1,137 @@
+(pyt) rgupta@chifflot-7:~/dev/espnet/egs2/librispeech_100/asr1$ bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+\n******************************\n
+/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/dump
+/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp
+********\n Important setting data direcotry  *********** \n
+\n data directory : /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data  \n
+\n****************************\n
+2022-05-30T17:04:47 (asr.sh:281:main) ./asr.sh --skip_data_prep false --skip_train false --skip_eval false --lang en --ngpu 1 --nj 32 --inference_n
+j 32 --nbpe 5000 --max_wav_duration 30 --speed_perturb_factors 0.9 1.0 1.1 --audio_format flac.ark --feats_type raw --use_lm false --asr_tag confor
+mer_lr2e-3_warmup15k_amp_nondeterministic --asr_config /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml --inference_config /ho
+me/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml --train_set train_clean_100 --valid_set dev --test_sets test_clean test_other d
+ev_clean dev_other --lm_train_text /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data/train_clean_100/text --bpe_train_text /home/rgupta/dev/es
+pnet/egs2/librispeech_100/asr1/data/train_clean_100/text --stage 10 --stage 10 --stage 10 --stage 10 --stage 10 --stage 10 --stage 10 --stage 11 --
+stage 11 --stage 11 --stage 11 --stage 11 --stage 11
+./path.sh: line 9: /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/../../../tools/activate_python.sh: No such file or directory
+2022-05-30T17:04:47 (asr.sh:922:main) Stage 6-8: Skip lm-related stages: use_lm=false
+2022-05-30T17:04:47 (asr.sh:1049:main) Stage 11: ASR Training: train_set=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_
+libri_100/pyt_1/dump/raw/train_clean_100_sp, valid_set=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/du
+mp/raw/dev
+2022-05-30T17:04:47 (asr.sh:1116:main) Generate '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_
+conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh'. You can resume the process from stage 11 using this script
+2022-05-30T17:04:47 (asr.sh:1120:main) ASR training started... log: '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/train.log'
+2022-05-30T17:04:48 (asr.sh:1128:main)
+ *********************** changing directories Stage 11 **************************
+
+2022-05-30 17:04:48,313 (launch:94) INFO: /home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/launch.py --cmd 'run.pl -
+-name /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_amp_nondetermini
+stic/train.log' --log /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_
+amp_nondeterministic/train.log --ngpu 1 --num_nodes 1 --init_file_prefix /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_
+libri_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/.dist_init_ --multiprocessing_distributed true -- python3 -m espnet2.bin.as
+r_train --use_preprocessor true --bpemodel /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data/en_token_list/bpe_unigram5000/bpe.model --token_t
+ype bpe --token_list /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data/en_token_list/bpe_unigram5000/tokens.txt --non_linguistic_symbols none
+--cleaner none --g2p none --valid_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/p
+yt_1/dump/raw/dev/wav.scp,speech,kaldi_ark --valid_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/
+fresh_libri_100/pyt_1/dump/raw/dev/text,text,text --valid_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/pyt_1/exp/asr_stats_raw_en_bpe5000_sp/valid/speech_shape --valid_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgup
+ta/fresh_libri_100/pyt_1/exp/asr_stats_raw_en_bpe5000_sp/valid/text_shape.bpe --resume true --init_param --ignore_init_mismatch false --fold_length
+ 80000 --fold_length 150 --output_dir /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_conformer_l
+r2e-3_warmup15k_amp_nondeterministic --config /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml --frontend_conf fs=16k --normal
+ize=global_mvn --normalize_conf stats_file=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_stats_
+raw_en_bpe5000_sp/train/feats_stats.npz --train_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fre
+sh_libri_100/pyt_1/dump/raw/train_clean_100_sp/wav.scp,speech,kaldi_ark --train_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/mul
+tispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/dump/raw/train_clean_100_sp/text,text,text --train_shape_file /srv/storage/talc2@talc-data2.nanc
+y/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_stats_raw_en_bpe5000_sp/train/speech_shape --train_shape_file /srv/storage/talc2@ta
+lc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_stats_raw_en_bpe5000_sp/train/text_shape.bpe
+2022-05-30 17:04:48,506 (launch:348) INFO: log file: /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/
+asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/train.log
+Connection to chifflot-7.lille.grid5000.fr closed.
+# Error: job was terminated.
+Disconnected from OAR job 1887067.
+(pytorch) rgupta@flille:~/dev/espnet_currently_working/espnet/egs2/librispeech_1(pytorch) r(pytorch) rgupta@flille(pytorch) rgupta@flille:~/dev/esp
+net_currently_working/espnet/egs2/librispeech_100/asr1$
+(pytorch) rgupta@flille:~/dev/espnet_currently_working/espnet/egs2/librispeech_100/asr1$
+(pytorch) rgupta@flille:~/dev/espnet_currently_working/espnet/egs2/librispeech_100/asr1$
+(pytorch) rgupta@flille:~/dev/espnet_currently_working/espnet/egs2/librispeech_100/asr1$ source ~/.bashrc
+(base) rgupta@flille:~/dev/espnet_currently_working/espnet/egs2/librispeech_100/asr1$ wf
+(base) rgupta@flille:~/dev/espnet/egs2/librispeech_100/asr1$ conda activate pyt
+(pyt) rgupta@flille:~/dev/espnet/egs2/librispeech_100/asr1$ oarsub -l walltime=14:00:00 'sleep infinity' -p "clust
+er='chifflot'" --project magnet --json -v
+# Computed global resource filter: -p "(cluster='chifflot') AND maintenance = 'NO'"
+# Computed resource request: -l {"type = 'default'"}/host=1
+# Generate a job key...
+OAR_JOB_ID=1887113
+
+##########
+{
+   "job_id" : "1887113"
+}
+
+##########
+
+(pyt) rgupta@flille:~/dev/espnet/egs2/librispeech_100/asr1$ oarsub -C 1887113
+rgupta@chifflot-7:~/dev/espnet/egs2/librispeech_100/asr1$ source ~/.bashrc
+(base) rgupta@chifflot-7:~/dev/espnet/egs2/librispeech_100/asr1$ conda activate pyt
+(pyt) rgupta@chifflot-7:~/dev/espnet/egs2/librispeech_100/asr1$ bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+\n******************************\n
+/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/dump
+/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp
+********\n Important setting data direcotry  *********** \n
+\n data directory : /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data  \n
+\n****************************\n
+2022-05-30T20:20:01 (asr.sh:281:main) ./asr.sh --skip_data_prep false --skip_train false --skip_eval false --lang en --ngpu 1 --nj 32 --inference_n
+j 32 --nbpe 5000 --max_wav_duration 30 --speed_perturb_factors 0.9 1.0 1.1 --audio_format flac.ark --feats_type raw --use_lm false --asr_tag confor
+mer_lr2e-3_warmup15k_amp_nondeterministic --asr_config /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml --inference_config /ho
+me/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml --train_set train_clean_100 --valid_set dev --test_sets test_clean test_other d
+ev_clean dev_other --lm_train_text /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data/train_clean_100/text --bpe_train_text /home/rgupta/dev/es
+pnet/egs2/librispeech_100/asr1/data/train_clean_100/text --stage 10 --stage 10 --stage 10 --stage 10 --stage 10 --stage 10 --stage 10 --stage 11 --
+stage 11 --stage 11 --stage 11 --stage 11 --stage 11 --stage 11
+./path.sh: line 9: /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/../../../tools/activate_python.sh: No such file or directory
+2022-05-30T20:20:01 (asr.sh:922:main) Stage 6-8: Skip lm-related stages: use_lm=false
+2022-05-30T20:20:01 (asr.sh:1049:main) Stage 11: ASR Training: train_set=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_
+libri_100/pyt_1/dump/raw/train_clean_100_sp, valid_set=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/du
+mp/raw/dev
+2022-05-30T20:20:02 (asr.sh:1116:main) Generate '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_
+conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh'. You can resume the process from stage 11 using this script
+2022-05-30T20:20:02 (asr.sh:1120:main) ASR training started... log: '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/train.log'
+2022-05-30T20:20:02 (asr.sh:1128:main)
+ *********************** changing directories Stage 11 **************************
+
+2022-05-30 20:20:03,779 (launch:94) INFO: /home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/launch.py --cmd 'run.pl -
+-name /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_amp_nondetermini
+stic/train.log' --log /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_
+amp_nondeterministic/train.log --ngpu 1 --num_nodes 1 --init_file_prefix /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_
+libri_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/.dist_init_ --multiprocessing_distributed true -- python3 -m espnet2.bin.as
+r_train --use_preprocessor true --bpemodel /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data/en_token_list/bpe_unigram5000/bpe.model --token_t
+ype bpe --token_list /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data/en_token_list/bpe_unigram5000/tokens.txt --non_linguistic_symbols none
+--cleaner none --g2p none --valid_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/p
+yt_1/dump/raw/dev/wav.scp,speech,kaldi_ark --valid_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/
+fresh_libri_100/pyt_1/dump/raw/dev/text,text,text --valid_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/pyt_1/exp/asr_stats_raw_en_bpe5000_sp/valid/speech_shape --valid_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgup
+ta/fresh_libri_100/pyt_1/exp/asr_stats_raw_en_bpe5000_sp/valid/text_shape.bpe --resume true --init_param --ignore_init_mismatch false --fold_length
+ 80000 --fold_length 150 --output_dir /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_conformer_l
+r2e-3_warmup15k_amp_nondeterministic --config /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml --frontend_conf fs=16k --normal
+ize=global_mvn --normalize_conf stats_file=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_stats_
+raw_en_bpe5000_sp/train/feats_stats.npz --train_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fre
+sh_libri_100/pyt_1/dump/raw/train_clean_100_sp/wav.scp,speech,kaldi_ark --train_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/mul
+tispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/dump/raw/train_clean_100_sp/text,text,text --train_shape_file /srv/storage/talc2@talc-data2.nanc
+y/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_stats_raw_en_bpe5000_sp/train/speech_shape --train_shape_file /srv/storage/talc2@ta
+lc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_stats_raw_en_bpe5000_sp/train/text_shape.bpe
+2022-05-30 20:20:13,693 (launch:348) INFO: log file: /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/
+asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/train.log
+2022-05-31T06:57:36 (asr.sh:1200:main) Stage 12: Decoding: training_dir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_l
+ibri_100/pyt_1/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic
+2022-05-31T06:57:36 (asr.sh:1228:main) Generate '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_1/exp/asr_
+conformer_lr2e-3_warmup15k_amp_nondeterministic/decode_asr_asr_model_valid.acc.ave/run.sh'. You can resume the process from stage 12 using this scr
+ipt
+./asr.sh: line 1282: utils/split_scp.pl: No such file or directory
+(pyt) rgupta@chifflot-7:~/dev/espnet/egs2/librispeech_100/asr1$ Connection to chifflot-7.lille.grid5000.fr closed.
+# Error: job was terminated.
+Disconnected from OAR job 1887113.
+(pyt) rgupta@flille:~/dev/espnet/egs2/librispeech_100/asr1$ history >> first_running_30_may_history.txt
+(pyt) rgupta@flille:~/dev/espnet/egs2/librispeech_100/asr1$ vim first_running_30_may_history.txt
+(pyt) rgupta@flille:~/dev/espnet/egs2/librispeech_100/asr1$

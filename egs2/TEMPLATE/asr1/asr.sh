@@ -43,11 +43,13 @@ gpu_inference=false  # Whether to perform gpu decoding.
 ###################################################################################################################################################################################################
 
 global_dir=/home/rgupta/dev/espnet/egs2/librispeech/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
-experiment_n=pyt_1 # name of the experiment, just change it to create differnet folders
+experiment_n=pyt_adversarial_1 # name of the experiment, just change it to create differnet folders
 
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/dump # Directory to dump features.
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/exp # Directory to save experiments.
-data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data # determines all the files creating folder as in the data folder
+
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/data # determines all the files creating folder as in the data folder
+
 
 
 echo "\n******************************\n"
@@ -69,7 +71,7 @@ echo "\n****************************\n"
 python=python3       # Specify python to execute espnet commands.
 
 # Data preparation related
-local_data_opts= # The options given to local/data.sh.
+local_data_opts=${data_dd} # The options given to local/data.sh.
 
 # Speed perturbation related
 speed_perturb_factors=  # perturbation factors, e.g. "0.9 1.0 1.1" (separated by space).
@@ -482,7 +484,7 @@ if ! "${skip_data_prep}"; then
            log "Stage 2: Speed perturbation: ${data_dd}/${train_set} -> ${data_dd}/${train_set}_sp"
            for factor in ${speed_perturb_factors}; do
                if [[ $(bc <<<"${factor} != 1.0") == 1 ]]; then
-                   scripts/utils/perturb_data_dir_speed.sh "${factor}" "${data_dd}/${train_set}" "${data_dd}/${train_set}_sp${factor}"
+                   ${global_dir}/scripts/utils/perturb_data_dir_speed.sh "${factor}" "${data_dd}/${train_set}" "${data_dd}/${train_set}_sp${factor}"
                    _dirs+="${data_dd}/${train_set}_sp${factor} "
                else
                    # If speed factor is 1, same as the original
@@ -517,7 +519,7 @@ if ! "${skip_data_prep}"; then
                 else
                     _suf=""
                 fi
-                utils/copy_data_dir.sh --validate_opts --non-print ${data_dd}/"${dset}" "${data_feats}${_suf}/${dset}"
+                ${global_dir}/utils/copy_data_dir.sh --validate_opts --non-print ${data_dd}/"${dset}" "${data_feats}${_suf}/${dset}"
                 rm -f ${data_feats}${_suf}/${dset}/{segments,wav.scp,reco2file_and_channel,reco2dur}
                 _opts=
                 if [ -e ${data_dd}/"${dset}"/segments ]; then
@@ -529,7 +531,7 @@ if ! "${skip_data_prep}"; then
                     _opts+="--segments ${data_dd}/${dset}/segments "
                 fi
                 # shellcheck disable=SC2086
-                scripts/audio/format_wav_scp.sh --nj "${nj}" --cmd "${train_cmd}" \
+                ${global_dir}/scripts/audio/format_wav_scp.sh --nj "${nj}" --cmd "${train_cmd}" \
                     --audio-format "${audio_format}" --fs "${fs}" ${_opts} \
                     "${data_dd}/${dset}/wav.scp" "${data_feats}${_suf}/${dset}"
 
@@ -554,7 +556,7 @@ if ! "${skip_data_prep}"; then
                 utils/fix_data_dir.sh "${data_feats}${_suf}/${dset}"
 
                 # 3. Derive the the frame length and feature dimension
-                scripts/feats/feat_to_shape.sh --nj "${_nj}" --cmd "${train_cmd}" \
+                ${global_dir}/scripts/feats/feat_to_shape.sh --nj "${_nj}" --cmd "${train_cmd}" \
                     "${data_feats}${_suf}/${dset}/feats.scp" "${data_feats}${_suf}/${dset}/feats_shape"
 
                 # 4. Write feats_dim
@@ -586,7 +588,7 @@ if ! "${skip_data_prep}"; then
 
                 # Derive the the frame length and feature dimension
                 _nj=$(min "${nj}" "$(<"${data_feats}${_suf}/${dset}/utt2spk" wc -l)")
-                scripts/feats/feat_to_shape.sh --nj "${_nj}" --cmd "${train_cmd}" \
+                ${global_dir}/scripts/feats/feat_to_shape.sh --nj "${_nj}" --cmd "${train_cmd}" \
                     "${data_feats}${_suf}/${dset}/feats.scp" "${data_feats}${_suf}/${dset}/feats_shape"
 
                 pyscripts/feats/feat-to-shape.py "scp:head -n 1 ${data_feats}${_suf}/${dset}/feats.scp |" - | \
@@ -1423,7 +1425,7 @@ if ! "${skip_eval}"; then
         [ -f local/score.sh ] && local/score.sh ${local_score_opts} "${asr_exp}"
 
         # Show results in Markdown syntax
-        scripts/utils/show_asr_result.sh "${asr_exp}" > "${asr_exp}"/RESULTS.md
+        ${global_dir}/scripts/utils/show_asr_result.sh "${asr_exp}" > "${asr_exp}"/RESULTS.md
         cat "${asr_exp}"/RESULTS.md
 
     fi
@@ -1569,7 +1571,7 @@ if ! "${skip_upload_hf}"; then
         espnet_task=ASR
         # shellcheck disable=SC2034
         task_exp=${asr_exp}
-        eval "echo \"$(cat scripts/utils/TEMPLATE_HF_Readme.md)\"" > "${dir_repo}"/README.md
+        eval "echo \"$(cat ${global_dir}/scripts/utils/TEMPLATE_HF_Readme.md)\"" > "${dir_repo}"/README.md
 
         this_folder=${PWD}
         cd ${dir_repo}
