@@ -24,8 +24,8 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 # experiment_n=pyt_1
 experiment_n=pyt_adversarial_1 # name of the experiment, just change it to create differnet folders
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/data # determines all the files creating folder as in the data folder
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/${experiment_n}/train_asr.yaml
-inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/${experiment_n}/decode_asr.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml
+inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 
 ###################################################################################################################################################################################################

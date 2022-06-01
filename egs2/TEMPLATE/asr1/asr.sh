@@ -1002,7 +1002,7 @@ if ! "${skip_train}"; then
         #       but it's used only for deciding the sample ids.
 
 
-        log "\n *********************** changing directories **************************\n"
+        log "\n *********************** changing directories Stage 10    **************************\n"
         cd "${global_dir}"
         cd "../../../"
 

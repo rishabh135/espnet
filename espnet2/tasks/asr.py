@@ -448,20 +448,6 @@ class ASRTask(AbsTask):
         encoder_class = encoder_choices.get_class(args.encoder)
         encoder = encoder_class(input_size=input_size, **args.encoder_conf)
 
-        ################################################################################################################
-        ################################################################################################################
-        # TO DO rishabh create adversarial branch and link it with the encoder
-
-        ################################################################################################################
-        ################################################################################################################
-
-        # 4.1 Adversarial branch
-
-        self.grlalpha = args.grlalpha
-        
-        # :param int odim_adv: dimension of outputs for adversarial class (default None)
-        adversarial_branch = SpeakerAdv(odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.dropout_rate)
-
 
 
         # 5. Post-encoder block
@@ -506,6 +492,38 @@ class ASRTask(AbsTask):
             odim=vocab_size, encoder_output_size=encoder_output_size, **args.ctc_conf
         )
 
+
+        ################################################################################################################
+        ################################################################################################################
+        # TO DO rishabh create adversarial branch and link it with the encoder
+
+        ################################################################################################################
+        ################################################################################################################
+
+        # 4.1 Adversarial branch
+
+        # odim = int(valid_json[utts[0]]['output'][0]['shape'][1])
+        # logging.info('#input dims : ' + str(idim))
+        # logging.info('#output dims: ' + str(odim))
+        # odim_adv = None
+        # if args.adv:
+        #     odim_adv = int(valid_json[utts[0]]['output'][1]['shape'][1])
+        #     logging.info('#output dims adversarial: ' + str(odim_adv))
+
+        # grlalpha = args.grlalpha
+    
+        # :param int odim_adv: dimension of outputs for adversarial class (default None)
+        cls.adv_flag = args.adv_flag
+        cls.grlalpha = args.grlalpha
+        logging.info("\n\n ******* cls.adv_flag {}  and  adv_flag {} *******\n".format(cls.adv_flag, args.adv_flag))
+        if(args.adv_flag):
+            cls.adv_flag = args.adv_flag
+            adversarial_branch = SpeakerAdv(vocab_size, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
+
+
+
+
+
         # 7. Build model
         try:
             model_class = model_choices.get_class(args.model)
@@ -518,6 +536,7 @@ class ASRTask(AbsTask):
             normalize=normalize,
             preencoder=preencoder,
             encoder=encoder,
+            adversarial_branch= adversarial_branch,
             postencoder=postencoder,
             decoder=decoder,
             ctc=ctc,
