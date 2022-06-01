@@ -611,6 +611,7 @@
         <span class="c1"># 4.1 Adversarial branch</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">grlalpha</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">grlalpha</span>
+        
         <span class="c1"># :param int odim_adv: dimension of outputs for adversarial class (default None)</span>
         <span class="n">adversarial_branch</span> <span class="o">=</span> <span class="n">SpeakerAdv</span><span class="p">(</span><span class="n">odim_adv</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">eprojs</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_units</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_layers</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">dropout_rate</span><span class="p">)</span>
 
