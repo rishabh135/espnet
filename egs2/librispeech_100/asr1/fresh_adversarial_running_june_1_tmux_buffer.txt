@@ -1,0 +1,118 @@
+(pyt) rgupta@chifflot-7:~/dev/espnet/egs2/librispeech_100/asr1$ dataf
+(pyt) rgupta@chifflot-7:/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta$ cd fresh_libri_100/pyt_adversarial_1/
+(pyt) rgupta@chifflot-7:/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1$ rm -rf *
+(pyt) rgupta@chifflot-7:/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1$ wf
+(pyt) rgupta@chifflot-7:~/dev/espnet/egs2/librispeech_100/asr1$ bash run.sh
+\n******************************\n
+/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/dump
+/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/exp
+********\n Important setting data direcotry  *********** \n
+\n data directory : /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data  \n
+\n****************************\n
+2022-06-01T10:54:05 (asr.sh:283:main) ./asr.sh --skip_data_prep false --skip_train false --skip_eval false --lang en --ngpu 2 --nj 32 --inference_nj 32 --nbpe 5000 --max_wav_dura
+tion 30 --speed_perturb_factors 0.9 1.0 1.1 --audio_format flac.ark --feats_type raw --use_lm false --asr_tag conformer_lr2e-3_warmup15k_amp_nondeterministic --asr_config /home/r
+gupta/dev/espnet/egs2/librispeech_100/asr1/conf/pyt_adversarial_1/train_asr.yaml --inference_config /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/pyt_adversarial_1/decod
+e_asr.yaml --train_set train_clean_100 --valid_set dev --test_sets test_clean test_other dev_clean dev_other --data_dd /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/user
+s/rgupta/fresh_libri_100/pyt_adversarial_1/data --lm_train_text /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_c
+lean_100/text --bpe_train_text /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100/text
+./path.sh: line 9: /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/../../../tools/activate_python.sh: No such file or directory
+2022-06-01T10:54:05 (asr.sh:477:main) Stage 1: Data preparation for /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/tra
+in_clean_100, /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/dev, etc.
+\n
+****** Inside data.sh and checking first argument /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data **********\n
+\n
+ \n
+2022-06-01T10:54:05 (data.sh:24:main) local/data.sh /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data
+./path.sh: line 9: /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/../../../tools/activate_python.sh: No such file or directory
+2022-06-01T10:54:05 (data.sh:49:main) stage 1: /srv/storage/magnet@storage1.lille.grid5000.fr/brij/asr_data//LibriSpeech/LICENSE.TXT is already existing. Skip data downloading
+2022-06-01T10:54:05 (data.sh:54:main) stage 2: Data Preparation
+utils/validate_data_dir.sh: Successfully validated data-directory /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/dev_c
+lean
+local/data_prep.sh: successfully prepared data in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/dev_clean
+utils/validate_data_dir.sh: Successfully validated data-directory /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/test_
+clean
+local/data_prep.sh: successfully prepared data in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/test_clean
+utils/validate_data_dir.sh: Successfully validated data-directory /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/dev_o
+ther
+local/data_prep.sh: successfully prepared data in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/dev_other
+utils/validate_data_dir.sh: Successfully validated data-directory /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/test_
+other
+local/data_prep.sh: successfully prepared data in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/test_other
+utils/validate_data_dir.sh: Successfully validated data-directory /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train
+_clean_100
+local/data_prep.sh: successfully prepared data in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100
+2022-06-01T10:56:22 (data.sh:62:main) stage 3: combine all training and development sets
+utils/combine_data.sh --extra_files utt2num_frames data/dev data/dev_clean data/dev_other
+./path.sh: line 9: /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/../../../tools/activate_python.sh: No such file or directory
+utils/combine_data.sh [info]: not combining utt2uniq as it does not exist
+utils/combine_data.sh [info]: not combining segments as it does not exist
+utils/combine_data.sh: combined utt2spk
+utils/combine_data.sh [info]: not combining utt2lang as it does not exist
+utils/combine_data.sh [info]: not combining utt2dur as it does not exist
+utils/combine_data.sh [info]: not combining utt2num_frames as it does not exist
+utils/combine_data.sh [info]: not combining reco2dur as it does not exist
+utils/combine_data.sh [info]: not combining feats.scp as it does not exist
+utils/combine_data.sh: combined text
+utils/combine_data.sh [info]: not combining cmvn.scp as it does not exist
+utils/combine_data.sh [info]: not combining vad.scp as it does not exist
+utils/combine_data.sh [info]: not combining reco2file_and_channel as it does not exist
+utils/combine_data.sh: combined wav.scp
+utils/combine_data.sh: combined spk2gender
+utils/combine_data.sh [info]: not combining utt2num_frames as it does not exist
+fix_data_dir.sh: kept all 5567 utterances.
+fix_data_dir.sh: old files are kept in data/dev/.backup
+2022-06-01T10:56:22 (data.sh:80:main) Successfully finished. [elapsed=137s]
+2022-06-01T10:56:22 (asr.sh:484:main) Stage 2: Speed perturbation: /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/trai
+n_clean_100 -> /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100_sp
+text
+utt2lang
+/home/rgupta/dev/espnet/egs2/librispeech/asr1//scripts/utils/perturb_data_dir_speed.sh: generated speed-perturbed version of data in /srv/storage/talc2@talc-data2.nancy/multispee
+ch/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100, in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversar
+ial_1/data/train_clean_100_sp0.9
+fix_data_dir.sh: kept all 28539 utterances.
+fix_data_dir.sh: old files are kept in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100_sp0.9/.backup
+utils/validate_data_dir.sh: Successfully validated data-directory /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train
+_clean_100_sp0.9
+text
+utt2lang
+/home/rgupta/dev/espnet/egs2/librispeech/asr1//scripts/utils/perturb_data_dir_speed.sh: generated speed-perturbed version of data in /srv/storage/talc2@talc-data2.nancy/multispee
+ch/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100, in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversar
+ial_1/data/train_clean_100_sp1.1
+fix_data_dir.sh: kept all 28539 utterances.
+fix_data_dir.sh: old files are kept in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100_sp1.1/.backup
+utils/validate_data_dir.sh: Successfully validated data-directory /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train
+_clean_100_sp1.1
+utils/combine_data.sh /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100_sp /srv/storage/talc2@talc-data2.
+nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100_sp0.9 /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri
+_100/pyt_adversarial_1/data/train_clean_100 /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100_sp1.1
+./path.sh: line 9: /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/../../../tools/activate_python.sh: No such file or directory
+utils/combine_data.sh: combined utt2uniq
+utils/combine_data.sh [info]: not combining segments as it does not exist
+utils/combine_data.sh: combined utt2spk
+utils/combine_data.sh [info]: not combining utt2lang as it does not exist
+utils/combine_data.sh [info]: not combining utt2dur as it does not exist
+utils/combine_data.sh [info]: not combining utt2num_frames as it does not exist
+utils/combine_data.sh [info]: not combining reco2dur as it does not exist
+utils/combine_data.sh [info]: not combining feats.scp as it does not exist
+utils/combine_data.sh: combined text
+utils/combine_data.sh [info]: not combining cmvn.scp as it does not exist
+utils/combine_data.sh [info]: not combining vad.scp as it does not exist
+utils/combine_data.sh [info]: not combining reco2file_and_channel as it does not exist
+utils/combine_data.sh: combined wav.scp
+utils/combine_data.sh: combined spk2gender
+fix_data_dir.sh: kept all 85617 utterances.
+fix_data_dir.sh: old files are kept in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100_sp/.backup
+2022-06-01T10:56:37 (asr.sh:506:main) Stage 3: Format wav.scp: /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/ -> /srv
+/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/dump/raw
+utils/copy_data_dir.sh: copied data from /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100_sp to /srv/sto
+rage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/dump/raw/org/train_clean_100_sp
+utils/validate_data_dir.sh: Successfully validated data-directory /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/dump/raw/o
+rg/train_clean_100_sp
+2022-06-01T10:56:41 (format_wav_scp.sh:42:main) /home/rgupta/dev/espnet/egs2/librispeech/asr1//scripts/audio/format_wav_scp.sh --nj 32 --cmd run.pl --audio-format flac.ark --fs 1
+6k /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/train_clean_100_sp/wav.scp /srv/storage/talc2@talc-data2.nancy/multi
+speech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/dump/raw/org/train_clean_100_sp
+./path.sh: line 9: /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/../../../tools/activate_python.sh: No such file or directory
+2022-06-01T10:56:41 (format_wav_scp.sh:110:main) [info]: without segments
+2022-06-01T10:59:06 (format_wav_scp.sh:142:main) Successfully finished. [elapsed=145s]
+copy_data_dir.sh: no such file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_1/data/dev/utt2spk
+(pyt) rgupta@chifflot-7:~/dev/espnet/egs2/librispeech_100/asr1$

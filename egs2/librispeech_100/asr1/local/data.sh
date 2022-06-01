@@ -17,6 +17,10 @@ stop_stage=100000
 data_url=www.openslr.org/resources/12
 train_dev="dev"
 
+echo "\n"
+echo "****** Inside data.sh and checking first argument $1 **********\n "
+echo "\n "
+echo " \n"
 log "$0 $*"
 . utils/parse_options.sh
 
@@ -25,10 +29,10 @@ log "$0 $*"
 . ./cmd.sh
 
 
-if [ $# -ne 0 ]; then
-    log "Error: No positional arguments are required."
-    exit 2
-fi
+# if [ $# -ne 0 ]; then
+#     log "Error: No positional arguments are required."
+#     exit 2
+# fi
 
 if [ -z "${LIBRISPEECH}" ]; then
     log "Fill the value of 'LIBRISPEECH' of db.sh"
@@ -50,26 +54,26 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
     log "stage 2: Data Preparation"
     for part in dev-clean test-clean dev-other test-other train-clean-100; do
         # use underscore-separated names in data directories.
-        local/data_prep.sh ${LIBRISPEECH}/LibriSpeech/${part} data/${part//-/_}
+        local/data_prep.sh ${LIBRISPEECH}/LibriSpeech/${part} $1/${part//-/_}
     done
 fi
 
 if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
     log "stage 3: combine all training and development sets"
-    utils/combine_data.sh --extra_files utt2num_frames data/${train_dev} data/dev_clean data/dev_other
+    utils/combine_data.sh --extra_files utt2num_frames $1/${train_dev} $1/dev_clean $1/dev_other
 fi
 
 if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     # use external data
-    if [ ! -e data/local/other_text/librispeech-lm-norm.txt.gz ]; then
+    if [ ! -e $1/local/other_text/librispeech-lm-norm.txt.gz ]; then
 	log "stage 4: prepare external text data from http://www.openslr.org/resources/11/librispeech-lm-norm.txt.gz"
-        wget http://www.openslr.org/resources/11/librispeech-lm-norm.txt.gz -P data/local/other_text/
+        wget http://www.openslr.org/resources/11/librispeech-lm-norm.txt.gz -P $1/local/other_text/
     fi
-    if [ ! -e data/local/other_text/text ]; then
+    if [ ! -e $1/local/other_text/text ]; then
 	# provide utterance id to each texts
 	# e.g., librispeech_lng_00003686 A BANK CHECK
-	zcat data/local/other_text/librispeech-lm-norm.txt.gz | \
-	    awk '{ printf("librispeech_lng_%08d %s\n",NR,$0) } ' > data/local/other_text/text
+	zcat $1/local/other_text/librispeech-lm-norm.txt.gz | \
+	    awk '{ printf("librispeech_lng_%08d %s\n",NR,$0) } ' > $1/local/other_text/text
     fi
 fi
 

@@ -12,22 +12,31 @@ test_sets="test_clean test_other dev_clean dev_other"
 asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 
+
+
+###################################################################################################################################################################################################
+###################################################################################################################################################################################################
+###################################################################################################################################################################################################
 # asr_config=conf/train_asr.yaml
 # inference_config=conf/decode_asr.yaml
 
 # srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}
 # experiment_n=pyt_1
-data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data # determines all the files creating folder as in the data folder
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml
-inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
+experiment_n=pyt_adversarial_1 # name of the experiment, just change it to create differnet folders
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/data # determines all the files creating folder as in the data folder
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/${experiment_n}/train_asr.yaml
+inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/${experiment_n}/decode_asr.yaml
 
 
+###################################################################################################################################################################################################
+###################################################################################################################################################################################################
+###################################################################################################################################################################################################
 ./asr.sh \
     --skip_data_prep false \
     --skip_train false \
     --skip_eval false \
     --lang en \
-    --ngpu 1 \
+    --ngpu 2 \
     --nj 32 \
     --inference_nj 32 \
     --nbpe 5000 \
@@ -42,6 +51,6 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --train_set "${train_set}" \
     --valid_set "${valid_set}" \
     --test_sets "${test_sets}" \
-    --data_dd "${data_dd}"
+    --data_dd "${data_dd}"\
     --lm_train_text "${data_dd}/${train_set}/text" \
     --bpe_train_text "${data_dd}/${train_set}/text" "$@"

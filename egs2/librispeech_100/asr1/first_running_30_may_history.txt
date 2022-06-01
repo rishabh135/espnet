@@ -1,0 +1,523 @@
+    3  clear
+    4  clear
+    5  bash run.sh 
+    6  clear
+    7  bash run.sh 
+    8  bash run.sh 
+    9  clear
+   10  bash run.sh 
+   11  bash run.sh 
+   12  bash run.sh 
+   13  bash run.sh 
+   14  ls
+   15  clear
+   16  ls
+   17  bash run.sh 
+   18  ls
+   19  ls
+   20  cd ..
+   21  git status
+   22  cd ..
+   23  git status
+   24  git status
+   25  git status
+   26  git diff TEMPLATE/asr1/db.sh
+   27  git diff TEMPLATE/asr1/path.sh
+   28  clear
+   29  clear
+   30  vim ~/.tmux.conf
+   31  cd ~
+   32  cat >> ~/.tmux.conf
+   33  clear
+   34  ∫
+   35  conda activate pytorch
+   36  ls
+   37  clear
+   38  ls
+   39  history grep "oarsub"
+   40  history grep oarsub
+   41  history
+   42  clear
+   43  clear
+   44  ls -abc
+   45  vim ~/.bash_history 
+   46  cd dev/
+   47  ls
+   48  cd ..
+   49  wf
+   50  bash run.sh 
+   51  bash run.sh 
+   52  bash run.sh 
+   53  bash run.sh 
+   54  which python3
+   55  which python3
+   56  bash run.sh 
+   57  clear
+   58  bash run.sh 
+   59  clear
+   60  bash run.sh 
+   61  clear
+   62  bash run.sh 
+   63  bash run.sh 
+   64  clear
+   65  which python2
+   66  which python3
+   67  clear
+   68  bash run.sh 
+   69  clear
+   70  bash run.sh 
+   71  :Q
+   72  clear
+   73  cd ~
+   74  cd dev/espnet
+   75  ls
+   76  cd egs/
+   77  ls
+   78  cd librispeech_adv/
+   79  ls
+   80  cd asr1/
+   81  ls
+   82  bash run.sh 
+   83  cd ..
+   84  cd ..
+   85  cd ..
+   86  cd tools/
+   87  ls
+   88  git clone https://github.com/kaldi-asr/kaldi.git
+   89  cd ../
+   90  ls
+   91  cd egs/
+   92  ls
+   93  cd librispeech_adv/
+   94  ls
+   95  cd asr1/
+   96  bash run.sh 
+   97  bash run.sh 
+   98  bash run2.sh 
+   99  bash run2.sh 
+  100  bash run.sh 
+  101  clear
+  102  clear
+  103  bash run
+  104  bash run.sh 
+  105  clear
+  106  clear
+  107  clear
+  108  pip install jupyterlab-link-share
+  109  source ~/.bashrc
+  110  conda activate pytorch
+  111  tmux ls
+  112  tmux attach -t 0
+  113  clear
+  114  clear
+  115  source ~/.bashrc
+  116  oarstat -u
+  117  oarsub -C 1885113
+  118  oarsub -C 1885113
+  119  oarsub -C 1885113
+  120  launchgpu 2
+  121  oarstat -u
+  122  oarstat -u
+  123  oarstat
+  124  launchgpu 2
+  125  clear
+  126  oarstat
+  127  oarsub -l walltime=2:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet
+  128  oarsub -C 1885294
+  129  source ~/.bashrc
+  130  wf
+  131  pip install resampy
+  132  grep -r resampy
+  133  tmux attach -t 0
+  134  tmux
+  135  clear
+  136  oarsub -C 1885294
+  137  oarstat
+  138  oarsub -l walltime=4:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet
+  139  oarsub -C 1885364
+  140  source ~/.bashrc
+  141  wf
+  142  bash run.sh 
+  143  tmux
+  144  ls
+  145  clear
+  146  source ~/.bashrc
+  147  source ~/.bashrc
+  148  tmux ls
+  149  tmux
+  150  oardel 1885402
+  151  oarstat -u
+  152  oarstat -user
+  153  source ~/.bashrc
+  154  oarstat -user
+  155  oarstat
+  156  oarsub
+  157  tmux attach -t 0
+  158  oarsub -l walltime=4:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet
+  159  oarstat -u
+  160  oarsub -C 1885402
+  161  oardel 1885402
+  162  clear
+  163  oarsub -l walltime=4:00:00 'sleep infinity' -p "cluster='chifflot-7'" --project magnet
+  164  oarsub -l walltime=4:00:00 'sleep infinity' -p "cluster='chifflot-3'" --project magnet
+  165  clear
+  166  oarsub -l walltime=4:00:00 'sleep infinity' -p "cluster='chifflot-3'" --project magnet
+  167  oarsub -l walltime=4:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet
+  168  oarsub -C 1885406
+  169  clear
+  170  ls
+  171  tmux --name esp
+  172  tmux
+  173  source ~/.bashrc
+  174  conda activate pytorch
+  175  ckear
+  176  clear
+  177  wf
+  178  bash run.sh 
+  179  sudo-g5k apt-install flac sox
+  180  sudo-g5k apt install flac sox
+  181  clear
+  182  bash run.sh 
+  183  clear
+  184  source ~/.bashrc
+  185  clear
+  186  oarstat
+  187  tmux
+  188  tmux ls
+  189  tmux kill-session 0
+  190  tmux kill-session -t 0
+  191  clear
+  192  clear
+  193  exit
+  194  oarstat -u
+  195  tmux
+  196  tmux attach -t 0
+  197  tmux attach -t 0
+  198  tmux attach -t 0
+  199  tmux attach -t 0
+  200  clear
+  201  source ~/.bashrc
+  202  conda activate pytorch
+  203  wf
+  204  bash run.sh 
+  205  sudo-g5k apt install flac sox
+  206  bash run.sh 
+  207  clear
+  208  oarsub -C 1885406
+  209  clear
+  210  nvidia-smi
+  211  ls
+  212  ls
+  213  clear
+  214  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  215  tmux --version
+  216  vim ~/.tmux.conf 
+  217  tmux source ~/.tmux.conf
+  218  source ~/.bashrc
+  219  vim ~/.tmux.conf 
+  220  clear
+  221  source ~/.bashrc
+  222  tmux source ~/.tmux.conf
+  223  clear
+  224  clear
+  225  vim ~/.bashrc
+  226  clear
+  227  ls
+  228  exit
+  229  tmux attach -t 0
+  230  clear
+  231  tmux attach -t 0
+  232  source ~/.bashrc
+  233  tmux attach -t 0
+  234  tmux attach -t 0
+  235  tmux attach -t 0
+  236  tmux attach -t 0
+  237  source ~/.bashrc
+  238  conda activate pytorch
+  239  sudo-g5k apt install flac sox
+  240  bash run.sh 
+  241  cd ~
+  242  git clone https://github.com/tmux-plugins/tmux-yank.git ./
+  243  ls
+  244  vim ~/.tmux.conf 
+  245  clear
+  246  source ~/.tmux.conf.local
+  247  source ~/.tmux.conf
+  248  tmux source-file ~/.tmux.conf
+  249  s
+  250  s
+  251  s
+  252  s
+  253  vim ~/.basrc
+  254  vim ~/.tmux.conf 
+  255  source ~/.tmux.conf
+  256  dfdfdas;dfgqwiyouwqwertyuiogf
+  257  exit
+  258  oarsub -C 1885406
+  259  oarsub -l walltime=4:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet
+  260  oarsub -C 1885424
+  261  clear
+  262  ls
+  263  oarsub -C 1885424
+  264  oarsub -C 1885424
+  265  clear
+  266  ls
+  267  oarstat
+  268  clear
+  269  source ~/.bashrc'
+  270  source ~/.bashrc
+  271  wf
+  272  conda activate pytorch
+  273  ls
+  274  du -sh data/
+  275  du -sh ./
+  276  ls du -hs *
+  277  ls du -hs ./*
+  278  du -sh
+  279  du -sh ./
+  280  du -sh ./*
+  281  cd dump/
+  282  ls
+  283  cd raw/
+  284  ls
+  285  vim ~/.bashrc
+  286  cd ../
+  287  cd ../
+  288  clear
+  289  oarstat
+  290  clear
+  291  clear
+  292  storagef 
+  293  wf
+  294  grep -r "./dump/"
+  295  clear
+  296  ks
+  297  ls
+  298  grep -r "./dump/"
+  299  clear
+  300  grep -rni "./dump"
+  301  grep -rni "dump" *
+  302  grep -rni "dump/" *
+  303  grep -rni "dump/" * >> grep_out.out
+  304  storagef 
+  305  cd ~
+  306  ls
+  307  pwd
+  308  storagef 
+  309  mv /home/rgupta/dev/espnet_currently_working/espnet/egs2/librispeech_100/asr1/dump ./librispeech/dump/
+  310  mkdir librispeech/dump/
+  311  mkdir librispeech
+  312  cd librispeech/
+  313  mkdir dump
+  314  cd ..
+  315  cd ..
+  316  cd rgupta/
+  317  rsync -avzhp /home/rgupta/dev/espnet_currently_working/espnet/egs2/librispeech_100/asr1/dump ./librispeech/dump/
+  318  ls
+  319  du -lsh
+  320  du -lsh *
+  321  cd librispeech/
+  322  ls
+  323  cd dump/
+  324  ls
+  325  cd dump/
+  326  ls
+  327  mv raw/ ../
+  328  ls
+  329  cd ..
+  330  ls
+  331  du -sh *
+  332  rm -rf dump/
+  333  ls
+  334  cd ..
+  335  ls
+  336  wf
+  337  grep -rni "dump/" * >> grep_out.out
+  338  clear
+  339  ls
+  340  du -sh *
+  341  rm -rf dump/
+  342  ls
+  343  grep -rni "dump/" * >> grep_out.out
+  344  grep -rni "Stage" * > grep_out.out
+  345  storagef 
+  346  pwd
+  347  ls
+  348  clear
+  349  ls
+  350  wf
+  351  ls
+  352  vim ~/.tmux.conf 
+  353  clear
+  354  clear
+  355  ls
+  356  storagef 
+  357  ls
+  358  pwd
+  359  history
+  360  clear
+  361  clear
+  362  ls
+  363  pwd
+  364  pwd >> /home/rgupta/hisotry.txt
+  365  clear
+  366  wf
+  367  cd ..
+  368  cd ..
+  369  cd ..
+  370  du -sh *
+  371  cd egs2/
+  372  ls
+  373  cd librispeech_100/
+  374  ls
+  375  du -sh *
+  376  cd asr1/
+  377  ls
+  378  ls
+  379  du -sh *
+  380  cd data/
+  381  ls
+  382  cd ..
+  383  cd ..
+  384  cd ..
+  385  cd librispeech_100/asr1/
+  386  ls
+  387  clear
+  388  clear
+  389  ls
+  390  bash run.sh 
+  391  sudo-g5k apt install flac sox
+  392  clear apt install flac sox
+  393  clear
+  394  oarstat
+  395  oarstat -u
+  396  vim ~/.bashrc
+  397  vim ~/.bashrc
+  398  launchgpu 4
+  399  oarstat -u
+  400  vim ~/.bashrc
+  401  launchgpu 4
+  402  ls
+  403  vim ~/.bashrc
+  404  clear
+  405  clear
+  406  clear
+  407  clear
+  408  clear
+  409  ls
+  410  clear
+  411  clear
+  412  ls
+  413  ls
+  414  bash exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh 
+  415  clear
+  416  bash run.sh 
+  417  oarsub -l walltime=4:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet --json -v 
+  418  oarsub -C 1885638
+  419  exit
+  420  tmux attach -t 0
+  421  tmux attach -t 0
+  422  tmux attach -t 0
+  423  tmux attach -t 0
+  424  tmux attach -t 0
+  425  tmux attach -t 0
+  426  tmux attach -t 0
+  427  ls
+  428  source ~/.bashrc
+  429  storagef 
+  430  pwd
+  431  clear
+  432  clear
+  433  tmux attach -t 0
+  434  tmux attach -t 0
+  435  tmux attach -t 0
+  436  wf
+  437  ls
+  438  tmux attach -t 0
+  439  clear
+  440  tmux attach -t 0
+  441  tmux attach -t 0
+  442  tmux attach -t 0
+  443  clear
+  444  exit
+  445  tmux source-file ~/.tmux.conf
+  446  tmux attach -t 0
+  447  git clone https://github.com/tmux-plugins/tmux-logging ~/.tmux/tmux-logging
+  448  run-shell ~/.tmux/tmux-logging/logging.tmux
+  449  vim ~/.tmux.conf 
+  450  tmux source-file ~/.tmux.conf
+  451  tmux attach -t 0
+  452  export HISTSIZE=7000
+  453  tmux attach -t 0
+  454  tmux source-file ~/.tmux.conf
+  455  tmux attach -t 0
+  456  ls
+  457  vim ~/.tmux.conf 
+  458  vim ~/.tmux.conf 
+  459  vim ~/.tmux.conf 
+  460  clear
+  461  vim ~/.tmux.conf 
+  462  clear
+  463  source ~/.bashrc
+  464  clear
+  465  clear
+  466  ls
+  467  clear
+  468  clear
+  469  oarstat -u
+  470  clear
+  471  oarstat 
+  472  oarstat -u
+  473  clear
+  474  clear
+  475  clear
+  476  clear
+  477  clear
+  478  clear
+  479  source ~/.bashrc
+  480  clear
+  481  exit
+  482  tmux attach -t 0
+  483  storagef
+  484  pwd
+  485  tmux attach -t 0
+  486  tmux attach -t 0
+  487  exit
+  488  tmux attach -t 0
+  489  tmux attach -t 0
+  490  tmux attach -t 0
+  491  tmux attach -t 0
+  492  tmux attach -t 0
+  493  /bin/python3 /home/rgupta/anaconda3/envs/pytorch/lib/python3.9/site-packages/espnet2/tasks/abs_task.py
+  494  tmux attach -t 0
+  495  vim ~/.tmux.conf 
+  496  tmux source-file ~/.tmux.conf 
+  497  clear
+  498  tmux attach -t 0
+  499  tmux source-file ~/.tmux.conf 
+  500  tmux attach -t 0
+  501  clear
+  502  source ~/.bashrc
+  503  clear
+  504  clear
+  505  wf
+  506  conda activate pytorch
+  507  clear
+  508  oarsub -l walltime=8:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet --json -v 
+  509  oarsub -C 1886356
+  510  oarsub -C 1886356
+  511  clear
+  512  oarstat
+  513  oarsub -C 1886435
+  514  clear
+  515  clear
+  516  oarsub -C 1886530
+  517  clear
+  518  oarstat
+  519  oarsub -C 1887067
+  520  source ~/.bashrc
+  521  wf
+  522  conda activate pyt
+  523  oarsub -l walltime=14:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet --json -v 
+  524  oarsub -C 1887113
+  525  history >> first_running_30_may_history.txt
