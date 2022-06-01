@@ -11,6 +11,7 @@ from espnet2.asr.decoder.abs_decoder import AbsDecoder
 from espnet2.asr.encoder.abs_encoder import AbsEncoder
 
 from espnet2.asr.adversarial_branch import SpeakerAdv
+from espnet2.asr.adversarial_branch import ReverseLayerF
 
 from espnet2.asr.frontend.abs_frontend import AbsFrontend
 from espnet2.asr.postencoder.abs_postencoder import AbsPostEncoder
@@ -96,6 +97,7 @@ class ESPnetASRModel(AbsESPnetModel):
         self.encoder = encoder
         self.adversarial_branch = adversarial_branch
 
+        # self.adv_flag = adv_flag
 
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
@@ -328,6 +330,16 @@ class ESPnetASRModel(AbsESPnetModel):
             stats["acc"] = acc_att
             stats["cer"] = cer_att
             stats["wer"] = wer_att
+            
+
+
+        # if (self.adv_flag):
+
+        logging.info("Computing adversarial loss abd flag inside {}  \n".format(self.adv_flag))
+        rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+        loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text)
+        stats["loss_adversarial"] = loss_adv.detach()if loss_adv is not None else None
+
 
         # Collect total loss stats
         stats["loss"] = loss.detach()
