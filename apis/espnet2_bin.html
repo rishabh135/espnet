@@ -621,7 +621,11 @@ Text converter related:
                     [--optim {adam,adamw,sgd,adadelta,adagrad,adamax,asgd,lbfgs,rmsprop,rprop,radam,accagd,adabound,adamod,diffgrad,lamb,novograd,pid,qhm,sgdw,yogi}]
                     [--optim_conf OPTIM_CONF]
                     [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
-                    [--scheduler_conf SCHEDULER_CONF]
+                    [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
+                    [--adv_flag ADV_FLAG] [--adv ADV]
+                    [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
+                    [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
+                    [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
                     [--token_list TOKEN_LIST]
                     [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
                     [--input_size INPUT_SIZE] [--ctc_conf CTC_CONF]
@@ -655,6 +659,8 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -761,7 +767,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: True)
+                        Enable wandb logging (default: False)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -980,6 +986,19 @@ Optimizer related:
                         The lr scheduler type (default: None)
   --scheduler_conf SCHEDULER_CONF
                         The keyword arguments for lr scheduler (default: {})
+
+Adversarial part related related:
+  --eprojs EPROJS       Number of encoder projection units (default: 320)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+  --adv ADV             To perform speaker adversarial training or not (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 320)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
 
   Task related
 
@@ -1168,7 +1187,12 @@ Diarize speech related:
                      [--optim {adam,adamw,sgd,adadelta,adagrad,adamax,asgd,lbfgs,rmsprop,rprop,radam,accagd,adabound,adamod,diffgrad,lamb,novograd,pid,qhm,sgdw,yogi}]
                      [--optim_conf OPTIM_CONF]
                      [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
-                     [--scheduler_conf SCHEDULER_CONF] [--num_spk NUM_SPK]
+                     [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
+                     [--adv_flag ADV_FLAG] [--adv ADV]
+                     [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
+                     [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
+                     [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
+                     [--num_spk NUM_SPK]
                      [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
                      [--input_size INPUT_SIZE] [--model_conf MODEL_CONF]
                      [--use_preprocessor USE_PREPROCESSOR]
@@ -1189,6 +1213,8 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
 
 Common configuration:
   --print_config        Print the config file and exit (default: False)
@@ -1278,7 +1304,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: True)
+                        Enable wandb logging (default: False)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -1497,6 +1523,19 @@ Optimizer related:
                         The lr scheduler type (default: None)
   --scheduler_conf SCHEDULER_CONF
                         The keyword arguments for lr scheduler (default: {})
+
+Adversarial part related related:
+  --eprojs EPROJS       Number of encoder projection units (default: 320)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+  --adv ADV             To perform speaker adversarial training or not (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 320)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
 
   Task related
 
@@ -1700,7 +1739,12 @@ SeparateSpeech related:
                         [--optim {adam,adamw,sgd,adadelta,adagrad,adamax,asgd,lbfgs,rmsprop,rprop,radam,accagd,adabound,adamod,diffgrad,lamb,novograd,pid,qhm,sgdw,yogi}]
                         [--optim_conf OPTIM_CONF]
                         [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
-                        [--scheduler_conf SCHEDULER_CONF]
+                        [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
+                        [--adv_flag ADV_FLAG] [--adv ADV]
+                        [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
+                        [--grlalpha GRLALPHA] [--adv_lr ADV_LR]
+                        [--asr_lr ASR_LR] [--reinit_adv]
+                        [--adv_dropout_rate ADV_DROPOUT_RATE]
                         [--token_list TOKEN_LIST]
                         [--src_token_list SRC_TOKEN_LIST]
                         [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
@@ -1756,6 +1800,8 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -1851,7 +1897,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: True)
+                        Enable wandb logging (default: False)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -2070,6 +2116,19 @@ Optimizer related:
                         The lr scheduler type (default: None)
   --scheduler_conf SCHEDULER_CONF
                         The keyword arguments for lr scheduler (default: {})
+
+Adversarial part related related:
+  --eprojs EPROJS       Number of encoder projection units (default: 320)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+  --adv ADV             To perform speaker adversarial training or not (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 320)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
 
   Task related
 
@@ -2270,7 +2329,11 @@ Input data related:
                     [--optim {adam,adamw,sgd,adadelta,adagrad,adamax,asgd,lbfgs,rmsprop,rprop,radam,accagd,adabound,adamod,diffgrad,lamb,novograd,pid,qhm,sgdw,yogi}]
                     [--optim_conf OPTIM_CONF]
                     [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
-                    [--scheduler_conf SCHEDULER_CONF]
+                    [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
+                    [--adv_flag ADV_FLAG] [--adv ADV]
+                    [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
+                    [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
+                    [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
                     [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
                     [--model_conf MODEL_CONF] [--criterions CRITERIONS]
                     [--use_preprocessor USE_PREPROCESSOR]
@@ -2283,6 +2346,8 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
 
 Common configuration:
   --print_config        Print the config file and exit (default: False)
@@ -2372,7 +2437,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: True)
+                        Enable wandb logging (default: False)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -2592,6 +2657,19 @@ Optimizer related:
   --scheduler_conf SCHEDULER_CONF
                         The keyword arguments for lr scheduler (default: {})
 
+Adversarial part related related:
+  --eprojs EPROJS       Number of encoder projection units (default: 320)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+  --adv ADV             To perform speaker adversarial training or not (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 320)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+
   Task related
 
   --init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}
@@ -2697,7 +2775,12 @@ Optimizer related:
                         [--optim2 {adam,adamw,sgd,adadelta,adagrad,adamax,asgd,lbfgs,rmsprop,rprop,radam,accagd,adabound,adamod,diffgrad,lamb,novograd,pid,qhm,sgdw,yogi}]
                         [--optim2_conf OPTIM2_CONF]
                         [--scheduler2 {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
-                        [--scheduler2_conf SCHEDULER2_CONF]
+                        [--scheduler2_conf SCHEDULER2_CONF] [--eprojs EPROJS]
+                        [--adv_flag ADV_FLAG] [--adv ADV]
+                        [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
+                        [--grlalpha GRLALPHA] [--adv_lr ADV_LR]
+                        [--asr_lr ASR_LR] [--reinit_adv]
+                        [--adv_dropout_rate ADV_DROPOUT_RATE]
                         [--generator_first GENERATOR_FIRST]
                         [--token_list TOKEN_LIST] [--odim ODIM]
                         [--model_conf MODEL_CONF]
@@ -2725,6 +2808,8 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
   --generator_first GENERATOR_FIRST
                         Whether to update generator first. (default: False)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
@@ -2822,7 +2907,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: True)
+                        Enable wandb logging (default: False)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -3050,6 +3135,19 @@ Optimizer related:
   --scheduler2_conf SCHEDULER2_CONF
                         The keyword arguments for lr scheduler (default: {})
 
+Adversarial part related related:
+  --eprojs EPROJS       Number of encoder projection units (default: 320)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+  --adv ADV             To perform speaker adversarial training or not (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 320)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+
   Task related
 
   --token_list TOKEN_LIST
@@ -3167,7 +3265,12 @@ Optimizer related:
                        [--optim {adam,adamw,sgd,adadelta,adagrad,adamax,asgd,lbfgs,rmsprop,rprop,radam,accagd,adabound,adamod,diffgrad,lamb,novograd,pid,qhm,sgdw,yogi}]
                        [--optim_conf OPTIM_CONF]
                        [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
-                       [--scheduler_conf SCHEDULER_CONF]
+                       [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
+                       [--adv_flag ADV_FLAG] [--adv ADV]
+                       [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
+                       [--grlalpha GRLALPHA] [--adv_lr ADV_LR]
+                       [--asr_lr ASR_LR] [--reinit_adv]
+                       [--adv_dropout_rate ADV_DROPOUT_RATE]
                        [--token_list TOKEN_LIST]
                        [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
                        [--input_size INPUT_SIZE] [--model_conf MODEL_CONF]
@@ -3201,6 +3304,8 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -3315,7 +3420,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: True)
+                        Enable wandb logging (default: False)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -3534,6 +3639,19 @@ Optimizer related:
                         The lr scheduler type (default: None)
   --scheduler_conf SCHEDULER_CONF
                         The keyword arguments for lr scheduler (default: {})
+
+Adversarial part related related:
+  --eprojs EPROJS       Number of encoder projection units (default: 320)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+  --adv ADV             To perform speaker adversarial training or not (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 320)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
 
   Task related
 
@@ -3739,7 +3857,12 @@ The model configuration related:
                    [--optim {adam,adamw,sgd,adadelta,adagrad,adamax,asgd,lbfgs,rmsprop,rprop,radam,accagd,adabound,adamod,diffgrad,lamb,novograd,pid,qhm,sgdw,yogi}]
                    [--optim_conf OPTIM_CONF]
                    [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
-                   [--scheduler_conf SCHEDULER_CONF] [--token_list TOKEN_LIST]
+                   [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
+                   [--adv_flag ADV_FLAG] [--adv ADV] [--adv_layers ADV_LAYERS]
+                   [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                   [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
+                   [--adv_dropout_rate ADV_DROPOUT_RATE]
+                   [--token_list TOKEN_LIST]
                    [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
                    [--model_conf MODEL_CONF]
                    [--use_preprocessor USE_PREPROCESSOR]
@@ -3753,6 +3876,8 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -3848,7 +3973,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: True)
+                        Enable wandb logging (default: False)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -4067,6 +4192,19 @@ Optimizer related:
                         The lr scheduler type (default: None)
   --scheduler_conf SCHEDULER_CONF
                         The keyword arguments for lr scheduler (default: {})
+
+Adversarial part related related:
+  --eprojs EPROJS       Number of encoder projection units (default: 320)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+  --adv ADV             To perform speaker adversarial training or not (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 320)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
 
   Task related
 
@@ -4248,8 +4386,12 @@ Text converter related:
                    [--optim {adam,adamw,sgd,adadelta,adagrad,adamax,asgd,lbfgs,rmsprop,rprop,radam,accagd,adabound,adamod,diffgrad,lamb,novograd,pid,qhm,sgdw,yogi}]
                    [--optim_conf OPTIM_CONF]
                    [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
-                   [--scheduler_conf SCHEDULER_CONF] [--token_list TOKEN_LIST]
-                   [--src_token_list SRC_TOKEN_LIST]
+                   [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
+                   [--adv_flag ADV_FLAG] [--adv ADV] [--adv_layers ADV_LAYERS]
+                   [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                   [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
+                   [--adv_dropout_rate ADV_DROPOUT_RATE]
+                   [--token_list TOKEN_LIST] [--src_token_list SRC_TOKEN_LIST]
                    [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
                    [--input_size INPUT_SIZE] [--model_conf MODEL_CONF]
                    [--use_preprocessor USE_PREPROCESSOR]
@@ -4273,6 +4415,8 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -4368,7 +4512,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: True)
+                        Enable wandb logging (default: False)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -4587,6 +4731,19 @@ Optimizer related:
                         The lr scheduler type (default: None)
   --scheduler_conf SCHEDULER_CONF
                         The keyword arguments for lr scheduler (default: {})
+
+Adversarial part related related:
+  --eprojs EPROJS       Number of encoder projection units (default: 320)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+  --adv ADV             To perform speaker adversarial training or not (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 320)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
 
   Task related
 
@@ -4831,8 +4988,12 @@ Text converter related:
                    [--optim {adam,adamw,sgd,adadelta,adagrad,adamax,asgd,lbfgs,rmsprop,rprop,radam,accagd,adabound,adamod,diffgrad,lamb,novograd,pid,qhm,sgdw,yogi}]
                    [--optim_conf OPTIM_CONF]
                    [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
-                   [--scheduler_conf SCHEDULER_CONF] [--token_list TOKEN_LIST]
-                   [--src_token_list SRC_TOKEN_LIST]
+                   [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
+                   [--adv_flag ADV_FLAG] [--adv ADV] [--adv_layers ADV_LAYERS]
+                   [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                   [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
+                   [--adv_dropout_rate ADV_DROPOUT_RATE]
+                   [--token_list TOKEN_LIST] [--src_token_list SRC_TOKEN_LIST]
                    [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
                    [--input_size INPUT_SIZE] [--ctc_conf CTC_CONF]
                    [--model_conf MODEL_CONF]
@@ -4870,6 +5031,8 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -4976,7 +5139,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: True)
+                        Enable wandb logging (default: False)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -5195,6 +5358,19 @@ Optimizer related:
                         The lr scheduler type (default: None)
   --scheduler_conf SCHEDULER_CONF
                         The keyword arguments for lr scheduler (default: {})
+
+Adversarial part related related:
+  --eprojs EPROJS       Number of encoder projection units (default: 320)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+  --adv ADV             To perform speaker adversarial training or not (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 320)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
 
   Task related
 
@@ -5488,7 +5664,11 @@ Vocoder related:
                     [--optim {adam,adamw,sgd,adadelta,adagrad,adamax,asgd,lbfgs,rmsprop,rprop,radam,accagd,adabound,adamod,diffgrad,lamb,novograd,pid,qhm,sgdw,yogi}]
                     [--optim_conf OPTIM_CONF]
                     [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
-                    [--scheduler_conf SCHEDULER_CONF]
+                    [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
+                    [--adv_flag ADV_FLAG] [--adv ADV]
+                    [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
+                    [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
+                    [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
                     [--token_list TOKEN_LIST] [--odim ODIM]
                     [--model_conf MODEL_CONF]
                     [--use_preprocessor USE_PREPROCESSOR]
@@ -5514,6 +5694,8 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese,korean_cleaner}
@@ -5609,7 +5791,7 @@ Trainer related:
   --use_tensorboard USE_TENSORBOARD
                         Enable tensorboard logging (default: True)
   --use_wandb USE_WANDB
-                        Enable wandb logging (default: True)
+                        Enable wandb logging (default: False)
   --wandb_project WANDB_PROJECT
                         Specify wandb project (default: None)
   --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -5828,6 +6010,19 @@ Optimizer related:
                         The lr scheduler type (default: None)
   --scheduler_conf SCHEDULER_CONF
                         The keyword arguments for lr scheduler (default: {})
+
+Adversarial part related related:
+  --eprojs EPROJS       Number of encoder projection units (default: 320)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+  --adv ADV             To perform speaker adversarial training or not (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 320)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
 
   Task related
 

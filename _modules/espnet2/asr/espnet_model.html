@@ -164,6 +164,7 @@
 <span class="kn">from</span> <span class="nn">espnet2.asr.encoder.abs_encoder</span> <span class="kn">import</span> <span class="n">AbsEncoder</span>
 
 <span class="kn">from</span> <span class="nn">espnet2.asr.adversarial_branch</span> <span class="kn">import</span> <span class="n">SpeakerAdv</span>
+<span class="kn">from</span> <span class="nn">espnet2.asr.adversarial_branch</span> <span class="kn">import</span> <span class="n">ReverseLayerF</span>
 
 <span class="kn">from</span> <span class="nn">espnet2.asr.frontend.abs_frontend</span> <span class="kn">import</span> <span class="n">AbsFrontend</span>
 <span class="kn">from</span> <span class="nn">espnet2.asr.postencoder.abs_postencoder</span> <span class="kn">import</span> <span class="n">AbsPostEncoder</span>
@@ -249,6 +250,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">encoder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span> <span class="o">=</span> <span class="n">adversarial_branch</span>
 
+        <span class="c1"># self.adv_flag = adv_flag</span>
 
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">,</span> <span class="s2">&quot;interctc_use_conditioning&quot;</span><span class="p">):</span>
@@ -481,6 +483,16 @@
             <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;acc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_att</span>
             <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;cer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cer_att</span>
             <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;wer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wer_att</span>
+            
+
+
+        <span class="c1"># if (self.adv_flag):</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing adversarial loss abd flag inside </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">))</span>
+        <span class="n">rev_hs_pad</span> <span class="o">=</span> <span class="n">ReverseLayerF</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">encoder_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grlalpha</span><span class="p">)</span>
+        <span class="n">loss_adv</span><span class="p">,</span> <span class="n">acc_adv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span><span class="p">(</span><span class="n">rev_hs_pad</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss_adversarial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_adv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
 
         <span class="c1"># Collect total loss stats</span>
         <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>

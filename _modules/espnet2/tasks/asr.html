@@ -601,20 +601,6 @@
         <span class="n">encoder_class</span> <span class="o">=</span> <span class="n">encoder_choices</span><span class="o">.</span><span class="n">get_class</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">encoder</span><span class="p">)</span>
         <span class="n">encoder</span> <span class="o">=</span> <span class="n">encoder_class</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="n">input_size</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="o">.</span><span class="n">encoder_conf</span><span class="p">)</span>
 
-        <span class="c1">################################################################################################################</span>
-        <span class="c1">################################################################################################################</span>
-        <span class="c1"># TO DO rishabh create adversarial branch and link it with the encoder</span>
-
-        <span class="c1">################################################################################################################</span>
-        <span class="c1">################################################################################################################</span>
-
-        <span class="c1"># 4.1 Adversarial branch</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">grlalpha</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">grlalpha</span>
-        
-        <span class="c1"># :param int odim_adv: dimension of outputs for adversarial class (default None)</span>
-        <span class="n">adversarial_branch</span> <span class="o">=</span> <span class="n">SpeakerAdv</span><span class="p">(</span><span class="n">odim_adv</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">eprojs</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_units</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_layers</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">dropout_rate</span><span class="p">)</span>
-
 
 
         <span class="c1"># 5. Post-encoder block</span>
@@ -659,6 +645,38 @@
             <span class="n">odim</span><span class="o">=</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">encoder_output_size</span><span class="o">=</span><span class="n">encoder_output_size</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="o">.</span><span class="n">ctc_conf</span>
         <span class="p">)</span>
 
+
+        <span class="c1">################################################################################################################</span>
+        <span class="c1">################################################################################################################</span>
+        <span class="c1"># TO DO rishabh create adversarial branch and link it with the encoder</span>
+
+        <span class="c1">################################################################################################################</span>
+        <span class="c1">################################################################################################################</span>
+
+        <span class="c1"># 4.1 Adversarial branch</span>
+
+        <span class="c1"># odim = int(valid_json[utts[0]][&#39;output&#39;][0][&#39;shape&#39;][1])</span>
+        <span class="c1"># logging.info(&#39;#input dims : &#39; + str(idim))</span>
+        <span class="c1"># logging.info(&#39;#output dims: &#39; + str(odim))</span>
+        <span class="c1"># odim_adv = None</span>
+        <span class="c1"># if args.adv:</span>
+        <span class="c1">#     odim_adv = int(valid_json[utts[0]][&#39;output&#39;][1][&#39;shape&#39;][1])</span>
+        <span class="c1">#     logging.info(&#39;#output dims adversarial: &#39; + str(odim_adv))</span>
+
+        <span class="c1"># grlalpha = args.grlalpha</span>
+    
+        <span class="c1"># :param int odim_adv: dimension of outputs for adversarial class (default None)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">adv_flag</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">grlalpha</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">grlalpha</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> ******* cls.adv_flag </span><span class="si">{}</span><span class="s2">  and  adv_flag </span><span class="si">{}</span><span class="s2"> *******</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">))</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">):</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">adv_flag</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span>
+            <span class="n">adversarial_branch</span> <span class="o">=</span> <span class="n">SpeakerAdv</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">eprojs</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_units</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_layers</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">adv_dropout_rate</span><span class="p">)</span>
+
+
+
+
+
         <span class="c1"># 7. Build model</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">model_class</span> <span class="o">=</span> <span class="n">model_choices</span><span class="o">.</span><span class="n">get_class</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
@@ -671,6 +689,7 @@
             <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span>
             <span class="n">preencoder</span><span class="o">=</span><span class="n">preencoder</span><span class="p">,</span>
             <span class="n">encoder</span><span class="o">=</span><span class="n">encoder</span><span class="p">,</span>
+            <span class="n">adversarial_branch</span><span class="o">=</span> <span class="n">adversarial_branch</span><span class="p">,</span>
             <span class="n">postencoder</span><span class="o">=</span><span class="n">postencoder</span><span class="p">,</span>
             <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">,</span>
             <span class="n">ctc</span><span class="o">=</span><span class="n">ctc</span><span class="p">,</span>
