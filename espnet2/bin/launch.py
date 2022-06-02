@@ -12,7 +12,7 @@ from pathlib import Path
 from espnet2.utils.types import str2bool, str_or_none
 from espnet.utils.cli_utils import get_commandline_args
 
-
+logging.info (" \n ********* Inside  bin/launch.py  *********  \n ")
 def get_parser():
     parser = argparse.ArgumentParser(
         description="Launch distributed process with appropriate options. ",

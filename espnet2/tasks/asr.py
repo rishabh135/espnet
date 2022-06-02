@@ -492,6 +492,7 @@ class ASRTask(AbsTask):
             odim=vocab_size, encoder_output_size=encoder_output_size, **args.ctc_conf
         )
 
+        
 
         ################################################################################################################
         ################################################################################################################
@@ -517,12 +518,12 @@ class ASRTask(AbsTask):
         cls.grlalpha = args.grlalpha
         logging.info("\n\n ******* cls.adv_flag {}  and  adv_flag {} *******\n".format(cls.adv_flag, args.adv_flag))
         if(args.adv_flag):
-            cls.adv_flag = args.adv_flag
+            # cls.adv_flag = args.adv_flag
             adversarial_branch = SpeakerAdv(vocab_size, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
 
 
 
-
+        logging.info("\n******* Inside ASR.py *********\n")
 
         # 7. Build model
         try:
@@ -530,13 +531,15 @@ class ASRTask(AbsTask):
         except AttributeError:
             model_class = model_choices.get_class("espnet")
         model = model_class(
+            adv_flag=args.adv_flag,
+            grlalpha=args.grlalpha,
             vocab_size=vocab_size,
             frontend=frontend,
             specaug=specaug,
             normalize=normalize,
             preencoder=preencoder,
             encoder=encoder,
-            adversarial_branch= adversarial_branch,
+            adversarial_branch=adversarial_branch,
             postencoder=postencoder,
             decoder=decoder,
             ctc=ctc,
