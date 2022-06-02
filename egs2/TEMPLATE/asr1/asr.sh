@@ -43,17 +43,18 @@ gpu_inference=false  # Whether to perform gpu decoding.
 ###################################################################################################################################################################################################
 
 global_dir=/home/rgupta/dev/espnet/egs2/librispeech/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
-experiment_n=pyt_adversarial_1 # name of the experiment, just change it to create differnet folders
+experiment_n=pyt_adversarial_4 # name of the experiment, just change it to create differnet folders
+
+
 
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/dump # Directory to dump features.
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/exp # Directory to save experiments.
-
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/data # determines all the files creating folder as in the data folder
 
 
 
 echo "\n******************************\n"
-
+echo "${experiment_n}"
 echo "$dumpdir"
 echo "$expdir"
 echo "********\n Important setting data direcotry  *********** \n"

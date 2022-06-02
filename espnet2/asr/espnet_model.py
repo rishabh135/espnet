@@ -51,8 +51,10 @@ class ESPnetASRModel(AbsESPnetModel):
 
     def __init__(
         self,
+        adv_flag,
+        grlalpha,
         vocab_size: int,
-        token_list: Union[Tuple[str, ...], List[str]],
+        token_list: Union[Tuple[str, ...], List[str]],        
         frontend: Optional[AbsFrontend],
         specaug: Optional[AbsSpecAug],
         normalize: Optional[AbsNormalize],
@@ -72,7 +74,7 @@ class ESPnetASRModel(AbsESPnetModel):
         report_wer: bool = True,
         sym_space: str = "<space>",
         sym_blank: str = "<blank>",
-        extract_feats_in_collect_stats: bool = True,
+        extract_feats_in_collect_stats: bool = True,       
     ):
         assert check_argument_types()
         assert 0.0 <= ctc_weight <= 1.0, ctc_weight
@@ -97,7 +99,8 @@ class ESPnetASRModel(AbsESPnetModel):
         self.encoder = encoder
         self.adversarial_branch = adversarial_branch
 
-        # self.adv_flag = adv_flag
+        self.adv_flag = adv_flag
+        self.grlalpha = grlalpha
 
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
@@ -333,12 +336,12 @@ class ESPnetASRModel(AbsESPnetModel):
             
 
 
-        # if (self.adv_flag):
-
-        logging.info("Computing adversarial loss abd flag inside {}  \n".format(self.adv_flag))
-        rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-        loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text)
-        stats["loss_adversarial"] = loss_adv.detach()if loss_adv is not None else None
+        if (self.adv_flag):
+            logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+            print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text)
+            stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
 
 
         # Collect total loss stats

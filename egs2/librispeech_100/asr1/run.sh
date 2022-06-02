@@ -12,8 +12,6 @@ test_sets="test_clean test_other dev_clean dev_other"
 asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 
-
-
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
@@ -22,7 +20,8 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 # srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}
 # experiment_n=pyt_1
-experiment_n=pyt_adversarial_1 # name of the experiment, just change it to create differnet folders
+experiment_n=pyt_adversarial_4 # name of the experiment, just change it to create differnet folders
+
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/data # determines all the files creating folder as in the data folder
 asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
@@ -36,7 +35,7 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --skip_train false \
     --skip_eval false \
     --lang en \
-    --ngpu 2 \
+    --ngpu 1 \
     --nj 32 \
     --inference_nj 32 \
     --nbpe 5000 \
@@ -53,4 +52,4 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --test_sets "${test_sets}" \
     --data_dd "${data_dd}"\
     --lm_train_text "${data_dd}/${train_set}/text" \
-    --bpe_train_text "${data_dd}/${train_set}/text" "$@"
+    --bpe_train_text "${data_dd}/${train_set}/text" "$@" 

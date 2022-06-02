@@ -855,7 +855,8 @@ class AbsTask(ABC):
         group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-
+        parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
+        parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
 
         cls.trainer.add_arguments(parser)
         cls.add_task_arguments(parser)
@@ -1139,6 +1140,7 @@ class AbsTask(ABC):
         # display PYTHONPATH
         logging.info('python path = ' + os.environ.get('PYTHONPATH', '(None)'))
 
+            
         model = cls.build_model(args=args)
         if not isinstance(model, AbsESPnetModel):
             raise RuntimeError(
