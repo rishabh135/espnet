@@ -654,7 +654,7 @@
         <span class="c1">################################################################################################################</span>
         <span class="c1">################################################################################################################</span>
 
-        <span class="c1"># 4.1 Adversarial branch</span>
+        <span class="c1"># 4.1 Adversarial branch class definition</span>
 
         <span class="c1"># odim = int(valid_json[utts[0]][&#39;output&#39;][0][&#39;shape&#39;][1])</span>
         <span class="c1"># logging.info(&#39;#input dims : &#39; + str(idim))</span>
@@ -670,10 +670,13 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">adv_flag</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">grlalpha</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">grlalpha</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> ******* cls.adv_flag </span><span class="si">{}</span><span class="s2">  and  adv_flag </span><span class="si">{}</span><span class="s2"> *******</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; ******* cls.adv_flag </span><span class="si">{}</span><span class="s2">  and  adv_flag </span><span class="si">{}</span><span class="s2"> *******</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">))</span>
+        
         <span class="k">if</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">):</span>
             <span class="c1"># cls.adv_flag = args.adv_flag</span>
             <span class="n">adversarial_branch</span> <span class="o">=</span> <span class="n">SpeakerAdv</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">eprojs</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_units</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_layers</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">adv_dropout_rate</span><span class="p">)</span>
-
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">adversarial_branch</span> <span class="o">=</span> <span class="kc">None</span>
 
 
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">******* Inside ASR.py *********</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>

@@ -236,7 +236,9 @@
 
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Passing encoder output through advnet </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
                      <span class="nb">str</span><span class="p">(</span><span class="n">hs_pad</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Inside adversarial branch Passing encoder output through advnet </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hs_pad</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">advnet</span><span class="o">.</span><span class="n">flatten_parameters</span><span class="p">()</span>
         <span class="n">out_x</span><span class="p">,</span> <span class="p">(</span><span class="n">h_0</span><span class="p">,</span> <span class="n">c_0</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">advnet</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">,</span> <span class="p">(</span><span class="n">h_0</span><span class="p">,</span> <span class="n">c_0</span><span class="p">))</span>
         <span class="c1">#vgg_x, _ = self.vgg(hs_pad, hlens)</span>
@@ -244,12 +246,20 @@
 
         <span class="c1">#logging.info(&quot;vgg output size = %s&quot;, str(vgg_x.shape))</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;advnet output size = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;advnet output size = </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;adversarial target size = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">y_adv</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;adversarial target size  = </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_adv</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         
         <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">out_x</span><span class="p">)</span>
 
         <span class="c1"># Create labels tensor by replicating speaker label</span>
         <span class="n">batch_size</span><span class="p">,</span> <span class="n">avg_seq_len</span><span class="p">,</span> <span class="n">out_dim</span> <span class="o">=</span> <span class="n">y_hat</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; y_hat size  = </span><span class="si">{}</span><span class="s2"> and batch size </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_hat</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">))</span>
+     
 
         <span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">avg_seq_len</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>

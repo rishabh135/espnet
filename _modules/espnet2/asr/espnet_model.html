@@ -250,10 +250,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">preencoder</span> <span class="o">=</span> <span class="n">preencoder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">postencoder</span> <span class="o">=</span> <span class="n">postencoder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">encoder</span>
+        
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span> <span class="o">=</span> <span class="n">adversarial_branch</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">adv_flag</span> <span class="o">=</span> <span class="n">adv_flag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grlalpha</span> <span class="o">=</span> <span class="n">grlalpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder_frozen_flag</span> <span class="o">=</span> <span class="kc">False</span>
 
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">,</span> <span class="s2">&quot;interctc_use_conditioning&quot;</span><span class="p">):</span>
@@ -396,6 +398,8 @@
         <span class="c1"># for data-parallel</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:,</span> <span class="p">:</span> <span class="n">text_lengths</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span>
 
+
+
         <span class="c1"># 1. Encoder</span>
         <span class="n">encoder_out</span><span class="p">,</span> <span class="n">encoder_out_lens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">speech</span><span class="p">,</span> <span class="n">speech_lengths</span><span class="p">)</span>
         <span class="n">intermediate_outs</span> <span class="o">=</span> <span class="kc">None</span>
@@ -408,6 +412,14 @@
         <span class="n">loss_transducer</span><span class="p">,</span> <span class="n">cer_transducer</span><span class="p">,</span> <span class="n">wer_transducer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
         <span class="n">stats</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ******** espnet_model.py kwargs :  &quot;</span><span class="p">)</span>
+        <span class="c1"># for key, value in kwargs.items():</span>
+        <span class="c1">#     print(&quot;kwargs key {}  val : {} \n&quot;.format(key, value))</span>
+        <span class="c1"># print(&quot;\n&quot;)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;speech </span><span class="si">{}</span><span class="s2"> speech_lengths </span><span class="si">{}</span><span class="s2"> encoder_out </span><span class="si">{}</span><span class="s2"> encoder_out_lens </span><span class="si">{}</span><span class="s2"> text </span><span class="si">{}</span><span class="s2"> text_length </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">speech</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">speech_lengths</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">encoder_out</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">text_lengths</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+
         <span class="c1"># 1. CTC branch</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc_weight</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="n">loss_ctc</span><span class="p">,</span> <span class="n">cer_ctc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_ctc_loss</span><span class="p">(</span>
@@ -417,6 +429,20 @@
             <span class="c1"># Collect CTC branch stats</span>
             <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss_ctc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_ctc</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_ctc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;cer_ctc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cer_ctc</span>
+
+
+
+        <span class="c1">#################################################################################################################################################################################################################################</span>
+        <span class="c1">#################################################################################################################################################################################################################################</span>
+        <span class="c1">#################################################################################################################################################################################################################################</span>
+        <span class="c1">### adding a adversarial branch  as done here https://github.com/espnet/espnet/blob/876c75f40a159fb41f82267b64a5bd7d55de1a96/espnet/nets/e2e_asr_th.py#L457</span>
+        <span class="c1"># For training the adverarial branch, encoder must be frozen</span>
+        <span class="c1"># self.enc_frozen = False</span>
+        
+        <span class="c1">#################################################################################################################################################################################################################################</span>
+        <span class="c1">#################################################################################################################################################################################################################################</span>
+        
+
 
         <span class="c1"># Intermediate CTC (optional)</span>
         <span class="n">loss_interctc</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -481,6 +507,17 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc_weight</span> <span class="o">*</span> <span class="n">loss_ctc</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc_weight</span><span class="p">)</span> <span class="o">*</span> <span class="n">loss_att</span>
 
+
+
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">):</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing adversarial loss and flag inside </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">))</span>
+                <span class="n">rev_hs_pad</span> <span class="o">=</span> <span class="n">ReverseLayerF</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">encoder_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grlalpha</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> rev hs pad : </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">  encoder: out </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n</span><span class="s2"> text len </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rev_hs_pad</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">shape</span> <span class="p">))</span>
+                <span class="n">loss_adv</span><span class="p">,</span> <span class="n">acc_adv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span><span class="p">(</span><span class="n">rev_hs_pad</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="p">,</span> <span class="n">text_lengths</span><span class="p">)</span>
+                <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss_adversarial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_adv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+
+
             <span class="c1"># Collect Attn branch stats</span>
             <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss_att&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_att</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_att</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;acc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_att</span>
@@ -489,20 +526,31 @@
             
 
 
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">):</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing adversarial loss and flag inside </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">))</span>
-            <span class="n">rev_hs_pad</span> <span class="o">=</span> <span class="n">ReverseLayerF</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">encoder_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grlalpha</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> rev hs pad : </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">  encoder: out </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n</span><span class="s2"> text len </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rev_hs_pad</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">shape</span> <span class="p">))</span>
-            <span class="n">loss_adv</span><span class="p">,</span> <span class="n">acc_adv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span><span class="p">(</span><span class="n">rev_hs_pad</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss_adversarial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_adv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
 
 
         <span class="c1"># Collect total loss stats</span>
         <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; asr/ESPNET_model.py :  loss : </span><span class="si">{}</span><span class="s2">   acc_att : </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">],</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;acc&quot;</span><span class="p">]</span> <span class="p">))</span>
+
         <span class="c1"># force_gatherable: to-device and to-tensor if scalar for DataParallel</span>
         <span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">force_gatherable</span><span class="p">((</span><span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">),</span> <span class="n">loss</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        
         <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">weight</span></div>
+
+
+<div class="viewcode-block" id="ESPnetASRModel.freeze_encoder"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.espnet_model.ESPnetASRModel.freeze_encoder">[docs]</a>    <span class="k">def</span> <span class="nf">freeze_encoder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_frozen_flag</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">encoder_frozen_flag</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ESPnetASRModel.unfreeze_encoder"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.espnet_model.ESPnetASRModel.unfreeze_encoder">[docs]</a>    <span class="k">def</span> <span class="nf">unfreeze_encoder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_frozen_flag</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">encoder_frozen_flag</span> <span class="o">=</span> <span class="kc">False</span></div>
+
 
 <div class="viewcode-block" id="ESPnetASRModel.collect_feats"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.espnet_model.ESPnetASRModel.collect_feats">[docs]</a>    <span class="k">def</span> <span class="nf">collect_feats</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
