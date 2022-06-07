@@ -3,6 +3,7 @@ import argparse
 import functools
 import logging
 import os
+from pickle import FALSE
 import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -577,7 +578,7 @@ class AbsTask(ABC):
         group.add_argument(
             "--use_wandb",
             type=str2bool,
-            default=False,
+            default=True,
             help="Enable wandb logging",
         )
         group.add_argument(
@@ -846,10 +847,10 @@ class AbsTask(ABC):
 
         group = parser.add_argument_group("Adversarial part related related")
         group.add_argument('--eprojs', default=320, type=int, help='Number of encoder projection units')
-        group.add_argument('--adv_flag', default=True, type=bool, help='flag for whether to perform speaker adversarial training or not')
+        group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
         group.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
         group.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
-        group.add_argument('--adv_units', default=320, type=int, help='Number of decoder hidden units')
+        group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
         group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
         group.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
         group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
@@ -1314,7 +1315,7 @@ class AbsTask(ABC):
 
                     if args.wandb_name is None:
                         today = date.today()
-                        d2 = today.strftime("Run_from_%B_%d_default_espnet____")
+                        d2 = today.strftime("Run_from_%B_%d_")
                         name = d2 +  str(Path(".").resolve() ).replace("/", "_") 
                         # # dd/mm/YY
                         # d1 = today.strftime("%d/%m/%Y")

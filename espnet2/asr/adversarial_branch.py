@@ -83,7 +83,9 @@ class SpeakerAdv(torch.nn.Module):
 
         logging.info("Passing encoder output through advnet %s",
                      str(hs_pad.shape))
-
+        
+        print(" Inside adversarial branch Passing encoder output through advnet {} \n".format(hs_pad.shape))
+        
         self.advnet.flatten_parameters()
         out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
         #vgg_x, _ = self.vgg(hs_pad, hlens)
@@ -91,12 +93,20 @@ class SpeakerAdv(torch.nn.Module):
 
         #logging.info("vgg output size = %s", str(vgg_x.shape))
         logging.info("advnet output size = %s", str(out_x.shape))
+
+        print("advnet output size = {} \n".format(out_x.shape))
+        
         logging.info("adversarial target size = %s", str(y_adv.shape))
+        
+        print("adversarial target size  = {} \n".format(y_adv.shape))
         
         y_hat = self.output(out_x)
 
         # Create labels tensor by replicating speaker label
         batch_size, avg_seq_len, out_dim = y_hat.size()
+
+        print(" y_hat size  = {} and batch size {}  \n".format(y_hat.shape, batch_size))
+     
 
         labels = torch.zeros([batch_size, avg_seq_len], dtype=torch.int64)
         for ix in range(batch_size):
