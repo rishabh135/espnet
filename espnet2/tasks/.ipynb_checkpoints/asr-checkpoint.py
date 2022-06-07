@@ -501,7 +501,7 @@ class ASRTask(AbsTask):
         ################################################################################################################
         ################################################################################################################
 
-        # 4.1 Adversarial branch class definition
+        # 4.1 Adversarial branch
 
         # odim = int(valid_json[utts[0]]['output'][0]['shape'][1])
         # logging.info('#input dims : ' + str(idim))
@@ -517,13 +517,10 @@ class ASRTask(AbsTask):
         cls.adv_flag = args.adv_flag
         cls.grlalpha = args.grlalpha
         logging.info("\n\n ******* cls.adv_flag {}  and  adv_flag {} *******\n".format(cls.adv_flag, args.adv_flag))
-        print(" ******* cls.adv_flag {}  and  adv_flag {} *******\n".format(cls.adv_flag, args.adv_flag))
-        
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
             adversarial_branch = SpeakerAdv(vocab_size, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
-        else:
-            adversarial_branch = None
+
 
 
         logging.info("\n******* Inside ASR.py *********\n")
