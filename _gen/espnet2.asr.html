@@ -386,10 +386,11 @@ retrieved during the backward pass.</p>
 
 <dl class="method">
 <dt id="espnet2.asr.adversarial_branch.SpeakerAdv.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">hs_pad</em>, <em class="sig-param">hlens</em>, <em class="sig-param">y_adv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#SpeakerAdv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.SpeakerAdv.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">hs_pad</em>, <em class="sig-param">hlens</em>, <em class="sig-param">text_length</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#SpeakerAdv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.SpeakerAdv.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adversarial branch forward
 :param torch.Tensor hs_pad: batch of padded hidden state sequences (B, Tmax, D)
 :param torch.Tensor hlens: batch of lengths of hidden state sequences (B)
+:param torch.Tensor speech_length: list of speaker index so that we can create a per frame label to used for y_adv by extending the tensor to a dimnetion of (B, average_sequence_length) with each frame  (B)
 :param torch.Tensor y_adv: batch of speaker class (B, #Speakers)
 :return: loss value
 :rtype: torch.Tensor
@@ -402,6 +403,27 @@ retrieved during the backward pass.</p>
 <code class="sig-name descname">zero_state</code><span class="sig-paren">(</span><em class="sig-param">hs_pad</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#SpeakerAdv.zero_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.SpeakerAdv.zero_state" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.asr.adversarial_branch.th_accuracy">
+<code class="sig-prename descclassname">espnet2.asr.adversarial_branch.</code><code class="sig-name descname">th_accuracy</code><span class="sig-paren">(</span><em class="sig-param">pad_outputs</em>, <em class="sig-param">pad_targets</em>, <em class="sig-param">ignore_label</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#th_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.th_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to calculate accuracy
+:param torch.Tensor pad_outputs: prediction tensors (B*Lmax, D)
+:param torch.Tensor pad_targets: target tensors (B, Lmax, D)
+:param int ignore_label: ignore label id
+:retrun: accuracy value (0.0 - 1.0)
+:rtype: float</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="espnet2.asr.adversarial_branch.to_cuda">
+<code class="sig-prename descclassname">espnet2.asr.adversarial_branch.</code><code class="sig-name descname">to_cuda</code><span class="sig-paren">(</span><em class="sig-param">m</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/espnet2/asr/adversarial_branch.html#to_cuda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#espnet2.asr.adversarial_branch.to_cuda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to send tensor into corresponding device
+:param torch.nn.Module m: torch module
+:param torch.Tensor x: torch tensor
+:return: torch tensor located in the same place as torch module
+:rtype: torch.Tensor</p>
 </dd></dl>
 
 </section>

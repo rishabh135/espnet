@@ -165,7 +165,41 @@
 
 
 <span class="c1">#-------------------- Adversarial Network ------------------------------------</span>
-<span class="c1">#Brij: Added the gradient reversal layer</span>
+<span class="c1"># Brij: Added the gradient reversal layer</span>
+
+
+<div class="viewcode-block" id="to_cuda"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.to_cuda">[docs]</a><span class="k">def</span> <span class="nf">to_cuda</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to send tensor into corresponding device</span>
+<span class="sd">    :param torch.nn.Module m: torch module</span>
+<span class="sd">    :param torch.Tensor x: torch tensor</span>
+<span class="sd">    :return: torch tensor located in the same place as torch module</span>
+<span class="sd">    :rtype: torch.Tensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">.</span><span class="n">device</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="th_accuracy"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.th_accuracy">[docs]</a><span class="k">def</span> <span class="nf">th_accuracy</span><span class="p">(</span><span class="n">pad_outputs</span><span class="p">,</span> <span class="n">pad_targets</span><span class="p">,</span> <span class="n">ignore_label</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to calculate accuracy</span>
+<span class="sd">    :param torch.Tensor pad_outputs: prediction tensors (B*Lmax, D)</span>
+<span class="sd">    :param torch.Tensor pad_targets: target tensors (B, Lmax, D)</span>
+<span class="sd">    :param int ignore_label: ignore label id</span>
+<span class="sd">    :retrun: accuracy value (0.0 - 1.0)</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pad_pred</span> <span class="o">=</span> <span class="n">pad_outputs</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
+        <span class="n">pad_targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+        <span class="n">pad_targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">pad_outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">pad_targets</span> <span class="o">!=</span> <span class="n">ignore_label</span>
+    <span class="n">numerator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pad_pred</span><span class="o">.</span><span class="n">masked_select</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">==</span> <span class="n">pad_targets</span><span class="o">.</span><span class="n">masked_select</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span>
+    <span class="n">denominator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">denominator</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="ReverseLayerF"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.ReverseLayerF">[docs]</a><span class="k">class</span> <span class="nc">ReverseLayerF</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
 
 <div class="viewcode-block" id="ReverseLayerF.forward"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.ReverseLayerF.forward">[docs]</a>    <span class="nd">@staticmethod</span>
@@ -218,10 +252,11 @@
 <div class="viewcode-block" id="SpeakerAdv.zero_state"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.SpeakerAdv.zero_state">[docs]</a>    <span class="k">def</span> <span class="nf">zero_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hs_pad</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">hs_pad</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">advlayers</span><span class="p">,</span> <span class="n">hs_pad</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">advunits</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SpeakerAdv.forward"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.SpeakerAdv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">y_adv</span><span class="p">):</span>
+<div class="viewcode-block" id="SpeakerAdv.forward"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.SpeakerAdv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hs_pad</span><span class="p">,</span> <span class="n">hlens</span><span class="p">,</span> <span class="n">text_length</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Adversarial branch forward</span>
 <span class="sd">        :param torch.Tensor hs_pad: batch of padded hidden state sequences (B, Tmax, D)</span>
 <span class="sd">        :param torch.Tensor hlens: batch of lengths of hidden state sequences (B)</span>
+<span class="sd">        :param torch.Tensor speech_length: list of speaker index so that we can create a per frame label to used for y_adv by extending the tensor to a dimnetion of (B, average_sequence_length) with each frame  (B)</span>
 <span class="sd">        :param torch.Tensor y_adv: batch of speaker class (B, #Speakers)</span>
 <span class="sd">        :return: loss value</span>
 <span class="sd">        :rtype: torch.Tensor</span>
@@ -229,6 +264,7 @@
 <span class="sd">        :rtype: float</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
+       
         <span class="c1"># initialization</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;initializing hidden states for LSTM&quot;</span><span class="p">)</span>
         <span class="n">h_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zero_state</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">)</span>
@@ -249,9 +285,9 @@
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;advnet output size = </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;adversarial target size = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">y_adv</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="c1"># logging.info(&quot;adversarial target size = %s&quot;, str(y_adv.shape))</span>
         
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;adversarial target size  = </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_adv</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="c1"># print(&quot;adversarial target size  = {} \n&quot;.format(y_adv.shape))</span>
         
         <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">out_x</span><span class="p">)</span>
 
@@ -261,7 +297,14 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; y_hat size  = </span><span class="si">{}</span><span class="s2"> and batch size </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_hat</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">))</span>
      
 
+
+        <span class="c1"># for every frame the same speaked index, hence extend the vector to mimic the save value across average sequence length</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">avg_seq_len</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        
+        <span class="n">y_adv</span> <span class="o">=</span> <span class="n">text_length</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">avg_seq_len</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">avg_seq_len</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; ****** asr/adversarial_branch.py   y_adv shape  = </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_adv</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        
+
         <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
             <span class="n">labels</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">y_adv</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
 
