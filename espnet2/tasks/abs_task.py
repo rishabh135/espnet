@@ -578,7 +578,7 @@ class AbsTask(ABC):
         group.add_argument(
             "--use_wandb",
             type=str2bool,
-            default=True,
+            default=False,
             help="Enable wandb logging",
         )
         group.add_argument(
@@ -846,8 +846,8 @@ class AbsTask(ABC):
 
 
         group = parser.add_argument_group("Adversarial part related related")
-        group.add_argument('--eprojs', default=320, type=int, help='Number of encoder projection units')
-        group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
+        group.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
+        group.add_argument('--adv_flag', default=True, type=bool, help='flag for whether to perform speaker adversarial training or not')
         group.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
         group.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
         group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
