@@ -45,14 +45,16 @@ gpu_inference=false  # Whether to perform gpu decoding.
 global_dir=/home/rgupta/dev/espnet/egs2/librispeech/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
 
 # experiment_n=pyt_adversarial_june_7
-experiment_n=pyt_june_7
+experiment_n=pyt_june_8
 exp_dir_names=adv_units_256 # name of the experiment, just change it to create differnet folders
 
 
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/dump # Directory to dump features.
-expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/exp # Directory to save experiments.
+# dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/dump # Directory to dump features.
+# expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/exp # Directory to save experiments.
 
-# dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/${exp_dir_names}/dump # Directory to dump features.
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/${exp_dir_names}/dump # Directory to dump features.
+expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/${exp_dir_names}/exp # Directory to dump features.
+
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/data # determines all the files creating folder as in the data folder
 
