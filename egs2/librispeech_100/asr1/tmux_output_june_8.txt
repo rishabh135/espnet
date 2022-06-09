@@ -1,0 +1,200 @@
+(base) rgupta@chifflot-4:~/dev/espnet/egs2/librispeech_100/asr1$ bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_ju
+ne_8/adv_units_256/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh > ./pyt_june_8_output.txt
+./path.sh: line 9: /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/../../../tools/activate_python.sh: No such file or directory
+run.pl: job failed, log is in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_conformer_lr2
+e-3_warmup15k_amp_nondeterministic/train.log
+Command '['run.pl', '--name', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_conformer_lr
+2e-3_warmup15k_amp_nondeterministic/train.log', '--gpu', '1', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/ad
+v_units_256/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/train.log', 'python3', '-m', 'espnet2.bin.asr_train', '--use_preprocessor', 'true', '--bpemo
+del', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/data/en_token_list/bpe_unigram5000/bpe.model', '--token_ty
+pe', 'bpe', '--token_list', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/data/en_token_list/bpe_unigram5000/t
+okens.txt', '--non_linguistic_symbols', 'none', '--cleaner', 'none', '--g2p', 'none', '--valid_data_path_and_name_and_type', '/srv/storage/talc2@talc-data2.nanc
+y/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/dev/wav.scp,speech,kaldi_ark', '--valid_data_path_and_name_and_type', '/srv/
+storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/dev/text,text,text', '--valid_shape_file', '/sr
+v/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/valid/speech_shape', '
+--valid_shape_file', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_
+sp/valid/text_shape.bpe', '--resume', 'true', '--init_param', '--ignore_init_mismatch', 'false', '--fold_length', '80000', '--fold_length', '150', '--output_dir
+', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeter
+ministic', '--config', '/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml', '--frontend_conf', 'fs=16k', '--normalize=global_mvn', '--normal
+ize_conf', 'stats_file=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000
+_sp/train/feats_stats.npz', '--train_data_path_and_name_and_type', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june
+_8/adv_units_256/dump/raw/train_clean_100_sp/wav.scp,speech,kaldi_ark', '--train_data_path_and_name_and_type', '/srv/storage/talc2@talc-data2.nancy/multispeech/
+calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/train_clean_100_sp/text,text,text', '--train_shape_file', '/srv/storage/talc2@talc-data2.n
+ancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/speech_shape', '--train_shape_file', '/srv/s
+torage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/text_shape.bpe', '-
+-ngpu', '1', '--multiprocessing_distributed', 'True']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "/home/rgupta/anaconda3/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/rgupta/anaconda3/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/rgupta/dev/espnet/espnet2/bin/launch.py", line 384, in <module>
+    main()
+  File "/home/rgupta/dev/espnet/espnet2/bin/launch.py", line 375, in main
+    raise RuntimeError(
+RuntimeError:
+################### The last 1000 lines of /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_
+conformer_lr2e-3_warmup15k_amp_nondeterministic/train.log ###################
+# python3 -m espnet2.bin.asr_train --use_preprocessor true --bpemodel /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_ju
+ne_8/data/en_token_list/bpe_unigram5000/bpe.model --token_type bpe --token_list /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_
+100/pyt_june_8/data/en_token_list/bpe_unigram5000/tokens.txt --non_linguistic_symbols none --cleaner none --g2p none --valid_data_path_and_name_and_type /srv/st
+orage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/dev/wav.scp,speech,kaldi_ark --valid_data_path_an
+d_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/dev/text,text,text --valid
+_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/valid/s
+peech_shape --valid_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en
+_bpe5000_sp/valid/text_shape.bpe --resume true --init_param --ignore_init_mismatch false --fold_length 80000 --fold_length 150 --output_dir /srv/storage/talc2@t
+alc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic --config /home/
+rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml --frontend_conf fs=16k --normalize=global_mvn --normalize_conf stats_file=/srv/storage/talc2@tal
+c-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/feats_stats.npz --train_data_path_a
+nd_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/train_clean_100_sp/wav.sc
+p,speech,kaldi_ark --train_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_
+256/dump/raw/train_clean_100_sp/text,text,text --train_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8
+/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/speech_shape --train_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_l
+ibri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/text_shape.bpe --ngpu 1 --multiprocessing_distributed True
+# Started at Wed Jun  8 13:34:00 CEST 2022
+#
+Traceback (most recent call last):
+  File "/home/rgupta/anaconda3/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/rgupta/anaconda3/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/rgupta/dev/espnet/espnet2/bin/asr_train.py", line 2, in <module>
+    from espnet2.tasks.asr import ASRTask
+  File "/home/rgupta/dev/espnet/espnet2/tasks/asr.py", line 6, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'
+# Accounting: time=0 threads=1
+# Ended (code 1) at Wed Jun  8 13:34:00 CEST 2022, elapsed time 0 seconds
+
+(base) rgupta@chifflot-4:~/dev/espnet/egs2/librispeech_100/asr1$ conda activate pyt
+(pyt) rgupta@chifflot-4:~/dev/espnet/egs2/librispeech_100/asr1$ bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_jun
+e_8/adv_units_256/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh >> ./tmux_pyt_june_8_output.txt
+./path.sh: line 9: /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/../../../tools/activate_python.sh: No such file or directory
+run.pl: job failed, log is in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_conformer_lr2
+e-3_warmup15k_amp_nondeterministic/train.log
+Command '['run.pl', '--name', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_conformer_lr
+2e-3_warmup15k_amp_nondeterministic/train.log', '--gpu', '1', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/ad
+v_units_256/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/train.log', 'python3', '-m', 'espnet2.bin.asr_train', '--use_preprocessor', 'true', '--bpemo
+del', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/data/en_token_list/bpe_unigram5000/bpe.model', '--token_ty
+pe', 'bpe', '--token_list', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/data/en_token_list/bpe_unigram5000/t
+okens.txt', '--non_linguistic_symbols', 'none', '--cleaner', 'none', '--g2p', 'none', '--valid_data_path_and_name_and_type', '/srv/storage/talc2@talc-data2.nanc
+y/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/dev/wav.scp,speech,kaldi_ark', '--valid_data_path_and_name_and_type', '/srv/
+storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/dev/text,text,text', '--valid_shape_file', '/sr
+v/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/valid/speech_shape', '
+--valid_shape_file', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_
+sp/valid/text_shape.bpe', '--resume', 'true', '--init_param', '--ignore_init_mismatch', 'false', '--fold_length', '80000', '--fold_length', '150', '--output_dir
+', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeter
+ministic', '--config', '/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml', '--frontend_conf', 'fs=16k', '--normalize=global_mvn', '--normal
+ize_conf', 'stats_file=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000
+_sp/train/feats_stats.npz', '--train_data_path_and_name_and_type', '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june
+_8/adv_units_256/dump/raw/train_clean_100_sp/wav.scp,speech,kaldi_ark', '--train_data_path_and_name_and_type', '/srv/storage/talc2@talc-data2.nancy/multispeech/
+calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/train_clean_100_sp/text,text,text', '--train_shape_file', '/srv/storage/talc2@talc-data2.n
+ancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/speech_shape', '--train_shape_file', '/srv/s
+torage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/text_shape.bpe', '-
+-ngpu', '1', '--multiprocessing_distributed', 'True']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "/home/rgupta/anaconda3/envs/pyt/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/rgupta/anaconda3/envs/pyt/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/rgupta/dev/espnet/espnet2/bin/launch.py", line 384, in <module>
+    main()
+  File "/home/rgupta/dev/espnet/espnet2/bin/launch.py", line 375, in main
+    raise RuntimeError(
+RuntimeError:
+################### The last 1000 lines of /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_
+conformer_lr2e-3_warmup15k_amp_nondeterministic/train.log ###################
+# python3 -m espnet2.bin.asr_train --use_preprocessor true --bpemodel /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_ju
+ne_8/data/en_token_list/bpe_unigram5000/bpe.model --token_type bpe --token_list /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_
+100/pyt_june_8/data/en_token_list/bpe_unigram5000/tokens.txt --non_linguistic_symbols none --cleaner none --g2p none --valid_data_path_and_name_and_type /srv/st
+orage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/dev/wav.scp,speech,kaldi_ark --valid_data_path_an
+d_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/dev/text,text,text --valid
+_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/valid/s
+peech_shape --valid_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en
+_bpe5000_sp/valid/text_shape.bpe --resume true --init_param --ignore_init_mismatch false --fold_length 80000 --fold_length 150 --output_dir /srv/storage/talc2@t
+alc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic --config /home/
+rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml --frontend_conf fs=16k --normalize=global_mvn --normalize_conf stats_file=/srv/storage/talc2@tal
+c-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/feats_stats.npz --train_data_path_a
+nd_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/train_clean_100_sp/wav.sc
+p,speech,kaldi_ark --train_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_
+256/dump/raw/train_clean_100_sp/text,text,text --train_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8
+/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/speech_shape --train_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_l
+ibri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/text_shape.bpe --ngpu 1 --multiprocessing_distributed True
+# Started at Wed Jun  8 13:36:21 CEST 2022
+#
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/asr_train.py --use_preprocessor true --bpemodel /srv/storage/talc2@talc-data2.na
+ncy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/data/en_token_list/bpe_unigram5000/bpe.model --token_type bpe --token_list /srv/storage/talc2@tal
+c-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/data/en_token_list/bpe_unigram5000/tokens.txt --non_linguistic_symbols none --cleaner n
+one --g2p none --valid_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/
+dump/raw/dev/wav.scp,speech,kaldi_ark --valid_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/py
+t_june_8/adv_units_256/dump/raw/dev/text,text,text --valid_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_ju
+ne_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/valid/speech_shape --valid_shape_file /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fre
+sh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/valid/text_shape.bpe --resume true --init_param --ignore_init_mismatch false --fold_length
+ 80000 --fold_length 150 --output_dir /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_confo
+rmer_lr2e-3_warmup15k_amp_nondeterministic --config /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml --frontend_conf fs=16k --normalize=glo
+bal_mvn --normalize_conf stats_file=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_r
+aw_en_bpe5000_sp/train/feats_stats.npz --train_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/p
+yt_june_8/adv_units_256/dump/raw/train_clean_100_sp/wav.scp,speech,kaldi_ark --train_data_path_and_name_and_type /srv/storage/talc2@talc-data2.nancy/multispeech
+/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/dump/raw/train_clean_100_sp/text,text,text --train_shape_file /srv/storage/talc2@talc-data2.nancy/
+multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/speech_shape --train_shape_file /srv/storage/talc
+2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_june_8/adv_units_256/exp/asr_stats_raw_en_bpe5000_sp/train/text_shape.bpe --ngpu 1 --mult
+iprocessing_distributed True
+ ******* cls.adv_flag True  and  adv_flag True *******
+
+/home/rgupta/dev/espnet/espnet2/layers/stft.py:164: UserWarning: __floordiv__ is deprecated, and its behavior will change in a future version of pytorch. It cur
+rently rounds toward 0 (like the 'trunc' function NOT 'floor'). This results in incorrect rounding for negative values. To keep the current behavior, use torch.
+div(a, b, rounding_mode='trunc'), or for actual floor division, use torch.div(a, b, rounding_mode='floor').
+  olens = (ilens - self.n_fft) // self.hop_length + 1
+Traceback (most recent call last):
+  File "/home/rgupta/anaconda3/envs/pyt/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/rgupta/anaconda3/envs/pyt/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/rgupta/dev/espnet/espnet2/bin/asr_train.py", line 23, in <module>
+    main()
+  File "/home/rgupta/dev/espnet/espnet2/bin/asr_train.py", line 19, in main
+    ASRTask.main(cmd=cmd)
+  File "/home/rgupta/dev/espnet/espnet2/tasks/abs_task.py", line 1038, in main
+    cls.main_worker(args)
+  File "/home/rgupta/dev/espnet/espnet2/tasks/abs_task.py", line 1348, in main_worker
+    cls.trainer.run(
+  File "/home/rgupta/dev/espnet/espnet2/train/trainer.py", line 280, in run
+    all_steps_are_invalid = cls.train_one_epoch(
+  File "/home/rgupta/dev/espnet/espnet2/train/trainer.py", line 518, in train_one_epoch
+    retval = model(**batch)
+  File "/home/rgupta/anaconda3/envs/pyt/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/rgupta/dev/espnet/espnet2/asr/espnet_model.py", line 363, in forward
+    loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, speech)
+  File "/home/rgupta/anaconda3/envs/pyt/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/rgupta/dev/espnet/espnet2/asr/adversarial_branch.py", line 113, in forward
+    labels[ix, :] = y_adv[ix]
+RuntimeError: The expanded size of the tensor (281) must match the existing size (180218) at non-singleton dimension 0.  Target sizes: [281].  Tensor sizes: [18
+0218]
+
+ ******** espnet_model.py kwargs :
+speech torch.Size([39, 180218]) speech_lengths torch.Size([39]) encoder_out torch.Size([39, 281, 256]) encoder_out_lens torch.Size([39]) text torch.Size([39, 49
+]) text_length torch.Size([39])
+
+
+
+ rev hs pad : torch.Size([39, 281, 256])
+  encoder: out torch.Size([39])
+ text len torch.Size([39, 49])
+
+
+
+ Inside adversarial branch Passing encoder output through advnet torch.Size([39, 281, 256])
+
+advnet output size = torch.Size([39, 281, 512])
+
+adversarial target size  = torch.Size([39, 180218])
+
+ y_hat size  = torch.Size([39, 281, 5000]) and batch size 39
+
+# Accounting: time=12 threads=1
+# Ended (code 1) at Wed Jun  8 13:36:33 CEST 2022, elapsed time 12 seconds
+
+(pyt) rgupta@chifflot-4:~/dev/espnet/egs2/librispeech_100/asr1$
+(pyt) rgupta@chifflot-4:~/dev/espnet/egs2/librispeech_100/asr1$

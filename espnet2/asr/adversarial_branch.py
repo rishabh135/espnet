@@ -110,6 +110,10 @@ class SpeakerAdv(torch.nn.Module):
         :return: accuracy
         :rtype: float
         '''
+    
+        # CUDA runtime error (59) : device-side assert triggered  
+        # Necessary to replace speech_length to text_length
+        # https://stackoverflow.com/questions/51691563/cuda-runtime-error-59-device-side-assert-triggered
 
        
         # initialization
@@ -120,7 +124,7 @@ class SpeakerAdv(torch.nn.Module):
         logging.info("Passing encoder output through advnet %s",
                      str(hs_pad.shape))
         
-        print(" Inside adversarial branch Passing encoder output through advnet {} \n".format(hs_pad.shape))
+        # print(" Inside adversarial branch Passing encoder output through advnet {} \n".format(hs_pad.shape))
         
         self.advnet.flatten_parameters()
         out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
@@ -130,7 +134,7 @@ class SpeakerAdv(torch.nn.Module):
         #logging.info("vgg output size = %s", str(vgg_x.shape))
         logging.info("advnet output size = %s", str(out_x.shape))
 
-        print("advnet output size = {} \n".format(out_x.shape))
+        # print("advnet output size = {} \n".format(out_x.shape))
         
         # logging.info("adversarial target size = %s", str(y_adv.shape))
         
@@ -141,7 +145,7 @@ class SpeakerAdv(torch.nn.Module):
         # Create labels tensor by replicating speaker label
         batch_size, avg_seq_len, out_dim = y_hat.size()
 
-        print(" y_hat size  = {} and batch size {}  \n".format(y_hat.shape, batch_size))
+        # print(" y_hat size  = {} and batch size {}  \n".format(y_hat.shape, batch_size))
      
 
 
@@ -149,7 +153,7 @@ class SpeakerAdv(torch.nn.Module):
         labels = torch.zeros([batch_size, avg_seq_len], dtype=torch.int64)
         
         y_adv = text_length.repeat(1, avg_seq_len).view(-1, avg_seq_len)
-        print(" ****** asr/adversarial_branch.py   y_adv shape  = {} \n".format(y_adv.shape))
+        # print(" ****** asr/adversarial_branch.py   y_adv shape  = {} \n".format(y_adv.shape))
         
 
         for ix in range(batch_size):
@@ -164,10 +168,11 @@ class SpeakerAdv(torch.nn.Module):
         y_hat = y_hat.view((-1, out_dim))
         labels = labels.contiguous().view(-1)
         labels = to_cuda(self, labels.long())
-        logging.info("adversarial output size = %s", str(y_hat.shape))
-        logging.info("artificial label size = %s", str(labels.shape))
+        # logging.info("adversarial output size = %s", str(y_hat.shape))
+        # logging.info("artificial label size = %s", str(labels.shape))
 
         loss = F.cross_entropy(y_hat, labels, size_average=True)
+        
         logging.info("Adversarial loss = %f", loss.item())
         acc = th_accuracy(y_hat, labels.unsqueeze(0), -1)
         logging.info("Adversarial accuracy = %f", acc)
