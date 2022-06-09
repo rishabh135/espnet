@@ -613,6 +613,7 @@ class Trainer:
 
 
                 logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
+                print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
                 if not torch.isfinite(grad_norm):
                     logging.warning(
                         f"The grad norm is {grad_norm}. Skipping updating the model."

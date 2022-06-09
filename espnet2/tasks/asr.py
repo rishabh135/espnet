@@ -407,6 +407,7 @@ class ASRTask(AbsTask):
             raise RuntimeError("token_list must be str or list")
         vocab_size = len(token_list)
         logging.info(f"Vocabulary size: {vocab_size }")
+        print("Vocabulary size :  {} \n".format(vocab_size))
 
         # 1. frontend
         if args.input_size is None:
@@ -516,8 +517,8 @@ class ASRTask(AbsTask):
         # :param int odim_adv: dimension of outputs for adversarial class (default None)
         cls.adv_flag = args.adv_flag
         cls.grlalpha = args.grlalpha
-        logging.info("\n\n ******* cls.adv_flag {}  and  adv_flag {} *******\n".format(cls.adv_flag, args.adv_flag))
-        print(" ******* cls.adv_flag {}  and  adv_flag {} *******\n".format(cls.adv_flag, args.adv_flag))
+        # logging.info("\n\n ******* cls.adv_flag {}  and  adv_flag {} *******\n".format(cls.adv_flag, args.adv_flag))
+        print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag

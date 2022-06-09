@@ -261,11 +261,11 @@ class ESPnetASRModel(AbsESPnetModel):
         stats = dict()
 
 
-        print("\n ******** espnet_model.py kwargs :  ")
+        # print("\n ******** espnet_model.py kwargs :  ")
         # for key, value in kwargs.items():
         #     print("kwargs key {}  val : {} \n".format(key, value))
         # print("\n")
-        print("speech {} speech_lengths {} encoder_out {} encoder_out_lens {} text {} text_length {} \n".format(speech.shape, speech_lengths.shape, encoder_out.shape, encoder_out_lens.shape, text.shape, text_lengths.shape))
+        # print("speech {} speech_lengths {} encoder_out {} encoder_out_lens {} text {} text_length {} \n".format(speech.shape, speech_lengths.shape, encoder_out.shape, encoder_out_lens.shape, text.shape, text_lengths.shape))
 
 
         # 1. CTC branch
@@ -358,11 +358,14 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
             if (self.adv_flag):
-                logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+                # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
                 rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-                print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+                # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
                 loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
+
+                print("adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
                 stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
+                loss = loss + loss_adv
 
 
 
