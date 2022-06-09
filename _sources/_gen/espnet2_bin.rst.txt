@@ -576,7 +576,7 @@ asr_train.py
       --use_tensorboard USE_TENSORBOARD
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
-                            Enable wandb logging (default: False)
+                            Enable wandb logging (default: True)
       --wandb_project WANDB_PROJECT
                             Specify wandb project (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -797,8 +797,8 @@ asr_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -1122,7 +1122,7 @@ diar_train.py
       --use_tensorboard USE_TENSORBOARD
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
-                            Enable wandb logging (default: False)
+                            Enable wandb logging (default: True)
       --wandb_project WANDB_PROJECT
                             Specify wandb project (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -1343,8 +1343,8 @@ diar_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -1724,7 +1724,7 @@ enh_s2t_train.py
       --use_tensorboard USE_TENSORBOARD
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
-                            Enable wandb logging (default: False)
+                            Enable wandb logging (default: True)
       --wandb_project WANDB_PROJECT
                             Specify wandb project (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -1945,8 +1945,8 @@ enh_s2t_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -2273,7 +2273,7 @@ enh_train.py
       --use_tensorboard USE_TENSORBOARD
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
-                            Enable wandb logging (default: False)
+                            Enable wandb logging (default: True)
       --wandb_project WANDB_PROJECT
                             Specify wandb project (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -2494,8 +2494,8 @@ enh_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -2750,7 +2750,7 @@ gan_tts_train.py
       --use_tensorboard USE_TENSORBOARD
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
-                            Enable wandb logging (default: False)
+                            Enable wandb logging (default: True)
       --wandb_project WANDB_PROJECT
                             Specify wandb project (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -2979,8 +2979,8 @@ gan_tts_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -3270,7 +3270,7 @@ hubert_train.py
       --use_tensorboard USE_TENSORBOARD
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
-                            Enable wandb logging (default: False)
+                            Enable wandb logging (default: True)
       --wandb_project WANDB_PROJECT
                             Specify wandb project (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -3491,8 +3491,8 @@ hubert_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -3834,7 +3834,7 @@ lm_train.py
       --use_tensorboard USE_TENSORBOARD
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
-                            Enable wandb logging (default: False)
+                            Enable wandb logging (default: True)
       --wandb_project WANDB_PROJECT
                             Specify wandb project (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -4055,8 +4055,8 @@ lm_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -4382,7 +4382,7 @@ mt_train.py
       --use_tensorboard USE_TENSORBOARD
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
-                            Enable wandb logging (default: False)
+                            Enable wandb logging (default: True)
       --wandb_project WANDB_PROJECT
                             Specify wandb project (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -4603,8 +4603,8 @@ mt_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -5022,7 +5022,7 @@ st_train.py
       --use_tensorboard USE_TENSORBOARD
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
-                            Enable wandb logging (default: False)
+                            Enable wandb logging (default: True)
       --wandb_project WANDB_PROJECT
                             Specify wandb project (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -5243,8 +5243,8 @@ st_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -5685,7 +5685,7 @@ tts_train.py
       --use_tensorboard USE_TENSORBOARD
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
-                            Enable wandb logging (default: False)
+                            Enable wandb logging (default: True)
       --wandb_project WANDB_PROJECT
                             Specify wandb project (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
@@ -5906,8 +5906,8 @@ tts_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: True)
+      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)

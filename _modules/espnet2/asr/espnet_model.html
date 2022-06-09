@@ -414,11 +414,11 @@
         <span class="n">stats</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ******** espnet_model.py kwargs :  &quot;</span><span class="p">)</span>
+        <span class="c1"># print(&quot;\n ******** espnet_model.py kwargs :  &quot;)</span>
         <span class="c1"># for key, value in kwargs.items():</span>
         <span class="c1">#     print(&quot;kwargs key {}  val : {} \n&quot;.format(key, value))</span>
         <span class="c1"># print(&quot;\n&quot;)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;speech </span><span class="si">{}</span><span class="s2"> speech_lengths </span><span class="si">{}</span><span class="s2"> encoder_out </span><span class="si">{}</span><span class="s2"> encoder_out_lens </span><span class="si">{}</span><span class="s2"> text </span><span class="si">{}</span><span class="s2"> text_length </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">speech</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">speech_lengths</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">encoder_out</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">text_lengths</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="c1"># print(&quot;speech {} speech_lengths {} encoder_out {} encoder_out_lens {} text {} text_length {} \n&quot;.format(speech.shape, speech_lengths.shape, encoder_out.shape, encoder_out_lens.shape, text.shape, text_lengths.shape))</span>
 
 
         <span class="c1"># 1. CTC branch</span>
@@ -511,11 +511,14 @@
 
 
             <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">):</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing adversarial loss and flag inside </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">))</span>
+                <span class="c1"># logging.info(&quot;Computing adversarial loss and flag inside {}  \n&quot;.format(self.adv_flag))</span>
                 <span class="n">rev_hs_pad</span> <span class="o">=</span> <span class="n">ReverseLayerF</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">encoder_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grlalpha</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> rev hs pad : </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">  encoder: out </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n</span><span class="s2"> text len </span><span class="si">{}</span><span class="s2">  </span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rev_hs_pad</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">shape</span> <span class="p">))</span>
+                <span class="c1"># print(&quot;\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n&quot;.format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))</span>
                 <span class="n">loss_adv</span><span class="p">,</span> <span class="n">acc_adv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span><span class="p">(</span><span class="n">rev_hs_pad</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="p">,</span> <span class="n">text_lengths</span><span class="p">)</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;adversarial_loss </span><span class="si">{}</span><span class="s2"> and accuracy </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loss_adv</span><span class="p">,</span> <span class="n">acc_adv</span><span class="p">))</span>
                 <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss_adversarial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_adv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">loss_adv</span>
 
 
 
