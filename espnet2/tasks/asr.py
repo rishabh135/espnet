@@ -163,7 +163,7 @@ decoder_choices = ClassChoices(
         mlm=MLMDecoder,
     ),
     type_check=AbsDecoder,
-    default="rnn",
+    default="transducer",
 )
 
 
@@ -465,6 +465,7 @@ class ASRTask(AbsTask):
 
         # 5. Decoder
         decoder_class = decoder_choices.get_class(args.decoder)
+        print("\n Setting current decoder as insider tasks/asr.py {} \n".format(args.decoder))
 
         if args.decoder == "transducer":
             decoder = decoder_class(

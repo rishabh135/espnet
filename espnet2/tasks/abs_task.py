@@ -846,7 +846,7 @@ class AbsTask(ABC):
 
 
         group = parser.add_argument_group("Adversarial part related related")
-        group.add_argument('--eprojs', default=320, type=int, help='Number of encoder projection units')
+        group.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
         group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
         group.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
         group.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
@@ -1309,7 +1309,7 @@ class AbsTask(ABC):
                     or distributed_option.dist_rank == 0
                 ):
                     if args.wandb_project is None:
-                        project = "ESPnet_" + cls.__name__
+                        project = "ESPnet_without_adversarial_with_language_model" + cls.__name__
                     else:
                         project = args.wandb_project
 

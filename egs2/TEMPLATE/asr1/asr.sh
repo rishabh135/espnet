@@ -45,19 +45,20 @@ gpu_inference=false  # Whether to perform gpu decoding.
 global_dir=/home/rgupta/dev/espnet/egs2/librispeech/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
 
 # experiment_n=pyt_adversarial_june_7
-experiment_n=pyt_1
+# experiment_n=pyt_1
+experiment_n=pyt_with_language_modeling_without_adversarial
 exp_dir_names=adv_units_256 # name of the experiment, just change it to create differnet folders
 
 
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/dump # Directory to dump features.
-expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/exp # Directory to save experiments.
+# dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/dump # Directory to dump features.
+# expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/exp # Directory to save experiments.
 
-# dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/${exp_dir_names}/dump # Directory to dump features.
-# expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/${exp_dir_names}/exp # Directory to dump features.
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/${exp_dir_names}/dump # Directory to dump features.
+expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/${exp_dir_names}/exp # Directory to dump features.
 
 
-# data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/data # determines all the files creating folder as in the data folder
-data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/data # determines all the files creating folder as in the data folder
+# data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
 
 
 echo "\n******************************\n"
@@ -499,7 +500,7 @@ if ! "${skip_data_prep}"; then
                    _dirs+="${data_dd}/${train_set} "
                fi
            done
-           utils/combine_data.sh "${data_dd}/${train_set}_sp" ${_dirs}
+           ${global_dir}/utils/combine_data.sh "${data_dd}/${train_set}_sp" ${_dirs}
         else
            log "Skip stage 2: Speed perturbation"
         fi
@@ -556,12 +557,12 @@ if ! "${skip_data_prep}"; then
                     _suf=""
                 fi
                 # 1. Copy datadir
-                utils/copy_data_dir.sh --validate_opts --non-print ${data_dd}/"${dset}" "${data_feats}${_suf}/${dset}"
+                ${global_dir}/utils/copy_data_dir.sh --validate_opts --non-print ${data_dd}/"${dset}" "${data_feats}${_suf}/${dset}"
 
                 # 2. Feature extract
                 _nj=$(min "${nj}" "$(<"${data_feats}${_suf}/${dset}/utt2spk" wc -l)")
                 steps/make_fbank_pitch.sh --nj "${_nj}" --cmd "${train_cmd}" "${data_feats}${_suf}/${dset}"
-                utils/fix_data_dir.sh "${data_feats}${_suf}/${dset}"
+                ${global_dir}/utils/fix_data_dir.sh "${data_feats}${_suf}/${dset}"
 
                 # 3. Derive the the frame length and feature dimension
                 ${global_dir}/scripts/feats/feat_to_shape.sh --nj "${_nj}" --cmd "${train_cmd}" \
@@ -592,7 +593,7 @@ if ! "${skip_data_prep}"; then
                 fi
                 # Generate dummy wav.scp to avoid error by copy_data_dir.sh
                 <${data_dd}/"${dset}"/cmvn.scp awk ' { print($1,"<DUMMY>") }' > ${data_dd}/"${dset}"/wav.scp
-                utils/copy_data_dir.sh --validate_opts --non-print ${data_dd}/"${dset}" "${data_feats}${_suf}/${dset}"
+                ${global_dir}/utils/copy_data_dir.sh --validate_opts --non-print ${data_dd}/"${dset}" "${data_feats}${_suf}/${dset}"
 
                 # Derive the the frame length and feature dimension
                 _nj=$(min "${nj}" "$(<"${data_feats}${_suf}/${dset}/utt2spk" wc -l)")
@@ -619,7 +620,7 @@ if ! "${skip_data_prep}"; then
         for dset in "${train_set}" "${valid_set}"; do
 
             # Copy data dir
-            utils/copy_data_dir.sh --validate_opts --non-print "${data_feats}/org/${dset}" "${data_feats}/${dset}"
+            ${global_dir}/utils/copy_data_dir.sh --validate_opts --non-print "${data_feats}/org/${dset}" "${data_feats}/${dset}"
             cp "${data_feats}/org/${dset}/feats_type" "${data_feats}/${dset}/feats_type"
 
             # Remove short utterances
@@ -635,7 +636,7 @@ if ! "${skip_data_prep}"; then
                         '{ if ($2 > min_length && $2 < max_length ) print $0; }' \
                         >"${data_feats}/${dset}/utt2num_samples"
                 <"${data_feats}/org/${dset}/wav.scp" \
-                    utils/filter_scp.pl "${data_feats}/${dset}/utt2num_samples"  \
+                    ${global_dir}/utils/filter_scp.pl "${data_feats}/${dset}/utt2num_samples"  \
                     >"${data_feats}/${dset}/wav.scp"
             else
                 # Get frame shift in ms from conf/fbank.conf
@@ -659,7 +660,7 @@ if ! "${skip_data_prep}"; then
                         '{ if ($2 > min_length && $2 < max_length) print $0; }' \
                         >"${data_feats}/${dset}/feats_shape"
                 <"${data_feats}/org/${dset}/feats.scp" \
-                    utils/filter_scp.pl "${data_feats}/${dset}/feats_shape"  \
+                    ${global_dir}/utils/filter_scp.pl "${data_feats}/${dset}/feats_shape"  \
                     >"${data_feats}/${dset}/feats.scp"
             fi
 
@@ -668,7 +669,7 @@ if ! "${skip_data_prep}"; then
                 awk ' { if( NF != 1 ) print $0; } ' >"${data_feats}/${dset}/text"
 
             # fix_data_dir.sh leaves only utts which exist in all files
-            utils/fix_data_dir.sh "${data_feats}/${dset}"
+            ${global_dir}/utils/fix_data_dir.sh "${data_feats}/${dset}"
         done
 
         # shellcheck disable=SC2002
@@ -779,7 +780,7 @@ if ! "${skip_train}"; then
                 split_scps+=" ${_logdir}/train.${n}.scp"
             done
             # shellcheck disable=SC2086
-            utils/split_scp.pl "${key_file}" ${split_scps}
+            ${global_dir}/utils/split_scp.pl "${key_file}" ${split_scps}
 
             key_file="${lm_dev_text}"
             split_scps=""
@@ -787,11 +788,16 @@ if ! "${skip_train}"; then
                 split_scps+=" ${_logdir}/dev.${n}.scp"
             done
             # shellcheck disable=SC2086
-            utils/split_scp.pl "${key_file}" ${split_scps}
+            ${global_dir}/utils/split_scp.pl "${key_file}" ${split_scps}
 
             # 2. Generate run.sh
             log "Generate '${lm_stats_dir}/run.sh'. You can resume the process from stage 6 using this script"
             mkdir -p "${lm_stats_dir}"; echo "${run_args} --stage 6 \"\$@\"; exit \$?" > "${lm_stats_dir}/run.sh"; chmod +x "${lm_stats_dir}/run.sh"
+
+
+            log "\n *********************** changing directories Stage 6 Language modeling **************************\n"
+            cd "${global_dir}"
+            cd "../../../"
 
             # 3. Submit jobs
             log "LM collect-stats started... log: '${_logdir}/stats.*.log'"
@@ -882,6 +888,15 @@ if ! "${skip_train}"; then
             else
                 jobname="${lm_exp}/train.log"
             fi
+
+
+
+
+
+            log "\n *********************** changing directories Stage 7 Language modeling **************************\n"
+            cd "${global_dir}"
+            cd "../../../"
+
 
             # shellcheck disable=SC2086
             ${python} -m espnet2.bin.launch \
@@ -989,7 +1004,7 @@ if ! "${skip_train}"; then
             split_scps+=" ${_logdir}/train.${n}.scp"
         done
         # shellcheck disable=SC2086
-        utils/split_scp.pl "${key_file}" ${split_scps}
+        ${global_dir}/utils/split_scp.pl "${key_file}" ${split_scps}
 
         key_file="${_asr_valid_dir}/${_scp}"
         split_scps=""
@@ -997,7 +1012,7 @@ if ! "${skip_train}"; then
             split_scps+=" ${_logdir}/valid.${n}.scp"
         done
         # shellcheck disable=SC2086
-        utils/split_scp.pl "${key_file}" ${split_scps}
+        ${global_dir}/utils/split_scp.pl "${key_file}" ${split_scps}
 
         # 2. Generate run.sh
         log "Generate '${asr_stats_dir}/run.sh'. You can resume the process from stage 10 using this script"
