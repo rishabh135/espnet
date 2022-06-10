@@ -797,7 +797,7 @@ asr_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
@@ -857,7 +857,7 @@ asr_train.py
       --postencoder_conf POSTENCODER_CONF
                             The keyword arguments for postencoder (default: {})
       --decoder {transformer,lightweight_conv,lightweight_conv2d,dynamic_conv,dynamic_conv2d,rnn,transducer,mlm}
-                            The decoder type (default: rnn)
+                            The decoder type (default: transducer)
       --decoder_conf DECODER_CONF
                             The keyword arguments for decoder (default: {})
 .. _diar_inference.py:
@@ -1343,7 +1343,7 @@ diar_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
@@ -1945,7 +1945,7 @@ enh_s2t_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
@@ -2029,7 +2029,7 @@ enh_s2t_train.py
       --asr_postencoder_conf ASR_POSTENCODER_CONF
                             The keyword arguments for asr_postencoder (default: {})
       --asr_decoder {transformer,lightweight_conv,lightweight_conv2d,dynamic_conv,dynamic_conv2d,rnn,transducer,mlm}
-                            The asr_decoder type (default: rnn)
+                            The asr_decoder type (default: transducer)
       --asr_decoder_conf ASR_DECODER_CONF
                             The keyword arguments for asr_decoder (default: {})
       --st_preencoder {sinc,linear,None}
@@ -2494,7 +2494,7 @@ enh_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
@@ -2979,7 +2979,7 @@ gan_tts_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
@@ -3491,7 +3491,7 @@ hubert_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
@@ -4055,7 +4055,7 @@ lm_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
@@ -4603,7 +4603,7 @@ mt_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
@@ -5243,7 +5243,7 @@ st_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
@@ -5906,7 +5906,7 @@ tts_train.py
                             The keyword arguments for lr scheduler (default: {})
     
     Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 320)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
