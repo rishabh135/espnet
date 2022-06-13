@@ -19,7 +19,7 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 # inference_config=conf/decode_asr.yaml
 
 # srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}
-experiment_n=pyt_with_language_modeling_without_adversarial
+experiment_n=asr_lmt_trigram_wo_adv
 # experiment_n=pyt_adversarial_june_7 # name of the experiment, just change it to create differnet folders
 # experiment_n=pyt_adversarial_june_7 # name of the experiment, just change it to create differnet folders
 
