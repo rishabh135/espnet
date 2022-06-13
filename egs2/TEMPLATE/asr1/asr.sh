@@ -42,12 +42,12 @@ gpu_inference=false  # Whether to perform gpu decoding.
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 
-global_dir=/home/rgupta/dev/espnet/egs2/librispeech/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
+global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
 
 # experiment_n=pyt_adversarial_june_7
 # experiment_n=pyt_1
-experiment_n=pyt_with_language_modeling_without_adversarial
-exp_dir_names=adv_units_256 # name of the experiment, just change it to create differnet folders
+experiment_n=asr_lmt_trigram_wo_adv
+exp_dir_names=exp_files # name of the experiment, just change it to create differnet folders
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/dump # Directory to dump features.
@@ -104,8 +104,8 @@ bpe_nlsyms=         # non-linguistic symbols list, separated by a comma, for BPE
 bpe_char_cover=1.0  # character coverage when modeling BPE
 
 # Ngram model related
-use_ngram=false
-ngram_exp=
+use_ngram=true
+ngram_exp=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/${exp_dir_names}/ngram/exp # Directory to dump features.
 ngram_num=3
 
 # Language model related
@@ -954,8 +954,8 @@ if ! "${skip_train}"; then
     if [ ${stage} -le 9 ] && [ ${stop_stage} -ge 9 ]; then
         if "${use_ngram}"; then
             log "Stage 9: Ngram Training: train_set=${data_feats}/lm_train.txt"
-            cut -f 2- -d " " ${data_feats}/lm_train.txt | lmplz -S "20%" --discount_fallback -o ${ngram_num} - >${ngram_exp}/${ngram_num}gram.arpa
-            build_binary -s ${ngram_exp}/${ngram_num}gram.arpa ${ngram_exp}/${ngram_num}gram.bin
+            cut -f 2- -d " " ${data_feats}/lm_train.txt | ${global_dir}/kenlm/build/bin/lmplz -S "20%" --discount_fallback -o ${ngram_num} - >${ngram_exp}/${ngram_num}gram.arpa
+            ${global_dir}/kenlm/build/bin/build_binary -s ${ngram_exp}/${ngram_num}gram.arpa ${ngram_exp}/${ngram_num}gram.bin
         else
             log "Stage 9: Skip ngram stages: use_ngram=${use_ngram}"
         fi
