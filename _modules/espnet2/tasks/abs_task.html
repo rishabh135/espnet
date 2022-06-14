@@ -734,12 +734,14 @@
             <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable wandb logging&quot;</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--wandb_project&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;--project_name&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specify wandb project&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specify wandb project name&quot;</span><span class="p">,</span>
         <span class="p">)</span>
+        
         <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--wandb_id&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
@@ -1461,10 +1463,10 @@
                     <span class="ow">not</span> <span class="n">distributed_option</span><span class="o">.</span><span class="n">distributed</span>
                     <span class="ow">or</span> <span class="n">distributed_option</span><span class="o">.</span><span class="n">dist_rank</span> <span class="o">==</span> <span class="mi">0</span>
                 <span class="p">):</span>
-                    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wandb_project</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">project</span> <span class="o">=</span> <span class="s2">&quot;ESPnet_without_adversarial_with_language_model&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+                    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">project_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">project</span> <span class="o">=</span> <span class="s2">&quot;ESPnet__&quot;</span>  <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">project</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">wandb_project</span>
+                        <span class="n">project</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">project_name</span> <span class="o">+</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
 
                     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wandb_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">today</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
