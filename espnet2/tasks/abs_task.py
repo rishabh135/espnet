@@ -581,12 +581,14 @@ class AbsTask(ABC):
             default=True,
             help="Enable wandb logging",
         )
+
         group.add_argument(
-            "--wandb_project",
+            "--project_name",
             type=str,
             default=None,
-            help="Specify wandb project",
+            help="Specify wandb project name",
         )
+        
         group.add_argument(
             "--wandb_id",
             type=str,
@@ -1308,10 +1310,10 @@ class AbsTask(ABC):
                     not distributed_option.distributed
                     or distributed_option.dist_rank == 0
                 ):
-                    if args.wandb_project is None:
-                        project = "ESPnet_without_adversarial_with_language_model" + cls.__name__
+                    if args.project_name is None:
+                        project = "ESPnet__"  + cls.__name__
                     else:
-                        project = args.wandb_project
+                        project = args.project_name + + cls.__name__
 
                     if args.wandb_name is None:
                         today = date.today()
