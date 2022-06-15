@@ -540,7 +540,14 @@
         <span class="c1"># force_gatherable: to-device and to-tensor if scalar for DataParallel</span>
         <span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">force_gatherable</span><span class="p">((</span><span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">),</span> <span class="n">loss</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         
-        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">loss_adv</span></div>
+
+        <span class="n">retval</span> <span class="o">=</span> <span class="p">{}</span> 
+        <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span>   
+        <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span>
+        <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;weight&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weight</span>
+        <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;loss_adv&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">loss_adv</span>
+
+        <span class="k">return</span> <span class="n">retval</span></div>
 
 
 

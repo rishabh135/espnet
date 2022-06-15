@@ -629,6 +629,10 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --train-json TRAIN_JSON
+                        Filename of train label data (json) (default: None)
+  --valid-json VALID_JSON
+                        Filename of validation label data (json) (default: None)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -971,10 +975,6 @@ Adversarial part related related:
                         adversarial Dropout rate (default: 0.0)
   --adversarial_list ADVERSARIAL_LIST
                         adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;])
-  --train-json TRAIN_JSON
-                        Filename of train label data (json) (default: None)
-  --valid-json VALID_JSON
-                        Filename of validation label data (json) (default: None)
 
   Task related
 
@@ -1191,6 +1191,10 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --train-json TRAIN_JSON
+                        Filename of train label data (json) (default: None)
+  --valid-json VALID_JSON
+                        Filename of validation label data (json) (default: None)
 
 Common configuration:
   --print_config        Print the config file and exit (default: False)
@@ -1516,10 +1520,6 @@ Adversarial part related related:
                         adversarial Dropout rate (default: 0.0)
   --adversarial_list ADVERSARIAL_LIST
                         adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;])
-  --train-json TRAIN_JSON
-                        Filename of train label data (json) (default: None)
-  --valid-json VALID_JSON
-                        Filename of validation label data (json) (default: None)
 
   Task related
 
@@ -1785,6 +1785,10 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --train-json TRAIN_JSON
+                        Filename of train label data (json) (default: None)
+  --valid-json VALID_JSON
+                        Filename of validation label data (json) (default: None)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -2116,10 +2120,6 @@ Adversarial part related related:
                         adversarial Dropout rate (default: 0.0)
   --adversarial_list ADVERSARIAL_LIST
                         adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;])
-  --train-json TRAIN_JSON
-                        Filename of train label data (json) (default: None)
-  --valid-json VALID_JSON
-                        Filename of validation label data (json) (default: None)
 
   Task related
 
@@ -2339,6 +2339,10 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --train-json TRAIN_JSON
+                        Filename of train label data (json) (default: None)
+  --valid-json VALID_JSON
+                        Filename of validation label data (json) (default: None)
 
 Common configuration:
   --print_config        Print the config file and exit (default: False)
@@ -2664,10 +2668,6 @@ Adversarial part related related:
                         adversarial Dropout rate (default: 0.0)
   --adversarial_list ADVERSARIAL_LIST
                         adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;])
-  --train-json TRAIN_JSON
-                        Filename of train label data (json) (default: None)
-  --valid-json VALID_JSON
-                        Filename of validation label data (json) (default: None)
 
   Task related
 
@@ -2808,6 +2808,10 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --train-json TRAIN_JSON
+                        Filename of train label data (json) (default: None)
+  --valid-json VALID_JSON
+                        Filename of validation label data (json) (default: None)
   --generator_first GENERATOR_FIRST
                         Whether to update generator first. (default: False)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
@@ -3149,10 +3153,6 @@ Adversarial part related related:
                         adversarial Dropout rate (default: 0.0)
   --adversarial_list ADVERSARIAL_LIST
                         adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;])
-  --train-json TRAIN_JSON
-                        Filename of train label data (json) (default: None)
-  --valid-json VALID_JSON
-                        Filename of validation label data (json) (default: None)
 
   Task related
 
@@ -3312,6 +3312,10 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --train-json TRAIN_JSON
+                        Filename of train label data (json) (default: None)
+  --valid-json VALID_JSON
+                        Filename of validation label data (json) (default: None)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -3662,10 +3666,6 @@ Adversarial part related related:
                         adversarial Dropout rate (default: 0.0)
   --adversarial_list ADVERSARIAL_LIST
                         adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;])
-  --train-json TRAIN_JSON
-                        Filename of train label data (json) (default: None)
-  --valid-json VALID_JSON
-                        Filename of validation label data (json) (default: None)
 
   Task related
 
@@ -3710,8 +3710,16 @@ Adversarial part related related:
 </section>
 <section id="launch-py">
 <span id="id14"></span><h1>launch.py<a class="headerlink" href="#launch-py" title="Permalink to this headline">¶</a></h1>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: launch.py [-h] [--cmd CMD] [--log LOG]
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> ********* Inside  bin/launch.py  *********
+
+usage: launch.py [-h] [--cmd CMD] [--log LOG]
                  [--max_num_log_files MAX_NUM_LOG_FILES] [--ngpu NGPU]
+                 [--project_name PROJECT_NAME] [--eprojs EPROJS]
+                 [--adv_flag ADV_FLAG] [--adv ADV] [--adv_layers ADV_LAYERS]
+                 [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                 [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
+                 [--adv_dropout_rate ADV_DROPOUT_RATE]
+                 [--adversarial_list ADVERSARIAL_LIST]
                  [--num_nodes NUM_NODES | --host HOST] [--envfile ENVFILE]
                  [--multiprocessing_distributed MULTIPROCESSING_DISTRIBUTED]
                  [--master_port MASTER_PORT] [--master_addr MASTER_ADDR]
@@ -3731,6 +3739,39 @@ optional arguments:
                         The maximum number of log-files to be kept (default:
                         1000)
   --ngpu NGPU           The number of GPUs per node (default: 1)
+  --project_name PROJECT_NAME
+                        Specify wandb project name (default: None)
+  --eprojs EPROJS       Number of encoder projection units (default: 256)
+  --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial
+                        training or not (default: False)
+  --adv ADV             To perform speaker adversarial training or not
+                        (default: asr10)
+  --adv_layers ADV_LAYERS
+                        Number of decoder layers (default: 1)
+  --adv_units ADV_UNITS
+                        Number of decoder hidden units (default: 256)
+  --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+  --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+  --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default:
+                        0.05)
+  --reinit_adv          To reinitialize the speaker adversarial branch
+                        (default: False)
+  --adv_dropout_rate ADV_DROPOUT_RATE
+                        adversarial Dropout rate (default: 0.0)
+  --adversarial_list ADVERSARIAL_LIST
+                        adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;,
+                        &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;,
+                        &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;,
+                        &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;,
+                        &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;,
+                        &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;,
+                        &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;,
+                        &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;,
+                        &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;,
+                        &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;,
+                        &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;,
+                        &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;,
+                        &#39;spkasr&#39;])
   --num_nodes NUM_NODES
                         The number of nodes (default: 1)
   --host HOST           Directly specify the host names. The job are submitted
@@ -3892,6 +3933,10 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --train-json TRAIN_JSON
+                        Filename of train label data (json) (default: None)
+  --valid-json VALID_JSON
+                        Filename of validation label data (json) (default: None)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -4223,10 +4268,6 @@ Adversarial part related related:
                         adversarial Dropout rate (default: 0.0)
   --adversarial_list ADVERSARIAL_LIST
                         adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;])
-  --train-json TRAIN_JSON
-                        Filename of train label data (json) (default: None)
-  --valid-json VALID_JSON
-                        Filename of validation label data (json) (default: None)
 
   Task related
 
@@ -4439,6 +4480,10 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --train-json TRAIN_JSON
+                        Filename of train label data (json) (default: None)
+  --valid-json VALID_JSON
+                        Filename of validation label data (json) (default: None)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -4770,10 +4815,6 @@ Adversarial part related related:
                         adversarial Dropout rate (default: 0.0)
   --adversarial_list ADVERSARIAL_LIST
                         adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;])
-  --train-json TRAIN_JSON
-                        Filename of train label data (json) (default: None)
-  --valid-json VALID_JSON
-                        Filename of validation label data (json) (default: None)
 
   Task related
 
@@ -5063,6 +5104,10 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --train-json TRAIN_JSON
+                        Filename of train label data (json) (default: None)
+  --valid-json VALID_JSON
+                        Filename of validation label data (json) (default: None)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese}
@@ -5405,10 +5450,6 @@ Adversarial part related related:
                         adversarial Dropout rate (default: 0.0)
   --adversarial_list ADVERSARIAL_LIST
                         adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;])
-  --train-json TRAIN_JSON
-                        Filename of train label data (json) (default: None)
-  --valid-json VALID_JSON
-                        Filename of validation label data (json) (default: None)
 
   Task related
 
@@ -5734,6 +5775,10 @@ base parser
 
 optional arguments:
   --config CONFIG       Give config file in yaml format (default: None)
+  --train-json TRAIN_JSON
+                        Filename of train label data (json) (default: None)
+  --valid-json VALID_JSON
+                        Filename of validation label data (json) (default: None)
   --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                         non_linguistic_symbols file path (default: None)
   --cleaner {None,tacotron,jaconv,vietnamese,korean_cleaner}
@@ -6065,10 +6110,6 @@ Adversarial part related related:
                         adversarial Dropout rate (default: 0.0)
   --adversarial_list ADVERSARIAL_LIST
                         adversarial mode list (default: [&#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;spk&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;asr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;, &#39;spkasr&#39;])
-  --train-json TRAIN_JSON
-                        Filename of train label data (json) (default: None)
-  --valid-json VALID_JSON
-                        Filename of validation label data (json) (default: None)
 
   Task related
 
