@@ -518,7 +518,7 @@
 
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;adversarial_loss </span><span class="si">{}</span><span class="s2"> and accuracy </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loss_adv</span><span class="p">,</span> <span class="n">acc_adv</span><span class="p">))</span>
                 <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss_adversarial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_adv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-                <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">loss_adv</span>
+                
 
 
 
@@ -540,20 +540,10 @@
         <span class="c1"># force_gatherable: to-device and to-tensor if scalar for DataParallel</span>
         <span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">force_gatherable</span><span class="p">((</span><span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">),</span> <span class="n">loss</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         
-        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">weight</span></div>
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">loss_adv</span></div>
 
 
-<div class="viewcode-block" id="ESPnetASRModel.freeze_encoder"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.espnet_model.ESPnetASRModel.freeze_encoder">[docs]</a>    <span class="k">def</span> <span class="nf">freeze_encoder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_frozen_flag</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
-                <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">encoder_frozen_flag</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="ESPnetASRModel.unfreeze_encoder"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.espnet_model.ESPnetASRModel.unfreeze_encoder">[docs]</a>    <span class="k">def</span> <span class="nf">unfreeze_encoder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_frozen_flag</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
-                <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">encoder_frozen_flag</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="ESPnetASRModel.collect_feats"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.espnet_model.ESPnetASRModel.collect_feats">[docs]</a>    <span class="k">def</span> <span class="nf">collect_feats</span><span class="p">(</span>

@@ -347,6 +347,9 @@
     <span class="c1"># If you need to modify train() or eval() procedures, change Trainer class here</span>
     <span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span>
 
+
+
+
 <div class="viewcode-block" id="ASRTask.add_task_arguments"><a class="viewcode-back" href="../../../_gen/espnet2.tasks.html#espnet2.tasks.asr.ASRTask.add_task_arguments">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_task_arguments</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
         <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Task related&quot;</span><span class="p">)</span>
@@ -604,6 +607,8 @@
 
 
 
+
+
         <span class="c1"># 5. Post-encoder block</span>
         <span class="c1"># NOTE(kan-bayashi): Use getattr to keep the compatibility</span>
         <span class="n">encoder_output_size</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">output_size</span><span class="p">()</span>
@@ -669,9 +674,25 @@
         <span class="c1"># grlalpha = args.grlalpha</span>
     
         <span class="c1"># :param int odim_adv: dimension of outputs for adversarial class (default None)</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">adv_flag</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">grlalpha</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">grlalpha</span>
+        
+
+
+
         <span class="c1"># logging.info(&quot;\n\n ******* cls.adv_flag {}  and  adv_flag {} *******\n&quot;.format(cls.adv_flag, args.adv_flag))</span>
+        
+        <span class="c1">################################################################################################################</span>
+        <span class="c1">################################################################################################################</span>
+
+        <span class="c1"># creating encoder as a class property</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">adv_flag__</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">grlalpha__</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">grlalpha</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">encoder_</span> <span class="o">=</span> <span class="n">encoder</span> 
+
+        <span class="c1">################################################################################################################</span>
+        <span class="c1">################################################################################################################</span>
+
+        
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; *******  adv_flag </span><span class="si">{}</span><span class="s2"> and decoder </span><span class="si">{}</span><span class="s2"> *******</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">decoder</span><span class="p">))</span>
         
         <span class="k">if</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">):</span>
@@ -681,13 +702,16 @@
             <span class="n">adversarial_branch</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">******* Inside ASR.py *********</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># logging.info(&quot;\n******* Inside ASR.py *********\n&quot;)</span>
 
         <span class="c1"># 7. Build model</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">model_class</span> <span class="o">=</span> <span class="n">model_choices</span><span class="o">.</span><span class="n">get_class</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="n">model_class</span> <span class="o">=</span> <span class="n">model_choices</span><span class="o">.</span><span class="n">get_class</span><span class="p">(</span><span class="s2">&quot;espnet&quot;</span><span class="p">)</span>
+        
+        
+        <span class="c1"># here is where the main model class is both defined so we will need to add items to it to access model items</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model_class</span><span class="p">(</span>
             <span class="n">adv_flag</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">,</span>
             <span class="n">grlalpha</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">grlalpha</span><span class="p">,</span>
@@ -712,7 +736,24 @@
             <span class="n">initialize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">init</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">check_return_type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">model</span></div></div>
+        <span class="k">return</span> <span class="n">model</span></div>
+
+
+
+<div class="viewcode-block" id="ASRTask.freeze_encoder"><a class="viewcode-back" href="../../../_gen/espnet2.tasks.html#espnet2.tasks.asr.ASRTask.freeze_encoder">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">freeze_encoder</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">enc_frozen_flag</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encoder_</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">enc_frozen_flag</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ASRTask.unfreeze_encoder"><a class="viewcode-back" href="../../../_gen/espnet2.tasks.html#espnet2.tasks.asr.ASRTask.unfreeze_encoder">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">unfreeze_encoder</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">enc_frozen_flag</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encoder_</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">enc_frozen_flag</span> <span class="o">=</span> <span class="kc">False</span></div></div>
+
 </pre></div>
 
            </div>

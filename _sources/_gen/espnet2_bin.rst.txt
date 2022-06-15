@@ -430,6 +430,7 @@ asr_train.py
                         [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
                         [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
                         [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
+                        [--adversarial_list ADVERSARIAL_LIST]
                         [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                         [--token_list TOKEN_LIST]
                         [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
@@ -464,12 +465,6 @@ asr_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --train-json TRAIN_JSON
-                            Filename of train label data (json) (default: None)
-      --valid-json VALID_JSON
-                            Filename of validation label data (json) (default: None)
       --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                             non_linguistic_symbols file path (default: None)
       --cleaner {None,tacotron,jaconv,vietnamese}
@@ -808,6 +803,14 @@ asr_train.py
       --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
       --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
       --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+      --train-json TRAIN_JSON
+                            Filename of train label data (json) (default: None)
+      --valid-json VALID_JSON
+                            Filename of validation label data (json) (default: None)
     
       Task related
     
@@ -1005,6 +1008,7 @@ diar_train.py
                          [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
                          [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
                          [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
+                         [--adversarial_list ADVERSARIAL_LIST]
                          [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                          [--num_spk NUM_SPK]
                          [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
@@ -1027,12 +1031,6 @@ diar_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --train-json TRAIN_JSON
-                            Filename of train label data (json) (default: None)
-      --valid-json VALID_JSON
-                            Filename of validation label data (json) (default: None)
     
     Common configuration:
       --print_config        Print the config file and exit (default: False)
@@ -1354,6 +1352,14 @@ diar_train.py
       --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
       --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
       --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+      --train-json TRAIN_JSON
+                            Filename of train label data (json) (default: None)
+      --valid-json VALID_JSON
+                            Filename of validation label data (json) (default: None)
     
       Task related
     
@@ -1566,6 +1572,7 @@ enh_s2t_train.py
                             [--grlalpha GRLALPHA] [--adv_lr ADV_LR]
                             [--asr_lr ASR_LR] [--reinit_adv]
                             [--adv_dropout_rate ADV_DROPOUT_RATE]
+                            [--adversarial_list ADVERSARIAL_LIST]
                             [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                             [--token_list TOKEN_LIST]
                             [--src_token_list SRC_TOKEN_LIST]
@@ -1622,12 +1629,6 @@ enh_s2t_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --train-json TRAIN_JSON
-                            Filename of train label data (json) (default: None)
-      --valid-json VALID_JSON
-                            Filename of validation label data (json) (default: None)
       --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                             non_linguistic_symbols file path (default: None)
       --cleaner {None,tacotron,jaconv,vietnamese}
@@ -1955,6 +1956,14 @@ enh_s2t_train.py
       --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
       --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
       --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+      --train-json TRAIN_JSON
+                            Filename of train label data (json) (default: None)
+      --valid-json VALID_JSON
+                            Filename of validation label data (json) (default: None)
     
       Task related
     
@@ -2164,6 +2173,7 @@ enh_train.py
                         [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
                         [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
                         [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
+                        [--adversarial_list ADVERSARIAL_LIST]
                         [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                         [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
                         [--model_conf MODEL_CONF] [--criterions CRITERIONS]
@@ -2177,12 +2187,6 @@ enh_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --train-json TRAIN_JSON
-                            Filename of train label data (json) (default: None)
-      --valid-json VALID_JSON
-                            Filename of validation label data (json) (default: None)
     
     Common configuration:
       --print_config        Print the config file and exit (default: False)
@@ -2504,6 +2508,14 @@ enh_train.py
       --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
       --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
       --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+      --train-json TRAIN_JSON
+                            Filename of train label data (json) (default: None)
+      --valid-json VALID_JSON
+                            Filename of validation label data (json) (default: None)
     
       Task related
     
@@ -2617,6 +2629,7 @@ gan_tts_train.py
                             [--grlalpha GRLALPHA] [--adv_lr ADV_LR]
                             [--asr_lr ASR_LR] [--reinit_adv]
                             [--adv_dropout_rate ADV_DROPOUT_RATE]
+                            [--adversarial_list ADVERSARIAL_LIST]
                             [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                             [--generator_first GENERATOR_FIRST]
                             [--token_list TOKEN_LIST] [--odim ODIM]
@@ -2645,12 +2658,6 @@ gan_tts_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --train-json TRAIN_JSON
-                            Filename of train label data (json) (default: None)
-      --valid-json VALID_JSON
-                            Filename of validation label data (json) (default: None)
       --generator_first GENERATOR_FIRST
                             Whether to update generator first. (default: False)
       --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
@@ -2988,6 +2995,14 @@ gan_tts_train.py
       --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
       --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
       --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+      --train-json TRAIN_JSON
+                            Filename of train label data (json) (default: None)
+      --valid-json VALID_JSON
+                            Filename of validation label data (json) (default: None)
     
       Task related
     
@@ -3114,6 +3129,7 @@ hubert_train.py
                            [--grlalpha GRLALPHA] [--adv_lr ADV_LR]
                            [--asr_lr ASR_LR] [--reinit_adv]
                            [--adv_dropout_rate ADV_DROPOUT_RATE]
+                           [--adversarial_list ADVERSARIAL_LIST]
                            [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                            [--token_list TOKEN_LIST]
                            [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
@@ -3148,12 +3164,6 @@ hubert_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --train-json TRAIN_JSON
-                            Filename of train label data (json) (default: None)
-      --valid-json VALID_JSON
-                            Filename of validation label data (json) (default: None)
       --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                             non_linguistic_symbols file path (default: None)
       --cleaner {None,tacotron,jaconv,vietnamese}
@@ -3500,6 +3510,14 @@ hubert_train.py
       --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
       --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
       --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+      --train-json TRAIN_JSON
+                            Filename of train label data (json) (default: None)
+      --valid-json VALID_JSON
+                            Filename of validation label data (json) (default: None)
     
       Task related
     
@@ -3716,6 +3734,7 @@ lm_train.py
                        [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
                        [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
                        [--adv_dropout_rate ADV_DROPOUT_RATE]
+                       [--adversarial_list ADVERSARIAL_LIST]
                        [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                        [--token_list TOKEN_LIST]
                        [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
@@ -3731,12 +3750,6 @@ lm_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --train-json TRAIN_JSON
-                            Filename of train label data (json) (default: None)
-      --valid-json VALID_JSON
-                            Filename of validation label data (json) (default: None)
       --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                             non_linguistic_symbols file path (default: None)
       --cleaner {None,tacotron,jaconv,vietnamese}
@@ -4064,6 +4077,14 @@ lm_train.py
       --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
       --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
       --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+      --train-json TRAIN_JSON
+                            Filename of train label data (json) (default: None)
+      --valid-json VALID_JSON
+                            Filename of validation label data (json) (default: None)
     
       Task related
     
@@ -4254,6 +4275,7 @@ mt_train.py
                        [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
                        [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
                        [--adv_dropout_rate ADV_DROPOUT_RATE]
+                       [--adversarial_list ADVERSARIAL_LIST]
                        [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                        [--token_list TOKEN_LIST] [--src_token_list SRC_TOKEN_LIST]
                        [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
@@ -4279,12 +4301,6 @@ mt_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --train-json TRAIN_JSON
-                            Filename of train label data (json) (default: None)
-      --valid-json VALID_JSON
-                            Filename of validation label data (json) (default: None)
       --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                             non_linguistic_symbols file path (default: None)
       --cleaner {None,tacotron,jaconv,vietnamese}
@@ -4612,6 +4628,14 @@ mt_train.py
       --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
       --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
       --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+      --train-json TRAIN_JSON
+                            Filename of train label data (json) (default: None)
+      --valid-json VALID_JSON
+                            Filename of validation label data (json) (default: None)
     
       Task related
     
@@ -4869,6 +4893,7 @@ st_train.py
                        [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
                        [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
                        [--adv_dropout_rate ADV_DROPOUT_RATE]
+                       [--adversarial_list ADVERSARIAL_LIST]
                        [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                        [--token_list TOKEN_LIST] [--src_token_list SRC_TOKEN_LIST]
                        [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
@@ -4908,12 +4933,6 @@ st_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --train-json TRAIN_JSON
-                            Filename of train label data (json) (default: None)
-      --valid-json VALID_JSON
-                            Filename of validation label data (json) (default: None)
       --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                             non_linguistic_symbols file path (default: None)
       --cleaner {None,tacotron,jaconv,vietnamese}
@@ -5252,6 +5271,14 @@ st_train.py
       --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
       --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
       --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+      --train-json TRAIN_JSON
+                            Filename of train label data (json) (default: None)
+      --valid-json VALID_JSON
+                            Filename of validation label data (json) (default: None)
     
       Task related
     
@@ -5556,6 +5583,7 @@ tts_train.py
                         [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
                         [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
                         [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
+                        [--adversarial_list ADVERSARIAL_LIST]
                         [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                         [--token_list TOKEN_LIST] [--odim ODIM]
                         [--model_conf MODEL_CONF]
@@ -5582,12 +5610,6 @@ tts_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --train-json TRAIN_JSON
-                            Filename of train label data (json) (default: None)
-      --valid-json VALID_JSON
-                            Filename of validation label data (json) (default: None)
       --non_linguistic_symbols NON_LINGUISTIC_SYMBOLS
                             non_linguistic_symbols file path (default: None)
       --cleaner {None,tacotron,jaconv,vietnamese,korean_cleaner}
@@ -5915,6 +5937,14 @@ tts_train.py
       --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
       --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
       --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+      --train-json TRAIN_JSON
+                            Filename of train label data (json) (default: None)
+      --valid-json VALID_JSON
+                            Filename of validation label data (json) (default: None)
     
       Task related
     
