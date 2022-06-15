@@ -2,6 +2,7 @@
 import argparse
 import dataclasses
 import logging
+from socket import TIPC_CRITICAL_IMPORTANCE
 import time
 from contextlib import contextmanager
 from dataclasses import is_dataclass
@@ -80,6 +81,8 @@ class TrainerOptions:
     val_scheduler_criterion: Sequence[str]
     unused_parameters: bool
     wandb_model_log_interval: int
+    adversarial_list: list
+    adv_flag: bool
 
 
 class Trainer:
@@ -258,6 +261,7 @@ class Trainer:
 
         start_time = time.perf_counter()
         for iepoch in range(start_epoch, trainer_options.max_epoch + 1):
+            print("\n train/trainer.py <<< current epoch {}  max_epoch {} ******\n".format(iepoch, trainer_options.max_epoch))
             if iepoch != start_epoch:
                 logging.info(
                     "{}/{}epoch started. Estimated time to finish: {}".format(
@@ -287,6 +291,7 @@ class Trainer:
                     summary_writer=train_summary_writer,
                     options=trainer_options,
                     distributed_option=distributed_option,
+                    current_epoch=iepoch,
                 )
 
             with reporter.observe("valid") as sub_reporter:
@@ -470,6 +475,7 @@ class Trainer:
         summary_writer,
         options: TrainerOptions,
         distributed_option: DistributedOption,
+        current_epoch: int,
     ) -> bool:
         assert check_argument_types()
 
@@ -482,6 +488,9 @@ class Trainer:
         ngpu = options.ngpu
         use_wandb = options.use_wandb
         distributed = distributed_option.distributed
+
+        adv_mode = options.adversarial_list[current_epoch]
+        adv_flag = options.adv_flag
 
         if log_interval is None:
             try:
@@ -524,6 +533,7 @@ class Trainer:
                         loss = retval["loss"]
                         stats = retval["stats"]
                         weight = retval["weight"]
+                        loss_adv = retval["loss_adv"]
                         optim_idx = retval.get("optim_idx")
                         if optim_idx is not None and not isinstance(optim_idx, int):
                             if not isinstance(optim_idx, torch.Tensor):
@@ -549,7 +559,11 @@ class Trainer:
 
                     #   b. tuple or list type
                     else:
-                        loss, stats, weight = retval
+                        if(adv_flag):
+                            loss, stats, weight, loss_adv = retval
+                        else:
+                            loss, stats, weight = retval
+                        
                         optim_idx = None
 
                 stats = {k: v for k, v in stats.items() if v is not None}
@@ -612,6 +626,38 @@ class Trainer:
                     grad_norm = torch.tensor(grad_norm)
 
 
+
+                ###################################################################################
+                ###################################################################################
+                ###################################################################################
+
+                if (adv_mode == 'spk'):
+                    if options.ngpu > 1:
+                        model.module.freeze_encoder()
+                    else:
+                        model.freeze_encoder()
+                    total_loss = loss_adv
+                elif (adv_mode == 'asr'):
+                    if options.ngpu > 1:
+                        model.module.freeze_encoder()
+                    else:
+                        model.freeze_encoder()
+                    total_loss = loss
+                elif(adv_mode == 'spkasr'):
+                    if (options.ngpu > 1):
+                        model.module.unfreeze_encoder()
+                    else:
+                        model.unfreeze_encoder()
+                    total_loss = loss + loss_adv
+
+
+                loss = total_loss
+                ###################################################################################
+                ###################################################################################
+                ###################################################################################
+
+
+
                 logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
                 print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
                 if not torch.isfinite(grad_norm):
@@ -650,6 +696,9 @@ class Trainer:
                                 optimizer.step()
                             if isinstance(scheduler, AbsBatchStepScheduler):
                                 scheduler.step()
+
+
+                
                 for iopt, optimizer in enumerate(optimizers):
                     if optim_idx is not None and iopt != optim_idx:
                         continue
@@ -723,7 +772,7 @@ class Trainer:
                 stats = retval["stats"]
                 weight = retval["weight"]
             else:
-                _, stats, weight = retval
+                _, stats, weight, __ = retval
             if ngpu > 1 or distributed:
                 # Apply weighted averaging for stats.
                 # if distributed, this method can also apply all_reduce()
@@ -815,6 +864,5 @@ class Trainer:
 
                     if options.use_wandb:
                         import wandb
-
                         wandb.log({f"attention plot/{k}_{id_}": wandb.Image(fig)})
             reporter.next()
