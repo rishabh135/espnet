@@ -902,6 +902,7 @@ if ! "${skip_train}"; then
                 --cmd "${cuda_cmd} --name ${jobname}" \
                 --log "${lm_exp}"/train.log \
                 --ngpu "${ngpu}" \
+                --adv_flag false \
                 --num_nodes "${num_nodes}" \
                 --init_file_prefix "${lm_exp}"/.dist_init_ \
                 --multiprocessing_distributed true -- \
@@ -909,7 +910,6 @@ if ! "${skip_train}"; then
                     --ngpu "${ngpu}" \
                     --use_preprocessor true \
                     --bpemodel "${bpemodel}" \
-                    --adv_flag false \
                     --token_type "${lm_token_type}"\
                     --token_list "${lm_token_list}" \
                     --non_linguistic_symbols "${nlsyms_txt}" \
