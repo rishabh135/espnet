@@ -194,6 +194,9 @@ class ASRTask(AbsTask):
     # If you need to modify train() or eval() procedures, change Trainer class here
     trainer = Trainer
 
+
+
+
     @classmethod
     def add_task_arguments(cls, parser: argparse.ArgumentParser):
         group = parser.add_argument_group(description="Task related")
@@ -451,6 +454,8 @@ class ASRTask(AbsTask):
 
 
 
+
+
         # 5. Post-encoder block
         # NOTE(kan-bayashi): Use getattr to keep the compatibility
         encoder_output_size = encoder.output_size()
@@ -516,9 +521,25 @@ class ASRTask(AbsTask):
         # grlalpha = args.grlalpha
     
         # :param int odim_adv: dimension of outputs for adversarial class (default None)
-        cls.adv_flag = args.adv_flag
-        cls.grlalpha = args.grlalpha
+        
+
+
+
         # logging.info("\n\n ******* cls.adv_flag {}  and  adv_flag {} *******\n".format(cls.adv_flag, args.adv_flag))
+        
+        ################################################################################################################
+        ################################################################################################################
+
+        # creating encoder as a class property
+
+        cls.adv_flag__ = args.adv_flag
+        cls.grlalpha__ = args.grlalpha
+        cls.encoder_ = encoder 
+
+        ################################################################################################################
+        ################################################################################################################
+
+        
         print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
         
         if(args.adv_flag):
@@ -528,13 +549,16 @@ class ASRTask(AbsTask):
             adversarial_branch = None
 
 
-        logging.info("\n******* Inside ASR.py *********\n")
+        # logging.info("\n******* Inside ASR.py *********\n")
 
         # 7. Build model
         try:
             model_class = model_choices.get_class(args.model)
         except AttributeError:
             model_class = model_choices.get_class("espnet")
+        
+        
+        # here is where the main model class is both defined so we will need to add items to it to access model items
         model = model_class(
             adv_flag=args.adv_flag,
             grlalpha=args.grlalpha,
@@ -560,3 +584,20 @@ class ASRTask(AbsTask):
 
         assert check_return_type(model)
         return model
+
+
+
+    @classmethod
+    def freeze_encoder(cls):
+        if not cls.enc_frozen_flag:
+            for param in cls.encoder_.parameters():
+                param.requires_grad = False
+            cls.enc_frozen_flag = True
+
+    @classmethod
+    def unfreeze_encoder(cls):
+        if cls.enc_frozen_flag:
+            for param in cls.encoder_.parameters():
+                param.requires_grad = True
+            cls.enc_frozen_flag = False
+

@@ -365,7 +365,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
                 print("adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
                 stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-                loss = loss + loss_adv
+                
 
 
 
@@ -387,20 +387,10 @@ class ESPnetASRModel(AbsESPnetModel):
         # force_gatherable: to-device and to-tensor if scalar for DataParallel
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
         
-        return loss, stats, weight
+        return loss, stats, weight, loss_adv
 
 
-    def freeze_encoder(self):
-        if not self.encoder_frozen_flag:
-            for param in self.encoder.parameters():
-                param.requires_grad = False
-            self.encoder_frozen_flag = True
 
-    def unfreeze_encoder(self):
-        if self.encoder_frozen_flag:
-            for param in self.encoder.parameters():
-                param.requires_grad = True
-            self.encoder_frozen_flag = False
 
 
     def collect_feats(

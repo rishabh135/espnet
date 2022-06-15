@@ -42,8 +42,10 @@ gpu_inference=false  # Whether to perform gpu decoding.
 ###################################################################################################################################################################################################
 
 global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
-project_name=june_14_asr_lmt_trigram_wo_adv
-experiment_name=adv_256 # name of the experiment, just change it to create differnet folders
+
+project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
+
+experiment_name="standard_settings_with_encoder_frozen_70_epochs" # name of the experiment, just change it to create differnet folders
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
@@ -907,6 +909,7 @@ if ! "${skip_train}"; then
                     --ngpu "${ngpu}" \
                     --use_preprocessor true \
                     --bpemodel "${bpemodel}" \
+                    --adv_flag false \
                     --token_type "${lm_token_type}"\
                     --token_list "${lm_token_list}" \
                     --non_linguistic_symbols "${nlsyms_txt}" \
@@ -1157,6 +1160,7 @@ if ! "${skip_train}"; then
             --cmd "${cuda_cmd} --name ${jobname}" \
             --log "${asr_exp}"/train.log \
             --ngpu "${ngpu}" \
+            --adv_flag true \
             --num_nodes "${num_nodes}" \
             --init_file_prefix "${asr_exp}"/.dist_init_ \
             --multiprocessing_distributed true -- \

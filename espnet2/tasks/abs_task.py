@@ -65,7 +65,7 @@ from espnet2.utils.yaml_no_alias_safe_dump import yaml_no_alias_safe_dump
 from espnet.utils.cli_utils import get_commandline_args
 
 
-from datetime import date
+from datetime import date, datetime
 
 try:
     import wandb
@@ -857,9 +857,13 @@ class AbsTask(ABC):
         group.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
         group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
-        parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
-        parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
+        group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
+        group.add_argument('--adversarial_list', default=[ "spk"] * 20  + ["asr" ] * 20 + ["spkasr" ] * 30 , type=list,help='adversarial mode list')
+
+        group.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
+        group.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
+
+
 
         cls.trainer.add_arguments(parser)
         cls.add_task_arguments(parser)
@@ -1145,6 +1149,10 @@ class AbsTask(ABC):
 
             
         model = cls.build_model(args=args)
+
+        # print("\n\n ******** tasks/abs_task accessing model args adv_flag : {} ########### \n\n".format(model.adv_flag))
+
+
         if not isinstance(model, AbsESPnetModel):
             raise RuntimeError(
                 f"model must inherit {AbsESPnetModel.__name__}, but got {type(model)}"
@@ -1311,14 +1319,21 @@ class AbsTask(ABC):
                     or distributed_option.dist_rank == 0
                 ):
                     if args.project_name is None:
-                        project = "ESPnet__"  + cls.__name__
+                        today = date.today()
+                        d2 = today.strftime("_date_%B_%d_")
+                        project = "With freezing encoder ESPnet__"  + d2 + cls.__name__
                     else:
-                        project = args.project_name + + cls.__name__
+                        today = date.today()
+                        d2 = today.strftime("_date_%B_%d_") 
+                        project = "With_freezing_encoder_" + args.project_name + d2 + cls.__name__
 
                     if args.wandb_name is None:
                         today = date.today()
                         d2 = today.strftime("Run_from_%B_%d_")
-                        name = d2 +  str(Path(".").resolve() ).replace("/", "_") 
+                        time = datetime.now() .strftime(" %H %M")
+                        # d = date_time.strftime("%d %B, %Y")
+                        name = d2 + " time : " + time   
+                        # str(Path(".").resolve() ).replace("/", "_") 
                         # # dd/mm/YY
                         # d1 = today.strftime("%d/%m/%Y")
                         # print("d1 =", d1)
