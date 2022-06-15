@@ -860,8 +860,8 @@ class AbsTask(ABC):
         group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
         group.add_argument('--adversarial_list', default=[ "spk"] * 20  + ["asr" ] * 20 + ["spkasr" ] * 30 , type=list,help='adversarial mode list')
 
-        group.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
-        group.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
+        parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
+        parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
 
 
 

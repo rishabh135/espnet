@@ -387,7 +387,14 @@ class ESPnetASRModel(AbsESPnetModel):
         # force_gatherable: to-device and to-tensor if scalar for DataParallel
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
         
-        return loss, stats, weight, loss_adv
+
+        retval = {} 
+        retval["loss"] = loss   
+        retval["stats"] = stats
+        retval["weight"] = weight
+        retval["loss_adv"]= loss_adv
+
+        return retval
 
 
 
