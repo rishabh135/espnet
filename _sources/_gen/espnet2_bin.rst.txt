@@ -3598,7 +3598,7 @@ launch.py
                             Specify wandb project name (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial
-                            training or not (default: False)
+                            training or not (default: True)
       --adv ADV             To perform speaker adversarial training or not
                             (default: asr10)
       --adv_layers ADV_LAYERS
