@@ -47,7 +47,7 @@ def get_parser():
         )
 
     parser.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
-    parser.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
+    parser.add_argument('--adv_flag', default=True, type=bool, help='flag for whether to perform speaker adversarial training or not')
     parser.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
     parser.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
     parser.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')

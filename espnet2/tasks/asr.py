@@ -75,6 +75,10 @@ from espnet2.utils.get_default_kwargs import get_default_kwargs
 from espnet2.utils.nested_dict_action import NestedDictAction
 from espnet2.utils.types import float_or_none, int_or_none, str2bool, str_or_none
 
+
+
+from pprint import pprint
+
 frontend_choices = ClassChoices(
     name="frontend",
     classes=dict(
@@ -562,6 +566,7 @@ class ASRTask(AbsTask):
         model = model_class(
             adv_flag=args.adv_flag,
             grlalpha=args.grlalpha,
+            # adversarial_list=args.adversarial_list,
             vocab_size=vocab_size,
             frontend=frontend,
             specaug=specaug,
@@ -587,17 +592,5 @@ class ASRTask(AbsTask):
 
 
 
-    @classmethod
-    def freeze_encoder(cls):
-        if not cls.enc_frozen_flag:
-            for param in cls.encoder_.parameters():
-                param.requires_grad = False
-            cls.enc_frozen_flag = True
 
-    @classmethod
-    def unfreeze_encoder(cls):
-        if cls.enc_frozen_flag:
-            for param in cls.encoder_.parameters():
-                param.requires_grad = True
-            cls.enc_frozen_flag = False
 
