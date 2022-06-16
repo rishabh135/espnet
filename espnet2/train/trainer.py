@@ -533,7 +533,7 @@ class Trainer:
                         loss = retval["loss"]
                         stats = retval["stats"]
                         weight = retval["weight"]
-                        loss_adv = retval["loss_adv"]
+                        loss_adv = retval.get("loss_adv")
                         optim_idx = retval.get("optim_idx")
                         if optim_idx is not None and not isinstance(optim_idx, int):
                             if not isinstance(optim_idx, torch.Tensor):
@@ -631,27 +631,32 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-                if (adv_mode == 'spk'):
+                if (adv_flag == True and  adv_mode == 'spk'):
                     if options.ngpu > 1:
                         model.module.freeze_encoder()
                     else:
                         model.freeze_encoder()
                     total_loss = loss_adv
-                elif (adv_mode == 'asr'):
+                    loss = total_loss
+                
+                elif (adv_flag == True and adv_mode == 'asr'):
                     if options.ngpu > 1:
                         model.module.freeze_encoder()
                     else:
                         model.freeze_encoder()
                     total_loss = loss
-                elif(adv_mode == 'spkasr'):
+                    loss = total_loss
+                
+                elif(adv_flag == True and adv_mode == 'spkasr'):
                     if (options.ngpu > 1):
                         model.module.unfreeze_encoder()
                     else:
                         model.unfreeze_encoder()
                     total_loss = loss + loss_adv
+                    loss = total_loss
+                
 
 
-                loss = total_loss
                 ###################################################################################
                 ###################################################################################
                 ###################################################################################
@@ -751,6 +756,8 @@ class Trainer:
 
         model.eval()
 
+        adv_flag = options.adv_flag
+
         # [For distributed] Because iteration counts are not always equals between
         # processes, send stop-flag to the other processes if iterator is finished
         iterator_stop = torch.tensor(0).to("cuda" if ngpu > 0 else "cpu")
@@ -769,10 +776,16 @@ class Trainer:
 
             retval = model(**batch)
             if isinstance(retval, dict):
-                stats = retval["stats"]
-                weight = retval["weight"]
+                # stats = retval["stats"]
+                # weight = retval["weight"]
+                stats = retval.get("stats")
+                weight = retval.get("weight")
             else:
-                _, stats, weight, __ = retval
+                if(adv_flag):
+                    _, stats, weight, __ = retval
+                else:
+                    _, stats, weight = retval
+
             if ngpu > 1 or distributed:
                 # Apply weighted averaging for stats.
                 # if distributed, this method can also apply all_reduce()

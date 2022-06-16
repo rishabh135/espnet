@@ -54,6 +54,7 @@ class ESPnetASRModel(AbsESPnetModel):
         self,
         adv_flag,
         grlalpha,
+        # adversarial_list: list,
         vocab_size: int,
         token_list: Union[Tuple[str, ...], List[str]],        
         frontend: Optional[AbsFrontend],
@@ -103,7 +104,17 @@ class ESPnetASRModel(AbsESPnetModel):
         self.adversarial_branch = adversarial_branch
         self.adv_flag = adv_flag
         self.grlalpha = grlalpha
+
+
         self.encoder_frozen_flag = False
+        # adv_mode = adversarial_list[current_epoch]
+
+        # if(self.adv_mode == 'spk'):
+        #     self.encoder_frozen_flag = True
+
+        # elif(self.adv_mode == 'asr'):
+        #     self.encoder_frozen_flag = False
+         
 
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
@@ -182,6 +193,21 @@ class ESPnetASRModel(AbsESPnetModel):
     # For training the adverarial branch, encoder must be frozen
     # self.enc_frozen = False
 
+
+
+    
+    def freeze_encoder(self):
+        if not self.encoder_frozen_flag:
+            for param in self.encoder.parameters():
+                param.requires_grad = False
+            self.encoder_frozen_flag = True
+
+   
+    def unfreeze_encoder(self):
+        if self.encoder_frozen_flag:
+            for param in self.encoder.parameters():
+                param.requires_grad = True
+            self.encoder_frozen_flag = False
     
     # def freeze_encoder(self):
     #     if not self.enc_frozen:
@@ -356,7 +382,7 @@ class ESPnetASRModel(AbsESPnetModel):
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
 
 
-
+            retval = {} 
             if (self.adv_flag):
                 # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
                 rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
@@ -365,7 +391,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
                 print("adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
                 stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-                
+                retval["loss_adv"]= loss_adv.detach() if loss_adv is not None else None
 
 
 
@@ -388,11 +414,11 @@ class ESPnetASRModel(AbsESPnetModel):
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
         
 
-        retval = {} 
+        
         retval["loss"] = loss   
         retval["stats"] = stats
         retval["weight"] = weight
-        retval["loss_adv"]= loss_adv
+
 
         return retval
 
