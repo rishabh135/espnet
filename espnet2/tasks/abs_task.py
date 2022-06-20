@@ -1321,11 +1321,11 @@ class AbsTask(ABC):
                     if args.project_name is None:
                         today = date.today()
                         d2 = today.strftime("_date_%B_%d_")
-                        project = "With freezing encoder ESPnet__"  + d2 + cls.__name__
+                        project = "june_17_adv_flag_{}".format(args.adv_flag)  + cls.__name__
                     else:
                         today = date.today()
                         d2 = today.strftime("_date_%B_%d_") 
-                        project = "With_freezing_encoder_" + args.project_name + d2 + cls.__name__
+                        project = "june_17_adv_flag_{}".format(args.adv_flag) + args.project_name  + cls.__name__
 
                     if args.wandb_name is None:
                         today = date.today()

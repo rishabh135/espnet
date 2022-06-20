@@ -389,7 +389,7 @@ class ESPnetASRModel(AbsESPnetModel):
                 # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
                 loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
 
-                print("adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
+                print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
                 stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
                 retval["loss_adv"]= loss_adv.detach() if loss_adv is not None else None
 
@@ -418,7 +418,10 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["loss"] = loss   
         retval["stats"] = stats
         retval["weight"] = weight
-
+        retval["loss_ctc"] = loss_ctc
+        retval["loss_att"] = loss_att
+        
+        # loss_ctc, loss_att, acc, cer, wer, loss_adv, acc_adv
 
         return retval
 

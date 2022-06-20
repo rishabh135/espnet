@@ -43,9 +43,14 @@ gpu_inference=false  # Whether to perform gpu decoding.
 
 global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
 
-project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
+# project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
-experiment_name="standard_settings_with_encoder_frozen_70_epochs" # name of the experiment, just change it to create differnet folders
+
+project_name="june_17_trial_2_wo_adv_trigram"
+
+
+
+experiment_name="standard_settings_trigram_rnn_decoder" # name of the experiment, just change it to create differnet folders
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
@@ -116,7 +121,7 @@ lm_stats_dir=     # Specify the directory path for LM statistics.
 lm_config=        # Config for language model training.
 lm_args=          # Arguments for language model training, e.g., "--max_epoch 10".
                   # Note that it will overwrite args in lm config.
-use_word_lm=false # Whether to use word language model.
+use_word_lm=false    # Whether to use word language model.
 num_splits_lm=1   # Number of splitting for lm corpus.
 # shellcheck disable=SC2034
 word_vocab_size=10000 # Size of word vocabulary.
@@ -902,7 +907,6 @@ if ! "${skip_train}"; then
                 --cmd "${cuda_cmd} --name ${jobname}" \
                 --log "${lm_exp}"/train.log \
                 --ngpu "${ngpu}" \
-                --adv_flag false \
                 --num_nodes "${num_nodes}" \
                 --init_file_prefix "${lm_exp}"/.dist_init_ \
                 --multiprocessing_distributed true -- \
@@ -1160,13 +1164,11 @@ if ! "${skip_train}"; then
             --cmd "${cuda_cmd} --name ${jobname}" \
             --log "${asr_exp}"/train.log \
             --ngpu "${ngpu}" \
-            --adv_flag true \
             --num_nodes "${num_nodes}" \
             --init_file_prefix "${asr_exp}"/.dist_init_ \
             --multiprocessing_distributed true -- \
             ${python} -m espnet2.bin.asr_train \
                 --use_preprocessor true \
-                --adv_flag true \
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \

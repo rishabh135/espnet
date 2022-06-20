@@ -167,7 +167,7 @@ decoder_choices = ClassChoices(
         mlm=MLMDecoder,
     ),
     type_check=AbsDecoder,
-    default="transducer",
+    default="rnn",
 )
 
 
@@ -536,9 +536,9 @@ class ASRTask(AbsTask):
 
         # creating encoder as a class property
 
-        cls.adv_flag__ = args.adv_flag
-        cls.grlalpha__ = args.grlalpha
-        cls.encoder_ = encoder 
+        # cls.adv_flag__ = args.adv_flag
+        # cls.grlalpha__ = args.grlalpha
+        # cls.encoder_ = encoder 
 
         ################################################################################################################
         ################################################################################################################
