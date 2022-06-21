@@ -566,6 +566,64 @@ class Trainer:
                         
                         optim_idx = None
 
+
+
+                ###################################################################################
+                ###################################################################################
+                ###################################################################################
+
+
+                print("/*** train/trainer.py adv_flag {} adv_mode {}  loss {}    ".format(adv_flag, adv_mode, loss ))
+                try:
+                    print(" loss_adv is {}   \n".format( loss_adv ))
+                except:
+                    loss_adv = None
+                    print(" loss_adv is none   \n")
+                    
+                if (adv_flag == True and  adv_mode == 'spk'):
+                    if options.ngpu > 1:
+                        model.module.freeze_adversarial()
+                        model.module.unfreeze_encoder()
+                    else:
+                        model.freeze_adversarial()
+                        model.unfreeze_encoder()
+                
+                    
+
+                elif (adv_flag == True and adv_mode == 'asr'):
+
+                    if options.ngpu > 1:
+                        model.module.unfreeze_adversarial()
+                        model.module.freeze_encoder()
+                    else:
+                        model.unfreeze_adversarial()
+                        model.freeze_encoder()
+
+                    total_loss = loss_adv
+                    loss = total_loss
+                
+
+                elif(adv_flag == True and adv_mode == 'spkasr'):
+                    if options.ngpu > 1:
+                        model.module.unfreeze_adversarial()
+                        model.module.unfreeze_encoder()
+                    else:
+                        model.unfreeze_adversarial()
+                        model.unfreeze_encoder()
+                    
+                    total_loss = loss + loss_adv                    
+                    loss = total_loss
+                
+
+
+                ###################################################################################
+                ###################################################################################
+                ###################################################################################
+
+
+
+
+
                 stats = {k: v for k, v in stats.items() if v is not None}
                 if ngpu > 1 or distributed:
                     # Apply weighted averaging for loss and stats
@@ -626,40 +684,6 @@ class Trainer:
                     grad_norm = torch.tensor(grad_norm)
 
 
-
-                ###################################################################################
-                ###################################################################################
-                ###################################################################################
-
-                if (adv_flag == True and  adv_mode == 'spk'):
-                    if options.ngpu > 1:
-                        model.module.freeze_encoder()
-                    else:
-                        model.freeze_encoder()
-                    total_loss = loss_adv
-                    loss = total_loss
-                
-                elif (adv_flag == True and adv_mode == 'asr'):
-                    if options.ngpu > 1:
-                        model.module.freeze_encoder()
-                    else:
-                        model.freeze_encoder()
-                    total_loss = loss
-                    loss = total_loss
-                
-                elif(adv_flag == True and adv_mode == 'spkasr'):
-                    if (options.ngpu > 1):
-                        model.module.unfreeze_encoder()
-                    else:
-                        model.unfreeze_encoder()
-                    total_loss = loss + loss_adv
-                    loss = total_loss
-                
-
-
-                ###################################################################################
-                ###################################################################################
-                ###################################################################################
 
 
 
