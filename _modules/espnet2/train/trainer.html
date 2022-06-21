@@ -719,6 +719,64 @@
                         
                         <span class="n">optim_idx</span> <span class="o">=</span> <span class="kc">None</span>
 
+
+
+                <span class="c1">###################################################################################</span>
+                <span class="c1">###################################################################################</span>
+                <span class="c1">###################################################################################</span>
+
+
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;/*** train/trainer.py adv_flag </span><span class="si">{}</span><span class="s2"> adv_mode </span><span class="si">{}</span><span class="s2">  loss </span><span class="si">{}</span><span class="s2">    &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">adv_flag</span><span class="p">,</span> <span class="n">adv_mode</span><span class="p">,</span> <span class="n">loss</span> <span class="p">))</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; loss_adv is </span><span class="si">{}</span><span class="s2">   </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">loss_adv</span> <span class="p">))</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">loss_adv</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; loss_adv is none   </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    
+                <span class="k">if</span> <span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span>  <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;spk&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">freeze_adversarial</span><span class="p">()</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">unfreeze_encoder</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">freeze_adversarial</span><span class="p">()</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">unfreeze_encoder</span><span class="p">()</span>
+                
+                    
+
+                <span class="k">elif</span> <span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;asr&#39;</span><span class="p">):</span>
+
+                    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">unfreeze_adversarial</span><span class="p">()</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">freeze_encoder</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">unfreeze_adversarial</span><span class="p">()</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">freeze_encoder</span><span class="p">()</span>
+
+                    <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss_adv</span>
+                    <span class="n">loss</span> <span class="o">=</span> <span class="n">total_loss</span>
+                
+
+                <span class="k">elif</span><span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;spkasr&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">unfreeze_adversarial</span><span class="p">()</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">unfreeze_encoder</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">unfreeze_adversarial</span><span class="p">()</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">unfreeze_encoder</span><span class="p">()</span>
+                    
+                    <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">loss_adv</span>                    
+                    <span class="n">loss</span> <span class="o">=</span> <span class="n">total_loss</span>
+                
+
+
+                <span class="c1">###################################################################################</span>
+                <span class="c1">###################################################################################</span>
+                <span class="c1">###################################################################################</span>
+
+
+
+
+
                 <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
                 <span class="k">if</span> <span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">distributed</span><span class="p">:</span>
                     <span class="c1"># Apply weighted averaging for loss and stats</span>
@@ -779,40 +837,6 @@
                     <span class="n">grad_norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">grad_norm</span><span class="p">)</span>
 
 
-
-                <span class="c1">###################################################################################</span>
-                <span class="c1">###################################################################################</span>
-                <span class="c1">###################################################################################</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span>  <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;spk&#39;</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">freeze_encoder</span><span class="p">()</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">model</span><span class="o">.</span><span class="n">freeze_encoder</span><span class="p">()</span>
-                    <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss_adv</span>
-                    <span class="n">loss</span> <span class="o">=</span> <span class="n">total_loss</span>
-                
-                <span class="k">elif</span> <span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;asr&#39;</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">freeze_encoder</span><span class="p">()</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">model</span><span class="o">.</span><span class="n">freeze_encoder</span><span class="p">()</span>
-                    <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss</span>
-                    <span class="n">loss</span> <span class="o">=</span> <span class="n">total_loss</span>
-                
-                <span class="k">elif</span><span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;spkasr&#39;</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
-                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">unfreeze_encoder</span><span class="p">()</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">model</span><span class="o">.</span><span class="n">unfreeze_encoder</span><span class="p">()</span>
-                    <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">loss_adv</span>
-                    <span class="n">loss</span> <span class="o">=</span> <span class="n">total_loss</span>
-                
-
-
-                <span class="c1">###################################################################################</span>
-                <span class="c1">###################################################################################</span>
-                <span class="c1">###################################################################################</span>
 
 
 

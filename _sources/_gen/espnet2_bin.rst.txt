@@ -465,6 +465,21 @@ asr_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
+      --adv ADV             To perform speaker adversarial training or not (default: asr10)
+      --adv_layers ADV_LAYERS
+                            Number of decoder layers (default: 1)
+      --adv_units ADV_UNITS
+                            Number of decoder hidden units (default: 256)
+      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -795,23 +810,6 @@ asr_train.py
       --scheduler_conf SCHEDULER_CONF
                             The keyword arguments for lr scheduler (default: {})
     
-    Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
-    
       Task related
     
       --token_list TOKEN_LIST
@@ -1031,6 +1029,21 @@ diar_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
+      --adv ADV             To perform speaker adversarial training or not (default: asr10)
+      --adv_layers ADV_LAYERS
+                            Number of decoder layers (default: 1)
+      --adv_units ADV_UNITS
+                            Number of decoder hidden units (default: 256)
+      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -1344,23 +1357,6 @@ diar_train.py
       --scheduler_conf SCHEDULER_CONF
                             The keyword arguments for lr scheduler (default: {})
     
-    Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
-    
       Task related
     
       --num_spk NUM_SPK     The number fo speakers (for each recording) used in system training (default: None)
@@ -1629,6 +1625,21 @@ enh_s2t_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
+      --adv ADV             To perform speaker adversarial training or not (default: asr10)
+      --adv_layers ADV_LAYERS
+                            Number of decoder layers (default: 1)
+      --adv_units ADV_UNITS
+                            Number of decoder hidden units (default: 256)
+      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -1948,23 +1959,6 @@ enh_s2t_train.py
       --scheduler_conf SCHEDULER_CONF
                             The keyword arguments for lr scheduler (default: {})
     
-    Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
-    
       Task related
     
       --token_list TOKEN_LIST
@@ -2187,6 +2181,21 @@ enh_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
+      --adv ADV             To perform speaker adversarial training or not (default: asr10)
+      --adv_layers ADV_LAYERS
+                            Number of decoder layers (default: 1)
+      --adv_units ADV_UNITS
+                            Number of decoder hidden units (default: 256)
+      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -2500,23 +2509,6 @@ enh_train.py
       --scheduler_conf SCHEDULER_CONF
                             The keyword arguments for lr scheduler (default: {})
     
-    Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
-    
       Task related
     
       --init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}
@@ -2658,6 +2650,21 @@ gan_tts_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
+      --adv ADV             To perform speaker adversarial training or not (default: asr10)
+      --adv_layers ADV_LAYERS
+                            Number of decoder layers (default: 1)
+      --adv_units ADV_UNITS
+                            Number of decoder hidden units (default: 256)
+      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -2987,23 +2994,6 @@ gan_tts_train.py
       --scheduler2_conf SCHEDULER2_CONF
                             The keyword arguments for lr scheduler (default: {})
     
-    Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
-    
       Task related
     
       --token_list TOKEN_LIST
@@ -3164,6 +3154,21 @@ hubert_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
+      --adv ADV             To perform speaker adversarial training or not (default: asr10)
+      --adv_layers ADV_LAYERS
+                            Number of decoder layers (default: 1)
+      --adv_units ADV_UNITS
+                            Number of decoder hidden units (default: 256)
+      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -3502,23 +3507,6 @@ hubert_train.py
       --scheduler_conf SCHEDULER_CONF
                             The keyword arguments for lr scheduler (default: {})
     
-    Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
-    
       Task related
     
       --token_list TOKEN_LIST
@@ -3569,12 +3557,7 @@ launch.py
     
     usage: launch.py [-h] [--cmd CMD] [--log LOG]
                      [--max_num_log_files MAX_NUM_LOG_FILES] [--ngpu NGPU]
-                     [--project_name PROJECT_NAME] [--eprojs EPROJS]
-                     [--adv_flag ADV_FLAG] [--adv ADV] [--adv_layers ADV_LAYERS]
-                     [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
-                     [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
-                     [--adv_dropout_rate ADV_DROPOUT_RATE]
-                     [--adversarial_list ADVERSARIAL_LIST]
+                     [--project_name PROJECT_NAME] [--adv_flag ADV_FLAG]
                      [--num_nodes NUM_NODES | --host HOST] [--envfile ENVFILE]
                      [--multiprocessing_distributed MULTIPROCESSING_DISTRIBUTED]
                      [--master_port MASTER_PORT] [--master_addr MASTER_ADDR]
@@ -3596,37 +3579,8 @@ launch.py
       --ngpu NGPU           The number of GPUs per node (default: 1)
       --project_name PROJECT_NAME
                             Specify wandb project name (default: None)
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
       --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial
-                            training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not
-                            (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default:
-                            0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch
-                            (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk',
-                            'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk',
-                            'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk',
-                            'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr',
-                            'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr',
-                            'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr',
-                            'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr',
-                            'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr',
-                            'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr',
-                            'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr',
-                            'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr',
-                            'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr',
-                            'spkasr'])
+                            training or not (default: True)
       --num_nodes NUM_NODES
                             The number of nodes (default: 1)
       --host HOST           Directly specify the host names. The job are submitted
@@ -3792,6 +3746,21 @@ lm_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
+      --adv ADV             To perform speaker adversarial training or not (default: asr10)
+      --adv_layers ADV_LAYERS
+                            Number of decoder layers (default: 1)
+      --adv_units ADV_UNITS
+                            Number of decoder hidden units (default: 256)
+      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -4110,23 +4079,6 @@ lm_train.py
                             The lr scheduler type (default: None)
       --scheduler_conf SCHEDULER_CONF
                             The keyword arguments for lr scheduler (default: {})
-    
-    Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
     
       Task related
     
@@ -4343,6 +4295,21 @@ mt_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
+      --adv ADV             To perform speaker adversarial training or not (default: asr10)
+      --adv_layers ADV_LAYERS
+                            Number of decoder layers (default: 1)
+      --adv_units ADV_UNITS
+                            Number of decoder hidden units (default: 256)
+      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -4661,23 +4628,6 @@ mt_train.py
                             The lr scheduler type (default: None)
       --scheduler_conf SCHEDULER_CONF
                             The keyword arguments for lr scheduler (default: {})
-    
-    Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
     
       Task related
     
@@ -4975,6 +4925,21 @@ st_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
+      --adv ADV             To perform speaker adversarial training or not (default: asr10)
+      --adv_layers ADV_LAYERS
+                            Number of decoder layers (default: 1)
+      --adv_units ADV_UNITS
+                            Number of decoder hidden units (default: 256)
+      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -5304,23 +5269,6 @@ st_train.py
                             The lr scheduler type (default: None)
       --scheduler_conf SCHEDULER_CONF
                             The keyword arguments for lr scheduler (default: {})
-    
-    Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
     
       Task related
     
@@ -5652,6 +5600,21 @@ tts_train.py
     
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
+      --eprojs EPROJS       Number of encoder projection units (default: 256)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
+      --adv ADV             To perform speaker adversarial training or not (default: asr10)
+      --adv_layers ADV_LAYERS
+                            Number of decoder layers (default: 1)
+      --adv_units ADV_UNITS
+                            Number of decoder hidden units (default: 256)
+      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
+      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
+      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
+      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
+      --adv_dropout_rate ADV_DROPOUT_RATE
+                            adversarial Dropout rate (default: 0.0)
+      --adversarial_list ADVERSARIAL_LIST
+                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -5970,23 +5933,6 @@ tts_train.py
                             The lr scheduler type (default: None)
       --scheduler_conf SCHEDULER_CONF
                             The keyword arguments for lr scheduler (default: {})
-    
-    Adversarial part related related:
-      --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
-      --adv ADV             To perform speaker adversarial training or not (default: asr10)
-      --adv_layers ADV_LAYERS
-                            Number of decoder layers (default: 1)
-      --adv_units ADV_UNITS
-                            Number of decoder hidden units (default: 256)
-      --grlalpha GRLALPHA   Gradient reversal layer scale param (default: 0.5)
-      --adv_lr ADV_LR       Learning rate for adv branch (default: 1.0)
-      --asr_lr ASR_LR       Learning rate for ASR encoder and decoder (default: 0.05)
-      --reinit_adv          To reinitialize the speaker adversarial branch (default: False)
-      --adv_dropout_rate ADV_DROPOUT_RATE
-                            adversarial Dropout rate (default: 0.0)
-      --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
     
       Task related
     

@@ -404,6 +404,23 @@
             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The keyword arguments for joint network class.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
+
+
+
+        <span class="c1"># group = parser.add_argument_group(&quot;Adversarial part related related&quot;)</span>
+        <span class="c1"># group.add_argument(&#39;--eprojs&#39;, default=256, type=int, help=&#39;Number of encoder projection units&#39;)</span>
+        <span class="c1"># group.add_argument(&#39;--adv_flag&#39;, default=False, type=bool, help=&#39;flag for whether to perform speaker adversarial training or not&#39;)</span>
+        <span class="c1"># group.add_argument(&#39;--adv&#39;, default=&#39;asr10&#39;, type=str, help=&#39;To perform speaker adversarial training or not&#39;)</span>
+        <span class="c1"># group.add_argument(&#39;--adv_layers&#39;, default=1, type=int,help=&#39;Number of decoder layers&#39;)</span>
+        <span class="c1"># group.add_argument(&#39;--adv_units&#39;, default=256, type=int, help=&#39;Number of decoder hidden units&#39;)</span>
+        <span class="c1"># group.add_argument(&#39;--grlalpha&#39;, default=0.5, type=float,help=&#39;Gradient reversal layer scale param&#39;)</span>
+        <span class="c1"># group.add_argument(&#39;--adv_lr&#39;, default=1.0, type=float,help=&#39;Learning rate for adv branch&#39;)</span>
+        <span class="c1"># group.add_argument(&#39;--asr_lr&#39;, default=0.05, type=float,help=&#39;Learning rate for ASR encoder and decoder&#39;)</span>
+        <span class="c1"># group.add_argument(&#39;--reinit_adv&#39;, default=False, action=&#39;store_true&#39;,help=&#39;To reinitialize the speaker adversarial branch&#39;)</span>
+        <span class="c1"># group.add_argument(&#39;--adv_dropout_rate&#39;, default=0.0, type=float,help=&#39;adversarial Dropout rate&#39;)</span>
+        <span class="c1"># group.add_argument(&#39;--adversarial_list&#39;, default=[&quot;spk&quot;] * 20 + [&quot;asr&quot;] * 20 + [&quot;spkasr&quot; ] * 30 , type=list,help=&#39;adversarial mode list&#39;)</span>
+
+
         <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Preprocess related&quot;</span><span class="p">)</span>
         <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--use_preprocessor&quot;</span><span class="p">,</span>

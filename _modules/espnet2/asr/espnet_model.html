@@ -260,6 +260,7 @@
 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder_frozen_flag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_frozen_flag</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="c1"># adv_mode = adversarial_list[current_epoch]</span>
 
         <span class="c1"># if(self.adv_mode == &#39;spk&#39;):</span>
@@ -346,6 +347,20 @@
     <span class="c1"># For training the adverarial branch, encoder must be frozen</span>
     <span class="c1"># self.enc_frozen = False</span>
 
+
+
+<div class="viewcode-block" id="ESPnetASRModel.freeze_adversarial"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.espnet_model.ESPnetASRModel.freeze_adversarial">[docs]</a>    <span class="k">def</span> <span class="nf">freeze_adversarial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_frozen_flag</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_frozen_flag</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+   
+<div class="viewcode-block" id="ESPnetASRModel.unfreeze_adversarial"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.espnet_model.ESPnetASRModel.unfreeze_adversarial">[docs]</a>    <span class="k">def</span> <span class="nf">unfreeze_adversarial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_frozen_flag</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+                <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_frozen_flag</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 
     
@@ -542,7 +557,7 @@
                 <span class="c1"># print(&quot;\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n&quot;.format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))</span>
                 <span class="n">loss_adv</span><span class="p">,</span> <span class="n">acc_adv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span><span class="p">(</span><span class="n">rev_hs_pad</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="p">,</span> <span class="n">text_lengths</span><span class="p">)</span>
 
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;espnet_model.py adversarial_loss </span><span class="si">{}</span><span class="s2"> and accuracy </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loss_adv</span><span class="p">,</span> <span class="n">acc_adv</span><span class="p">))</span>
+                <span class="c1"># print(&quot;espnet_model.py adversarial_loss {} and accuracy {} \n&quot;.format(loss_adv, acc_adv))</span>
                 <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss_adversarial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_adv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
                 <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;loss_adv&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">loss_adv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
 
@@ -561,7 +576,7 @@
         <span class="c1"># Collect total loss stats</span>
         <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; asr/ESPNET_model.py :  loss : </span><span class="si">{}</span><span class="s2">   acc_att : </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">],</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;acc&quot;</span><span class="p">]</span> <span class="p">))</span>
+        <span class="c1"># print(&quot; asr/ESPNET_model.py :  loss : {}   acc_att : {} \n&quot;.format(stats[&quot;loss&quot;], stats[&quot;acc&quot;] ))</span>
 
         <span class="c1"># force_gatherable: to-device and to-tensor if scalar for DataParallel</span>
         <span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">force_gatherable</span><span class="p">((</span><span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">),</span> <span class="n">loss</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
