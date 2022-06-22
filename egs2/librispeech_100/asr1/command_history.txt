@@ -1,0 +1,512 @@
+    8  oarstat
+    9  clear
+   10  source ~/.bashrc'
+   11  source ~/.bashrc
+   12  wf
+   13  conda activate pytorch
+   14  ls
+   15  du -sh data/
+   16  du -sh ./
+   17  ls du -hs *
+   18  ls du -hs ./*
+   19  du -sh
+   20  du -sh ./
+   21  du -sh ./*
+   22  cd dump/
+   23  ls
+   24  cd raw/
+   25  ls
+   26  vim ~/.bashrc
+   27  cd ../
+   28  cd ../
+   29  clear
+   30  oarstat
+   31  clear
+   32  clear
+   33  storagef 
+   34  wf
+   35  grep -r "./dump/"
+   36  clear
+   37  ks
+   38  ls
+   39  grep -r "./dump/"
+   40  clear
+   41  grep -rni "./dump"
+   42  grep -rni "dump" *
+   43  grep -rni "dump/" *
+   44  grep -rni "dump/" * >> grep_out.out
+   45  storagef 
+   46  cd ~
+   47  ls
+   48  pwd
+   49  storagef 
+   50  mv /home/rgupta/dev/espnet_currently_working/espnet/egs2/librispeech_100/asr1/dump ./librispeech/dump/
+   51  mkdir librispeech/dump/
+   52  mkdir librispeech
+   53  cd librispeech/
+   54  mkdir dump
+   55  cd ..
+   56  cd ..
+   57  cd rgupta/
+   58  rsync -avzhp /home/rgupta/dev/espnet_currently_working/espnet/egs2/librispeech_100/asr1/dump ./librispeech/dump/
+   59  ls
+   60  du -lsh
+   61  du -lsh *
+   62  cd librispeech/
+   63  ls
+   64  cd dump/
+   65  ls
+   66  cd dump/
+   67  ls
+   68  mv raw/ ../
+   69  ls
+   70  cd ..
+   71  ls
+   72  du -sh *
+   73  rm -rf dump/
+   74  ls
+   75  cd ..
+   76  ls
+   77  wf
+   78  grep -rni "dump/" * >> grep_out.out
+   79  clear
+   80  ls
+   81  du -sh *
+   82  rm -rf dump/
+   83  ls
+   84  grep -rni "dump/" * >> grep_out.out
+   85  grep -rni "Stage" * > grep_out.out
+   86  storagef 
+   87  pwd
+   88  ls
+   89  clear
+   90  ls
+   91  wf
+   92  ls
+   93  vim ~/.tmux.conf 
+   94  clear
+   95  clear
+   96  ls
+   97  storagef 
+   98  ls
+   99  pwd
+  100  history
+  101  clear
+  102  clear
+  103  ls
+  104  pwd
+  105  pwd >> /home/rgupta/hisotry.txt
+  106  clear
+  107  wf
+  108  cd ..
+  109  cd ..
+  110  cd ..
+  111  du -sh *
+  112  cd egs2/
+  113  ls
+  114  cd librispeech_100/
+  115  ls
+  116  du -sh *
+  117  cd asr1/
+  118  ls
+  119  ls
+  120  du -sh *
+  121  cd data/
+  122  ls
+  123  cd ..
+  124  cd ..
+  125  cd ..
+  126  cd librispeech_100/asr1/
+  127  ls
+  128  clear
+  129  clear
+  130  ls
+  131  bash run.sh 
+  132  sudo-g5k apt install flac sox
+  133  clear apt install flac sox
+  134  clear
+  135  oarstat
+  136  oarstat -u
+  137  vim ~/.bashrc
+  138  vim ~/.bashrc
+  139  launchgpu 4
+  140  oarstat -u
+  141  vim ~/.bashrc
+  142  launchgpu 4
+  143  ls
+  144  vim ~/.bashrc
+  145  clear
+  146  clear
+  147  clear
+  148  clear
+  149  clear
+  150  ls
+  151  clear
+  152  clear
+  153  ls
+  154  ls
+  155  bash exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh 
+  156  clear
+  157  bash run.sh 
+  158  oarsub -l walltime=4:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet --json -v 
+  159  oarsub -C 1885638
+  160  exit
+  161  tmux attach -t 0
+  162  tmux attach -t 0
+  163  tmux attach -t 0
+  164  tmux attach -t 0
+  165  tmux attach -t 0
+  166  tmux attach -t 0
+  167  tmux attach -t 0
+  168  ls
+  169  source ~/.bashrc
+  170  storagef 
+  171  pwd
+  172  clear
+  173  clear
+  174  tmux attach -t 0
+  175  tmux attach -t 0
+  176  tmux attach -t 0
+  177  wf
+  178  ls
+  179  tmux attach -t 0
+  180  clear
+  181  tmux attach -t 0
+  182  tmux attach -t 0
+  183  tmux attach -t 0
+  184  clear
+  185  exit
+  186  tmux source-file ~/.tmux.conf
+  187  tmux attach -t 0
+  188  git clone https://github.com/tmux-plugins/tmux-logging ~/.tmux/tmux-logging
+  189  run-shell ~/.tmux/tmux-logging/logging.tmux
+  190  vim ~/.tmux.conf 
+  191  tmux source-file ~/.tmux.conf
+  192  tmux attach -t 0
+  193  export HISTSIZE=7000
+  194  tmux attach -t 0
+  195  tmux source-file ~/.tmux.conf
+  196  tmux attach -t 0
+  197  ls
+  198  vim ~/.tmux.conf 
+  199  vim ~/.tmux.conf 
+  200  vim ~/.tmux.conf 
+  201  clear
+  202  vim ~/.tmux.conf 
+  203  clear
+  204  source ~/.bashrc
+  205  clear
+  206  clear
+  207  ls
+  208  clear
+  209  clear
+  210  oarstat -u
+  211  clear
+  212  oarstat 
+  213  oarstat -u
+  214  clear
+  215  clear
+  216  clear
+  217  clear
+  218  clear
+  219  clear
+  220  source ~/.bashrc
+  221  clear
+  222  exit
+  223  tmux attach -t 0
+  224  storagef
+  225  pwd
+  226  tmux attach -t 0
+  227  tmux attach -t 0
+  228  exit
+  229  tmux attach -t 0
+  230  tmux attach -t 0
+  231  tmux attach -t 0
+  232  tmux attach -t 0
+  233  tmux attach -t 0
+  234  /bin/python3 /home/rgupta/anaconda3/envs/pytorch/lib/python3.9/site-packages/espnet2/tasks/abs_task.py
+  235  tmux attach -t 0
+  236  vim ~/.tmux.conf 
+  237  tmux source-file ~/.tmux.conf 
+  238  clear
+  239  tmux attach -t 0
+  240  tmux source-file ~/.tmux.conf 
+  241  tmux attach -t 0
+  242  clear
+  243  tmux attach -t 0
+  244  tmux --help
+  245  tmux
+  246  tmux attach -t 0
+  247  tmux attach -t 0
+  248  tmux attach -t 0
+  249  tmux new -s talc
+  250  tmux attach -t 0
+  251  tmux attach -t 0
+  252  tmux attach -t 0
+  253  tmux attach -t 0
+  254  tmux attach -t 0
+  255  tmux attach -t 0
+  256  0;43;1M0;43;1m
+  257  clear
+  258  tmux attach -t 0
+  259  tmux attach -t 0
+  260  tmux attach -t 0
+  261  tmux attach -t 0
+  262  tmux attach -t 0
+  263  tmux attach -t 0
+  264  tmux attach -t 0
+  265  clear
+  266  source ~/.bashrc
+  267  clear
+  268  clear
+  269  wf
+  270  conda activate pytorch
+  271  clear
+  272  oarsub -l walltime=8:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet --json -v 
+  273  oarsub -C 1886356
+  274  oarsub -C 1886356
+  275  clear
+  276  oarstat
+  277  oarsub -C 1886435
+  278  clear
+  279  clear
+  280  oarsub -C 1886530
+  281  clear
+  282  oarstat
+  283  oarsub -C 1887067
+  284  source ~/.bashrc
+  285  wf
+  286  conda activate pyt
+  287  oarsub -l walltime=14:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet --json -v 
+  288  oarsub -C 1887113
+  289  history >> first_running_30_may_history.txt
+  290  vim first_running_30_may_history.txt 
+  291  ls
+  292  ls
+  293  source ~/.bashrc
+  294  clear
+  295  wf
+  296  oarsub -C 1886356
+  297  oarsub -C 1886356
+  298  clear
+  299  clear
+  300  oarsub -l walltime=8:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet --json -v 
+  301  oarsub -C 1886435
+  302  clear
+  303  source ~/.bashrc
+  304  oarsub -l walltime=8:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet --json -v 
+  305  oarsub -C 1886530
+  306  clear
+  307  clear
+  308  clear
+  309  clear
+  310  oarsub -l walltime=8:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet --json -v 
+  311  oarsub -C 1887067
+  312  clear
+  313  nvidia-smi 
+  314  oarstat -u
+  315  oarsub -C 1887113
+  316  clear
+  317  tmux attach -t 0
+  318  clear
+  319  tmux new -s esp
+  320  tmux attach -t esp
+  321  tmux attach -t esp
+  322  tmux attach -t esp
+  323  tmux attach -t esp
+  324  tmux attach -t esp
+  325  tmux attach -t esp
+  326  usagepolicycheck -t
+  327  clear
+  328  du -sh *
+  329  ls
+  330  cd dev/
+  331  du -sh | sort -sh
+  332  du -sh * | sort -sh
+  333  rsync -vrzh --progress espnet_currently_working/*  /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/archived_codebase/ 
+  334  tmux attach -t esp
+  335  source ~/.bashrc
+  336  storagef
+  337  clear
+  338  tmux attach -t esp
+  339  tmux attach -t esp
+  340  tmux attach -t esp
+  341  clear
+  342  tmux attach -t esp
+  343  tmux attach -t esp
+  344  tmux attach -t esp
+  345  tmux attach -t esp
+  346  tmux attach -t esp
+  347  tmux attach -t esp
+  348  tmux attach -t esp
+  349  tmux attach -t esp
+  350  tmux attach -t esp
+  351  tmux new -s espnet
+  352  tmux attach -t esp
+  353  tmux attach -t esp
+  354  tmux attach -t espnet
+  355  tmux source-file ~/.tmux.conf
+  356  tmux attach -t esp
+  357  tmux new -s ess
+  358  source ~/.bashrc
+  359  conda activate pyt
+  360  wf
+  361  clear
+  362  clear
+  363  ls
+  364  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_2/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  365  oarsub -l walltime=10:00:00 'sleep infinity' -p "cluster='chifflot'" --project magnet --json -v 
+  366  oarsub -C 1888193
+  367  source ~/.bashrc
+  368  clear
+  369  conda activate pyt
+  370  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_2/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  371  clear
+  372  clear
+  373  clear
+  374  source ~/.tmux.conf 
+  375  clear
+  376  clear
+  377  vim ~/.tmux.conf 
+  378  vim ~/.tmux.conf 
+  379  clear
+  380  source ~/.bashrc
+  381  conda activate pyt
+  382  oarsub -C 1888193
+  383  source ~/.bashrc
+  384  conda activate pyt
+  385  clear
+  386  bash run.sh 
+  387  sudo-g5k apt install flac sox
+  388  bash run.sh 
+  389  clear
+  390  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_june_7/exp/asr_stats_raw_en_bpe5000_sp/run.sh
+  391  clear
+  392  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_june_7/exp/asr_stats_raw_en_bpe5000_sp/run.sh
+  393  clear
+  394  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_june_7/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh 
+  395  clear
+  396  clear
+  397  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_june_7/exp/asr_stats_raw_en_bpe5000_sp/run.sh
+  398  clear
+  399  clear
+  400  clear
+  401  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_june_7/exp/asr_stats_raw_en_bpe5000_sp/run.sh
+  402  clear
+  403  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_june_7/exp/asr_stats_raw_en_bpe5000_sp/run.sh
+  404  clear
+  405  vim ~/.tmux.conf 
+  406  clear
+  407  clear
+  408  clear
+  409  clear
+  410  clear
+  411  clear
+  412  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_june_7/exp/asr_stats_raw_en_bpe5000_sp/run.sh
+  413  bash run.sh 
+  414  clear
+  415  clear
+  416  bash run.sh 
+  417  clear
+  418  clear
+  419  bash run.sh 
+  420  clear
+  421  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_june_7/adv_units_256/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  422  clear
+  423  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_adversarial_june_7/adv_units_256/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh 
+  424  clear
+  425  clear
+  426  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_2/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  427  clear
+  428  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_2/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  429  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_2/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  430  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_2/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  431  clear
+  432  bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/pyt_2/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  433  clear
+  434  source ~/.tmux.conf 
+  435  tmux attach -t esp
+  436  source ~/.bashrc
+  437  tmux kill-server
+  438  clear
+  439  clear
+  440  tmux attach -t esp
+  441  tmux attach -t ess
+  442  tmux new -s espnet
+  443  tmux attach -t ess
+  444  tmux attach -t espnet
+  445  tmux source-file ~/.tmux.conf
+  446  tmux new -s espnet
+  447  tmux new -s espnet2
+  448  tmux attach -t espnet
+  449  tmux attach -t espnet
+  450  tmux attach -t espnet2
+  451  tmux attach -t espnet
+  452  tmux attach -t espnet
+  453  tmux attach -t espnet2
+  454  clear
+  455  tmux attach -t espnet
+  456  tmux attach -t espnet2
+  457  tmux attach -t espnet
+  458  tmux attach -t espnet
+  459  tmux attach -t espnet2
+  460  tmux attach -t espnet
+  461  tmux attach -t espnet
+  462  tmux attach -t espnet2
+  463  tmux attach -t espnet2
+  464  tmux attach -t espnet
+  465  tmux attach -t espnet2
+  466  tmux attach -t espnet
+  467  tmux attach -t espnet
+  468  tmux attach -t espnet2
+  469  tmux attach -t espnet2
+  470  tmux attach -t espnet
+  471  tmux attach -t espnet
+  472  tmux attach -t espnet
+  473  tmux attach -t espnet2
+  474  tmux attach -t espnet
+  475  tmux attach -t espnet
+  476  tmux attach -t espnet
+  477  tmux attach -t espnet2
+  478  tmux attach -t espnet2
+  479  tmux attach -t espnet2
+  480  tmux attach -t espnet
+  481  tmux attach -t espnet
+  482  tmux attach -t espnet2
+  483  clear
+  484  tmux attach -t espnet2
+  485  tmux attach -t espnet
+  486  tmux attach -t espnet
+  487  tmux attach -t espnet
+  488  tmux attach -t espnet2
+  489  tmux attach -t espnet2
+  490  tmux attach -t espnet
+  491  tmux attach -t espnet2
+  492  tmux attach -t espnet
+  493  tmux attach -t espnet2
+  494  tmux attach -t espnet
+  495  tmux attach -t espnet
+  496  tmux attach -t espnet2
+  497  tmux attach -t espnet
+  498  tmux attach -t espnet
+  499  tmux attach -t espnet2
+  500  tmux new -s esp
+  501  oarsub -u
+  502  oartat -u
+  503  oarstat -u
+  504  oarsub -C 1889635
+  505  oarstat -u
+  506  oarsub -C 1889739
+  507  source ~/.bashrc
+  508  conda env export --from-history>pyt.yml
+  509  ls
+  510  vim pyt.yml 
+  511  conda activate pyt
+  512  conda env export --from-history>pyt.yml
+  513  vim pyt.yml 
+  514  conda env export pyt>pyt_iinstall.yml
+  515  conda env export > pyt_iinstall.yml
+  516  vim pyt_iinstall.yml 
+  517  wf
+  518  conda env export > pyt_iinstall.yml
+  519  history >> command_history.txt

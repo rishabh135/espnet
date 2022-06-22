@@ -47,9 +47,11 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-project_name="june_20_with_adversarial_trigram_rnn"
 
-experiment_name="standard_settings_trigram_rnn_decoder" # name of the experiment, just change it to create differnet folders
+
+project_name="june22_only_decoding_using_pretrained_network"
+
+experiment_name="standard_settig_without_adversarial_flag" # name of the experiment, just change it to create differnet folders
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
