@@ -7,7 +7,8 @@ from typing import Iterable, List, Optional, Union
 import g2p_en
 import jamo
 from typeguard import check_argument_types
-
+import nltk
+nltk.download( 'averaged_perceptron_tagger' , download_dir= "/home/rgupta/nltk_data/" )
 from espnet2.text.abs_tokenizer import AbsTokenizer
 
 g2p_choices = [

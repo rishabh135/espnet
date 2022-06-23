@@ -1324,13 +1324,12 @@ class AbsTask(ABC):
                     if args.project_name is None:
                         today = date.today()
                         d2 = today.strftime("_date_%B_%d_")
-                        project = "june_20__date_June_20__june_20_with_adversarial_trigram_rnnASRTask"
+                        project = "june22_only_decoding_using_pretrained_network_" + cls.__name__
                         # project = "june_20_{}_".format(d2)  + cls.__name__
                     else:
                         today = date.today()
                         d2 = today.strftime("_date_%B_%d_") 
-                        project = "june_20__date_June_20__june_20_with_adversarial_trigram_rnnASRTask"
-    
+                        project = "june22_only_decoding_using_pretrained_network_" + cls.__name__
                         # project = "june_20_{}_".format(d2) + args.project_name  + cls.__name__
 
                     if args.wandb_name is None:
