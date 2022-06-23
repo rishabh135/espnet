@@ -489,7 +489,7 @@ class Trainer:
         use_wandb = options.use_wandb
         distributed = distributed_option.distributed
 
-        adv_mode = options.adversarial_list[current_epoch]
+        adv_mode = options.adversarial_list[current_epoch-1]
         adv_flag = options.adv_flag
 
         if log_interval is None:
