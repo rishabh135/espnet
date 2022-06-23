@@ -642,7 +642,7 @@
         <span class="n">use_wandb</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">use_wandb</span>
         <span class="n">distributed</span> <span class="o">=</span> <span class="n">distributed_option</span><span class="o">.</span><span class="n">distributed</span>
 
-        <span class="n">adv_mode</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">adversarial_list</span><span class="p">[</span><span class="n">current_epoch</span><span class="p">]</span>
+        <span class="n">adv_mode</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">adversarial_list</span><span class="p">[</span><span class="n">current_epoch</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">adv_flag</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">adv_flag</span>
 
         <span class="k">if</span> <span class="n">log_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
