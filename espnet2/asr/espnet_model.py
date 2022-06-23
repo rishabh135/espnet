@@ -52,8 +52,6 @@ class ESPnetASRModel(AbsESPnetModel):
 
     def __init__(
         self,
-        adv_flag,
-        grlalpha,
         # adversarial_list: list,
         vocab_size: int,
         token_list: Union[Tuple[str, ...], List[str]],        
@@ -61,8 +59,7 @@ class ESPnetASRModel(AbsESPnetModel):
         specaug: Optional[AbsSpecAug],
         normalize: Optional[AbsNormalize],
         preencoder: Optional[AbsPreEncoder],
-        encoder: AbsEncoder,
-        adversarial_branch: Optional[SpeakerAdv],
+        encoder: AbsEncoder,    
         postencoder: Optional[AbsPostEncoder],
         decoder: AbsDecoder,
         ctc: CTC,
@@ -101,9 +98,9 @@ class ESPnetASRModel(AbsESPnetModel):
         self.encoder = encoder
         
         
-        self.adversarial_branch = adversarial_branch
-        self.adv_flag = adv_flag
-        self.grlalpha = grlalpha
+        # self.adversarial_branch = adversarial_branch
+        # self.adv_flag = adv_flag
+        # self.grlalpha = grlalpha
 
 
         self.encoder_frozen_flag = False
@@ -398,15 +395,15 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
             retval = {} 
-            if (self.adv_flag):
-                # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
-                rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-                # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-                loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
+            # if (self.adv_flag):
+            #     # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+            #     rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+            #     # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+            #     loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
 
-                # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
-                stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-                retval["loss_adv"]= loss_adv if loss_adv is not None else None
+            #     # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
+            #     stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
+            #     retval["loss_adv"]= loss_adv if loss_adv is not None else None
 
 
 

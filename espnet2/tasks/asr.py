@@ -561,13 +561,12 @@ class ASRTask(AbsTask):
         ################################################################################################################
 
         
-        print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
+        # print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
         
-        if(args.adv_flag):
-            # cls.adv_flag = args.adv_flag
-            adversarial_branch = SpeakerAdv(vocab_size, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
-        else:
-            adversarial_branch = None
+        # if(args.adv_flag):
+        #     adversarial_branch = SpeakerAdv(vocab_size, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
+        # else:
+        #     adversarial_branch = None
 
 
         # logging.info("\n******* Inside ASR.py *********\n")
@@ -581,16 +580,12 @@ class ASRTask(AbsTask):
         
         # here is where the main model class is both defined so we will need to add items to it to access model items
         model = model_class(
-            adv_flag=args.adv_flag,
-            grlalpha=args.grlalpha,
-            # adversarial_list=args.adversarial_list,
             vocab_size=vocab_size,
             frontend=frontend,
             specaug=specaug,
             normalize=normalize,
             preencoder=preencoder,
             encoder=encoder,
-            adversarial_branch=adversarial_branch,
             postencoder=postencoder,
             decoder=decoder,
             ctc=ctc,

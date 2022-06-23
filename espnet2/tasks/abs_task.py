@@ -847,18 +847,18 @@ class AbsTask(ABC):
             )
 
 
-        group = parser.add_argument_group("Adversarial part related ")
-        parser.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
-        parser.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
-        parser.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
-        parser.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
-        parser.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
-        parser.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
-        parser.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
-        parser.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
-        parser.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
-        parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        parser.add_argument('--adversarial_list', default=[ "spk"] * 20  + ["asr" ] * 20 + ["spkasr" ] * 30 , type=list,help='adversarial mode list')
+        # group = parser.add_argument_group("Adversarial part related ")
+        # parser.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
+        # parser.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
+        # parser.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
+        # parser.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
+        # parser.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
+        # parser.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
+        # parser.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
+        # parser.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
+        # parser.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
+        # parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
+        # parser.add_argument('--adversarial_list', default=[ "spk"] * 20  + ["asr" ] * 20 + ["spkasr" ] * 30 , type=list,help='adversarial mode list')
 
 
 

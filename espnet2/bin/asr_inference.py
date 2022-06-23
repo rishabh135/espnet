@@ -81,6 +81,10 @@ class Speech2Text:
 
         task = ASRTask if not enh_s2t_task else EnhS2TTask
 
+        print("\n ************** \n")
+        print(" Inisde bin/asr_inference.py : {}     \n\n {} \n\n {} \n\n ".format(asr_train_config, asr_model_file, {lm_train_config}))
+        
+        print("\n ************** \n")
         if quantize_asr_model or quantize_lm:
             if quantize_dtype == "float16" and torch.__version__ < LooseVersion(
                 "1.5.0"
