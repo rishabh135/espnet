@@ -1230,118 +1230,119 @@ fi
 
 
 if ! "${skip_eval}"; then
-    if [ ${stage} -le 12 ] && [ ${stop_stage} -ge 12 ]; then
-        log "Stage 12: Decoding: training_dir=${asr_exp}"
 
-        if ${gpu_inference}; then
-            _cmd="${cuda_cmd}"
-            _ngpu=1
-        else
-            _cmd="${decode_cmd}"
-            _ngpu=0
-        fi
+    # if [ ${stage} -le 12 ] && [ ${stop_stage} -ge 12 ]; then
+    #     log "Stage 12: Decoding: training_dir=${asr_exp}"
 
-        _opts=
-        if [ -n "${inference_config}" ]; then
-            _opts+="--config ${inference_config} "
-        fi
-        if "${use_lm}"; then
-            if "${use_word_lm}"; then
-                _opts+="--word_lm_train_config ${lm_exp}/config.yaml "
-                _opts+="--word_lm_file ${lm_exp}/${inference_lm} "
-            else
-                _opts+="--lm_train_config ${lm_exp}/config.yaml "
-                _opts+="--lm_file ${lm_exp}/${inference_lm} "
-            fi
-        fi
-        if "${use_ngram}"; then
-             _opts+="--ngram_file ${ngram_exp}/${inference_ngram}"
-        fi
+    #     if ${gpu_inference}; then
+    #         _cmd="${cuda_cmd}"
+    #         _ngpu=1
+    #     else
+    #         _cmd="${decode_cmd}"
+    #         _ngpu=0
+    #     fi
 
-        # 2. Generate run.sh
-        log "Generate '${asr_exp}/${inference_tag}/run.sh'. You can resume the process from stage 12 using this script"
-        mkdir -p "${asr_exp}/${inference_tag}"; echo "${run_args} --stage 12 \"\$@\"; exit \$?" > "${asr_exp}/${inference_tag}/run.sh"; chmod +x "${asr_exp}/${inference_tag}/run.sh"
-        if "${use_k2}"; then
-          # Now only _nj=1 is verified if using k2
-          asr_inference_tool="espnet2.bin.asr_inference_k2"
+    #     _opts=
+    #     if [ -n "${inference_config}" ]; then
+    #         _opts+="--config ${inference_config} "
+    #     fi
+    #     if "${use_lm}"; then
+    #         if "${use_word_lm}"; then
+    #             _opts+="--word_lm_train_config ${lm_exp}/config.yaml "
+    #             _opts+="--word_lm_file ${lm_exp}/${inference_lm} "
+    #         else
+    #             _opts+="--lm_train_config ${lm_exp}/config.yaml "
+    #             _opts+="--lm_file ${lm_exp}/${inference_lm} "
+    #         fi
+    #     fi
+    #     if "${use_ngram}"; then
+    #          _opts+="--ngram_file ${ngram_exp}/${inference_ngram}"
+    #     fi
 
-          _opts+="--is_ctc_decoding ${k2_ctc_decoding} "
-          _opts+="--use_nbest_rescoring ${use_nbest_rescoring} "
-          _opts+="--num_paths ${num_paths} "
-          _opts+="--nll_batch_size ${nll_batch_size} "
-          _opts+="--k2_config ${k2_config} "
-        else
-          if "${use_streaming}"; then
-              asr_inference_tool="espnet2.bin.asr_inference_streaming"
-          elif "${use_maskctc}"; then
-              asr_inference_tool="espnet2.bin.asr_inference_maskctc"
-          else
-              asr_inference_tool="espnet2.bin.asr_inference"
-          fi
-        fi
+    #     # 2. Generate run.sh
+    #     log "Generate '${asr_exp}/${inference_tag}/run.sh'. You can resume the process from stage 12 using this script"
+    #     mkdir -p "${asr_exp}/${inference_tag}"; echo "${run_args} --stage 12 \"\$@\"; exit \$?" > "${asr_exp}/${inference_tag}/run.sh"; chmod +x "${asr_exp}/${inference_tag}/run.sh"
+    #     if "${use_k2}"; then
+    #       # Now only _nj=1 is verified if using k2
+    #       asr_inference_tool="espnet2.bin.asr_inference_k2"
 
-        for dset in ${test_sets}; do
-            _data="${data_feats}/${dset}"
-            _dir="${asr_exp}/${inference_tag}/${dset}"
-            _logdir="${_dir}/logdir"
-            mkdir -p "${_logdir}"
+    #       _opts+="--is_ctc_decoding ${k2_ctc_decoding} "
+    #       _opts+="--use_nbest_rescoring ${use_nbest_rescoring} "
+    #       _opts+="--num_paths ${num_paths} "
+    #       _opts+="--nll_batch_size ${nll_batch_size} "
+    #       _opts+="--k2_config ${k2_config} "
+    #     else
+    #       if "${use_streaming}"; then
+    #           asr_inference_tool="espnet2.bin.asr_inference_streaming"
+    #       elif "${use_maskctc}"; then
+    #           asr_inference_tool="espnet2.bin.asr_inference_maskctc"
+    #       else
+    #           asr_inference_tool="espnet2.bin.asr_inference"
+    #       fi
+    #     fi
 
-            _feats_type="$(<${_data}/feats_type)"
-            if [ "${_feats_type}" = raw ]; then
-                _scp=wav.scp
-                if [[ "${audio_format}" == *ark* ]]; then
-                    _type=kaldi_ark
-                else
-                    _type=sound
-                fi
-            else
-                _scp=feats.scp
-                _type=kaldi_ark
-            fi
+    #     for dset in ${test_sets}; do
+    #         _data="${data_feats}/${dset}"
+    #         _dir="${asr_exp}/${inference_tag}/${dset}"
+    #         _logdir="${_dir}/logdir"
+    #         mkdir -p "${_logdir}"
 
-            # 1. Split the key file
-            key_file=${_data}/${_scp}
-            split_scps=""
-            if "${use_k2}"; then
-              # Now only _nj=1 is verified if using k2
-              _nj=1
-            else
-              _nj=$(min "${inference_nj}" "$(<${key_file} wc -l)")
-            fi
+    #         _feats_type="$(<${_data}/feats_type)"
+    #         if [ "${_feats_type}" = raw ]; then
+    #             _scp=wav.scp
+    #             if [[ "${audio_format}" == *ark* ]]; then
+    #                 _type=kaldi_ark
+    #             else
+    #                 _type=sound
+    #             fi
+    #         else
+    #             _scp=feats.scp
+    #             _type=kaldi_ark
+    #         fi
 
-            for n in $(seq "${_nj}"); do
-                split_scps+=" ${_logdir}/keys.${n}.scp"
-            done
-            # shellcheck disable=SC2086
-            ${global_dir}/utils/split_scp.pl "${key_file}" ${split_scps}
+    #         # 1. Split the key file
+    #         key_file=${_data}/${_scp}
+    #         split_scps=""
+    #         if "${use_k2}"; then
+    #           # Now only _nj=1 is verified if using k2
+    #           _nj=1
+    #         else
+    #           _nj=$(min "${inference_nj}" "$(<${key_file} wc -l)")
+    #         fi
 
-            # 2. Submit decoding jobs
-            log "Decoding started... log: '${_logdir}/asr_inference.*.log'"
-            log "\n *********************** changing directories Stage 12 **************************\n"
-            cd "${global_dir}"
-            cd "../../../"
-            # shellcheck disable=SC2046,SC2086
-            ${_cmd} --gpu "${_ngpu}" JOB=1:"${_nj}" "${_logdir}"/asr_inference.JOB.log \
-                ${python} -m ${asr_inference_tool} \
-                    --batch_size ${batch_size} \
-                    --ngpu "${_ngpu}" \
-                    --data_path_and_name_and_type "${_data}/${_scp},speech,${_type}" \
-                    --key_file "${_logdir}"/keys.JOB.scp \
-                    --asr_train_config "${asr_exp}"/config.yaml \
-                    --asr_model_file "${asr_exp}"/"${inference_asr_model}" \
-                    --output_dir "${_logdir}"/output.JOB \
-                    ${_opts} ${inference_args} || { cat $(grep -l -i error "${_logdir}"/asr_inference.*.log) ; exit 1; }
+    #         for n in $(seq "${_nj}"); do
+    #             split_scps+=" ${_logdir}/keys.${n}.scp"
+    #         done
+    #         # shellcheck disable=SC2086
+    #         ${global_dir}/utils/split_scp.pl "${key_file}" ${split_scps}
 
-            # 3. Concatenates the output files from each jobs
-            for f in token token_int score text; do
-                if [ -f "${_logdir}/output.1/1best_recog/${f}" ]; then
-                  for i in $(seq "${_nj}"); do
-                      cat "${_logdir}/output.${i}/1best_recog/${f}"
-                  done | sort -k1 >"${_dir}/${f}"
-                fi
-            done
-        done
-    fi
+    #         # 2. Submit decoding jobs
+    #         log "Decoding started... log: '${_logdir}/asr_inference.*.log'"
+    #         log "\n *********************** changing directories Stage 12 **************************\n"
+    #         cd "${global_dir}"
+    #         cd "../../../"
+    #         # shellcheck disable=SC2046,SC2086
+    #         ${_cmd} --gpu "${_ngpu}" JOB=1:"${_nj}" "${_logdir}"/asr_inference.JOB.log \
+    #             ${python} -m ${asr_inference_tool} \
+    #                 --batch_size ${batch_size} \
+    #                 --ngpu "${_ngpu}" \
+    #                 --data_path_and_name_and_type "${_data}/${_scp},speech,${_type}" \
+    #                 --key_file "${_logdir}"/keys.JOB.scp \
+    #                 --asr_train_config "${asr_exp}"/config.yaml \
+    #                 --asr_model_file "${asr_exp}"/"${inference_asr_model}" \
+    #                 --output_dir "${_logdir}"/output.JOB \
+    #                 ${_opts} ${inference_args} || { cat $(grep -l -i error "${_logdir}"/asr_inference.*.log) ; exit 1; }
+
+    #         # 3. Concatenates the output files from each jobs
+    #         for f in token token_int score text; do
+    #             if [ -f "${_logdir}/output.1/1best_recog/${f}" ]; then
+    #               for i in $(seq "${_nj}"); do
+    #                   cat "${_logdir}/output.${i}/1best_recog/${f}"
+    #               done | sort -k1 >"${_dir}/${f}"
+    #             fi
+    #         done
+    #     done
+    # fi
 
 
     if [ ${stage} -le 13 ] && [ ${stop_stage} -ge 13 ]; then
@@ -1443,8 +1444,8 @@ if ! "${skip_eval}"; then
 
                 fi
 
-                sclite \
-		    ${score_opts} \
+                ${global_dir}../../../tools/kaldi/tools/sctk-20159b5/bin/sclite \
+		        ${score_opts} \
                     -r "${_scoredir}/ref.trn" trn \
                     -h "${_scoredir}/hyp.trn" trn \
                     -i rm -o all stdout > "${_scoredir}/result.txt"
