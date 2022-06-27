@@ -487,7 +487,7 @@ class ASRTask(AbsTask):
 
         # 5. Decoder
         decoder_class = decoder_choices.get_class(args.decoder)
-        print("\n Setting current decoder as insider tasks/asr.py {} \n".format(args.decoder))
+        # print("\n Setting current decoder as insider tasks/asr.py {} \n".format(args.decoder))
 
         if args.decoder == "transducer":
             decoder = decoder_class(
@@ -557,7 +557,7 @@ class ASRTask(AbsTask):
         ################################################################################################################
 
         
-        print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
+        # print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
@@ -566,7 +566,6 @@ class ASRTask(AbsTask):
             adversarial_branch = None
 
 
-        # logging.info("\n******* Inside ASR.py *********\n")
 
         # 7. Build model
         try:

@@ -46,10 +46,10 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
+adversarial_flag="True"
+project_name="june_27_adv_trigram_rnn_lm"
 
-project_name="june_27_adversarial_trigram_rnn_lm"
-
-experiment_name="90epoch_plot_adv_acc" # name of the experiment, just change it to create differnet folders
+experiment_name="70e_adv_acc_varied_lr" # name of the experiment, just change it to create differnet folders
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
@@ -1046,7 +1046,7 @@ if ! "${skip_train}"; then
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
-                --adv_flag "True" \
+                --adv_flag "${adversarial_flag}" \
                 --project_name "${project_name}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \

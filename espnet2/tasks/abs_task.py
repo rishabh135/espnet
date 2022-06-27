@@ -856,9 +856,9 @@ class AbsTask(ABC):
         parser.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
         parser.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
         parser.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
-        parser.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
+        # parser.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        parser.add_argument('--adversarial_list', default=[ "asr"] * 20  + ["adv" ] * 20 + ["asradv" ] * 30 + ["readv" ] * 20 , type=list,help='adversarial mode list')
+        parser.add_argument('--adversarial_list', default=[ "asr"] * 20  + ["adv" ] * 20 + ["asradv" ] * 30, type=list,help='adversarial mode list')
 
 
 
@@ -886,16 +886,40 @@ class AbsTask(ABC):
             )
 
         optim_class = optim_classes.get(args.optim)
+
+        if ( args.adv_flag and args.ngpu > 1):
+            param_grp = [
+                {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
+                {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
+                {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
+            ]            
+            optim = optim_class(param_grp,, **args.optim_conf)
+
+
+
+        elif(args.adv_flag and args.ngpu == 1):
+            param_grp = [
+                {'params': model.encoder.parameters(), 'lr': args.asr_lr},
+                {'params': model.decoder.parameters(), 'lr': args.asr_lr},
+                {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}
+            ]
+            optim = optim_class(param_grp, **args.optim_conf)
+
+
+        elif (args.adv_flag == False):
+            optim = optim_class(model.parameters(), **args.optim_conf)
+
         if optim_class is None:
             raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
-        if args.sharded_ddp:
-            if fairscale is None:
-                raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
-            optim = fairscale.optim.oss.OSS(
-                params=model.parameters(), optim=optim_class, **args.optim_conf
-            )
-        else:
-            optim = optim_class(model.parameters(), **args.optim_conf)
+        
+        # if args.sharded_ddp:
+        #     if fairscale is None:
+        #         raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
+        #     optim = fairscale.optim.oss.OSS(
+        #         params=model.parameters(), optim=optim_class, **args.optim_conf
+        #     )
+        # else:
+
 
         optimizers = [optim]
         return optimizers
@@ -1325,12 +1349,12 @@ class AbsTask(ABC):
 
                     if args.project_name is None:
                         today = date.today()
-                        d2 = today.strftime("_date_%B_%d_")
+                        d2 = today.strftime("%B_%d_")
                         # project = "june_20__date_June_20__june_20_with_adversarial_trigram_rnnASRTask"
                         project = "{}_".format(d2) + cls.__name__
                     else:
                         today = date.today()
-                        d2 = today.strftime("_date_%B_%d_") 
+                        d2 = today.strftime("%B_%d_") 
                         # project = "june_20__date_June_20__june_20_with_adversarial_trigram_rnnASRTask"
     
                         project = "{}_".format(d2) + args.project_name + cls.__name__

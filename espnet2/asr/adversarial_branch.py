@@ -98,7 +98,7 @@ class SpeakerAdv(torch.nn.Module):
         #    layer_arr.extend([torch.nn.Linear(advunits, advunits),
         #                    torch.nn.ReLU(), torch.nn.Dropout(p=dropout_rate)])
         #self.advnet = torch.nn.Sequential(*layer_arr)
-        self.output = torch.nn.Linear(2*advunits, odim, init=torch.nn.init.Xavier())
+        self.output = torch.nn.Linear(2*advunits, odim)
 
 
 
@@ -108,6 +108,14 @@ class SpeakerAdv(torch.nn.Module):
         # if hasattr(layer, 'reset_parameters'):
         #     layer.reset_parameters()
         for name, param in self.advnet.named_parameters():
+            if 'bias' in name:
+                torch.nn.init.constant_(param, 0.0)
+            elif 'weight_ih' in name:
+                torch.nn.init.kaiming_normal_(param)
+            elif 'weight_hh' in name:
+                torch.nn.init.orthogonal_(param)
+
+        for name, param in self.output.named_parameters():
             if 'bias' in name:
                 torch.nn.init.constant_(param, 0.0)
             elif 'weight_ih' in name:
