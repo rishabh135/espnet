@@ -1,0 +1,337 @@
+(pyt) rgupta@graffiti-6:~/dev/espnet/egs2/librispeech_100/asr1$ bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/j
+une22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decode_asr_a
+sr_model_valid.acc.ave/run.sh
+\n******************************\n
+june22_only_decoding_using_pretrained_network
+/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/standard_settig_without_
+adversarial_flag/dump
+/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/standard_settig_without_
+adversarial_flag/exp
+********\n Important setting data direcotry  *********** \n
+\n data directory : /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/data
+  \n
+\n****************************\n
+2022-06-23T17:48:17 (asr_with_adversarial.sh:298:main) ******* train_set : ********    ************************
+2022-06-23T17:48:17 (asr_with_adversarial.sh:300:main) ./asr_with_adversarial.sh --skip_data_prep false --skip_train false --skip_eval false --lang en --n
+gpu 1 --nj 32 --inference_nj 32 --nbpe 5000 --max_wav_duration 30 --speed_perturb_factors 0.9 1.0 1.1 --audio_format flac.ark --feats_type raw --use_lm fa
+lse --asr_tag conformer_lr2e-3_warmup15k_amp_nondeterministic --asr_config /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_with_adversari
+al.yaml --inference_config /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml --train_set train_clean_100 --valid_set dev --test_sets
+test_clean test_other dev_clean dev_other --lm_train_text /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june_20_with
+_adversarial_trigram_rnn/data/train_clean_100/text --bpe_train_text /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/ju
+ne_20_with_adversarial_trigram_rnn/data/train_clean_100/text --stage 7 --stage 7 --stage 7 --stage 10 --stage 11 --stage 11 --stage 11 --stage 11 --stage
+11 --stage 11 --stage 11 --stage 11 --stage 11 --stage 11 --stage 11 --stage 11 --stage 12 --stage 12 --stage 12 --stage 12 --stage 12 --stage 12 --stage
+12 --stage 12 --stage 12 --stage 12 --stage 12 --stage 12 --stage 12 --stage 12 --stage 12
+./path.sh: line 9: /home/rgupta/dev/espnet/egs2/librispeech_100/asr1/../../../tools/activate_python.sh: No such file or directory
+2022-06-23T17:48:17 (asr_with_adversarial.sh:960:main) Stage 6-8: Skip lm-related stages: use_lm=false
+2022-06-23T17:48:17 (asr_with_adversarial.sh:1353:main) Stage 13: Scoring
+2022-06-23T17:48:17 (asr_with_adversarial.sh:1354:main)
+ *********************** changing directories Stage 13 **************************
+
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type char --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type char --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true
+2022-06-23T17:48:33 (asr_with_adversarial.sh:1457:main) Write cer result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/test_clean/score_cer/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                        Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2620                           281530              |             97.4                             1.4
+                        1.2                             0.9                             3.5                            63.3              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type word --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type word --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true
+2022-06-23T17:48:37 (asr_with_adversarial.sh:1457:main) Write wer result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/test_clean/score_wer/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                        Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2620                            52576              |             92.8                             6.5
+                        0.7                             1.2                             8.4                            63.3              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type bpe --bpemodel /s
+rv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/data/en_token_list/bpe_uni
+gram5000/bpe.model --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type bpe --bpemodel /s
+rv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/data/en_token_list/bpe_uni
+gram5000/bpe.model
+2022-06-23T17:48:42 (asr_with_adversarial.sh:1457:main) Write ter result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/test_clean/score_ter/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                        Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2620                            66983              |             90.0                             6.2
+                        3.9                             0.8                            10.9                            63.3              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type char --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type char --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true
+2022-06-23T17:48:56 (asr_with_adversarial.sh:1457:main) Write cer result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/test_other/score_cer/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                        Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2939                           272758              |             92.0                             4.7
+                        3.2                             2.3                            10.2                            84.8              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type word --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type word --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true
+2022-06-23T17:49:00 (asr_with_adversarial.sh:1457:main) Write wer result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/test_other/score_wer/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                        Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2939                            52343              |             82.1                            16.0
+                        1.9                             2.6                            20.5                            84.8              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type bpe --bpemodel /s
+rv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/data/en_token_list/bpe_uni
+gram5000/bpe.model --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type bpe --bpemodel /s
+rv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/data/en_token_list/bpe_uni
+gram5000/bpe.model
+2022-06-23T17:49:04 (asr_with_adversarial.sh:1457:main) Write ter result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/test_other/score_ter/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                        Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2939                            66650              |             77.9                            15.2
+                        6.9                             2.5                            24.6                            84.8              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type char --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type char --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true
+2022-06-23T17:49:20 (asr_with_adversarial.sh:1457:main) Write cer result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/dev_clean/score_cer/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                       Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2703                           288456              |             97.5                             1.4
+                       1.1                             0.9                             3.4                            63.1              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type word --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type word --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true
+2022-06-23T17:49:24 (asr_with_adversarial.sh:1457:main) Write wer result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/dev_clean/score_wer/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                       Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2703                            54402              |             93.0                             6.4
+                       0.5                             1.1                             8.1                            63.1              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type bpe --bpemodel /s
+rv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/data/en_token_list/bpe_uni
+gram5000/bpe.model --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type bpe --bpemodel /s
+rv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/data/en_token_list/bpe_uni
+gram5000/bpe.model
+2022-06-23T17:49:29 (asr_with_adversarial.sh:1457:main) Write ter result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/dev_clean/score_ter/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                       Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2703                            69558              |             89.9                             6.1
+                       4.0                             0.8                            10.9                            63.1              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type char --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type char --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true
+2022-06-23T17:49:42 (asr_with_adversarial.sh:1457:main) Write cer result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/dev_other/score_cer/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                       Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2864                           265951              |             92.1                             4.8
+                       3.1                             2.4                            10.3                            83.8              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type word --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type word --non_lingui
+stic_symbols none --remove_non_linguistic_symbols true
+2022-06-23T17:49:46 (asr_with_adversarial.sh:1457:main) Write wer result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/dev_other/score_wer/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                       Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2864                            50948              |             82.5                            15.9
+                       1.6                             2.7                            20.2                            83.8              |
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type bpe --bpemodel /s
+rv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/data/en_token_list/bpe_uni
+gram5000/bpe.model --cleaner none
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/rgupta/nltk_data/...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+/home/rgupta/anaconda3/envs/pyt/bin/python3 /home/rgupta/dev/espnet/espnet2/bin/tokenize_text.py -f 2- --input - --output - --token_type bpe --bpemodel /s
+rv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/data/en_token_list/bpe_uni
+gram5000/bpe.model
+2022-06-23T17:49:50 (asr_with_adversarial.sh:1457:main) Write ter result in /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libr
+i_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/decod
+e_asr_asr_model_valid.acc.ave/dev_other/score_ter/result.txt
+|             SPKR                |             # Snt                           # Wrd              |             Corr                             Sub
+                       Del                             Ins                             Err                           S.Err              |
+|             Sum/Avg             |             2864                            64524              |             78.5                            15.3
+                       6.2                             2.8                            24.3                            83.8              |
+/home/rgupta/dev/espnet/egs2/librispeech_100/asr1//scripts/utils/show_asr_result.sh: line 5: utils/parse_options.sh: No such file or directory
+ls: cannot access '/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_using_pretrained_network/stand
+ard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/*/*/score_wer/scoring/*.filt.sys': No such file or directory
+<!-- Generated by /home/rgupta/dev/espnet/egs2/librispeech_100/asr1//scripts/utils/show_asr_result.sh -->
+# RESULTS
+## Environments
+- date: `Thu Jun 23 17:49:50 CEST 2022`
+- python version: `3.9.12 (main, Apr  5 2022, 06:56:58)  [GCC 7.5.0]`
+- espnet version: `espnet 202205`
+- pytorch version: `pytorch 1.11.0`
+- Git hash: `55110c25381762f77eeefb7472a7de77532e0e22`
+  - Commit date: `Thu Jun 23 15:17:10 2022 +0200`
+
+## asr_conformer_lr2e-3_warmup15k_amp_nondeterministic
+### WER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_asr_model_valid.acc.ave/dev_clean|2703|54402|93.0|6.4|0.5|1.1|8.1|63.1|
+|decode_asr_asr_model_valid.acc.ave/dev_other|2864|50948|82.5|15.9|1.6|2.7|20.2|83.8|
+|decode_asr_asr_model_valid.acc.ave/test_clean|2620|52576|92.8|6.5|0.7|1.2|8.4|63.3|
+|decode_asr_asr_model_valid.acc.ave/test_other|2939|52343|82.1|16.0|1.9|2.6|20.5|84.8|
+
+### CER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_asr_model_valid.acc.ave/dev_clean|2703|288456|97.5|1.4|1.1|0.9|3.4|63.1|
+|decode_asr_asr_model_valid.acc.ave/dev_other|2864|265951|92.1|4.8|3.1|2.4|10.3|83.8|
+|decode_asr_asr_model_valid.acc.ave/test_clean|2620|281530|97.4|1.4|1.2|0.9|3.5|63.3|
+|decode_asr_asr_model_valid.acc.ave/test_other|2939|272758|92.0|4.7|3.2|2.3|10.2|84.8|
+
+### TER
+
+|dataset|Snt|Wrd|Corr|Sub|Del|Ins|Err|S.Err|
+|---|---|---|---|---|---|---|---|---|
+|decode_asr_asr_model_valid.acc.ave/dev_clean|2703|69558|89.9|6.1|4.0|0.8|10.9|63.1|
+|decode_asr_asr_model_valid.acc.ave/dev_other|2864|64524|78.5|15.3|6.2|2.8|24.3|83.8|
+|decode_asr_asr_model_valid.acc.ave/test_clean|2620|66983|90.0|6.2|3.9|0.8|10.9|63.3|
+|decode_asr_asr_model_valid.acc.ave/test_other|2939|66650|77.9|15.2|6.9|2.5|24.6|84.8|
+
+2022-06-23T17:49:51 (asr_with_adversarial.sh:1478:main) Stage 14: Pack model: /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_li
+bri_100/june22_only_decoding_using_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/asr
+_conformer_lr2e-3_warmup15k_amp_nondeterministic_valid.acc.ave.zip
+2022-06-23T17:49:51 (asr_with_adversarial.sh:1497:main)
+ *********************** changing directories Stage 14 **************************
+
+Traceback (most recent call last):
+  File "/home/rgupta/anaconda3/envs/pyt/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/rgupta/anaconda3/envs/pyt/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/rgupta/dev/espnet/espnet2/bin/pack.py", line 100, in <module>
+    main()
+  File "/home/rgupta/dev/espnet/espnet2/bin/pack.py", line 91, in main
+    pack(
+  File "/home/rgupta/dev/espnet/espnet2/main_funcs/pack_funcs.py", line 262, in pack
+    raise FileNotFoundError(f"No such file or directory: {v}")
+FileNotFoundError: No such file or directory: /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/june22_only_decoding_usi
+ng_pretrained_network/standard_settig_without_adversarial_flag/exp/asr_stats_raw_en_bpe5000_sp/train/feats_stats.npz
+(pyt) rgupta@graffiti-6:~/dev/espnet/egs2/librispeech_100/asr1$ ls
+adversarial_running_june_1_tmux_buffer.txt        kenlm               OAR.1887695.stderr  OAR.1889622.stderr     run_with_adversarial.sh
+asr.sh                                            local               OAR.1887695.stdout  OAR.1889622.stdout     scripts
+asr_with_adversarial.sh                           OAR.1887113.stderr  OAR.1887741.stderr  OAR.1889898.stderr     steps
+cmd.sh                                            OAR.1887113.stdout  OAR.1887741.stdout  OAR.1889898.stdout     tmux_last-10000-lines.out
+command_history.txt                               OAR.1887145.stderr  OAR.1888193.stderr  path.sh                tmux_output_june_8_2.txt
+conf                                              OAR.1887145.stdout  OAR.1888193.stdout  pyscripts              tmux_output_june_8.txt
+db.sh                                             OAR.1887286.stderr  OAR.1888556.stderr  pyt_iinstall.yml       tmux_output.out
+first_running_30_may_history.txt                  OAR.1887286.stdout  OAR.1888556.stdout  pyt_june_8_output.txt  tmux_pyt_june_8_output.txt
+first_running_30_may_tmux_buffer.txt              OAR.1887495.stderr  OAR.1889305.stderr  README.md              utils
+fresh_adversarial_running_june_1_tmux_buffer.txt  OAR.1887495.stdout  OAR.1889305.stdout  run.sh
+(pyt) rgupta@graffiti-6:~/dev/espnet/egs2/librispeech_100/asr1$
