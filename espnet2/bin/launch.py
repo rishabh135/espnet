@@ -42,15 +42,7 @@ def get_parser():
     )
     
 
-    parser.add_argument(
-            "--project_name",
-            type=str,
-            default=None,
-            help="Specify wandb project name",
-        )
 
-    parser.add_argument('--adv_flag', default=True, type=bool, help='flag for whether to perform speaker adversarial training or not')
-    
 
     # parser.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
     

@@ -1317,10 +1317,12 @@ class AbsTask(ABC):
                     args.use_wandb = False
 
             if args.use_wandb:
+                print("\n\n Inside abs_task : {} \n\n".format(args.project_name))
                 if (
                     not distributed_option.distributed
                     or distributed_option.dist_rank == 0
                 ):
+
                     if args.project_name is None:
                         today = date.today()
                         d2 = today.strftime("_date_%B_%d_")

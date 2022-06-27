@@ -572,12 +572,11 @@ class Trainer:
                 ###################################################################################
 
 
-                print("/*** train/trainer.py adv_flag {} adv_mode {}  loss {}    ".format(adv_flag, adv_mode, loss ))
-                # try:
-                #     print(" loss_adv is {}   \n".format( loss_adv ))
-                # except:
-                #     loss_adv = None
-                #     print(" loss_adv is none   \n")
+                print("/*** train/trainer.py adv_flag {} adv_mode {}  adv_mode {} asr_loss {}   ".format(adv_flag, adv_mode, loss ))
+                if(adv_flag):
+                    print(" adversarial_loss is {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"], stats["adversarial_accuracy"] ))
+ 
+ 
                     
                 if (adv_flag == True and  adv_mode == 'asr'):
                     if options.ngpu > 1:
@@ -629,7 +628,7 @@ class Trainer:
 
 
 
-                    ["asradv" ] * 30
+                   
                 
 
 

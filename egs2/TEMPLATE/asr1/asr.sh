@@ -47,13 +47,15 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 
 
-project_name="june_27_with_adversarial_trigram_rnn_encoder_and_decoder"
+project_name="june_27_adversarial_trigram_rnn_lm"
 
-experiment_name="standard_settings_trigram_rnn_decoder" # name of the experiment, just change it to create differnet folders
+experiment_name="90epoch_plot_adv_acc" # name of the experiment, just change it to create differnet folders
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
+
+
 
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
@@ -906,7 +908,6 @@ if ! "${skip_train}"; then
             # shellcheck disable=SC2086
             ${python} -m espnet2.bin.launch \
                 --cmd "${cuda_cmd} --name ${jobname}" \
-                --adv_flag "" \
                 --log "${lm_exp}"/train.log \
                 --ngpu "${ngpu}" \
                 --num_nodes "${num_nodes}" \
@@ -918,6 +919,8 @@ if ! "${skip_train}"; then
                     --bpemodel "${bpemodel}" \
                     --token_type "${lm_token_type}"\
                     --token_list "${lm_token_list}" \
+                    --adv_flag "" \
+                    --project_name "Language_modeling_${project_name}" \
                     --non_linguistic_symbols "${nlsyms_txt}" \
                     --cleaner "${cleaner}" \
                     --g2p "${g2p}" \
@@ -1040,10 +1043,11 @@ if ! "${skip_train}"; then
             ${python} -m espnet2.bin.asr_train \
                 --collect_stats true \
                 --use_preprocessor true \
-                --project_name "${project_name}" \
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
+                --adv_flag "True" \
+                --project_name "${project_name}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \
@@ -1166,7 +1170,6 @@ if ! "${skip_train}"; then
             --cmd "${cuda_cmd} --name ${jobname}" \
             --log "${asr_exp}"/train.log \
             --ngpu "${ngpu}" \
-            --adv_flag "True" \
             --num_nodes "${num_nodes}" \
             --init_file_prefix "${asr_exp}"/.dist_init_ \
             --multiprocessing_distributed true -- \
@@ -1175,6 +1178,8 @@ if ! "${skip_train}"; then
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
+                --adv_flag "True" \
+                --project_name "${project_name}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \
