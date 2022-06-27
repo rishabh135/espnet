@@ -46,7 +46,8 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-project_name="june_20_with_adversarial_trigram_rnn"
+
+project_name="june_27_with_adversarial_trigram_rnn_encoder_and_decoder"
 
 experiment_name="standard_settings_trigram_rnn_decoder" # name of the experiment, just change it to create differnet folders
 
@@ -905,6 +906,7 @@ if ! "${skip_train}"; then
             # shellcheck disable=SC2086
             ${python} -m espnet2.bin.launch \
                 --cmd "${cuda_cmd} --name ${jobname}" \
+                --adv_flag "" \
                 --log "${lm_exp}"/train.log \
                 --ngpu "${ngpu}" \
                 --num_nodes "${num_nodes}" \
@@ -1164,6 +1166,7 @@ if ! "${skip_train}"; then
             --cmd "${cuda_cmd} --name ${jobname}" \
             --log "${asr_exp}"/train.log \
             --ngpu "${ngpu}" \
+            --adv_flag "True" \
             --num_nodes "${num_nodes}" \
             --init_file_prefix "${asr_exp}"/.dist_init_ \
             --multiprocessing_distributed true -- \

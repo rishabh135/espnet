@@ -505,9 +505,8 @@ class Trainer:
         iterator_stop = torch.tensor(0).to("cuda" if ngpu > 0 else "cpu")
 
         start_time = time.perf_counter()
-        for iiter, (utt_id, batch) in enumerate(
-            reporter.measure_iter_time(iterator, "iter_time"), 1
-        ):
+        
+        for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
             assert isinstance(batch, dict), type(batch)
 
             if distributed:
@@ -574,13 +573,13 @@ class Trainer:
 
 
                 print("/*** train/trainer.py adv_flag {} adv_mode {}  loss {}    ".format(adv_flag, adv_mode, loss ))
-                try:
-                    print(" loss_adv is {}   \n".format( loss_adv ))
-                except:
-                    loss_adv = None
-                    print(" loss_adv is none   \n")
+                # try:
+                #     print(" loss_adv is {}   \n".format( loss_adv ))
+                # except:
+                #     loss_adv = None
+                #     print(" loss_adv is none   \n")
                     
-                if (adv_flag == True and  adv_mode == 'spk'):
+                if (adv_flag == True and  adv_mode == 'asr'):
                     if options.ngpu > 1:
                         model.module.freeze_adversarial()
                         model.module.unfreeze_encoder()
@@ -590,7 +589,7 @@ class Trainer:
                 
                     
 
-                elif (adv_flag == True and adv_mode == 'asr'):
+                elif (adv_flag == True and adv_mode == 'adv'):
 
                     if options.ngpu > 1:
                         model.module.unfreeze_adversarial()
@@ -603,7 +602,7 @@ class Trainer:
                     loss = total_loss
                 
 
-                elif(adv_flag == True and adv_mode == 'spkasr'):
+                elif(adv_flag == True and adv_mode == 'asradv'):
                     if options.ngpu > 1:
                         model.module.unfreeze_adversarial()
                         model.module.unfreeze_encoder()
@@ -613,6 +612,24 @@ class Trainer:
                     
                     total_loss = loss + loss_adv                    
                     loss = total_loss
+
+
+                elif(adv_flag == True and adv_mode == 'readv'):
+                    if options.ngpu > 1:
+                        model.module.unfreeze_adversarial()
+                        model.module.freeze_encoder()
+                    else:
+                        model.unfreeze_adversarial()
+                        model.freeze_encoder()
+                    
+                    model.adversarial_branch.reset_weights()
+
+                    total_loss = loss_adv                    
+                    loss = total_loss
+
+
+
+                    ["asradv" ] * 30
                 
 
 
@@ -687,8 +704,8 @@ class Trainer:
 
 
 
-                logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
-                print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
+                # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
+                # print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
                 if not torch.isfinite(grad_norm):
                     logging.warning(
                         f"The grad norm is {grad_norm}. Skipping updating the model."
@@ -814,6 +831,13 @@ class Trainer:
                 # Apply weighted averaging for stats.
                 # if distributed, this method can also apply all_reduce()
                 stats, weight = recursive_average(stats, weight, distributed)
+
+
+            #print the keys:
+            # print("\n ********** train/trainer.py printing keys : \n")
+            # for key in stats:
+            #     print (" {} \n".format(key))
+            # print("\n ****************\n")
 
             reporter.register(stats, weight)
             reporter.next()

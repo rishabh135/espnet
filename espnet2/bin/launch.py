@@ -14,6 +14,9 @@ from espnet.utils.cli_utils import get_commandline_args
 
 logging.info (" \n ********* Inside  bin/launch.py  *********  \n ")
 print("\n ********* Inside  bin/launch.py  *********  \n")
+
+
+
 def get_parser():
     parser = argparse.ArgumentParser(
         description="Launch distributed process with appropriate options. ",
@@ -46,10 +49,10 @@ def get_parser():
             help="Specify wandb project name",
         )
 
-
+    parser.add_argument('--adv_flag', default=True, type=bool, help='flag for whether to perform speaker adversarial training or not')
+    
 
     # parser.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
-    parser.add_argument('--adv_flag', default=True, type=bool, help='flag for whether to perform speaker adversarial training or not')
     
     # parser.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
     # parser.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')

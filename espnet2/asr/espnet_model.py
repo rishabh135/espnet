@@ -397,38 +397,37 @@ class ESPnetASRModel(AbsESPnetModel):
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
 
 
-            retval = {} 
-            if (self.adv_flag):
-                # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
-                rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-                # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-                loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
-
-                # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
-                stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-                retval["loss_adv"]= loss_adv if loss_adv is not None else None
-
-
-
             # Collect Attn branch stats
-            stats["loss_att"] = loss_att.detach() if loss_att is not None else None
-            stats["acc"] = acc_att
-            stats["cer"] = cer_att
-            stats["wer"] = wer_att
+            stats["attention_loss"] = loss_att.detach() if loss_att is not None else None
+            stats["attention_accuracy"] = acc_att
+            stats["attention_cer"] = cer_att
+            stats["attention_wer"] = wer_att
             
 
 
 
+        retval = {} 
+        if (self.adv_flag):
+            # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+            # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
+            # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
+            
+            stats["adversarial_loss"] = loss_adv.detach() if loss_adv is not None else None
+            stats["adversarial_accuracy"] = acc_adv.detach() if acc_adv is not None else None
+            
+            
+            retval["loss_adv"]= loss_adv if loss_adv is not None else None
+            retval["accuracy_adversarial"] = acc_adv if acc_adv is not None else None
+
+
 
         # Collect total loss stats
-        stats["loss"] = loss.detach()
-
-        # print(" asr/ESPNET_model.py :  loss : {}   acc_att : {} \n".format(stats["loss"], stats["acc"] ))
+        stats["asr_loss"] = loss.detach()
 
         # force_gatherable: to-device and to-tensor if scalar for DataParallel
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
-        
-
         
         retval["loss"] = loss   
         retval["stats"] = stats
@@ -436,7 +435,7 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["loss_ctc"] = loss_ctc
         retval["loss_att"] = loss_att
         
-        # loss_ctc, loss_att, acc, cer, wer, loss_adv, acc_adv
+  
 
         return retval
 
