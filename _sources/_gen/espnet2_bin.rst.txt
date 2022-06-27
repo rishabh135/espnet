@@ -391,9 +391,8 @@ asr_train.py
                         [--use_amp USE_AMP] [--log_interval LOG_INTERVAL]
                         [--use_matplotlib USE_MATPLOTLIB]
                         [--use_tensorboard USE_TENSORBOARD]
-                        [--use_wandb USE_WANDB] [--project_name PROJECT_NAME]
-                        [--wandb_id WANDB_ID] [--wandb_entity WANDB_ENTITY]
-                        [--wandb_name WANDB_NAME]
+                        [--use_wandb USE_WANDB] [--wandb_id WANDB_ID]
+                        [--wandb_entity WANDB_ENTITY] [--wandb_name WANDB_NAME]
                         [--wandb_model_log_interval WANDB_MODEL_LOG_INTERVAL]
                         [--detect_anomaly DETECT_ANOMALY]
                         [--pretrain_path PRETRAIN_PATH]
@@ -426,10 +425,10 @@ asr_train.py
                         [--optim_conf OPTIM_CONF]
                         [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
                         [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
-                        [--adv_flag ADV_FLAG] [--adv ADV]
-                        [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
-                        [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
-                        [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
+                        [--adv ADV] [--adv_layers ADV_LAYERS]
+                        [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                        [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
+                        [--adv_dropout_rate ADV_DROPOUT_RATE]
                         [--adversarial_list ADVERSARIAL_LIST]
                         [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                         [--token_list TOKEN_LIST]
@@ -466,7 +465,6 @@ asr_train.py
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -479,7 +477,7 @@ asr_train.py
       --adv_dropout_rate ADV_DROPOUT_RATE
                             adversarial Dropout rate (default: 0.0)
       --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+                            adversarial mode list (default: ['asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -591,8 +589,6 @@ asr_train.py
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
                             Enable wandb logging (default: True)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
       --wandb_entity WANDB_ENTITY
                             Specify wandb entity (default: None)
@@ -967,9 +963,8 @@ diar_train.py
                          [--use_amp USE_AMP] [--log_interval LOG_INTERVAL]
                          [--use_matplotlib USE_MATPLOTLIB]
                          [--use_tensorboard USE_TENSORBOARD]
-                         [--use_wandb USE_WANDB] [--project_name PROJECT_NAME]
-                         [--wandb_id WANDB_ID] [--wandb_entity WANDB_ENTITY]
-                         [--wandb_name WANDB_NAME]
+                         [--use_wandb USE_WANDB] [--wandb_id WANDB_ID]
+                         [--wandb_entity WANDB_ENTITY] [--wandb_name WANDB_NAME]
                          [--wandb_model_log_interval WANDB_MODEL_LOG_INTERVAL]
                          [--detect_anomaly DETECT_ANOMALY]
                          [--pretrain_path PRETRAIN_PATH]
@@ -1002,10 +997,10 @@ diar_train.py
                          [--optim_conf OPTIM_CONF]
                          [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
                          [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
-                         [--adv_flag ADV_FLAG] [--adv ADV]
-                         [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
-                         [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
-                         [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
+                         [--adv ADV] [--adv_layers ADV_LAYERS]
+                         [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                         [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
+                         [--adv_dropout_rate ADV_DROPOUT_RATE]
                          [--adversarial_list ADVERSARIAL_LIST]
                          [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                          [--num_spk NUM_SPK]
@@ -1030,7 +1025,6 @@ diar_train.py
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -1043,7 +1037,7 @@ diar_train.py
       --adv_dropout_rate ADV_DROPOUT_RATE
                             adversarial Dropout rate (default: 0.0)
       --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+                            adversarial mode list (default: ['asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -1138,8 +1132,6 @@ diar_train.py
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
                             Enable wandb logging (default: True)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
       --wandb_entity WANDB_ENTITY
                             Specify wandb entity (default: None)
@@ -1528,8 +1520,8 @@ enh_s2t_train.py
                             [--use_amp USE_AMP] [--log_interval LOG_INTERVAL]
                             [--use_matplotlib USE_MATPLOTLIB]
                             [--use_tensorboard USE_TENSORBOARD]
-                            [--use_wandb USE_WANDB] [--project_name PROJECT_NAME]
-                            [--wandb_id WANDB_ID] [--wandb_entity WANDB_ENTITY]
+                            [--use_wandb USE_WANDB] [--wandb_id WANDB_ID]
+                            [--wandb_entity WANDB_ENTITY]
                             [--wandb_name WANDB_NAME]
                             [--wandb_model_log_interval WANDB_MODEL_LOG_INTERVAL]
                             [--detect_anomaly DETECT_ANOMALY]
@@ -1563,10 +1555,9 @@ enh_s2t_train.py
                             [--optim_conf OPTIM_CONF]
                             [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
                             [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
-                            [--adv_flag ADV_FLAG] [--adv ADV]
-                            [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
-                            [--grlalpha GRLALPHA] [--adv_lr ADV_LR]
-                            [--asr_lr ASR_LR] [--reinit_adv]
+                            [--adv ADV] [--adv_layers ADV_LAYERS]
+                            [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                            [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
                             [--adv_dropout_rate ADV_DROPOUT_RATE]
                             [--adversarial_list ADVERSARIAL_LIST]
                             [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
@@ -1626,7 +1617,6 @@ enh_s2t_train.py
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -1639,7 +1629,7 @@ enh_s2t_train.py
       --adv_dropout_rate ADV_DROPOUT_RATE
                             adversarial Dropout rate (default: 0.0)
       --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+                            adversarial mode list (default: ['asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -1740,8 +1730,6 @@ enh_s2t_train.py
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
                             Enable wandb logging (default: True)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
       --wandb_entity WANDB_ENTITY
                             Specify wandb entity (default: None)
@@ -2128,9 +2116,8 @@ enh_train.py
                         [--use_amp USE_AMP] [--log_interval LOG_INTERVAL]
                         [--use_matplotlib USE_MATPLOTLIB]
                         [--use_tensorboard USE_TENSORBOARD]
-                        [--use_wandb USE_WANDB] [--project_name PROJECT_NAME]
-                        [--wandb_id WANDB_ID] [--wandb_entity WANDB_ENTITY]
-                        [--wandb_name WANDB_NAME]
+                        [--use_wandb USE_WANDB] [--wandb_id WANDB_ID]
+                        [--wandb_entity WANDB_ENTITY] [--wandb_name WANDB_NAME]
                         [--wandb_model_log_interval WANDB_MODEL_LOG_INTERVAL]
                         [--detect_anomaly DETECT_ANOMALY]
                         [--pretrain_path PRETRAIN_PATH]
@@ -2163,10 +2150,10 @@ enh_train.py
                         [--optim_conf OPTIM_CONF]
                         [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
                         [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
-                        [--adv_flag ADV_FLAG] [--adv ADV]
-                        [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
-                        [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
-                        [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
+                        [--adv ADV] [--adv_layers ADV_LAYERS]
+                        [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                        [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
+                        [--adv_dropout_rate ADV_DROPOUT_RATE]
                         [--adversarial_list ADVERSARIAL_LIST]
                         [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                         [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
@@ -2182,7 +2169,6 @@ enh_train.py
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -2195,7 +2181,7 @@ enh_train.py
       --adv_dropout_rate ADV_DROPOUT_RATE
                             adversarial Dropout rate (default: 0.0)
       --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+                            adversarial mode list (default: ['asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -2290,8 +2276,6 @@ enh_train.py
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
                             Enable wandb logging (default: True)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
       --wandb_entity WANDB_ENTITY
                             Specify wandb entity (default: None)
@@ -2577,8 +2561,8 @@ gan_tts_train.py
                             [--use_amp USE_AMP] [--log_interval LOG_INTERVAL]
                             [--use_matplotlib USE_MATPLOTLIB]
                             [--use_tensorboard USE_TENSORBOARD]
-                            [--use_wandb USE_WANDB] [--project_name PROJECT_NAME]
-                            [--wandb_id WANDB_ID] [--wandb_entity WANDB_ENTITY]
+                            [--use_wandb USE_WANDB] [--wandb_id WANDB_ID]
+                            [--wandb_entity WANDB_ENTITY]
                             [--wandb_name WANDB_NAME]
                             [--wandb_model_log_interval WANDB_MODEL_LOG_INTERVAL]
                             [--detect_anomaly DETECT_ANOMALY]
@@ -2616,10 +2600,9 @@ gan_tts_train.py
                             [--optim2_conf OPTIM2_CONF]
                             [--scheduler2 {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
                             [--scheduler2_conf SCHEDULER2_CONF] [--eprojs EPROJS]
-                            [--adv_flag ADV_FLAG] [--adv ADV]
-                            [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
-                            [--grlalpha GRLALPHA] [--adv_lr ADV_LR]
-                            [--asr_lr ASR_LR] [--reinit_adv]
+                            [--adv ADV] [--adv_layers ADV_LAYERS]
+                            [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                            [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
                             [--adv_dropout_rate ADV_DROPOUT_RATE]
                             [--adversarial_list ADVERSARIAL_LIST]
                             [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
@@ -2651,7 +2634,6 @@ gan_tts_train.py
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -2664,7 +2646,7 @@ gan_tts_train.py
       --adv_dropout_rate ADV_DROPOUT_RATE
                             adversarial Dropout rate (default: 0.0)
       --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+                            adversarial mode list (default: ['asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -2767,8 +2749,6 @@ gan_tts_train.py
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
                             Enable wandb logging (default: True)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
       --wandb_entity WANDB_ENTITY
                             Specify wandb entity (default: None)
@@ -3079,9 +3059,8 @@ hubert_train.py
                            [--use_amp USE_AMP] [--log_interval LOG_INTERVAL]
                            [--use_matplotlib USE_MATPLOTLIB]
                            [--use_tensorboard USE_TENSORBOARD]
-                           [--use_wandb USE_WANDB] [--project_name PROJECT_NAME]
-                           [--wandb_id WANDB_ID] [--wandb_entity WANDB_ENTITY]
-                           [--wandb_name WANDB_NAME]
+                           [--use_wandb USE_WANDB] [--wandb_id WANDB_ID]
+                           [--wandb_entity WANDB_ENTITY] [--wandb_name WANDB_NAME]
                            [--wandb_model_log_interval WANDB_MODEL_LOG_INTERVAL]
                            [--detect_anomaly DETECT_ANOMALY]
                            [--pretrain_path PRETRAIN_PATH]
@@ -3114,10 +3093,9 @@ hubert_train.py
                            [--optim_conf OPTIM_CONF]
                            [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
                            [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
-                           [--adv_flag ADV_FLAG] [--adv ADV]
-                           [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
-                           [--grlalpha GRLALPHA] [--adv_lr ADV_LR]
-                           [--asr_lr ASR_LR] [--reinit_adv]
+                           [--adv ADV] [--adv_layers ADV_LAYERS]
+                           [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                           [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
                            [--adv_dropout_rate ADV_DROPOUT_RATE]
                            [--adversarial_list ADVERSARIAL_LIST]
                            [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
@@ -3155,7 +3133,6 @@ hubert_train.py
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -3168,7 +3145,7 @@ hubert_train.py
       --adv_dropout_rate ADV_DROPOUT_RATE
                             adversarial Dropout rate (default: 0.0)
       --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+                            adversarial mode list (default: ['asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -3288,8 +3265,6 @@ hubert_train.py
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
                             Enable wandb logging (default: True)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
       --wandb_entity WANDB_ENTITY
                             Specify wandb entity (default: None)
@@ -3692,8 +3667,8 @@ lm_train.py
                        [--use_amp USE_AMP] [--log_interval LOG_INTERVAL]
                        [--use_matplotlib USE_MATPLOTLIB]
                        [--use_tensorboard USE_TENSORBOARD] [--use_wandb USE_WANDB]
-                       [--project_name PROJECT_NAME] [--wandb_id WANDB_ID]
-                       [--wandb_entity WANDB_ENTITY] [--wandb_name WANDB_NAME]
+                       [--wandb_id WANDB_ID] [--wandb_entity WANDB_ENTITY]
+                       [--wandb_name WANDB_NAME]
                        [--wandb_model_log_interval WANDB_MODEL_LOG_INTERVAL]
                        [--detect_anomaly DETECT_ANOMALY]
                        [--pretrain_path PRETRAIN_PATH]
@@ -3726,7 +3701,7 @@ lm_train.py
                        [--optim_conf OPTIM_CONF]
                        [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
                        [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
-                       [--adv_flag ADV_FLAG] [--adv ADV] [--adv_layers ADV_LAYERS]
+                       [--adv ADV] [--adv_layers ADV_LAYERS]
                        [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
                        [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
                        [--adv_dropout_rate ADV_DROPOUT_RATE]
@@ -3747,7 +3722,6 @@ lm_train.py
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -3760,7 +3734,7 @@ lm_train.py
       --adv_dropout_rate ADV_DROPOUT_RATE
                             adversarial Dropout rate (default: 0.0)
       --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+                            adversarial mode list (default: ['asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -3861,8 +3835,6 @@ lm_train.py
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
                             Enable wandb logging (default: True)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
       --wandb_entity WANDB_ENTITY
                             Specify wandb entity (default: None)
@@ -4231,8 +4203,8 @@ mt_train.py
                        [--use_amp USE_AMP] [--log_interval LOG_INTERVAL]
                        [--use_matplotlib USE_MATPLOTLIB]
                        [--use_tensorboard USE_TENSORBOARD] [--use_wandb USE_WANDB]
-                       [--project_name PROJECT_NAME] [--wandb_id WANDB_ID]
-                       [--wandb_entity WANDB_ENTITY] [--wandb_name WANDB_NAME]
+                       [--wandb_id WANDB_ID] [--wandb_entity WANDB_ENTITY]
+                       [--wandb_name WANDB_NAME]
                        [--wandb_model_log_interval WANDB_MODEL_LOG_INTERVAL]
                        [--detect_anomaly DETECT_ANOMALY]
                        [--pretrain_path PRETRAIN_PATH]
@@ -4265,7 +4237,7 @@ mt_train.py
                        [--optim_conf OPTIM_CONF]
                        [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
                        [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
-                       [--adv_flag ADV_FLAG] [--adv ADV] [--adv_layers ADV_LAYERS]
+                       [--adv ADV] [--adv_layers ADV_LAYERS]
                        [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
                        [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
                        [--adv_dropout_rate ADV_DROPOUT_RATE]
@@ -4296,7 +4268,6 @@ mt_train.py
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -4309,7 +4280,7 @@ mt_train.py
       --adv_dropout_rate ADV_DROPOUT_RATE
                             adversarial Dropout rate (default: 0.0)
       --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+                            adversarial mode list (default: ['asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -4410,8 +4381,6 @@ mt_train.py
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
                             Enable wandb logging (default: True)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
       --wandb_entity WANDB_ENTITY
                             Specify wandb entity (default: None)
@@ -4847,8 +4816,8 @@ st_train.py
                        [--use_amp USE_AMP] [--log_interval LOG_INTERVAL]
                        [--use_matplotlib USE_MATPLOTLIB]
                        [--use_tensorboard USE_TENSORBOARD] [--use_wandb USE_WANDB]
-                       [--project_name PROJECT_NAME] [--wandb_id WANDB_ID]
-                       [--wandb_entity WANDB_ENTITY] [--wandb_name WANDB_NAME]
+                       [--wandb_id WANDB_ID] [--wandb_entity WANDB_ENTITY]
+                       [--wandb_name WANDB_NAME]
                        [--wandb_model_log_interval WANDB_MODEL_LOG_INTERVAL]
                        [--detect_anomaly DETECT_ANOMALY]
                        [--pretrain_path PRETRAIN_PATH]
@@ -4881,7 +4850,7 @@ st_train.py
                        [--optim_conf OPTIM_CONF]
                        [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
                        [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
-                       [--adv_flag ADV_FLAG] [--adv ADV] [--adv_layers ADV_LAYERS]
+                       [--adv ADV] [--adv_layers ADV_LAYERS]
                        [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
                        [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
                        [--adv_dropout_rate ADV_DROPOUT_RATE]
@@ -4926,7 +4895,6 @@ st_train.py
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -4939,7 +4907,7 @@ st_train.py
       --adv_dropout_rate ADV_DROPOUT_RATE
                             adversarial Dropout rate (default: 0.0)
       --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+                            adversarial mode list (default: ['asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -5051,8 +5019,6 @@ st_train.py
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
                             Enable wandb logging (default: True)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
       --wandb_entity WANDB_ENTITY
                             Specify wandb entity (default: None)
@@ -5534,9 +5500,8 @@ tts_train.py
                         [--use_amp USE_AMP] [--log_interval LOG_INTERVAL]
                         [--use_matplotlib USE_MATPLOTLIB]
                         [--use_tensorboard USE_TENSORBOARD]
-                        [--use_wandb USE_WANDB] [--project_name PROJECT_NAME]
-                        [--wandb_id WANDB_ID] [--wandb_entity WANDB_ENTITY]
-                        [--wandb_name WANDB_NAME]
+                        [--use_wandb USE_WANDB] [--wandb_id WANDB_ID]
+                        [--wandb_entity WANDB_ENTITY] [--wandb_name WANDB_NAME]
                         [--wandb_model_log_interval WANDB_MODEL_LOG_INTERVAL]
                         [--detect_anomaly DETECT_ANOMALY]
                         [--pretrain_path PRETRAIN_PATH]
@@ -5569,10 +5534,10 @@ tts_train.py
                         [--optim_conf OPTIM_CONF]
                         [--scheduler {reducelronplateau,lambdalr,steplr,multisteplr,exponentiallr,cosineannealinglr,noamlr,warmuplr,cycliclr,onecyclelr,cosineannealingwarmrestarts,None}]
                         [--scheduler_conf SCHEDULER_CONF] [--eprojs EPROJS]
-                        [--adv_flag ADV_FLAG] [--adv ADV]
-                        [--adv_layers ADV_LAYERS] [--adv_units ADV_UNITS]
-                        [--grlalpha GRLALPHA] [--adv_lr ADV_LR] [--asr_lr ASR_LR]
-                        [--reinit_adv] [--adv_dropout_rate ADV_DROPOUT_RATE]
+                        [--adv ADV] [--adv_layers ADV_LAYERS]
+                        [--adv_units ADV_UNITS] [--grlalpha GRLALPHA]
+                        [--adv_lr ADV_LR] [--asr_lr ASR_LR] [--reinit_adv]
+                        [--adv_dropout_rate ADV_DROPOUT_RATE]
                         [--adversarial_list ADVERSARIAL_LIST]
                         [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                         [--token_list TOKEN_LIST] [--odim ODIM]
@@ -5601,7 +5566,6 @@ tts_train.py
     optional arguments:
       --config CONFIG       Give config file in yaml format (default: None)
       --eprojs EPROJS       Number of encoder projection units (default: 256)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --adv ADV             To perform speaker adversarial training or not (default: asr10)
       --adv_layers ADV_LAYERS
                             Number of decoder layers (default: 1)
@@ -5614,7 +5578,7 @@ tts_train.py
       --adv_dropout_rate ADV_DROPOUT_RATE
                             adversarial Dropout rate (default: 0.0)
       --adversarial_list ADVERSARIAL_LIST
-                            adversarial mode list (default: ['spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'spk', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr', 'spkasr'])
+                            adversarial mode list (default: ['asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'asr', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'adv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'asradv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv', 'readv'])
       --train-json TRAIN_JSON
                             Filename of train label data (json) (default: None)
       --valid-json VALID_JSON
@@ -5715,8 +5679,6 @@ tts_train.py
                             Enable tensorboard logging (default: True)
       --use_wandb USE_WANDB
                             Enable wandb logging (default: True)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
       --wandb_id WANDB_ID   Specify wandb id (default: None)
       --wandb_entity WANDB_ENTITY
                             Specify wandb entity (default: None)

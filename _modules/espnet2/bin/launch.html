@@ -167,6 +167,9 @@
 
 <span class="n">logging</span><span class="o">.</span><span class="n">info</span> <span class="p">(</span><span class="s2">&quot; </span><span class="se">\n</span><span class="s2"> ********* Inside  bin/launch.py  *********  </span><span class="se">\n</span><span class="s2"> &quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ********* Inside  bin/launch.py  *********  </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+
 <div class="viewcode-block" id="get_parser"><a class="viewcode-back" href="../../../_gen/espnet2.bin.html#espnet2.bin.launch.get_parser">[docs]</a><span class="k">def</span> <span class="nf">get_parser</span><span class="p">():</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Launch distributed process with appropriate options. &quot;</span><span class="p">,</span>
@@ -199,10 +202,10 @@
             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specify wandb project name&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--adv_flag&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;flag for whether to perform speaker adversarial training or not&#39;</span><span class="p">)</span>
+    
 
     <span class="c1"># parser.add_argument(&#39;--eprojs&#39;, default=256, type=int, help=&#39;Number of encoder projection units&#39;)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--adv_flag&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;flag for whether to perform speaker adversarial training or not&#39;</span><span class="p">)</span>
     
     <span class="c1"># parser.add_argument(&#39;--adv&#39;, default=&#39;asr10&#39;, type=str, help=&#39;To perform speaker adversarial training or not&#39;)</span>
     <span class="c1"># parser.add_argument(&#39;--adv_layers&#39;, default=1, type=int,help=&#39;Number of decoder layers&#39;)</span>

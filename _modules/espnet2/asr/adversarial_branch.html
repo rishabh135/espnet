@@ -217,6 +217,11 @@
 
 
 <span class="c1"># Brij: Added to classify speakers from encoder projections</span>
+
+
+
+
+
 <div class="viewcode-block" id="SpeakerAdv"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.SpeakerAdv">[docs]</a><span class="k">class</span> <span class="nc">SpeakerAdv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Speaker adversarial module</span>
 <span class="sd">    :param int odim: dimension of outputs</span>
@@ -246,8 +251,22 @@
         <span class="c1">#    layer_arr.extend([torch.nn.Linear(advunits, advunits),</span>
         <span class="c1">#                    torch.nn.ReLU(), torch.nn.Dropout(p=dropout_rate)])</span>
         <span class="c1">#self.advnet = torch.nn.Sequential(*layer_arr)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">advunits</span><span class="p">,</span> <span class="n">odim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">advunits</span><span class="p">,</span> <span class="n">odim</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">Xavier</span><span class="p">())</span>
 
+
+
+<div class="viewcode-block" id="SpeakerAdv.reset_weights"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.SpeakerAdv.reset_weights">[docs]</a>    <span class="k">def</span> <span class="nf">reset_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+
+        <span class="c1"># for layer in self.children():</span>
+        <span class="c1"># if hasattr(layer, &#39;reset_parameters&#39;):</span>
+        <span class="c1">#     layer.reset_parameters()</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">advnet</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;bias&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">constant_</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;weight_ih&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">kaiming_normal_</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;weight_hh&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">orthogonal_</span><span class="p">(</span><span class="n">param</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SpeakerAdv.zero_state"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.SpeakerAdv.zero_state">[docs]</a>    <span class="k">def</span> <span class="nf">zero_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hs_pad</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">hs_pad</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">advlayers</span><span class="p">,</span> <span class="n">hs_pad</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">advunits</span><span class="p">)</span></div>

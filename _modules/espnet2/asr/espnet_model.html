@@ -550,38 +550,37 @@
                 <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc_weight</span> <span class="o">*</span> <span class="n">loss_ctc</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctc_weight</span><span class="p">)</span> <span class="o">*</span> <span class="n">loss_att</span>
 
 
-            <span class="n">retval</span> <span class="o">=</span> <span class="p">{}</span> 
-            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">):</span>
-                <span class="c1"># logging.info(&quot;Computing adversarial loss and flag inside {}  \n&quot;.format(self.adv_flag))</span>
-                <span class="n">rev_hs_pad</span> <span class="o">=</span> <span class="n">ReverseLayerF</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">encoder_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grlalpha</span><span class="p">)</span>
-                <span class="c1"># print(&quot;\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n&quot;.format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))</span>
-                <span class="n">loss_adv</span><span class="p">,</span> <span class="n">acc_adv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span><span class="p">(</span><span class="n">rev_hs_pad</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="p">,</span> <span class="n">text_lengths</span><span class="p">)</span>
-
-                <span class="c1"># print(&quot;espnet_model.py adversarial_loss {} and accuracy {} \n&quot;.format(loss_adv, acc_adv))</span>
-                <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss_adversarial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_adv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-                <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;loss_adv&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">loss_adv</span> <span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-
-
-
             <span class="c1"># Collect Attn branch stats</span>
-            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss_att&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_att</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_att</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;acc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_att</span>
-            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;cer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cer_att</span>
-            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;wer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wer_att</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;attention_loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_att</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_att</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;attention_accuracy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_att</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;attention_cer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cer_att</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;attention_wer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wer_att</span>
             
 
 
 
+        <span class="n">retval</span> <span class="o">=</span> <span class="p">{}</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adv_flag</span><span class="p">):</span>
+            <span class="c1"># logging.info(&quot;Computing adversarial loss and flag inside {}  \n&quot;.format(self.adv_flag))</span>
+            <span class="n">rev_hs_pad</span> <span class="o">=</span> <span class="n">ReverseLayerF</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">encoder_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grlalpha</span><span class="p">)</span>
+            <span class="c1"># print(&quot;\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n&quot;.format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))</span>
+            <span class="n">loss_adv</span><span class="p">,</span> <span class="n">acc_adv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adversarial_branch</span><span class="p">(</span><span class="n">rev_hs_pad</span><span class="p">,</span> <span class="n">encoder_out_lens</span><span class="p">,</span> <span class="n">text_lengths</span><span class="p">)</span>
+            <span class="c1"># print(&quot;espnet_model.py adversarial_loss {} and accuracy {} \n&quot;.format(loss_adv, acc_adv))</span>
+            
+            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;adversarial_loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_adv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;adversarial_accuracy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_adv</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="k">if</span> <span class="n">acc_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            
+            
+            <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;loss_adv&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">loss_adv</span> <span class="k">if</span> <span class="n">loss_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;accuracy_adversarial&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_adv</span> <span class="k">if</span> <span class="n">acc_adv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+
 
         <span class="c1"># Collect total loss stats</span>
-        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
-
-        <span class="c1"># print(&quot; asr/ESPNET_model.py :  loss : {}   acc_att : {} \n&quot;.format(stats[&quot;loss&quot;], stats[&quot;acc&quot;] ))</span>
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;asr_loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
         <span class="c1"># force_gatherable: to-device and to-tensor if scalar for DataParallel</span>
         <span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">force_gatherable</span><span class="p">((</span><span class="n">loss</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">),</span> <span class="n">loss</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-        
-
         
         <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span>   
         <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span>
@@ -589,7 +588,7 @@
         <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;loss_ctc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_ctc</span>
         <span class="n">retval</span><span class="p">[</span><span class="s2">&quot;loss_att&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_att</span>
         
-        <span class="c1"># loss_ctc, loss_att, acc, cer, wer, loss_adv, acc_adv</span>
+  
 
         <span class="k">return</span> <span class="n">retval</span></div>
 

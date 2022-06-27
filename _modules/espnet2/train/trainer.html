@@ -658,9 +658,8 @@
         <span class="n">iterator_stop</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
 
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">iiter</span><span class="p">,</span> <span class="p">(</span><span class="n">utt_id</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-            <span class="n">reporter</span><span class="o">.</span><span class="n">measure_iter_time</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="s2">&quot;iter_time&quot;</span><span class="p">),</span> <span class="mi">1</span>
-        <span class="p">):</span>
+        
+        <span class="k">for</span> <span class="n">iiter</span><span class="p">,</span> <span class="p">(</span><span class="n">utt_id</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reporter</span><span class="o">.</span><span class="n">measure_iter_time</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="s2">&quot;iter_time&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">):</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">distributed</span><span class="p">:</span>
@@ -727,13 +726,13 @@
 
 
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;/*** train/trainer.py adv_flag </span><span class="si">{}</span><span class="s2"> adv_mode </span><span class="si">{}</span><span class="s2">  loss </span><span class="si">{}</span><span class="s2">    &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">adv_flag</span><span class="p">,</span> <span class="n">adv_mode</span><span class="p">,</span> <span class="n">loss</span> <span class="p">))</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; loss_adv is </span><span class="si">{}</span><span class="s2">   </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">loss_adv</span> <span class="p">))</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="n">loss_adv</span> <span class="o">=</span> <span class="kc">None</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; loss_adv is none   </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="c1"># try:</span>
+                <span class="c1">#     print(&quot; loss_adv is {}   \n&quot;.format( loss_adv ))</span>
+                <span class="c1"># except:</span>
+                <span class="c1">#     loss_adv = None</span>
+                <span class="c1">#     print(&quot; loss_adv is none   \n&quot;)</span>
                     
-                <span class="k">if</span> <span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span>  <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;spk&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span>  <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;asr&#39;</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">freeze_adversarial</span><span class="p">()</span>
                         <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">unfreeze_encoder</span><span class="p">()</span>
@@ -743,7 +742,7 @@
                 
                     
 
-                <span class="k">elif</span> <span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;asr&#39;</span><span class="p">):</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;adv&#39;</span><span class="p">):</span>
 
                     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">unfreeze_adversarial</span><span class="p">()</span>
@@ -756,7 +755,7 @@
                     <span class="n">loss</span> <span class="o">=</span> <span class="n">total_loss</span>
                 
 
-                <span class="k">elif</span><span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;spkasr&#39;</span><span class="p">):</span>
+                <span class="k">elif</span><span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;asradv&#39;</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">unfreeze_adversarial</span><span class="p">()</span>
                         <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">unfreeze_encoder</span><span class="p">()</span>
@@ -766,6 +765,24 @@
                     
                     <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">loss_adv</span>                    
                     <span class="n">loss</span> <span class="o">=</span> <span class="n">total_loss</span>
+
+
+                <span class="k">elif</span><span class="p">(</span><span class="n">adv_flag</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">adv_mode</span> <span class="o">==</span> <span class="s1">&#39;readv&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">unfreeze_adversarial</span><span class="p">()</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">freeze_encoder</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">unfreeze_adversarial</span><span class="p">()</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">freeze_encoder</span><span class="p">()</span>
+                    
+                    <span class="n">model</span><span class="o">.</span><span class="n">adversarial_branch</span><span class="o">.</span><span class="n">reset_weights</span><span class="p">()</span>
+
+                    <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss_adv</span>                    
+                    <span class="n">loss</span> <span class="o">=</span> <span class="n">total_loss</span>
+
+
+
+                    <span class="p">[</span><span class="s2">&quot;asradv&quot;</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">30</span>
                 
 
 
@@ -840,8 +857,8 @@
 
 
 
-                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ***** Grad norm : </span><span class="si">{}</span><span class="s2"> and loss :</span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">grad_norm</span><span class="p">,</span> <span class="n">loss</span><span class="p">))</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;/*** train/trainer.py grad norm </span><span class="si">{}</span><span class="s2"> and loss </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">grad_norm</span><span class="p">,</span> <span class="n">loss</span><span class="p">))</span>
+                <span class="c1"># logging.info(&quot;\n ***** Grad norm : {} and loss :{} \n&quot;.format(grad_norm, loss))</span>
+                <span class="c1"># print(&quot;/*** train/trainer.py grad norm {} and loss {} \n&quot;.format(grad_norm, loss))</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">grad_norm</span><span class="p">):</span>
                     <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;The grad norm is </span><span class="si">{</span><span class="n">grad_norm</span><span class="si">}</span><span class="s2">. Skipping updating the model.&quot;</span>
@@ -967,6 +984,13 @@
                 <span class="c1"># Apply weighted averaging for stats.</span>
                 <span class="c1"># if distributed, this method can also apply all_reduce()</span>
                 <span class="n">stats</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">recursive_average</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">distributed</span><span class="p">)</span>
+
+
+            <span class="c1">#print the keys:</span>
+            <span class="c1"># print(&quot;\n ********** train/trainer.py printing keys : \n&quot;)</span>
+            <span class="c1"># for key in stats:</span>
+            <span class="c1">#     print (&quot; {} \n&quot;.format(key))</span>
+            <span class="c1"># print(&quot;\n ****************\n&quot;)</span>
 
             <span class="n">reporter</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
             <span class="n">reporter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
