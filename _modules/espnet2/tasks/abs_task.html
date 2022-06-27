@@ -1470,10 +1470,12 @@
                     <span class="n">args</span><span class="o">.</span><span class="n">use_wandb</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">use_wandb</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> Inside abs_task : </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_name</span><span class="p">))</span>
                 <span class="k">if</span> <span class="p">(</span>
                     <span class="ow">not</span> <span class="n">distributed_option</span><span class="o">.</span><span class="n">distributed</span>
                     <span class="ow">or</span> <span class="n">distributed_option</span><span class="o">.</span><span class="n">dist_rank</span> <span class="o">==</span> <span class="mi">0</span>
                 <span class="p">):</span>
+
                     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">project_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">today</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
                         <span class="n">d2</span> <span class="o">=</span> <span class="n">today</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;_date_%B_</span><span class="si">%d</span><span class="s2">_&quot;</span><span class="p">)</span>

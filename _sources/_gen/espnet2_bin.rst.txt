@@ -433,6 +433,7 @@ asr_train.py
                         [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
                         [--token_list TOKEN_LIST]
                         [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
+                        [--project_name PROJECT_NAME] [--adv_flag ADV_FLAG]
                         [--input_size INPUT_SIZE] [--ctc_conf CTC_CONF]
                         [--joint_net_conf JOINT_NET_CONF]
                         [--use_preprocessor USE_PREPROCESSOR]
@@ -812,6 +813,9 @@ asr_train.py
                             A text mapping int-id to token (default: None)
       --init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}
                             The initialization method (default: None)
+      --project_name PROJECT_NAME
+                            Specify wandb project name (default: _Language_Model)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --input_size INPUT_SIZE
                             The number of input dimension of the feature (default: None)
       --ctc_conf CTC_CONF   The keyword arguments for CTC class. (default: {'dropout_rate': 0.0, 'ctc_type': 'builtin', 'reduce': True, 'ignore_nan_grad': True})
@@ -3532,7 +3536,6 @@ launch.py
     
     usage: launch.py [-h] [--cmd CMD] [--log LOG]
                      [--max_num_log_files MAX_NUM_LOG_FILES] [--ngpu NGPU]
-                     [--project_name PROJECT_NAME] [--adv_flag ADV_FLAG]
                      [--num_nodes NUM_NODES | --host HOST] [--envfile ENVFILE]
                      [--multiprocessing_distributed MULTIPROCESSING_DISTRIBUTED]
                      [--master_port MASTER_PORT] [--master_addr MASTER_ADDR]
@@ -3552,10 +3555,6 @@ launch.py
                             The maximum number of log-files to be kept (default:
                             1000)
       --ngpu NGPU           The number of GPUs per node (default: 1)
-      --project_name PROJECT_NAME
-                            Specify wandb project name (default: None)
-      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial
-                            training or not (default: True)
       --num_nodes NUM_NODES
                             The number of nodes (default: 1)
       --host HOST           Directly specify the host names. The job are submitted
@@ -3707,7 +3706,8 @@ lm_train.py
                        [--adv_dropout_rate ADV_DROPOUT_RATE]
                        [--adversarial_list ADVERSARIAL_LIST]
                        [--train-json TRAIN_JSON] [--valid-json VALID_JSON]
-                       [--token_list TOKEN_LIST]
+                       [--token_list TOKEN_LIST] [--project_name PROJECT_NAME]
+                       [--adv_flag ADV_FLAG]
                        [--init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}]
                        [--model_conf MODEL_CONF]
                        [--use_preprocessor USE_PREPROCESSOR]
@@ -4056,6 +4056,9 @@ lm_train.py
     
       --token_list TOKEN_LIST
                             A text mapping int-id to token (default: None)
+      --project_name PROJECT_NAME
+                            Specify wandb project name (default: _Language_Model)
+      --adv_flag ADV_FLAG   flag for whether to perform speaker adversarial training or not (default: False)
       --init {chainer,xavier_uniform,xavier_normal,kaiming_uniform,kaiming_normal,None}
                             The initialization method (default: None)
       --model_conf MODEL_CONF

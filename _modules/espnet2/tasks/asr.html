@@ -385,6 +385,17 @@
         <span class="p">)</span>
 
         <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+                <span class="s2">&quot;--project_name&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;_Language_Model&quot;</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specify wandb project name&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--adv_flag&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;flag for whether to perform speaker adversarial training or not&#39;</span><span class="p">)</span>
+        
+
+
+        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--input_size&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">int_or_none</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
