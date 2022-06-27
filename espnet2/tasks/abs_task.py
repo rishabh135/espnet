@@ -1350,13 +1350,10 @@ class AbsTask(ABC):
                     if args.project_name is None:
                         today = date.today()
                         d2 = today.strftime("%B_%d_")
-                        # project = "june_20__date_June_20__june_20_with_adversarial_trigram_rnnASRTask"
                         project = "{}_".format(d2) + cls.__name__
                     else:
                         today = date.today()
                         d2 = today.strftime("%B_%d_") 
-                        # project = "june_20__date_June_20__june_20_with_adversarial_trigram_rnnASRTask"
-    
                         project = "{}_".format(d2) + args.project_name + cls.__name__
 
                     if args.wandb_name is None:
@@ -1365,13 +1362,6 @@ class AbsTask(ABC):
                         time = datetime.now() .strftime(" %H %M")
                         # d = date_time.strftime("%d %B, %Y")
                         name = d2 + " time : " + time   
-                        # str(Path(".").resolve() ).replace("/", "_") 
-                        # # dd/mm/YY
-                        # d1 = today.strftime("%d/%m/%Y")
-                        # print("d1 =", d1)
-
-                        # Textual month, day and year	
-                        # print("d2 =", d2)
 
                     else:
                         name = args.wandb_name
