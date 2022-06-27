@@ -46,15 +46,16 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-project_name="june_17_trial_2_wo_adv_trigram"
+adversarial_flag="True"
+project_name="june_27_adv_trigram_rnn_lm"
 
-
-
-experiment_name="standard_settings_trigram_rnn_decoder" # name of the experiment, just change it to create differnet folders
+experiment_name="70e_adv_acc_varied_lr" # name of the experiment, just change it to create differnet folders
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
+
+
 
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
@@ -63,14 +64,16 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 # data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
 
-
-echo "\n******************************\n"
+echo
+echo -e "\n******************************\n"
 echo "${project_name}"
+echo 
 echo "$dumpdir"
+echo 
 echo "$expdir"
-echo "********\n Important setting data direcotry  *********** \n"
-echo "\n data directory : ${data_dd}  \n"
-echo "\n****************************\n"
+echo -e "********\n Important setting data direcotry  *********** \n"
+echo -e "\n data directory : ${data_dd}  \n"
+echo -e "\n****************************\n"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
@@ -916,6 +919,8 @@ if ! "${skip_train}"; then
                     --bpemodel "${bpemodel}" \
                     --token_type "${lm_token_type}"\
                     --token_list "${lm_token_list}" \
+                    --adv_flag "" \
+                    --project_name "Language_modeling_${project_name}" \
                     --non_linguistic_symbols "${nlsyms_txt}" \
                     --cleaner "${cleaner}" \
                     --g2p "${g2p}" \
@@ -1038,10 +1043,11 @@ if ! "${skip_train}"; then
             ${python} -m espnet2.bin.asr_train \
                 --collect_stats true \
                 --use_preprocessor true \
-                --project_name "${project_name}" \
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
+                --adv_flag "${adversarial_flag}" \
+                --project_name "${project_name}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \
@@ -1172,6 +1178,8 @@ if ! "${skip_train}"; then
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
+                --adv_flag "True" \
+                --project_name "${project_name}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \

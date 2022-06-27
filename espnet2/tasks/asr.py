@@ -232,6 +232,17 @@ class ASRTask(AbsTask):
         )
 
         group.add_argument(
+                "--project_name",
+                type=str,
+                default="_Language_Model",
+                help="Specify wandb project name",
+            )
+
+        group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
+        
+
+
+        group.add_argument(
             "--input_size",
             type=int_or_none,
             default=None,
@@ -251,21 +262,6 @@ class ASRTask(AbsTask):
             help="The keyword arguments for joint network class.",
         )
 
-
-
-
-        # group = parser.add_argument_group("Adversarial part related related")
-        # group.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
-        # group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
-        # group.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
-        # group.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
-        # group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
-        # group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
-        # group.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
-        # group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
-        # group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
-        # group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        # group.add_argument('--adversarial_list', default=["spk"] * 20 + ["asr"] * 20 + ["spkasr" ] * 30 , type=list,help='adversarial mode list')
 
 
         group = parser.add_argument_group(description="Preprocess related")
@@ -491,7 +487,7 @@ class ASRTask(AbsTask):
 
         # 5. Decoder
         decoder_class = decoder_choices.get_class(args.decoder)
-        print("\n Setting current decoder as insider tasks/asr.py {} \n".format(args.decoder))
+        # print("\n Setting current decoder as insider tasks/asr.py {} \n".format(args.decoder))
 
         if args.decoder == "transducer":
             decoder = decoder_class(
@@ -561,7 +557,7 @@ class ASRTask(AbsTask):
         ################################################################################################################
 
         
-        print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
+        # print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
@@ -570,7 +566,6 @@ class ASRTask(AbsTask):
             adversarial_branch = None
 
 
-        # logging.info("\n******* Inside ASR.py *********\n")
 
         # 7. Build model
         try:

@@ -64,6 +64,11 @@ class ReverseLayerF(Function):
 
 
 # Brij: Added to classify speakers from encoder projections
+
+
+
+
+
 class SpeakerAdv(torch.nn.Module):
     """ Speaker adversarial module
     :param int odim: dimension of outputs
@@ -95,6 +100,28 @@ class SpeakerAdv(torch.nn.Module):
         #self.advnet = torch.nn.Sequential(*layer_arr)
         self.output = torch.nn.Linear(2*advunits, odim)
 
+
+
+    def reset_weights(self,):
+
+        # for layer in self.children():
+        # if hasattr(layer, 'reset_parameters'):
+        #     layer.reset_parameters()
+        for name, param in self.advnet.named_parameters():
+            if 'bias' in name:
+                torch.nn.init.constant_(param, 0.0)
+            elif 'weight_ih' in name:
+                torch.nn.init.kaiming_normal_(param)
+            elif 'weight_hh' in name:
+                torch.nn.init.orthogonal_(param)
+
+        for name, param in self.output.named_parameters():
+            if 'bias' in name:
+                torch.nn.init.constant_(param, 0.0)
+            elif 'weight_ih' in name:
+                torch.nn.init.kaiming_normal_(param)
+            elif 'weight_hh' in name:
+                torch.nn.init.orthogonal_(param)
 
     def zero_state(self, hs_pad):
         return hs_pad.new_zeros(2*self.advlayers, hs_pad.size(0), self.advunits)
