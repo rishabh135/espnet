@@ -47,7 +47,7 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 
 adversarial_flag="True"
-project_name="june_27_adv_trigram_rnn_lm"
+project_name="june_27_adv_trigram_tformer_lm"
 
 experiment_name="70e_adv_acc_varied_lr" # name of the experiment, just change it to create differnet folders
 
