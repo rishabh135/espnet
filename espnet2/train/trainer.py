@@ -572,9 +572,9 @@ class Trainer:
                 ###################################################################################
 
 
-                print("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss ))
+                print("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
                 if(adv_flag):
-                    print(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"], stats["adversarial_accuracy"] ))
+                    print(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"].detach(), stats["adversarial_accuracy"] ))
  
  
                     

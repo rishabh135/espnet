@@ -510,3 +510,4 @@
   517  wf
   518  conda env export > pyt_iinstall.yml
   519  history >> command_history.txt
+  520  oarsub -q production -l walltime=24:00:00 -t deploy 'sleep infinity' -p "cluster='graffiti'"  --project magnet --json -v

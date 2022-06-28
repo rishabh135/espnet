@@ -15,6 +15,7 @@ from torch.autograd import Function
 # Brij: Added the gradient reversal layer
 
 
+
 def to_cuda(m, x):
     """Function to send tensor into corresponding device
     :param torch.nn.Module m: torch module
@@ -144,12 +145,12 @@ class SpeakerAdv(torch.nn.Module):
 
        
         # initialization
-        logging.info("initializing hidden states for LSTM")
+        # logging.info("initializing hidden states for LSTM")
         h_0 = self.zero_state(hs_pad)
         c_0 = self.zero_state(hs_pad)
 
-        logging.info("Passing encoder output through advnet %s",
-                     str(hs_pad.shape))
+        # logging.info("Passing encoder output through advnet %s",
+        #              str(hs_pad.shape))
         
         # print(" Inside adversarial branch Passing encoder output through advnet {} \n".format(hs_pad.shape))
         
@@ -159,7 +160,7 @@ class SpeakerAdv(torch.nn.Module):
         #out_x = self.advnet(vgg_x)
 
         #logging.info("vgg output size = %s", str(vgg_x.shape))
-        logging.info("advnet output size = %s", str(out_x.shape))
+        # logging.info("advnet output size = %s", str(out_x.shape))
 
         # print("advnet output size = {} \n".format(out_x.shape))
         
@@ -200,9 +201,9 @@ class SpeakerAdv(torch.nn.Module):
 
         loss = F.cross_entropy(y_hat, labels, size_average=True)
         
-        logging.info("Adversarial loss = %f", loss.item())
+        # logging.info("Adversarial loss = %f", loss.item())
         acc = th_accuracy(y_hat, labels.unsqueeze(0), -1)
-        logging.info("Adversarial accuracy = %f", acc)
+        # logging.info("Adversarial accuracy = %f", acc)
 
         return loss, acc
 
@@ -210,3 +211,18 @@ class SpeakerAdv(torch.nn.Module):
 #-------------------- Adversarial Network ------------------------------------
 
 
+
+
+
+
+
+
+# : Passing encoder output through advnet torch.Size([35, 313, 256])
+# [chifflot-3] 2022-06-27 16:56:43,444 (adversarial_branch:162) INFO: advnet output size = torch.Size([35, 313, 512])
+# [chifflot-3] 2022-06-27 16:56:43,462 (adversarial_branch:203) INFO: Adversarial loss = nan
+# [chifflot-3] 2022-06-27 16:56:43,462 (adversarial_branch:205) INFO: Adversarial accuracy = 0.000000
+# [chifflot-3] 2022-06-27 16:56:43,951 (trainer:709) WARNING: The grad norm is nan. Skipping updating the model.
+# [chifflot-3] 2022-06-27 16:56:44,246 (ctc:69) WARNING: All samples in this mini-batch got nan grad. Returning nan value instead of CTC loss
+# [chifflot-3] 2022-06-27 16:56:44,276 (adversarial_branch:147) INFO: initializing hidden states for LSTM
+# [chifflot-3] 2022-06-27 16:56:44,276 (adversarial_branch:151) INFO: Passing encoder output through advnet torch.Size([30, 403, 256])
+# [chifflot-3] 2022-06-27 16:56:44,284 (adversarial_branch:162) INFO: advnet output size = torch.Size([30, 403, 512])
