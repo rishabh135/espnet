@@ -168,6 +168,7 @@
 <span class="c1"># Brij: Added the gradient reversal layer</span>
 
 
+
 <div class="viewcode-block" id="to_cuda"><a class="viewcode-back" href="../../../_gen/espnet2.asr.html#espnet2.asr.adversarial_branch.to_cuda">[docs]</a><span class="k">def</span> <span class="nf">to_cuda</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Function to send tensor into corresponding device</span>
 <span class="sd">    :param torch.nn.Module m: torch module</span>
@@ -297,12 +298,12 @@
 
        
         <span class="c1"># initialization</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;initializing hidden states for LSTM&quot;</span><span class="p">)</span>
+        <span class="c1"># logging.info(&quot;initializing hidden states for LSTM&quot;)</span>
         <span class="n">h_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zero_state</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">)</span>
         <span class="n">c_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zero_state</span><span class="p">(</span><span class="n">hs_pad</span><span class="p">)</span>
 
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Passing encoder output through advnet </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-                     <span class="nb">str</span><span class="p">(</span><span class="n">hs_pad</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="c1"># logging.info(&quot;Passing encoder output through advnet %s&quot;,</span>
+        <span class="c1">#              str(hs_pad.shape))</span>
         
         <span class="c1"># print(&quot; Inside adversarial branch Passing encoder output through advnet {} \n&quot;.format(hs_pad.shape))</span>
         
@@ -312,7 +313,7 @@
         <span class="c1">#out_x = self.advnet(vgg_x)</span>
 
         <span class="c1">#logging.info(&quot;vgg output size = %s&quot;, str(vgg_x.shape))</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;advnet output size = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="c1"># logging.info(&quot;advnet output size = %s&quot;, str(out_x.shape))</span>
 
         <span class="c1"># print(&quot;advnet output size = {} \n&quot;.format(out_x.shape))</span>
         
@@ -353,9 +354,9 @@
 
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">size_average</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adversarial loss = </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+        <span class="c1"># logging.info(&quot;Adversarial loss = %f&quot;, loss.item())</span>
         <span class="n">acc</span> <span class="o">=</span> <span class="n">th_accuracy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adversarial accuracy = </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">acc</span><span class="p">)</span>
+        <span class="c1"># logging.info(&quot;Adversarial accuracy = %f&quot;, acc)</span>
 
         <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">acc</span></div></div>
 
@@ -363,6 +364,21 @@
 <span class="c1">#-------------------- Adversarial Network ------------------------------------</span>
 
 
+
+
+
+
+
+
+<span class="c1"># : Passing encoder output through advnet torch.Size([35, 313, 256])</span>
+<span class="c1"># [chifflot-3] 2022-06-27 16:56:43,444 (adversarial_branch:162) INFO: advnet output size = torch.Size([35, 313, 512])</span>
+<span class="c1"># [chifflot-3] 2022-06-27 16:56:43,462 (adversarial_branch:203) INFO: Adversarial loss = nan</span>
+<span class="c1"># [chifflot-3] 2022-06-27 16:56:43,462 (adversarial_branch:205) INFO: Adversarial accuracy = 0.000000</span>
+<span class="c1"># [chifflot-3] 2022-06-27 16:56:43,951 (trainer:709) WARNING: The grad norm is nan. Skipping updating the model.</span>
+<span class="c1"># [chifflot-3] 2022-06-27 16:56:44,246 (ctc:69) WARNING: All samples in this mini-batch got nan grad. Returning nan value instead of CTC loss</span>
+<span class="c1"># [chifflot-3] 2022-06-27 16:56:44,276 (adversarial_branch:147) INFO: initializing hidden states for LSTM</span>
+<span class="c1"># [chifflot-3] 2022-06-27 16:56:44,276 (adversarial_branch:151) INFO: Passing encoder output through advnet torch.Size([30, 403, 256])</span>
+<span class="c1"># [chifflot-3] 2022-06-27 16:56:44,284 (adversarial_branch:162) INFO: advnet output size = torch.Size([30, 403, 512])</span>
 </pre></div>
 
            </div>
