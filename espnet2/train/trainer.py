@@ -626,7 +626,20 @@ class Trainer:
                     total_loss = loss_adv                    
                     loss = total_loss
 
+                # elif(adv_flag == False):
+                #     if options.ngpu > 1:
+                #         model.module.unfreeze_adversarial()
+                #         model.module.freeze_encoder()
+                #     else:
+                #         model.unfreeze_adversarial()
+                #         model.freeze_encoder()
+                    
+                #     model.adversarial_branch.reset_weights()
 
+                #     total_loss = loss_adv                    
+                #     loss = total_loss
+
+                
 
                    
                 

@@ -858,9 +858,9 @@ class AbsTask(ABC):
         parser.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         # parser.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        parser.add_argument('--adversarial_list', default=[ "asr"] * 20  + ["adv" ] * 20 + ["asradv" ] * 30, type=list,help='adversarial mode list')
+        parser.add_argument('--adversarial_list', default=[ "asr"] * 20 + ["adv" ] * 20 + ["asradv" ] * 30 ,  type=list,help='adversarial mode list')
 
-
+        # + ["adv" ] * 20 + ["asradv" ] * 30
 
 
         parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
@@ -1176,9 +1176,9 @@ class AbsTask(ABC):
         # Invoking torch.distributed.init_process_group
         distributed_option.init_torch_distributed()
 
-        # Makiing sure that adv_flag makes the adversarial list as asr
-        if(args.adv_flag == False):
-            args.adversarial_list = [ "asr"]*args.max_epoch
+        # # Makiing sure that adv_flag makes the adversarial list as asr
+        # if(args.adv_flag == False):
+        #     args.adversarial_list = [ "asr"]*args.max_epoch
 
 
         # 1. Set random-seed
