@@ -779,7 +779,20 @@
                     <span class="n">total_loss</span> <span class="o">=</span> <span class="n">loss_adv</span>                    
                     <span class="n">loss</span> <span class="o">=</span> <span class="n">total_loss</span>
 
+                <span class="c1"># elif(adv_flag == False):</span>
+                <span class="c1">#     if options.ngpu &gt; 1:</span>
+                <span class="c1">#         model.module.unfreeze_adversarial()</span>
+                <span class="c1">#         model.module.freeze_encoder()</span>
+                <span class="c1">#     else:</span>
+                <span class="c1">#         model.unfreeze_adversarial()</span>
+                <span class="c1">#         model.freeze_encoder()</span>
+                    
+                <span class="c1">#     model.adversarial_branch.reset_weights()</span>
 
+                <span class="c1">#     total_loss = loss_adv                    </span>
+                <span class="c1">#     loss = total_loss</span>
+
+                
 
                    
                 
