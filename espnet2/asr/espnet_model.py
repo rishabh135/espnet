@@ -415,7 +415,7 @@ class ESPnetASRModel(AbsESPnetModel):
             # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
             
             stats["adversarial_loss"] = loss_adv.detach() if loss_adv is not None else None
-            stats["adversarial_accuracy"] = acc_adv.detach() if acc_adv is not None else None
+            stats["adversarial_accuracy"] = acc_adv if acc_adv is not None else None
             
             
             retval["loss_adv"]= loss_adv if loss_adv is not None else None

@@ -892,7 +892,7 @@ class AbsTask(ABC):
             raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
 
         # optimi = None
-        if ( args.adv_flag):
+        if ( args.adv_flag ):
             if(args.ngpu > 1):        
                 param_grp = [
                     {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},

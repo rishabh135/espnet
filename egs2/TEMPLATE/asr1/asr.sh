@@ -30,7 +30,7 @@ skip_train=false     # Skip training stages.
 skip_eval=false      # Skip decoding and evaluation stages.
 skip_upload=true     # Skip packing and uploading stages.
 skip_upload_hf=true  # Skip uploading to hugging face stages.
-ngpu=1               # The number of gpus ("0" uses cpu, otherwise use gpu).
+ngpu=4               # The number of gpus ("0" uses cpu, otherwise use gpu).
 num_nodes=1          # The number of nodes.
 nj=32                # The number of parallel jobs.
 inference_nj=32      # The number of parallel jobs in decoding.
@@ -43,12 +43,9 @@ gpu_inference=false  # Whether to perform gpu decoding.
 
 global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
 
-# project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
-
-adversarial_flag="True"
-project_name="june_27_adv_trigram_rnn_lm"
-
+adversarial_flag=""
+project_name="multigpu_june_27_adv_trigram_rnn_lm"
 experiment_name="70e_adv_acc_varied_lr" # name of the experiment, just change it to create differnet folders
 
 
@@ -59,10 +56,8 @@ experiment_name="70e_adv_acc_varied_lr" # name of the experiment, just change it
 
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
-
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/data # determines all the files creating folder as in the data folder
 
-# data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
 
 echo
 echo -e "\n******************************\n"
