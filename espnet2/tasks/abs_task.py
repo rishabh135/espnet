@@ -582,13 +582,7 @@ class AbsTask(ABC):
             help="Enable wandb logging",
         )
 
-        group.add_argument(
-            "--project_name",
-            type=str,
-            default=None,
-            help="Specify wandb project name",
-        )
-        
+
         group.add_argument(
             "--wandb_id",
             type=str,
@@ -849,7 +843,7 @@ class AbsTask(ABC):
 
         group = parser.add_argument_group("Adversarial part related ")
         parser.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
-        parser.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
+        # parser.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
         parser.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
         parser.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
         parser.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
@@ -899,6 +893,52 @@ class AbsTask(ABC):
 
         optimizers = [optim]
         return optimizers
+
+
+
+
+
+
+
+    # @classmethod
+    # def build_optimizers(
+    #     cls,
+    #     args: argparse.Namespace,
+    #     model: torch.nn.Module,
+    # ) -> List[torch.optim.Optimizer]:
+        
+    #     if cls.num_optimizers != 1:
+    #         raise RuntimeError(
+    #             "build_optimizers() must be overridden if num_optimizers != 1"
+    #         )
+
+    #     optim_class = optim_classes.get(args.optim)
+    #     # print("\n\n -------------------- \n adv flag : {}  gpu: {} \n\n".format(args.adv_flag, args.ngpu))
+    #     if optim_class is None:
+    #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+
+    #     # optimi = None
+    #     if ( args.adv_flag and cls.__name__ == "ASRTask" ):
+    #         if(args.ngpu > 1):        
+    #             param_grp = [
+    #                 {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
+    #             ]            
+    #         else:
+    #             param_grp = [
+    #                 {'params': model.encoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.decoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
+            
+    #         optimi = optim_class(param_grp)
+    #     else:
+    #         optimi = optim_class(model.parameters(), **args.optim_conf)
+
+    #     optimizers = [optimi]
+    #     return optimizers
+
+
 
     @classmethod
     def exclude_opts(cls) -> Tuple[str, ...]:
@@ -1316,38 +1356,34 @@ class AbsTask(ABC):
                     logging.info("wandb not configured! run `wandb login` to enable")
                     args.use_wandb = False
 
+   
+
+
             if args.use_wandb:
+                # print("\n\n Inside abs_task : {} \n\n".format(args.project_name))
                 if (
                     not distributed_option.distributed
                     or distributed_option.dist_rank == 0
                 ):
+
                     if args.project_name is None:
                         today = date.today()
-                        d2 = today.strftime("_date_%B_%d_")
-                        project = "june22_only_decoding_using_pretrained_network_" + cls.__name__
-                        # project = "june_20_{}_".format(d2)  + cls.__name__
+                        d2 = today.strftime("%B_%d_")
+                        project = "{}_".format(d2) + cls.__name__
                     else:
                         today = date.today()
-                        d2 = today.strftime("_date_%B_%d_") 
-                        project = "june22_only_decoding_using_pretrained_network_" + cls.__name__
-                        # project = "june_20_{}_".format(d2) + args.project_name  + cls.__name__
+                        d2 = today.strftime("%B_%d_") 
+                        project =  args.project_name + cls.__name__
 
                     if args.wandb_name is None:
                         today = date.today()
-                        d2 = today.strftime("Run_from_%B_%d_")
-                        time = datetime.now() .strftime(" %H %M")
+                        d2 = today.strftime("Run_%B_%d_")
+                        time = datetime.now().strftime("_time__%H_%M")
                         # d = date_time.strftime("%d %B, %Y")
-                        name = d2 + " time : " + time   
-                        # str(Path(".").resolve() ).replace("/", "_") 
-                        # # dd/mm/YY
-                        # d1 = today.strftime("%d/%m/%Y")
-                        # print("d1 =", d1)
-
-                        # Textual month, day and year	
-                        # print("d2 =", d2)
-
+                        name =  d2 + "__" + time 
                     else:
                         name = args.wandb_name
+
 
                     wandb.init(
                         entity=args.wandb_entity,

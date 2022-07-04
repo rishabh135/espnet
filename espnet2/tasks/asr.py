@@ -237,6 +237,19 @@ class ASRTask(AbsTask):
             default=None,
             help="The number of input dimension of the feature",
         )
+        
+        
+        
+        group.add_argument(
+                "--project_name",
+                type=str,
+                default="_Language_Model",
+                help="Specify wandb project name",
+            )
+
+        group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
+        
+
 
         group.add_argument(
             "--ctc_conf",

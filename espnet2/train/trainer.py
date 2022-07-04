@@ -489,7 +489,7 @@ class Trainer:
         use_wandb = options.use_wandb
         distributed = distributed_option.distributed
 
-        adv_mode = options.adversarial_list[current_epoch]
+        adv_mode = options.adversarial_list[current_epoch-1]
         adv_flag = options.adv_flag
 
         if log_interval is None:
@@ -631,6 +631,12 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
+                print("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
+                if(adv_flag):
+                    print(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"].detach(), stats["adversarial_accuracy"] ))
+ 
+
+
                 if (adv_flag == True and  adv_mode == 'spk'):
                     if options.ngpu > 1:
                         model.module.freeze_encoder()
@@ -663,8 +669,8 @@ class Trainer:
 
 
 
-                logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
-                print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
+                # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
+                # print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
                 if not torch.isfinite(grad_norm):
                     logging.warning(
                         f"The grad norm is {grad_norm}. Skipping updating the model."
