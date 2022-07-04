@@ -47,8 +47,6 @@ batch_type: numel
 batch_bins: 16000000
 accum_grad: 4
 max_epoch: 70
-adv_flag: true
-project_name: "june_20_with_adversarial_trigram_rnn"
 patience: none
 init: none
 best_model_criterion:

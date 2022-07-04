@@ -57,13 +57,15 @@ class CTC(torch.nn.Module):
         if self.ctc_type == "builtin":
             th_pred = th_pred.log_softmax(2)
             loss = self.ctc_loss(th_pred, th_target, th_ilen, th_olen)
-
+            # print("\n asr/ctc.py ctc_loss : {} \n".format(loss))
+            logging.info("asr/ctc.py ctc_loss : {} ".format(loss))
             if loss.requires_grad and self.ignore_nan_grad:
                 # ctc_grad: (L, B, O)
                 ctc_grad = loss.grad_fn(torch.ones_like(loss))
                 ctc_grad = ctc_grad.sum([0, 2])
                 indices = torch.isfinite(ctc_grad)
                 size = indices.long().sum()
+                logging.warning(" ctc_grad {} \n indices {}  \n  >>>>> size {} ".format(ctc_grad, indices, size))
                 if size == 0:
                     # Return as is
                     logging.warning(

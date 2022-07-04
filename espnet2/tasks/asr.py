@@ -234,7 +234,7 @@ class ASRTask(AbsTask):
         group.add_argument(
                 "--project_name",
                 type=str,
-                default="_Language_Model",
+                default="",
                 help="Specify wandb project name",
             )
 

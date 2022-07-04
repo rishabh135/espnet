@@ -858,9 +858,9 @@ class AbsTask(ABC):
         parser.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         # parser.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        parser.add_argument('--adversarial_list', default=[ "asr"] * 20  + ["adv" ] * 20 + ["asradv" ] * 30, type=list,help='adversarial mode list')
+        parser.add_argument('--adversarial_list', default=[ "asr"] * 20 + ["adv" ] * 20 + ["asradv" ] * 30 ,  type=list,help='adversarial mode list')
 
-
+        # + ["adv" ] * 20 + ["asradv" ] * 30
 
 
         parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
@@ -874,43 +874,74 @@ class AbsTask(ABC):
         assert check_return_type(parser)
         return parser
 
+
     @classmethod
     def build_optimizers(
         cls,
         args: argparse.Namespace,
         model: torch.nn.Module,
     ) -> List[torch.optim.Optimizer]:
-        
         if cls.num_optimizers != 1:
             raise RuntimeError(
                 "build_optimizers() must be overridden if num_optimizers != 1"
             )
 
         optim_class = optim_classes.get(args.optim)
-        # print("\n\n -------------------- \n adv flag : {}  gpu: {} \n\n".format(args.adv_flag, args.ngpu))
         if optim_class is None:
             raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
-
-        # optimi = None
-        if ( args.adv_flag ):
-            if(args.ngpu > 1):        
-                param_grp = [
-                    {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
-                    {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
-                    {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
-                ]            
-            else:
-                param_grp = [
-                    {'params': model.encoder.parameters(), 'lr': args.asr_lr},
-                    {'params': model.decoder.parameters(), 'lr': args.asr_lr},
-                    {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
-            
-            optimi = optim_class(param_grp)
+        if args.sharded_ddp:
+            if fairscale is None:
+                raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
+            optim = fairscale.optim.oss.OSS(
+                params=model.parameters(), optim=optim_class, **args.optim_conf
+            )
         else:
-            optimi = optim_class(model.parameters(), **args.optim_conf)
+            optim = optim_class(model.parameters(), **args.optim_conf)
 
-        optimizers = [optimi]
+        optimizers = [optim]
         return optimizers
+
+    # @classmethod
+    # def build_optimizers(
+    #     cls,
+    #     args: argparse.Namespace,
+    #     model: torch.nn.Module,
+    # ) -> List[torch.optim.Optimizer]:
+        
+    #     if cls.num_optimizers != 1:
+    #         raise RuntimeError(
+    #             "build_optimizers() must be overridden if num_optimizers != 1"
+    #         )
+
+    #     optim_class = optim_classes.get(args.optim)
+    #     # print("\n\n -------------------- \n adv flag : {}  gpu: {} \n\n".format(args.adv_flag, args.ngpu))
+    #     if optim_class is None:
+    #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+
+    #     # optimi = None
+    #     if ( args.adv_flag and cls.__name__ == "ASRTask"):
+    #         # print("\n abs_task.py : variable_lr asrlr {}   adv_lr {} \n".format(args.asr_lr, args.adv_lr))
+    #         if(args.ngpu > 1):        
+    #             param_grp = [
+    #                 {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
+    #             ]            
+    #         else:
+    #             param_grp = [
+    #                 {'params': model.encoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.decoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.ctc.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
+            
+    #         optimi = optim_class(param_grp, weight_decay= 0.000001)
+    #     else:
+    #         optimi = optim_class(model.parameters(), **args.optim_conf)
+
+    #     optimizers = [optimi]
+    #     return optimizers
+
 
     @classmethod
     def exclude_opts(cls) -> Tuple[str, ...]:
@@ -1148,6 +1179,11 @@ class AbsTask(ABC):
         # Invoking torch.distributed.init_process_group
         distributed_option.init_torch_distributed()
 
+        # # Makiing sure that adv_flag makes the adversarial list as asr
+        # if(args.adv_flag == False):
+        #     args.adversarial_list = [ "asr"]*args.max_epoch
+
+
         # 1. Set random-seed
         set_all_random_seed(args.seed)
         torch.backends.cudnn.enabled = args.cudnn_enabled
@@ -1164,9 +1200,6 @@ class AbsTask(ABC):
 
             
         model = cls.build_model(args=args)
-
-        # print("\n\n ******** tasks/abs_task accessing model args adv_flag : {} ########### \n\n".format(model.adv_flag))
-
 
         if not isinstance(model, AbsESPnetModel):
             raise RuntimeError(
@@ -1329,7 +1362,7 @@ class AbsTask(ABC):
                     args.use_wandb = False
 
             if args.use_wandb:
-                print("\n\n Inside abs_task : {} \n\n".format(args.project_name))
+                # print("\n\n Inside abs_task : {} \n\n".format(args.project_name))
                 if (
                     not distributed_option.distributed
                     or distributed_option.dist_rank == 0
@@ -1342,17 +1375,24 @@ class AbsTask(ABC):
                     else:
                         today = date.today()
                         d2 = today.strftime("%B_%d_") 
-                        project = "{}_".format(d2) + args.project_name + cls.__name__
+                        project =  args.project_name + cls.__name__
 
                     if args.wandb_name is None:
                         today = date.today()
-                        d2 = today.strftime("Run_from_%B_%d_")
-                        time = datetime.now() .strftime(" %H %M")
+                        d2 = today.strftime("Run_%B_%d_")
+                        time = datetime.now().strftime("_time__%H_%M")
                         # d = date_time.strftime("%d %B, %Y")
-                        name = d2 + " time : " + time   
-
+                        name =  d2 + "__" + time 
                     else:
                         name = args.wandb_name
+                        
+                        # str(Path(".").resolve() ).replace("/", "_") 
+                        # # dd/mm/YY
+                        # d1 = today.strftime("%d/%m/%Y")
+                        # print("d1 =", d1)
+
+                        # Textual month, day and year	
+                        # print("d2 =", d2)
 
                     wandb.init(
                         entity=args.wandb_entity,

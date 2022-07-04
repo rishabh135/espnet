@@ -376,9 +376,9 @@ class Trainer:
                             p.symlink_to(f"{iepoch}epoch.pth")
                             _improved.append(f"{_phase}.{k}")
                 if len(_improved) == 0:
-                    logging.info("There are no improvements in this epoch")
+                    logging.warning("There are no improvements in this epoch")
                 else:
-                    logging.info(
+                    logging.warning(
                         "The best model has been updated: " + ", ".join(_improved)
                     )
 
@@ -572,9 +572,9 @@ class Trainer:
                 ###################################################################################
 
 
-                print("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss ))
+                print("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
                 if(adv_flag):
-                    print(" adversarial_loss is {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"], stats["adversarial_accuracy"] ))
+                    print(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"].detach(), stats["adversarial_accuracy"] ))
  
  
                     
@@ -626,7 +626,20 @@ class Trainer:
                     total_loss = loss_adv                    
                     loss = total_loss
 
+                # elif(adv_flag == False):
+                #     if options.ngpu > 1:
+                #         model.module.unfreeze_adversarial()
+                #         model.module.freeze_encoder()
+                #     else:
+                #         model.unfreeze_adversarial()
+                #         model.freeze_encoder()
+                    
+                #     model.adversarial_branch.reset_weights()
 
+                #     total_loss = loss_adv                    
+                #     loss = total_loss
+
+                
 
                    
                 
