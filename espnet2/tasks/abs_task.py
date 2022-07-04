@@ -852,7 +852,7 @@ class AbsTask(ABC):
         parser.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         parser.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        parser.add_argument('--adversarial_list', default=[ "spk"] * 20  + ["asr" ] * 20 + ["spkasr" ] * 30 , type=list,help='adversarial mode list')
+        parser.add_argument('--adversarial_list', default=[ "asr"] * 20  + ["adv" ] * 20 + ["asradv" ] * 30 , type=list,help='adversarial mode list')
 
 
 

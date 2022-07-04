@@ -492,6 +492,38 @@ class Trainer:
         adv_mode = options.adversarial_list[current_epoch-1]
         adv_flag = options.adv_flag
 
+            
+        if (adv_flag == True and  adv_mode == 'asr'):
+            if options.ngpu > 1:
+                model.module.freeze_adversarial()
+                model.module.unfreeze_encoder()
+            else:
+                model.freeze_adversarial()
+                model.unfreeze_encoder()
+        
+            
+        elif (adv_flag == True and adv_mode == 'adv'):
+            if options.ngpu > 1:
+                model.module.unfreeze_adversarial()
+                model.module.freeze_encoder()
+            else:
+                model.unfreeze_adversarial()
+                model.freeze_encoder()
+            total_loss = loss_adv
+            loss = total_loss
+        
+        elif(adv_flag == True and adv_mode == 'asradv'):
+            if options.ngpu > 1:
+                model.module.unfreeze_adversarial()
+                model.module.unfreeze_encoder()
+            else:
+                model.unfreeze_adversarial()
+                model.unfreeze_encoder()
+            
+            total_loss = loss + loss_adv                    
+            loss = total_loss
+
+
         if log_interval is None:
             try:
                 log_interval = max(len(iterator) // 20, 10)
@@ -632,35 +664,19 @@ class Trainer:
                 ###################################################################################
 
                 print("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
+                # logging.warning("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
                 if(adv_flag):
                     print(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"].detach(), stats["adversarial_accuracy"] ))
  
-
-
-                if (adv_flag == True and  adv_mode == 'spk'):
-                    if options.ngpu > 1:
-                        model.module.freeze_encoder()
-                    else:
-                        model.freeze_encoder()
+                    
+                if (adv_flag and adv_mode == 'adv'):    
                     total_loss = loss_adv
                     loss = total_loss
                 
-                elif (adv_flag == True and adv_mode == 'asr'):
-                    if options.ngpu > 1:
-                        model.module.freeze_encoder()
-                    else:
-                        model.freeze_encoder()
-                    total_loss = loss
+                elif(adv_flag and adv_mode == 'asradv'):                    
+                    total_loss = loss + loss_adv                    
                     loss = total_loss
-                
-                elif(adv_flag == True and adv_mode == 'spkasr'):
-                    if (options.ngpu > 1):
-                        model.module.unfreeze_encoder()
-                    else:
-                        model.unfreeze_encoder()
-                    total_loss = loss + loss_adv
-                    loss = total_loss
-                
+
 
 
                 ###################################################################################
