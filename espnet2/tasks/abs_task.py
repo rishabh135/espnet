@@ -582,12 +582,7 @@ class AbsTask(ABC):
             help="Enable wandb logging",
         )
 
-        group.add_argument(
-            "--project_name",
-            type=str,
-            default=None,
-            help="Specify wandb project name",
-        )
+
         
         group.add_argument(
             "--wandb_id",
@@ -849,7 +844,7 @@ class AbsTask(ABC):
 
         group = parser.add_argument_group("Adversarial part related related")
         group.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
-        group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
+        # group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
         group.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
         group.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
         group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
@@ -858,7 +853,7 @@ class AbsTask(ABC):
         group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        group.add_argument('--adversarial_list', default=[ "spk"] * 20  + ["asr" ] * 20 + ["spkasr" ] * 30 , type=list,help='adversarial mode list')
+        group.add_argument('--adversarial_list', default=[ "asr", "asr", "adv"] * 20 , type=list,help='adversarial mode list')
 
         parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
         parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
@@ -1318,29 +1313,22 @@ class AbsTask(ABC):
                     not distributed_option.distributed
                     or distributed_option.dist_rank == 0
                 ):
+                    
                     if args.project_name is None:
                         today = date.today()
-                        d2 = today.strftime("_date_%B_%d_")
-                        project = "june_17_adv_flag_{}".format(args.adv_flag)  + cls.__name__
+                        d2 = today.strftime("%B_%d_")
+                        project = "{}_".format(d2) + cls.__name__
                     else:
                         today = date.today()
-                        d2 = today.strftime("_date_%B_%d_") 
-                        project = "june_17_adv_flag_{}".format(args.adv_flag) + args.project_name  + cls.__name__
+                        d2 = today.strftime("%B_%d_") 
+                        project =  args.project_name + cls.__name__
 
                     if args.wandb_name is None:
                         today = date.today()
-                        d2 = today.strftime("Run_from_%B_%d_")
-                        time = datetime.now() .strftime(" %H %M")
+                        d2 = today.strftime("Run_%B_%d_")
+                        time = datetime.now().strftime("_time__%H_%M")
                         # d = date_time.strftime("%d %B, %Y")
-                        name = d2 + " time : " + time   
-                        # str(Path(".").resolve() ).replace("/", "_") 
-                        # # dd/mm/YY
-                        # d1 = today.strftime("%d/%m/%Y")
-                        # print("d1 =", d1)
-
-                        # Textual month, day and year	
-                        # print("d2 =", d2)
-
+                        name =  d2 + "__" + time 
                     else:
                         name = args.wandb_name
 
@@ -1352,7 +1340,7 @@ class AbsTask(ABC):
                         id=args.wandb_id,
                         resume=args.resume,
                     )
-                    wandb.config.update(args)
+                    wandb.config.update(args, allow_val_change=True)
                 else:
                     # wandb also supports grouping for distributed training,
                     # but we only logs aggregated data,
