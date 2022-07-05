@@ -47,9 +47,10 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 
 adversarial_flag="True"
-project_name="nancy_july_4_reverted"
 
-experiment_name="70e_adv_acc_varied_lr" # name of the experiment, just change it to create differnet folders
+project_name="nancy_july_5_adv"
+
+experiment_name="70e_same_lr" # name of the experiment, just change it to create differnet folders
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
@@ -1179,7 +1180,7 @@ if ! "${skip_train}"; then
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
                 --adv_flag "${adversarial_flag}" \
-                --project_name "${project_name}" \
+                --project_name "ASR_modeling_${project_name}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \

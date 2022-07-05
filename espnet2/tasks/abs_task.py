@@ -843,7 +843,6 @@ class AbsTask(ABC):
 
         group = parser.add_argument_group("Adversarial part related ")
         parser.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
-        # parser.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
         parser.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
         parser.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
         parser.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
@@ -852,7 +851,7 @@ class AbsTask(ABC):
         parser.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         parser.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        parser.add_argument('--adversarial_list', default=[ "asr"] * 20  + ["adv" ] * 20 + ["asradv" ] * 30 , type=list,help='adversarial mode list')
+        parser.add_argument('--adversarial_list', default=[ "asr" , "adv", "asradv" ] * 20, type=list,help='adversarial mode list')
 
 
 
@@ -919,6 +918,7 @@ class AbsTask(ABC):
 
     #     # optimi = None
     #     if ( args.adv_flag and cls.__name__ == "ASRTask" ):
+    #         logging.warning("\n\n >>>> inside variable lr \n")
     #         if(args.ngpu > 1):        
     #             param_grp = [
     #                 {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},

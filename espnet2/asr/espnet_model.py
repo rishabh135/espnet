@@ -105,7 +105,7 @@ class ESPnetASRModel(AbsESPnetModel):
         self.adv_flag = adv_flag
         self.grlalpha = grlalpha
 
-        
+
         self.adversarial_frozen_flag = False
         self.encoder_frozen_flag = False
         # adv_mode = adversarial_list[current_epoch]
@@ -396,25 +396,28 @@ class ESPnetASRModel(AbsESPnetModel):
             else:
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
 
+        #################################################################################################################################################################################################################################
+        #################################################################################################################################################################################################################################
+        
+        # Made adversarial part decoder agnostic
+        retval = {} 
+        if (self.adv_flag):
+            # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+            # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
 
-            retval = {} 
-            if (self.adv_flag):
-                # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
-                rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-                # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-                loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
-
-                # # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
-                # stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-                # stats["accuracy_adversarial"] = acc_adv 
-                # retval["loss_adv"]= loss_adv if loss_adv is not None else None
-                
-                stats["adversarial_loss"] = loss_adv.detach() if loss_adv is not None else None
-                stats["adversarial_accuracy"] = acc_adv if acc_adv is not None else None
-                
-                
-                retval["loss_adv"]= loss_adv if loss_adv is not None else None
-                retval["accuracy_adversarial"] = acc_adv if acc_adv is not None else None
+            # # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
+            # stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
+            # stats["accuracy_adversarial"] = acc_adv 
+            # retval["loss_adv"]= loss_adv if loss_adv is not None else None
+            
+            stats["adversarial_loss"] = loss_adv.detach() if loss_adv is not None else None
+            stats["adversarial_accuracy"] = acc_adv if acc_adv is not None else None
+            
+            
+            retval["loss_adv"]= loss_adv if loss_adv is not None else None
+            retval["accuracy_adversarial"] = acc_adv if acc_adv is not None else None
 
 
 
@@ -422,17 +425,17 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
             # Collect Attn branch stats
-            stats["loss_att"] = loss_att.detach() if loss_att is not None else None
-            stats["acc"] = acc_att
-            stats["cer"] = cer_att
-            stats["wer"] = wer_att
+            stats["loss_attention"] = loss_att.detach() if loss_att is not None else None
+            stats["accuracy_attention"] = acc_att
+            stats["cer_attention"] = cer_att
+            stats["wer_attention"] = wer_att
             
 
 
 
 
         # Collect total loss stats
-        stats["loss"] = loss.detach()
+        stats["only_asr_loss"] = loss.detach()
 
         # print(" asr/ESPNET_model.py :  loss : {}   acc_att : {} \n".format(stats["loss"], stats["acc"] ))
 

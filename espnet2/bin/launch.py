@@ -39,10 +39,6 @@ def get_parser():
     )
     
 
-
-
-
-
     egroup = parser.add_mutually_exclusive_group()
     egroup.add_argument("--num_nodes", type=int, default=1, help="The number of nodes")
     egroup.add_argument(
