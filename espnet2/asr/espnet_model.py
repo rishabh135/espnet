@@ -107,6 +107,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         self.encoder_frozen_flag = False
+        self.adversarial_frozen_flag = False
+        
         # adv_mode = adversarial_list[current_epoch]
 
         # if(self.adv_mode == 'spk'):
@@ -193,6 +195,19 @@ class ESPnetASRModel(AbsESPnetModel):
     # For training the adverarial branch, encoder must be frozen
     # self.enc_frozen = False
 
+    
+    def freeze_adversarial(self):
+        if not self.adversarial_frozen_flag:
+            for param in self.adversarial_branch.parameters():
+                param.requires_grad = False
+            self.adversarial_frozen_flag = True
+
+
+    def unfreeze_adversarial(self):
+        if self.adversarial_frozen_flag:
+            for param in self.adversarial_branch.parameters():
+                param.requires_grad = True
+            self.adversarial_frozen_flag = False
 
 
     
@@ -200,15 +215,20 @@ class ESPnetASRModel(AbsESPnetModel):
         if not self.encoder_frozen_flag:
             for param in self.encoder.parameters():
                 param.requires_grad = False
+            for param in self.decoder.parameters():
+                param.requires_grad = False    
             self.encoder_frozen_flag = True
 
-   
+    
+
     def unfreeze_encoder(self):
         if self.encoder_frozen_flag:
             for param in self.encoder.parameters():
                 param.requires_grad = True
+            for param in self.decoder.parameters():
+                param.requires_grad = True            
             self.encoder_frozen_flag = False
-    
+
     # def freeze_encoder(self):
     #     if not self.enc_frozen:
     #         for param in self.enc.parameters():
@@ -381,34 +401,33 @@ class ESPnetASRModel(AbsESPnetModel):
             else:
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
 
-
-            retval = {} 
-            if (self.adv_flag):
-                # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
-                rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-                # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-                loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
-
-                print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
-                stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-                retval["loss_adv"]= loss_adv.detach() if loss_adv is not None else None
-
-
-
             # Collect Attn branch stats
             stats["loss_att"] = loss_att.detach() if loss_att is not None else None
             stats["acc"] = acc_att
             stats["cer"] = cer_att
             stats["wer"] = wer_att
             
+        
+        retval = {} 
+        if (self.adv_flag):
+            # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+            # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
 
+            stats["adversarial_loss"] = loss_adv.detach() if loss_adv is not None else None
+            stats["adversarial_accuracy"] = acc_adv if acc_adv is not None else None
+
+
+            retval["loss_adv"]= loss_adv if loss_adv is not None else None
+            retval["accuracy_adversarial"] = acc_adv if acc_adv is not None else None
 
 
 
         # Collect total loss stats
         stats["loss"] = loss.detach()
 
-        print(" asr/ESPNET_model.py :  loss : {}   acc_att : {} \n".format(stats["loss"], stats["acc"] ))
+        # print(" asr/ESPNET_model.py :  loss : {}   acc_att : {} \n".format(stats["loss"], stats["acc"] ))
 
         # force_gatherable: to-device and to-tensor if scalar for DataParallel
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)

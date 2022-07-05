@@ -46,11 +46,15 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-project_name="june_17_trial_2_wo_adv_trigram"
+adversarial_flag="True"
 
 
+project_name="nancy_july_5_adv_60"
 
-experiment_name="standard_settings_trigram_rnn_decoder" # name of the experiment, just change it to create differnet folders
+
+experiment_name="same_lr" # name of the experiment, just change it to create differnet folders
+
+
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
@@ -914,6 +918,8 @@ if ! "${skip_train}"; then
                     --ngpu "${ngpu}" \
                     --use_preprocessor true \
                     --bpemodel "${bpemodel}" \
+                    --adv_flag "" \
+                    --project_name "${project_name}" \
                     --token_type "${lm_token_type}"\
                     --token_list "${lm_token_list}" \
                     --non_linguistic_symbols "${nlsyms_txt}" \
@@ -1039,6 +1045,7 @@ if ! "${skip_train}"; then
                 --collect_stats true \
                 --use_preprocessor true \
                 --project_name "${project_name}" \
+                --adv_flag "${adversarial_flag}" \
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
@@ -1172,6 +1179,8 @@ if ! "${skip_train}"; then
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
+                --adv_flag "${adversarial_flag}" \
+                --project_name "${project_name}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \
