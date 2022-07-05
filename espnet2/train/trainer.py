@@ -489,8 +489,42 @@ class Trainer:
         use_wandb = options.use_wandb
         distributed = distributed_option.distributed
 
-        adv_mode = options.adversarial_list[current_epoch-1]
+        adv_mode = options.adversarial_list[current_epoch]
         adv_flag = options.adv_flag
+
+        # adversarial_frozen_flag = model.adversarial_frozen_flag
+        # encoder_frozen_flag = model.encoder_frozen_flag
+            
+        if (adv_flag == True and  adv_mode == 'asr'):
+            # logging.warning(" >>>>>> train/trainer.py  freezing and unfreezing happening \n ")
+            if options.ngpu > 1:
+                model.module.freeze_adversarial()
+                model.module.unfreeze_encoder()
+            else:
+                model.freeze_adversarial()
+                model.unfreeze_encoder()
+        
+            
+        elif (adv_flag == True and adv_mode == 'adv' ):
+            # logging.warning(" >>>>>> train/trainer.py  freezing and unfreezing happening \n ")
+            if options.ngpu > 1:
+                model.module.unfreeze_adversarial()
+                model.module.freeze_encoder()
+            else:
+                model.unfreeze_adversarial()
+                model.freeze_encoder()
+
+        
+        elif(adv_flag == True and adv_mode == 'asradv' ):
+            # logging.warning(" >>>>>> train/trainer.py  freezing and unfreezing happening \n ")
+            if options.ngpu > 1:
+                model.module.unfreeze_adversarial()
+                model.module.unfreeze_encoder()
+            else:
+                model.unfreeze_adversarial()
+                model.unfreeze_encoder()
+            
+
 
         if log_interval is None:
             try:
@@ -632,12 +666,11 @@ class Trainer:
                 ###################################################################################
 
                 print("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
+                # logging.warning("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
                 if(adv_flag):
                     print(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"].detach(), stats["adversarial_accuracy"] ))
- 
-
-
-                if (adv_flag == True and  adv_mode == 'spk'):
+   
+                if (adv_flag == True and  adv_mode == 'adv'):
                     if options.ngpu > 1:
                         model.module.freeze_encoder()
                     else:
@@ -645,22 +678,10 @@ class Trainer:
                     total_loss = loss_adv
                     loss = total_loss
                 
-                elif (adv_flag == True and adv_mode == 'asr'):
-                    if options.ngpu > 1:
-                        model.module.freeze_encoder()
-                    else:
-                        model.freeze_encoder()
-                    total_loss = loss
+                elif(adv_flag and adv_mode == 'asradv'):                    
+                    total_loss = loss + loss_adv                    
                     loss = total_loss
-                
-                elif(adv_flag == True and adv_mode == 'spkasr'):
-                    if (options.ngpu > 1):
-                        model.module.unfreeze_encoder()
-                    else:
-                        model.unfreeze_encoder()
-                    total_loss = loss + loss_adv
-                    loss = total_loss
-                
+
 
 
                 ###################################################################################
@@ -669,8 +690,8 @@ class Trainer:
 
 
 
-                # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
-                # print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
+                logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
+                print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
                 if not torch.isfinite(grad_norm):
                     logging.warning(
                         f"The grad norm is {grad_norm}. Skipping updating the model."

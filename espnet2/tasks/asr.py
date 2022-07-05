@@ -248,7 +248,6 @@ class ASRTask(AbsTask):
             )
 
         group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
-        
 
 
         group.add_argument(
@@ -557,7 +556,7 @@ class ASRTask(AbsTask):
         ################################################################################################################
 
         
-        print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
+        # print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
