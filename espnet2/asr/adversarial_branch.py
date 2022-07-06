@@ -173,9 +173,9 @@ class SpeakerAdv(torch.nn.Module):
 
         loss = F.cross_entropy(y_hat, labels, size_average=True)
         
-        logging.info("Adversarial loss = %f", loss.item())
+        # logging.info("Adversarial loss = %f", loss.item())
         acc = th_accuracy(y_hat, labels.unsqueeze(0), -1)
-        logging.info("Adversarial accuracy = %f", acc)
+        # logging.info("Adversarial accuracy = %f", acc)
 
         return loss, acc
 
