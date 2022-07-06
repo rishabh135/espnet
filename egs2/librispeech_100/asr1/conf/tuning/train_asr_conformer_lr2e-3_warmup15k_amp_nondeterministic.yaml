@@ -39,7 +39,7 @@ frontend_conf:
 
 seed: 2022
 log_interval: 400   
-num_att_plot: 0     
+num_att_plot: 1     
 num_workers: 4      
 sort_in_batch: descending       # how to sort data in making batch
 sort_batch: descending          # how to sort created batches

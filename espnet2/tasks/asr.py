@@ -576,6 +576,7 @@ class ASRTask(AbsTask):
         # here is where the main model class is both defined so we will need to add items to it to access model items
         model = model_class(
             adv_flag=args.adv_flag,
+            adv_mode=args.adv_mode,
             grlalpha=args.grlalpha,
             # adversarial_list=args.adversarial_list,
             vocab_size=vocab_size,
