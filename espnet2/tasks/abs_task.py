@@ -844,8 +844,7 @@ class AbsTask(ABC):
 
         group = parser.add_argument_group("Adversarial part related related")
         group.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
-        # group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
-        group.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
+        
         group.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
         group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
         group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
@@ -853,7 +852,7 @@ class AbsTask(ABC):
         group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        group.add_argument('--adversarial_list', default=[ "asr", "asr", "adv"] * 20 , type=list,help='adversarial mode list')
+        group.add_argument('--adversarial_list', default=[ "asr", "asr", "adv", "adv", "asradv", "asradv" ] * 20 + ["adv"] * 20  , type=list,help='adversarial mode list')
 
         parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
         parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
@@ -1092,6 +1091,14 @@ class AbsTask(ABC):
     @classmethod
     def main_worker(cls, args: argparse.Namespace):
         assert check_argument_types()
+
+        # Step -1  updated adversarial list
+        if(args.adv_flag and cls.__name__ == "ASRTask"):
+            print(" Updated adversarial list\n")
+            args.adversarial_list =[ "asr", "asr", "adv", "adv", "asradv", "asradv" ] * 20 + ["adv"] * 20 
+        elif(not args.adv_flag and cls.__name__ == "ASRTask"):
+            print(" Updated adversarial list without adversarial \n")
+            args.adversarial_list =[ "asr"] * 70 
 
         # 0. Init distributed process
         distributed_option = build_dataclass(DistributedOption, args)

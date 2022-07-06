@@ -489,7 +489,7 @@ class Trainer:
         use_wandb = options.use_wandb
         distributed = distributed_option.distributed
 
-        adv_mode = options.adversarial_list[current_epoch]
+        adv_mode = options.adversarial_list[current_epoch-1]
         adv_flag = options.adv_flag
 
         if log_interval is None:
@@ -505,6 +505,36 @@ class Trainer:
         iterator_stop = torch.tensor(0).to("cuda" if ngpu > 0 else "cpu")
 
         start_time = time.perf_counter()
+        
+        if (adv_flag == True and adv_mode == 'asr'):
+            if options.ngpu > 1:
+                model.module.freeze_adversarial()
+                model.module.unfreeze_encoder()
+            else:
+                model.freeze_adversarial()
+                model.unfreeze_encoder()
+
+
+        
+        elif (adv_flag == True and  adv_mode == 'adv'):
+            if options.ngpu > 1:
+                model.module.freeze_encoder()
+                model.module.unfreeze_adversarial()
+            else:
+                model.freeze_encoder()
+                model.unfreeze_adversarial()
+
+        
+        elif(adv_flag == True and adv_mode == 'asradv'):
+            if (options.ngpu > 1):
+                model.module.unfreeze_encoder()
+                model.module.unfreeze_adversarial()
+            else:
+                model.unfreeze_encoder()
+                model.unfreeze_adversarial()
+
+
+
         for iiter, (utt_id, batch) in enumerate(
             reporter.measure_iter_time(iterator, "iter_time"), 1
         ):
@@ -638,36 +668,17 @@ class Trainer:
                     print(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"].detach(), stats["adversarial_accuracy"] ))
  
                 
-                
-                
+                   
                 if (adv_flag == True and adv_mode == 'asr'):
-                    if options.ngpu > 1:
-                        model.module.freeze_adversarial()
-                        model.module.unfreeze_encoder()
-                    else:
-                        model.freeze_adversarial()
-                        model.unfreeze_encoder()
                     total_loss = loss
                     loss = total_loss
 
                 
                 elif (adv_flag == True and  adv_mode == 'adv'):
-                    if options.ngpu > 1:
-                        model.module.freeze_encoder()
-                        model.module.unfreeze_adversarial()
-                    else:
-                        model.freeze_encoder()
-                        model.unfreeze_adversarial()
                     total_loss = loss_adv
                     loss = total_loss
                 
                 elif(adv_flag == True and adv_mode == 'asradv'):
-                    if (options.ngpu > 1):
-                        model.module.unfreeze_encoder()
-                        model.module.unfreeze_adversarial()
-                    else:
-                        model.unfreeze_encoder()
-                        model.unfreeze_adversarial()
                     total_loss = loss + loss_adv
                     loss = total_loss
                 
