@@ -46,11 +46,10 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-adversarial_flag=""
+adversarial_flag="True"
 
 
-
-project_name="nancy_july_6_without_adversarial"
+project_name="nancy_july_6_adversarial_same_lr"
 experiment_name="70epochs" # name of the experiment, just change it to create differnet folders
 
 
@@ -1447,6 +1446,7 @@ if ! "${skip_eval}"; then
 
                 fi
 
+                
                 ${global_dir}../../../tools/kaldi/tools/sctk-20159b5/bin/sclite \ \
                     ${score_opts} \
                     -r "${_scoredir}/ref.trn" trn \
@@ -1623,3 +1623,4 @@ else
 fi
 
 log "Successfully finished. [elapsed=${SECONDS}s]"
+

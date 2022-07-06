@@ -427,8 +427,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # Collect total loss stats
         stats["loss"] = loss.detach()
 
-        # print(" asr/ESPNET_model.py :  loss : {}   acc_att : {} \n".format(stats["loss"], stats["acc"] ))
-
+        
         # force_gatherable: to-device and to-tensor if scalar for DataParallel
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
         
