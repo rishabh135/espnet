@@ -538,6 +538,7 @@ class ESPnetASRModel(AbsESPnetModel):
             #       data_loader may send time-domain signal in this case
             # speech (Batch, NSamples) -> feats: (Batch, NFrames, Dim)
             feats, feats_lengths = self.frontend(speech, speech_lengths)
+            # logging.warning("\n feats {} {} \n and feats lengths {} >>>>>>>\n {} \n".format(feats, feats.shape, feats_lengths, feats_lengths.max()))
         else:
             # No frontend and no feature extract
             feats, feats_lengths = speech, speech_lengths

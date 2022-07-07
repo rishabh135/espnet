@@ -81,7 +81,8 @@ class SpeakerAdv(torch.nn.Module):
         super(SpeakerAdv, self).__init__()
         self.advunits = advunits
         self.advlayers = advlayers
-        self.target_labels_max = []
+        self.target_labels_max = None
+        
         self.advnet = torch.nn.LSTM(eprojs, advunits, self.advlayers,
                                     batch_first=True, dropout=dropout_rate,
                                     bidirectional=True)
@@ -161,8 +162,11 @@ class SpeakerAdv(torch.nn.Module):
         # Convert tensors to desired shape
         y_hat = y_hat.view((-1, out_dim))
         labels = labels.contiguous().view(-1)
-        self.target_labels_max.append(labels.max())
-        logging.warning("\n Value: {} ".format(max(self.target_labels_max)))
+        # self.target_labels_max.append(labels.max())
+        if(self.target_labels_max is None or labels.max() > self.target_labels_max ):
+            self.target_labels_max= labels.max()
+            # logging.warning(" Updated target labels : {} ".format(self.target_labels_max))
+        # logging.warning("\n Value: {} ".format(max(self.target_labels_max)))
         labels = to_cuda(self, labels.long())
         # logging.warning("adversarial output size = %s \n", str(y_hat.shape))
         # logging.warning("artificial label size = %s \n", str(labels.shape))

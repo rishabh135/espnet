@@ -661,7 +661,7 @@ class AbsTask(ABC):
         group.add_argument(
             "--batch_size",
             type=int,
-            default=20,
+            default=30,
             help="The mini-batch size used for training. Used if batch_type='unsorted',"
             " 'sorted', or 'folded'.",
         )
@@ -853,14 +853,16 @@ class AbsTask(ABC):
         group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        group.add_argument('--adversarial_list', default= ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10 , type=list,help='adversarial mode list')
+        group.add_argument('--adversarial_list', default= ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30 , type=list,help='adversarial mode list')
         
         group.add_argument('--odim_adv', default=251, type=int, help='Output of adversarial units used for labeling')
 
         parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
         parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
 
-
+        
+        # ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10 , type=list,help='adversarial mode list')
+        
 
         cls.trainer.add_arguments(parser)
         cls.add_task_arguments(parser)
@@ -1099,7 +1101,7 @@ class AbsTask(ABC):
         if(args.adv_flag and cls.__name__ == "ASRTask"):
             # print(" Updated adversarial list\n")
             # args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
-            args.adversarial_list = ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10
+            args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
         
         elif(not args.adv_flag and cls.__name__ == "ASRTask"):
             # print(" Updated adversarial list without adversarial \n")
