@@ -485,7 +485,7 @@ class ASRTask(AbsTask):
 
         # 5. Decoder
         decoder_class = decoder_choices.get_class(args.decoder)
-        print("\n Setting current decoder as insider tasks/asr.py {} \n".format(args.decoder))
+        # print("\n Setting current decoder as insider tasks/asr.py {} \n".format(args.decoder))
 
         if args.decoder == "transducer":
             decoder = decoder_class(
@@ -555,11 +555,11 @@ class ASRTask(AbsTask):
         ################################################################################################################
 
         
-        print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
+        # print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
-            adversarial_branch = SpeakerAdv(vocab_size, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
+            adversarial_branch = SpeakerAdv( args.odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
         else:
             adversarial_branch = None
 
@@ -576,7 +576,6 @@ class ASRTask(AbsTask):
         # here is where the main model class is both defined so we will need to add items to it to access model items
         model = model_class(
             adv_flag=args.adv_flag,
-            adv_mode=args.adv_mode,
             grlalpha=args.grlalpha,
             # adversarial_list=args.adversarial_list,
             vocab_size=vocab_size,

@@ -53,7 +53,6 @@ class ESPnetASRModel(AbsESPnetModel):
     def __init__(
         self,
         adv_flag,
-        adv_mode,
         grlalpha,
         # adversarial_list: list,
         vocab_size: int,
@@ -105,7 +104,6 @@ class ESPnetASRModel(AbsESPnetModel):
         self.adversarial_branch = adversarial_branch
         self.adv_flag = adv_flag
         self.grlalpha = grlalpha
-        self.adv_mode = adv_mode
 
         self.encoder_frozen_flag = False
         self.adversarial_frozen_flag = False
@@ -409,7 +407,7 @@ class ESPnetASRModel(AbsESPnetModel):
             
         
         retval = {} 
-        if (self.adv_flag and  (self.adv_mode == "adv" or self.adv_mode == "asradv" ) ):
+        if (self.adv_flag):
             # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
             rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
             # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))

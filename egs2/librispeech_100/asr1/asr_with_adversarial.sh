@@ -49,8 +49,9 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 adversarial_flag="True"
 
 
-project_name="nancy_july_6_adversarial_same_lr"
-experiment_name="70epochs" # name of the experiment, just change it to create differnet folders
+
+project_name="nancy_july_7_updated_odim_adversarial"
+experiment_name="70e_asr_adv" # name of the experiment, just change it to create differnet folders
 
 
 
