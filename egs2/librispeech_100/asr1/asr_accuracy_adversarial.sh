@@ -46,12 +46,11 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-adversarial_flag=""
+adversarial_flag="True"
 
 
-
-project_name="nancy_july_7_without_adversarial_updated_odim"
-experiment_name="70epochs" # name of the experiment, just change it to create differnet folders
+project_name="nancy_july_18_accuracry_adversarial"
+experiment_name="asr_adv_585_odim_70e" # name of the experiment, just change it to create differnet folders
 
 
 
@@ -1623,3 +1622,4 @@ else
 fi
 
 log "Successfully finished. [elapsed=${SECONDS}s]"
+

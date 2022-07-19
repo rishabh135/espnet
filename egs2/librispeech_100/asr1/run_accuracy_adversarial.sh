@@ -18,7 +18,7 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-project_name="nancy_july_7_without_adversarial_updated_odim"
+project_name="nancy_july_18_accuracry_adversarial"
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/data # determines all the files creating folder as in the data folder
 
 
@@ -46,7 +46,7 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
-./asr.sh \
+./asr_accuracy_adversarial.sh \
     --skip_data_prep false \
     --skip_train false \
     --skip_eval false \

@@ -376,9 +376,9 @@ class Trainer:
                             p.symlink_to(f"{iepoch}epoch.pth")
                             _improved.append(f"{_phase}.{k}")
                 if len(_improved) == 0:
-                    logging.info("There are no improvements in this epoch")
+                    logging.warning("There are no improvements in this epoch")
                 else:
-                    logging.info(
+                    logging.warning(
                         "The best model has been updated: " + ", ".join(_improved)
                     )
 

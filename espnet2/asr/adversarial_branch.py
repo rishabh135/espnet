@@ -165,7 +165,7 @@ class SpeakerAdv(torch.nn.Module):
         # self.target_labels_max.append(labels.max())
         if(self.target_labels_max is None or labels.max() > self.target_labels_max ):
             self.target_labels_max= labels.max()
-            # logging.warning(" Updated target labels : {} ".format(self.target_labels_max))
+            logging.warning(" Updated target labels : {} ".format(self.target_labels_max))
         # logging.warning("\n Value: {} ".format(max(self.target_labels_max)))
         labels = to_cuda(self, labels.long())
         # logging.warning("adversarial output size = %s \n", str(y_hat.shape))
