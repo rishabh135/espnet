@@ -133,17 +133,23 @@ class SpeakerAdv(torch.nn.Module):
         h_0 = self.zero_state(hs_pad)
         c_0 = self.zero_state(hs_pad)
 
+        # Passing encoder output through advnet torch.Size([5, 385, 1024])
+        # logging.warning(" >>>> Passing encoder output through advnet %s \n",str(hs_pad.shape))
+
+
         self.advnet.flatten_parameters()
         out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
+
+        # logging.warning(" >>>> advnet output size = %s \n", str(out_x.shape))
+        # logging.warning(" >>>>> adversarial target size = %s \n", str(text_length.shape))
 
         # logging.info("advnet output size = %s", str(out_x.shape))
 
         y_hat = self.output(out_x)
-        # logging.warning(">>>>>>>>>>>>>>>> \n IMP y_hat_shape {} \n text_length  {} \n text_length_shape {} text_length max {}  \n *********************\n".format(y_hat.shape, text_length, text_length.shape, text_length.max()))
-
+        
         # Create labels tensor by replicating speaker label
         batch_size, avg_seq_len, out_dim = y_hat.size()
-
+        # logging.warning(">>>>>>>>>>>>>>>> \n IMP y_hat_shape {} \n text_length  {} \n text_length_shape {} text_length max {}  \n *********************\n".format(y_hat.shape, text_length, text_length.shape, text_length.max()))
 
         labels = torch.zeros([batch_size, avg_seq_len], dtype=torch.int64)
         
@@ -165,11 +171,12 @@ class SpeakerAdv(torch.nn.Module):
         # self.target_labels_max.append(labels.max())
         if(self.target_labels_max is None or labels.max() > self.target_labels_max ):
             self.target_labels_max= labels.max()
-            logging.warning(" Updated target labels : {} ".format(self.target_labels_max))
+            # logging.warning(" Updated target labels : {} ".format(self.target_labels_max))
         # logging.warning("\n Value: {} ".format(max(self.target_labels_max)))
         labels = to_cuda(self, labels.long())
-        # logging.warning("adversarial output size = %s \n", str(y_hat.shape))
-        # logging.warning("artificial label size = %s \n", str(labels.shape))
+        # logging.warning("\n ************ Second Part ****************")
+        # logging.warning(" >>>>> adversarial output size = %s ", str(y_hat.shape))
+        # logging.warning(" >>>>>>>>>> artificial label size = %s \n\n", str(labels.shape))
 
         loss = F.cross_entropy(y_hat, labels, size_average=True)
         # logging.info("Adversarial loss = %f", loss.item())

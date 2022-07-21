@@ -555,7 +555,7 @@ class ASRTask(AbsTask):
         ################################################################################################################
 
         
-        # print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
+        # logging.warning(" *******  adv_flag {} and decoder {} odim_adv {} eprojs {} adv_units {} adv_layers {} *******\n".format( args.adv_flag, args.decoder, args.odim_adv, args.eprojs, args.adv_units, args.adv_layers))
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag

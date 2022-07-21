@@ -360,6 +360,23 @@ class ESPnetASRModel(AbsESPnetModel):
                 1 - self.interctc_weight
             ) * loss_ctc + self.interctc_weight * loss_interctc
 
+
+        # logging.warning(" >>>>> encoder_out {} \n encoder_out_lens {} \n text_lengths  {} ".format(encoder_out.shape, encoder_out_lens.shape, text_lengths.shape ) )
+        retval = {} 
+        if (self.adv_flag):
+            # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+            # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
+
+            stats["adversarial_loss"] = loss_adv.detach() if loss_adv is not None else None
+            stats["adversarial_accuracy"] = acc_adv if acc_adv is not None else None
+
+
+            retval["loss_adv"]= loss_adv if loss_adv is not None else None
+            retval["accuracy_adversarial"] = acc_adv if acc_adv is not None else None
+
+
         if self.use_transducer_decoder:
             # 2a. Transducer decoder branch
             (
@@ -406,20 +423,6 @@ class ESPnetASRModel(AbsESPnetModel):
             stats["wer"] = wer_att
             
         
-        retval = {} 
-        if (self.adv_flag):
-            # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
-            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-            # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
-
-            stats["adversarial_loss"] = loss_adv.detach() if loss_adv is not None else None
-            stats["adversarial_accuracy"] = acc_adv if acc_adv is not None else None
-
-
-            retval["loss_adv"]= loss_adv if loss_adv is not None else None
-            retval["accuracy_adversarial"] = acc_adv if acc_adv is not None else None
-
 
 
         # Collect total loss stats
