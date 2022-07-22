@@ -581,13 +581,6 @@ class AbsTask(ABC):
             default=True,
             help="Enable wandb logging",
         )
-
-        group.add_argument(
-            "--project_name",
-            type=str,
-            default=None,
-            help="Specify wandb project name",
-        )
         
         group.add_argument(
             "--wandb_id",
@@ -666,7 +659,7 @@ class AbsTask(ABC):
         group.add_argument(
             "--batch_size",
             type=int,
-            default=20,
+            default=30,
             help="The mini-batch size used for training. Used if batch_type='unsorted',"
             " 'sorted', or 'folded'.",
         )
@@ -847,26 +840,28 @@ class AbsTask(ABC):
             )
 
 
-        group = parser.add_argument_group("Adversarial part related ")
-        parser.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
-        parser.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
-        parser.add_argument('--adv', default='asr10', type=str, help='To perform speaker adversarial training or not')
-        parser.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
-        parser.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
-        parser.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
-        parser.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
-        parser.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
-        parser.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
-        parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        parser.add_argument('--adversarial_list', default=[ "spk"] * 20  + ["asr" ] * 20 + ["spkasr" ] * 30 , type=list,help='adversarial mode list')
+        group = parser.add_argument_group("Adversarial part related related")
+        group.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
+        
+        group.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
+        group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
 
-
-
+        group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
+        group.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
+        group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
+        group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
+        group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
+        group.add_argument('--adversarial_list', default= ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["adv"] * 10, type=list,help='adversarial mode list')
+        
+        # 251 vs 585 ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10
+        group.add_argument('--odim_adv', default=585, type=int, help='Output of adversarial units used for labeling')
 
         parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
         parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
 
-
+        
+        # ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10 , type=list,help='adversarial mode list')
+        
 
         cls.trainer.add_arguments(parser)
         cls.add_task_arguments(parser)
@@ -1101,6 +1096,17 @@ class AbsTask(ABC):
     def main_worker(cls, args: argparse.Namespace):
         assert check_argument_types()
 
+        # Step -1  updated adversarial list
+        if(args.adv_flag and cls.__name__ == "ASRTask"):
+            # print(" Updated adversarial list\n")
+            args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["adv"] * 10
+            # args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
+            # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
+        
+        elif(not args.adv_flag and cls.__name__ == "ASRTask"):
+            # print(" Updated adversarial list without adversarial \n")
+            args.adversarial_list =[ "asr"] * 70 
+
         # 0. Init distributed process
         distributed_option = build_dataclass(DistributedOption, args)
         # Setting distributed_option.dist_rank, etc.
@@ -1321,32 +1327,22 @@ class AbsTask(ABC):
                     not distributed_option.distributed
                     or distributed_option.dist_rank == 0
                 ):
+                    
                     if args.project_name is None:
                         today = date.today()
-                        d2 = today.strftime("_date_%B_%d_")
-                        project = "june_20__date_June_20__june_20_with_adversarial_trigram_rnnASRTask"
-                        # project = "june_20_{}_".format(d2)  + cls.__name__
+                        d2 = today.strftime("%B_%d_")
+                        project = "{}_".format(d2) + cls.__name__
                     else:
                         today = date.today()
-                        d2 = today.strftime("_date_%B_%d_") 
-                        project = "june_20__date_June_20__june_20_with_adversarial_trigram_rnnASRTask"
-    
-                        # project = "june_20_{}_".format(d2) + args.project_name  + cls.__name__
+                        d2 = today.strftime("%B_%d_") 
+                        project =  args.project_name + cls.__name__
 
                     if args.wandb_name is None:
                         today = date.today()
-                        d2 = today.strftime("Run_from_%B_%d_")
-                        time = datetime.now() .strftime(" %H %M")
+                        d2 = today.strftime("Run_%B_%d_")
+                        time = datetime.now().strftime("_time__%H_%M")
                         # d = date_time.strftime("%d %B, %Y")
-                        name = d2 + " time : " + time   
-                        # str(Path(".").resolve() ).replace("/", "_") 
-                        # # dd/mm/YY
-                        # d1 = today.strftime("%d/%m/%Y")
-                        # print("d1 =", d1)
-
-                        # Textual month, day and year	
-                        # print("d2 =", d2)
-
+                        name =  d2 + "__" + time 
                     else:
                         name = args.wandb_name
 
@@ -1358,7 +1354,7 @@ class AbsTask(ABC):
                         id=args.wandb_id,
                         resume=args.resume,
                     )
-                    wandb.config.update(args)
+                    wandb.config.update(args, allow_val_change=True)
                 else:
                     # wandb also supports grouping for distributed training,
                     # but we only logs aggregated data,

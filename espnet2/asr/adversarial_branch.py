@@ -117,12 +117,12 @@ class SpeakerAdv(torch.nn.Module):
 
        
         # initialization
-        logging.info("initializing hidden states for LSTM")
+        # logging.info("initializing hidden states for LSTM")
         h_0 = self.zero_state(hs_pad)
         c_0 = self.zero_state(hs_pad)
 
-        logging.info("Passing encoder output through advnet %s",
-                     str(hs_pad.shape))
+        # logging.info("Passing encoder output through advnet %s",
+        #              str(hs_pad.shape))
         
         # print(" Inside adversarial branch Passing encoder output through advnet {} \n".format(hs_pad.shape))
         
@@ -132,7 +132,7 @@ class SpeakerAdv(torch.nn.Module):
         #out_x = self.advnet(vgg_x)
 
         #logging.info("vgg output size = %s", str(vgg_x.shape))
-        logging.info("advnet output size = %s", str(out_x.shape))
+        # logging.info("advnet output size = %s", str(out_x.shape))
 
         # print("advnet output size = {} \n".format(out_x.shape))
         
@@ -173,9 +173,9 @@ class SpeakerAdv(torch.nn.Module):
 
         loss = F.cross_entropy(y_hat, labels, size_average=True)
         
-        logging.info("Adversarial loss = %f", loss.item())
+        # logging.warning("Adversarial loss = %f", loss.item())
         acc = th_accuracy(y_hat, labels.unsqueeze(0), -1)
-        logging.info("Adversarial accuracy = %f", acc)
+        # logging.warning("Adversarial accuracy = %f", acc)
 
         return loss, acc
 

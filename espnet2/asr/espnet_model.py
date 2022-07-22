@@ -105,9 +105,10 @@ class ESPnetASRModel(AbsESPnetModel):
         self.adv_flag = adv_flag
         self.grlalpha = grlalpha
 
-
         self.encoder_frozen_flag = False
         self.adversarial_frozen_flag = False
+        
+
         # adv_mode = adversarial_list[current_epoch]
 
         # if(self.adv_mode == 'spk'):
@@ -187,6 +188,8 @@ class ESPnetASRModel(AbsESPnetModel):
         self.extract_feats_in_collect_stats = extract_feats_in_collect_stats
 
 
+     
+    
     #################################################################################################################################################################################################################################
     #################################################################################################################################################################################################################################
     #################################################################################################################################################################################################################################
@@ -194,15 +197,14 @@ class ESPnetASRModel(AbsESPnetModel):
     # For training the adverarial branch, encoder must be frozen
     # self.enc_frozen = False
 
-
-
+    
     def freeze_adversarial(self):
         if not self.adversarial_frozen_flag:
             for param in self.adversarial_branch.parameters():
                 param.requires_grad = False
             self.adversarial_frozen_flag = True
 
-   
+
     def unfreeze_adversarial(self):
         if self.adversarial_frozen_flag:
             for param in self.adversarial_branch.parameters():
@@ -215,41 +217,19 @@ class ESPnetASRModel(AbsESPnetModel):
         if not self.encoder_frozen_flag:
             for param in self.encoder.parameters():
                 param.requires_grad = False
+            for param in self.decoder.parameters():
+                param.requires_grad = False    
             self.encoder_frozen_flag = True
 
-   
+    
+
     def unfreeze_encoder(self):
         if self.encoder_frozen_flag:
             for param in self.encoder.parameters():
                 param.requires_grad = True
+            for param in self.decoder.parameters():
+                param.requires_grad = True            
             self.encoder_frozen_flag = False
-    
-    # def freeze_encoder(self):
-    #     if not self.enc_frozen:
-    #         for param in self.enc.parameters():
-    #             param.requires_grad = False
-    #         self.enc_frozen = True
-
-    # def unfreeze_encoder(self):
-    #     if self.enc_frozen:
-    #         for param in self.enc.parameters():
-    #             param.requires_grad = True
-    #         self.enc_frozen = False
-
-
-
-
-    # if adv_mode == 'spk':
-    #     self.model.module.predictor.freeze_encoder()
-    #     loss = loss_adv
-    # elif adv_mode == 'asr':
-    #     self.model.module.predictor.unfreeze_encoder()
-    #     loss = loss_asr
-    # else:
-    #     self.model.module.predictor.unfreeze_encoder()
-    #     loss = loss_asr + loss_adv
-
-
 
 
 
@@ -307,6 +287,23 @@ class ESPnetASRModel(AbsESPnetModel):
         #     print("kwargs key {}  val : {} \n".format(key, value))
         # print("\n")
         # print("speech {} speech_lengths {} encoder_out {} encoder_out_lens {} text {} text_length {} \n".format(speech.shape, speech_lengths.shape, encoder_out.shape, encoder_out_lens.shape, text.shape, text_lengths.shape))
+
+
+        retval = {} 
+        if (self.adv_flag):
+            # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+            # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
+
+            stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
+            stats["accuracy_adversarial"] = acc_adv if acc_adv is not None else None
+
+
+            retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
+            retval["accuracy_adversarial"] = acc_adv if acc_adv is not None else None
+
+
 
 
         # 1. CTC branch
@@ -396,39 +393,18 @@ class ESPnetASRModel(AbsESPnetModel):
             else:
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
 
-
-            retval = {} 
-            if (self.adv_flag):
-                # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
-                rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-                # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-                loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
-
-                # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
-                stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-                retval["loss_adv"]= loss_adv.detach() if loss_adv is not None else None
-
-
-
             # Collect Attn branch stats
-            stats["loss_att"] = loss_att.detach() if loss_att is not None else None
-            stats["acc"] = acc_att
-            stats["cer"] = cer_att
-            stats["wer"] = wer_att
+            stats["loss_attention"] = loss_att.detach() if loss_att is not None else None
+            stats["accuracy_attention"] = acc_att
+            stats["cer_attention"] = cer_att
+            stats["wer_attention"] = wer_att
             
 
-
-
-
         # Collect total loss stats
-        stats["loss"] = loss.detach()
-
-        # print(" asr/ESPNET_model.py :  loss : {}   acc_att : {} \n".format(stats["loss"], stats["acc"] ))
+        stats["loss_without_adversarial"] = loss.detach()
 
         # force_gatherable: to-device and to-tensor if scalar for DataParallel
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
-        
-
         
         retval["loss"] = loss   
         retval["stats"] = stats

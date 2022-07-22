@@ -354,6 +354,7 @@ class Trainer:
                     output_dir / "checkpoint.pth",
                 )
 
+
                 # 5. Save and log the model and update the link to the best model
                 torch.save(model.state_dict(), output_dir / f"{iepoch}epoch.pth")
 
@@ -376,10 +377,10 @@ class Trainer:
                             p.symlink_to(f"{iepoch}epoch.pth")
                             _improved.append(f"{_phase}.{k}")
                 if len(_improved) == 0:
-                    logging.info("There are no improvements in this epoch")
+                    logging.warning(" IMPORTANT: There are no improvements in this epoch")
                 else:
-                    logging.info(
-                        "The best model has been updated: " + ", ".join(_improved)
+                    logging.warning(
+                        " IMPORTANT : The best model has been updated: " + ", ".join(_improved)
                     )
 
                 log_model = (
@@ -489,9 +490,12 @@ class Trainer:
         use_wandb = options.use_wandb
         distributed = distributed_option.distributed
 
-        adv_mode = options.adversarial_list[current_epoch]
-        adv_flag = options.adv_flag
 
+        adv_mode = options.adversarial_list[current_epoch-1]
+        adv_flag = options.adv_flag
+        adv_name = cls.__name__
+
+        
         if log_interval is None:
             try:
                 log_interval = max(len(iterator) // 20, 10)
@@ -505,10 +509,46 @@ class Trainer:
         iterator_stop = torch.tensor(0).to("cuda" if ngpu > 0 else "cpu")
 
         start_time = time.perf_counter()
+ 
+        if (adv_flag == True and adv_name == "ASRTask" and adv_mode == 'asr'):
+            if options.ngpu > 1:
+                model.module.freeze_adversarial()
+                model.module.unfreeze_encoder()
+            else:
+                model.freeze_adversarial()
+                model.unfreeze_encoder()
+
+
+        
+        elif (adv_flag == True and adv_name == "ASRTask" and adv_mode == 'adv'):
+            if options.ngpu > 1:
+                model.module.freeze_encoder()
+                model.module.unfreeze_adversarial()
+            else:
+                model.freeze_encoder()
+                model.unfreeze_adversarial()
+
+        
+        elif(adv_flag == True and adv_name == "ASRTask" and adv_mode == 'asradv'):
+            if (options.ngpu > 1):
+                model.module.unfreeze_encoder()
+                model.module.unfreeze_adversarial()
+            else:
+                model.unfreeze_encoder()
+                model.unfreeze_adversarial()
+
+
         for iiter, (utt_id, batch) in enumerate(
             reporter.measure_iter_time(iterator, "iter_time"), 1
         ):
             assert isinstance(batch, dict), type(batch)
+
+            print(utt_id)
+            print("**************************")
+            for keys,values in batch.items():
+                print(" {}  >> {} ".format(keys, values))
+                
+            print("**************************")
 
             if distributed:
                 torch.distributed.all_reduce(iterator_stop, ReduceOp.SUM)
@@ -533,8 +573,10 @@ class Trainer:
                         loss = retval["loss"]
                         stats = retval["stats"]
                         weight = retval["weight"]
-                        loss_adv = retval.get("loss_adv")
+                        loss_adversarial = retval.get("loss_adversarial")
                         optim_idx = retval.get("optim_idx")
+
+                        # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
                         if optim_idx is not None and not isinstance(optim_idx, int):
                             if not isinstance(optim_idx, torch.Tensor):
                                 raise RuntimeError(
@@ -559,59 +601,26 @@ class Trainer:
 
                     #   b. tuple or list type
                     else:
-                        if(adv_flag):
-                            loss, stats, weight, loss_adv = retval
-                        else:
-                            loss, stats, weight = retval
+                        loss, stats, weight = retval
                         
                         optim_idx = None
 
 
-
                 ###################################################################################
                 ###################################################################################
                 ###################################################################################
 
+                if (adv_flag == True and adv_name == "ASRTask" and adv_mode == 'asr'):
+                    total_loss = loss
+                    loss = total_loss
 
-                print("/*** train/trainer.py adv_flag {} adv_mode {}  loss {}    ".format(adv_flag, adv_mode, loss ))
-                try:
-                    print(" loss_adv is {}   \n".format( loss_adv ))
-                except:
-                    loss_adv = None
-                    print(" loss_adv is none   \n")
-                    
-                if (adv_flag == True and  adv_mode == 'spk'):
-                    if options.ngpu > 1:
-                        model.module.freeze_adversarial()
-                        model.module.unfreeze_encoder()
-                    else:
-                        model.freeze_adversarial()
-                        model.unfreeze_encoder()
                 
-                    
-
-                elif (adv_flag == True and adv_mode == 'asr'):
-
-                    if options.ngpu > 1:
-                        model.module.unfreeze_adversarial()
-                        model.module.freeze_encoder()
-                    else:
-                        model.unfreeze_adversarial()
-                        model.freeze_encoder()
-
-                    total_loss = loss_adv
+                elif (adv_flag == True and adv_name == "ASRTask" and  adv_mode == 'adv'):
+                    total_loss = loss_adversarial
                     loss = total_loss
                 
-
-                elif(adv_flag == True and adv_mode == 'spkasr'):
-                    if options.ngpu > 1:
-                        model.module.unfreeze_adversarial()
-                        model.module.unfreeze_encoder()
-                    else:
-                        model.unfreeze_adversarial()
-                        model.unfreeze_encoder()
-                    
-                    total_loss = loss + loss_adv                    
+                elif(adv_flag == True and adv_name == "ASRTask" and adv_mode == 'asradv'):
+                    total_loss = loss + loss_adversarial
                     loss = total_loss
                 
 
@@ -619,15 +628,11 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
                 ###################################################################################
-
-
-
-
 
                 stats = {k: v for k, v in stats.items() if v is not None}
                 if ngpu > 1 or distributed:
                     # Apply weighted averaging for loss and stats
-                    loss = (loss * weight.type(loss.dtype)).sum()
+                    loss = (loss * weight.type(loss.dtype)).sum()                    
 
                     # if distributed, this method can also apply all_reduce()
                     stats, weight = recursive_average(stats, weight, distributed)
@@ -640,8 +645,8 @@ class Trainer:
                     loss *= torch.distributed.get_world_size()
 
                 loss /= accum_grad
+                
 
-            
             reporter.register(stats, weight)
 
             with reporter.measure_time("backward_time"):
@@ -683,12 +688,21 @@ class Trainer:
                 if not isinstance(grad_norm, torch.Tensor):
                     grad_norm = torch.tensor(grad_norm)
 
+                ###################################################################################
+                ###################################################################################
+                ###################################################################################
 
 
+                logging.warning("adv_flag {} adv_mode {}  >>>>   asr_loss {}  ".format(adv_flag, adv_mode, stats["loss_without_adversarial"].detach() ))
+                # logging.warning("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
+                if(adv_flag and adv_name == "ASRTask"  ):
+                    logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"].detach(), stats["adversarial_accuracy"] ))
+ 
+                
 
 
-                logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
-                print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
+                # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
+                # print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
                 if not torch.isfinite(grad_norm):
                     logging.warning(
                         f"The grad norm is {grad_norm}. Skipping updating the model."
