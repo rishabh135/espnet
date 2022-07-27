@@ -51,10 +51,10 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
 fi
 
 if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
-    log "stage 2: Data Preparation"
+    log "##### IMP stage 2: Data Preparation this time with adv script"
     for part in dev-clean test-clean dev-other test-other train-clean-100; do
         # use underscore-separated names in data directories.
-        local/data_prep.sh ${LIBRISPEECH}/LibriSpeech/${part} $1/${part//-/_}
+        local/data_prep_adv.sh ${LIBRISPEECH}/LibriSpeech/${part} $1/${part//-/_}
     done
 fi
 

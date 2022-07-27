@@ -50,8 +50,9 @@ adversarial_flag="True"
 
 
 
-project_name="nancy_july_23_adversarial"
-experiment_name="odim_585_asr20adv20asradv30" # name of the experiment, just change it to create differnet folders
+
+project_name="nancy_july_27_data_prep_adv"
+experiment_name="odim_585_asradvasradv10+asr10" # name of the experiment, just change it to create differnet folders
 
 
 
@@ -59,7 +60,9 @@ experiment_name="odim_585_asr20adv20asradv30" # name of the experiment, just cha
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
 
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
+# dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump
+
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/data # determines all the files creating folder as in the data folder
