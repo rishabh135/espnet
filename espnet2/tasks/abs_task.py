@@ -851,7 +851,7 @@ class AbsTask(ABC):
         group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
-        group.add_argument('--adversarial_list', default= ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["adv"] * 10, type=list,help='adversarial mode list')
+        group.add_argument('--adversarial_list', default= ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30, type=list,help='adversarial mode list')
         
         # 251 vs 585 ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10
         group.add_argument('--odim_adv', default=585, type=int, help='Output of adversarial units used for labeling')
@@ -1099,8 +1099,8 @@ class AbsTask(ABC):
         # Step -1  updated adversarial list
         if(args.adv_flag and cls.__name__ == "ASRTask"):
             # print(" Updated adversarial list\n")
-            args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["adv"] * 10
-            # args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
+            # args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["adv"] * 10
+            args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
             # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
         
         elif(not args.adv_flag and cls.__name__ == "ASRTask"):

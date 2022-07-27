@@ -36,7 +36,6 @@ nj=32                # The number of parallel jobs.
 inference_nj=32      # The number of parallel jobs in decoding.
 gpu_inference=false  # Whether to perform gpu decoding.
 
-adv_flag=False
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
@@ -47,9 +46,14 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-project_name="june_20_with_adversarial_trigram_rnn"
+adversarial_flag=""
 
-experiment_name="standard_settings_trigram_rnn_decoder" # name of the experiment, just change it to create differnet folders
+
+
+project_name="nancy_july_23_without_adversarial"
+experiment_name="odim_585_asr70" # name of the experiment, just change it to create differnet folders
+
+
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
@@ -907,13 +911,14 @@ if ! "${skip_train}"; then
                 --log "${lm_exp}"/train.log \
                 --ngpu "${ngpu}" \
                 --num_nodes "${num_nodes}" \
-                --adv_flag "False" \
                 --init_file_prefix "${lm_exp}"/.dist_init_ \
                 --multiprocessing_distributed true -- \
                 ${python} -m espnet2.bin.lm_train \
                     --ngpu "${ngpu}" \
                     --use_preprocessor true \
                     --bpemodel "${bpemodel}" \
+                    --adv_flag "" \
+                    --project_name "${project_name}" \
                     --token_type "${lm_token_type}"\
                     --token_list "${lm_token_list}" \
                     --non_linguistic_symbols "${nlsyms_txt}" \
@@ -1039,6 +1044,7 @@ if ! "${skip_train}"; then
                 --collect_stats true \
                 --use_preprocessor true \
                 --project_name "${project_name}" \
+                --adv_flag "${adversarial_flag}" \
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
@@ -1172,6 +1178,8 @@ if ! "${skip_train}"; then
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
+                --adv_flag "${adversarial_flag}" \
+                --project_name "${project_name}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \
@@ -1439,8 +1447,8 @@ if ! "${skip_eval}"; then
 
                 fi
 
-                sclite \
-		    ${score_opts} \
+                ${global_dir}../../../tools/kaldi/tools/sctk-20159b5/bin/sclite  \
+                    ${score_opts} \
                     -r "${_scoredir}/ref.trn" trn \
                     -h "${_scoredir}/hyp.trn" trn \
                     -i rm -o all stdout > "${_scoredir}/result.txt"
@@ -1615,3 +1623,6 @@ else
 fi
 
 log "Successfully finished. [elapsed=${SECONDS}s]"
+
+
+
