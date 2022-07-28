@@ -20,9 +20,9 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 
 
-project_name="nancy_july_27_data_prep_adv"
+project_name="nancy_july_28_data_prep_adv"
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/data # determines all the files creating folder as in the data folder
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data # determines all the files creating folder as in the data folder
 
 
 
@@ -59,7 +59,6 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --inference_nj 32 \
     --nbpe 5000 \
     --max_wav_duration 30 \
-    --speed_perturb_factors "0.9 1.0 1.1" \
     --audio_format "flac.ark" \
     --feats_type raw \
     --use_lm true \

@@ -854,7 +854,7 @@ class AbsTask(ABC):
         group.add_argument('--adversarial_list', default= ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["asr"] * 10 , type=list,help='adversarial mode list')
         
         # 251 vs 585 ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10
-        group.add_argument('--odim_adv', default=585, type=int, help='Output of adversarial units used for labeling')
+        group.add_argument('--odim_adv', default=251, type=int, help='Output of adversarial units used for labeling')
 
         parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
         parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')

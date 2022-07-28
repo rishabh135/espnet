@@ -51,7 +51,7 @@ adversarial_flag="True"
 
 
 
-project_name="nancy_july_27_data_prep_adv"
+project_name="nancy_july_28_data_prep_adv"
 experiment_name="odim_585_asradvasradv10+asr10" # name of the experiment, just change it to create differnet folders
 
 
@@ -65,7 +65,8 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/data # determines all the files creating folder as in the data folder
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data 
+# determines all the files creating folder as in the data folder
 
 # data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
 
@@ -115,7 +116,7 @@ bpe_char_cover=1.0  # character coverage when modeling BPE
 
 # Ngram model related
 use_ngram=true
-ngram_exp=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/ngram/exp # Directory to dump features.
+ngram_exp=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/ngram_exp/ # Directory to dump features.
 ngram_num=3
 
 # Language model related
@@ -489,6 +490,7 @@ if [ -z "${inference_tag}" ]; then
     fi
 fi
 
+
 # ========================== Main stages start from here. ==========================
 
 if ! "${skip_data_prep}"; then
@@ -516,10 +518,12 @@ if ! "${skip_data_prep}"; then
         fi
     fi
 
+
     if [ -n "${speed_perturb_factors}" ]; then
         train_set="${train_set}_sp"
     fi
 
+    log " Important :  Train set  ::    ${train_set}"
     if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
         if [ "${feats_type}" = raw ]; then
             log "Stage 3: Format wav.scp: ${data_dd}/ -> ${data_feats}"
@@ -1054,6 +1058,8 @@ if ! "${skip_train}"; then
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \
+                --train_data_path_and_name_and_type "${_asr_train_dir}/utt2spkid.txt,spkid,text_int" \
+                --allow_variable_data_keys true \ # This option disable the validation for expected data names, `speech` and `text`. In this case, you need to add unexpected data name, `spkid`
                 --train_data_path_and_name_and_type "${_asr_train_dir}/${_scp},speech,${_type}" \
                 --train_data_path_and_name_and_type "${_asr_train_dir}/text,text,text" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/${_scp},speech,${_type}" \

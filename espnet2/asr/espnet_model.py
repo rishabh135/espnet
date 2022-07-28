@@ -240,7 +240,11 @@ class ESPnetASRModel(AbsESPnetModel):
 
     #################################################################################################################################################################################################################################
     #################################################################################################################################################################################################################################
+
     #################################################################################################################################################################################################################################
+
+    #  spkid: The shape is (Batch, 1), probably...
+    # You can refer spkid for loss computation.
 
     def forward(
         self,
@@ -248,6 +252,8 @@ class ESPnetASRModel(AbsESPnetModel):
         speech_lengths: torch.Tensor,
         text: torch.Tensor,
         text_lengths: torch.Tensor,
+        spkid: torch.Tensor,
+        spkid_lengths: torch.Tensor,
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """Frontend + Encoder + Decoder + Calc loss
@@ -258,6 +264,8 @@ class ESPnetASRModel(AbsESPnetModel):
             text: (Batch, Length)
             text_lengths: (Batch,)
             kwargs: "utt_id" is among the input.
+            spkid: The shape is (Batch, 1), probably...
+            You can refer spkid for loss computation.
         """
         assert text_lengths.dim() == 1, text_lengths.shape
         # Check that batch_size is unified
