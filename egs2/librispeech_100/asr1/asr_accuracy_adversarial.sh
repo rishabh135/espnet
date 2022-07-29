@@ -52,7 +52,7 @@ adversarial_flag="True"
 
 
 project_name="nancy_july_28_data_prep_adv"
-experiment_name="odim_585_asradvasradv10+asr10" # name of the experiment, just change it to create differnet folders
+experiment_name="odim_585_asradvasradv10_asr10" # name of the experiment, just change it to create differnet folders
 
 
 
@@ -1041,7 +1041,7 @@ if ! "${skip_train}"; then
         #       but it's used only for deciding the sample ids.
 
 
-        log "\n *********************** changing directories Stage 10    **************************\n"
+        log "\n *********************** changing directories Stage 10  inside what we want   **************************\n"
         cd "${global_dir}"
         cd "../../../"
 
@@ -1057,13 +1057,13 @@ if ! "${skip_train}"; then
                 --token_list "${token_list}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
+                --allow_variable_data_keys true \
                 --g2p "${g2p}" \
-                --train_data_path_and_name_and_type "${_asr_train_dir}/utt2spkid.txt,spkid,text_int" \
-                --allow_variable_data_keys true \ # This option disable the validation for expected data names, `speech` and `text`. In this case, you need to add unexpected data name, `spkid`
                 --train_data_path_and_name_and_type "${_asr_train_dir}/${_scp},speech,${_type}" \
                 --train_data_path_and_name_and_type "${_asr_train_dir}/text,text,text" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/${_scp},speech,${_type}" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/text,text,text" \
+                --train_data_path_and_name_and_type "${_asr_train_dir}/utt2spkid.txt,spkid,text_int" \
                 --train_shape_file "${_logdir}/train.JOB.scp" \
                 --valid_shape_file "${_logdir}/valid.JOB.scp" \
                 --output_dir "${_logdir}/stats.JOB" \
@@ -1192,6 +1192,8 @@ if ! "${skip_train}"; then
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \
+                --allow_variable_data_keys true \
+                --train_data_path_and_name_and_type "${_asr_train_dir}/utt2spkid.txt,spkid,text_int" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/${_scp},speech,${_type}" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/text,text,text" \
                 --valid_shape_file "${asr_stats_dir}/valid/speech_shape" \

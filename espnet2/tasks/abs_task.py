@@ -783,7 +783,7 @@ class AbsTask(ABC):
         group.add_argument(
             "--allow_variable_data_keys",
             type=str2bool,
-            default=False,
+            default=True,
             help="Allow the arbitrary keys for mini-batch with ignoring "
             "the task requirements",
         )
@@ -1038,6 +1038,7 @@ class AbsTask(ABC):
 
         # "distributed" is decided using the other command args
         resolve_distributed_mode(args)
+
         if not args.distributed or not args.multiprocessing_distributed:
             cls.main_worker(args)
 

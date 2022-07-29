@@ -280,7 +280,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # for data-parallel
         text = text[:, : text_lengths.max()]
 
-
+        # logging.warning(">>>>> asr/espnet_model.py  spkid {} \n spkid_lengths {} ".format(spkid, spkid_lengths))
 
         # 1. Encoder
         encoder_out, encoder_out_lens = self.encode(speech, speech_lengths)
@@ -395,7 +395,7 @@ class ESPnetASRModel(AbsESPnetModel):
                 # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
                 rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
                 # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-                loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
+                loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, spkid)
 
                 # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
                 stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None

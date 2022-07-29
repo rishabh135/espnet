@@ -404,8 +404,17 @@ class ASRTask(AbsTask):
     def optional_data_names(
         cls, train: bool = True, inference: bool = False
     ) -> Tuple[str, ...]:
+
+        # logging.warning("\n\n >>>> Inside optional data names \n\n")
+        if not inference: 
+            retval = ( "spkid", "speech", "text" ) 
+        else: 
+            # Inference mode 
+            retval = ("speech", "text" ) 
+
+
         retval = ()
-        assert check_return_type(retval)
+        # assert check_return_type(retval)
         return retval
 
 
@@ -485,7 +494,7 @@ class ASRTask(AbsTask):
 
         # 5. Decoder
         decoder_class = decoder_choices.get_class(args.decoder)
-        print("\n Setting current decoder as insider tasks/asr.py {} \n".format(args.decoder))
+        # print("\n Setting current decoder as insider tasks/asr.py {} \n".format(args.decoder))
 
         if args.decoder == "transducer":
             decoder = decoder_class(
