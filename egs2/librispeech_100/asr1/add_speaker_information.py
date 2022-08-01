@@ -2,8 +2,9 @@ import argparse
 import logging
 import os
 import sys
-from pathlib import Path
+# from pathlib import Path
 
+import pathlib
 import numpy as np
 import torch
 from tqdm.contrib import tqdm
@@ -14,60 +15,63 @@ from tqdm.contrib import tqdm
     
 
 
+
+
 def main():
-    """Load the model, generate kernel and bandpass plots."""
+
+
+    """ setting paths plots."""
     global_dir= "/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100"
     adversarial_flag="True"
-    project_name="nancy_july_28_data_prep_adv"
+    project_name="nancy_july_29_data_prep_adv"
     
-    
-    with_sp = ""
-    utt2spkfile = "{}/data/train_clean_100{}/utt2spk".format(global_dir, with_sp) 
-    spk2genderfile = "{}/data/train_clean_100{}/spk2gender".format(global_dir, with_sp) 
-    output_file =  "{}/{}/dump/raw/train_clean_100{}/utt2spkid.txt".format(global_dir, project_name, with_sp)  
-    
-    main_map = {}
-    utt_index = {}
-    
-    with open( spk2genderfile, "r+") as work_data:
-        # File object is now open.
-        # Do stuff with the file:
-        inde = 0
-        for line in work_data:
-            spk, gend = line.split(" ")
-            # print(spk, gend)
-            main_map[str(spk)] = inde
-            inde += 1
-    
+    with_sp_list = ["train_clean_100", "dev"]
+    for with_sp in with_sp_list:
+        utt2spkfile = "{}/data/original_data/{}/utt2spk".format(global_dir, with_sp) 
+        spk2genderfile = "{}/data/original_data/{}/spk2gender".format(global_dir, with_sp) 
+        output_file =  "{}/data/dump/raw/{}/utt2spkid.txt".format(global_dir,with_sp)  
+        
+        pathlib.Path(os.path.dirname(output_file)).mkdir(parents=True, exist_ok=True)
 
-    keylist = list(main_map.keys()) 
-    print(keylist[0])
-    print(type(keylist[0]))
-    print("\n\n*********************************")
-    with open( utt2spkfile, "r+") as work_data:
-        # File object is now open.
-        # Do stuff with the file:
-        inde = 0
-        for line in work_data:
-            utt, spkid = line.strip("\n").split(" ")
-            utt_index[str(utt)] = main_map[str(spkid)]
-            # print(utt, spkid)
-            
-    print("\n*********************************\n")
+        main_map = {}
+        utt_index = {}
+        with open( spk2genderfile, "r+") as work_data:
+            # File object is now open.
+            # Do stuff with the file:
+            inde = 0
+            for line in work_data:
+                spk, gend = line.split(" ")
+                # print(spk, gend)
+                main_map[str(spk)] = inde
+                inde += 1
+        
 
-    with open( output_file, "w") as work_data:
-        # File object is now open.
-        # Do stuff with the file:
-        inde = 0
-        for key, value in utt_index.items():
-            print("{} {}".format(key, value), file=work_data)
+        keylist = list(main_map.keys()) 
+        print(keylist[0])
+        print(type(keylist[0]))
+        print("\n\n*********************************")
+        with open( utt2spkfile, "r+") as work_data:
+            # File object is now open.
+            # Do stuff with the file:
+            inde = 0
+            for line in work_data:
+                utt, spkid = line.strip("\n").split(" ")
+                utt_index[str(utt)] = main_map[str(spkid)]
+                print(utt, spkid)
+                
+        print("\n*********************************\n")
+        print(" {} \n {} \n {}\n ".format(utt2spkfile,spk2genderfile, output_file))
+        with open( output_file, "w") as work_data:
+            # File object is now open.
+            # Do stuff with the file:
+            inde = 0
+            for key, value in utt_index.items():
+                print("{} {}".format(key, value), file=work_data)
 
-            # utt, spkid = line.split(" ")
-            # utt_index[str(utt)] = main_map[str(spkid)]
-            # print(utt, spkid)
+                # utt, spkid = line.split(" ")
+                # utt_index[str(utt)] = main_map[str(spkid)]
+                # print(utt, spkid)
 
-    # parser = get_parser()
-    # args = parser.parse_args(argv)
 
 
 

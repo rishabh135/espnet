@@ -732,7 +732,7 @@ class Trainer:
                 if( (iiter % 20) == 0):        
                     logging.warning(" iiter {} adv_flag {} adv_mode {}  >>>>   asr_loss {}  ".format( iiter, adv_flag, adv_mode, stats["loss"].detach() ))
                     # logging.warning("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
-                    if(adv_flag and adv_name == "ASRTask"  ):
+                    if(adv_flag == True and adv_name == "ASRTask"  ):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"].detach(), stats["adversarial_accuracy"] ))
     
                 
@@ -842,6 +842,15 @@ class Trainer:
                 torch.distributed.all_reduce(iterator_stop, ReduceOp.SUM)
                 if iterator_stop > 0:
                     break
+
+            # logging.warning(" prinitng iiter {} ")
+            # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
+            # logging.warning("**************   Batch ************")
+            # for keys,values in batch.items():
+            #     logging.warning(" {}  >> {} \n".format(keys, values))
+                
+            # logging.warning("**************************\n\n")
+
 
             batch["utt_id"] = utt_id
 

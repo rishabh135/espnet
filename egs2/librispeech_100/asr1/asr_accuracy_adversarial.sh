@@ -51,7 +51,7 @@ adversarial_flag="True"
 
 
 
-project_name="nancy_july_28_data_prep_adv"
+project_name="nancy_aug_1_data_prep_adv"
 experiment_name="odim_585_asradvasradv10_asr10" # name of the experiment, just change it to create differnet folders
 
 
@@ -61,11 +61,13 @@ experiment_name="odim_585_asradvasradv10_asr10" # name of the experiment, just c
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data/dump
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data 
+
+
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data/original_data 
 # determines all the files creating folder as in the data folder
 
 # data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
@@ -1194,6 +1196,7 @@ if ! "${skip_train}"; then
                 --g2p "${g2p}" \
                 --allow_variable_data_keys true \
                 --train_data_path_and_name_and_type "${_asr_train_dir}/utt2spkid.txt,spkid,text_int" \
+                --valid_data_path_and_name_and_type "${_asr_valid_dir}/utt2spkid.txt,spkid,text_int" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/${_scp},speech,${_type}" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/text,text,text" \
                 --valid_shape_file "${asr_stats_dir}/valid/speech_shape" \
