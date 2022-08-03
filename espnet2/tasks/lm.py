@@ -83,6 +83,7 @@ class LMTask(AbsTask):
         )
 
         group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
+        group.add_argument('--adv_liststr', default= "", type=str, help='adv_liststr string')
         
 
         group.add_argument(

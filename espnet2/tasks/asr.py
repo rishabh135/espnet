@@ -260,6 +260,7 @@ class ASRTask(AbsTask):
         )
 
         group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
+        group.add_argument('--adv_liststr', default= "asr 20 adv 20 asradv 30", type=str, help='adv_liststr string')
         
 
         group = parser.add_argument_group(description="Preprocess related")

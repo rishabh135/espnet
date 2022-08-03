@@ -491,10 +491,18 @@ class Trainer:
         distributed = distributed_option.distributed
 
 
+        # "ASRTask"
         adv_mode = options.adversarial_list[current_epoch-1]
         adv_flag = options.adv_flag
-        adv_name = cls.__name__
-
+        # 'espnet2.asr.espnet_model.ESPnetASRModel'
+        adv_name = str(type(model).__name__)
+        
+        # logging.warning( " >>>> adv_name {} ".format(adv_name))
+        # logging.warning(" model_vars {} \n\n".format( vars(model)))
+        # logging.warning("******************************\n\n")
+        
+        # logging.warning(" cls_vars {} \n\n".format( vars(cls)))
+        # logging.warning("******************************\n\n")
         
         if log_interval is None:
             try:
@@ -510,7 +518,7 @@ class Trainer:
 
         start_time = time.perf_counter()
  
-        if (adv_flag == True and adv_name == "ASRTask" and adv_mode == 'asr'):
+        if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
             if options.ngpu > 1:
                 model.module.freeze_adversarial()
                 model.module.unfreeze_encoder()
@@ -520,7 +528,7 @@ class Trainer:
 
 
         
-        elif (adv_flag == True and adv_name == "ASRTask" and adv_mode == 'adv'):
+        elif (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'adv'):
             if options.ngpu > 1:
                 model.module.freeze_encoder()
                 model.module.unfreeze_adversarial()
@@ -529,7 +537,7 @@ class Trainer:
                 model.unfreeze_adversarial()
 
         
-        elif(adv_flag == True and adv_name == "ASRTask" and adv_mode == 'asradv'):
+        elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
             if (options.ngpu > 1):
                 model.module.unfreeze_encoder()
                 model.module.unfreeze_adversarial()
@@ -643,19 +651,19 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-                if (adv_flag == True and adv_name == "ASRTask" and adv_mode == 'asr'):
-                    loss_adversarial = retval["loss_adv"]
+                if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
+                    loss_adversarial = retval["loss_adversarial"]
                     total_loss = loss
                     loss = total_loss
 
                 
-                elif (adv_flag == True and adv_name == "ASRTask" and  adv_mode == 'adv'):
-                    loss_adversarial = retval["loss_adv"]
+                elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
+                    loss_adversarial = retval["loss_adversarial"]
                     total_loss = loss_adversarial
                     loss = total_loss
                 
-                elif(adv_flag == True and adv_name == "ASRTask" and adv_mode == 'asradv'):
-                    loss_adversarial = retval["loss_adv"]
+                elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
+                    loss_adversarial = retval["loss_adversarial"]
                     total_loss = loss + loss_adversarial
                     loss = total_loss
                 
@@ -730,10 +738,10 @@ class Trainer:
 
 
                 if( (iiter % 20) == 0):        
-                    logging.warning(" iiter {} adv_flag {} adv_mode {}  >>>>   asr_loss {}  ".format( iiter, adv_flag, adv_mode, stats["loss"].detach() ))
-                    # logging.warning("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
-                    if(adv_flag == True and adv_name == "ASRTask"  ):
-                        logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"].detach(), stats["adversarial_accuracy"] ))
+                    logging.warning(" iiter {} adv_flag {} adv_mode {}  >>>>   asr_loss {}  ".format( iiter, adv_flag, adv_mode, stats["loss"].detach()))
+                    # logging.warning("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {} adv_name {}  ".format(adv_flag, adv_mode, loss.detach() ))
+                    if(adv_flag == True and adv_name == "ESPnetASRModel"):
+                        logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
     
                 
 
