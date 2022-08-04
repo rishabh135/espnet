@@ -697,8 +697,9 @@ class Trainer:
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
                         loss_adversarial = retval["loss_adversarial"]
                         # loss_adversarial.requires_grad = True
-                        loss +=  loss_adversarial
+                        loss = loss + loss_adversarial
                         scaler.scale(loss).backward()
+                        # scaler.scale(loss_adversarial).backward()
 
 
 
@@ -747,7 +748,6 @@ class Trainer:
 
                 if( (iiter % 20) == 0):        
                     logging.warning(" iiter {} adv_flag {} adv_mode {}  >>>>   asr_loss {}  ".format( iiter, adv_flag, adv_mode, stats["loss"].detach()))
-                    # logging.warning("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {} adv_name {}  ".format(adv_flag, adv_mode, loss.detach() ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
     

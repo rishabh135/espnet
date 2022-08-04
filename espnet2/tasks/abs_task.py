@@ -1172,7 +1172,6 @@ class AbsTask(ABC):
             
         model = cls.build_model(args=args)
 
-        # print("\n\n ******** tasks/abs_task accessing model args adv_flag : {} ########### \n\n".format(model.adv_flag))
 
 
         if not isinstance(model, AbsESPnetModel):
