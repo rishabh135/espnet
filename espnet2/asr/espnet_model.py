@@ -202,12 +202,17 @@ class ESPnetASRModel(AbsESPnetModel):
         if not self.encoder_frozen_flag:
             for param in self.encoder.parameters():
                 param.requires_grad = False
+            for param in self.decoder.parameters():
+                param.requires_grad = False
+            
             self.encoder_frozen_flag = True
 
    
     def unfreeze_encoder(self):
         if self.encoder_frozen_flag:
             for param in self.encoder.parameters():
+                param.requires_grad = True
+            for param in self.decoder.parameters():
                 param.requires_grad = True
             self.encoder_frozen_flag = False
     
@@ -341,7 +346,7 @@ class ESPnetASRModel(AbsESPnetModel):
             
             stats["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
             
-            retval["loss_adversarial"]= loss_adv.detach() if loss_adv is not None else None
+            retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
             retval["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
             
 
