@@ -268,7 +268,7 @@ class SpeakerAdv(torch.nn.Module):
         c_0 = self.zero_state(hs_pad)
 
         # logging.warning("Passing encoder output through advnet {} ".format(hs_pad.shape))
-
+        # logging.warning(" spkid inside adversarial {} ".format(y_adv))
         self.advnet.flatten_parameters()
         out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
 

@@ -254,6 +254,209 @@ class ESPnetASRModel(AbsESPnetModel):
     #  spkid: The shape is (Batch, 1), probably...
     # You can refer spkid for loss computation.
 
+
+
+
+
+    # def forward(
+    #     self,
+    #     speech: torch.Tensor,
+    #     speech_lengths: torch.Tensor,
+    #     text: torch.Tensor,
+    #     text_lengths: torch.Tensor,
+    #     spkid: torch.Tensor,
+    #     spkid_lengths: torch.Tensor,
+    #     **kwargs,
+    # ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
+    #     """Frontend + Encoder + Decoder + Calc loss
+
+    #     Args:
+    #         speech: (Batch, Length, ...)
+    #         speech_lengths: (Batch, )
+    #         text: (Batch, Length)
+    #         text_lengths: (Batch,)
+    #         kwargs: "utt_id" is among the input.
+    #         spkid: The shape is (Batch, 1), probably...
+    #         You can refer spkid for loss computation.
+    #     """
+    #     assert text_lengths.dim() == 1, text_lengths.shape
+    #     # Check that batch_size is unified
+    #     assert (
+    #         speech.shape[0]
+    #         == speech_lengths.shape[0]
+    #         == text.shape[0]
+    #         == text_lengths.shape[0]
+    #     ), (speech.shape, speech_lengths.shape, text.shape, text_lengths.shape)
+    #     batch_size = speech.shape[0]
+
+    #     # for data-parallel
+    #     text = text[:, : text_lengths.max()]
+
+    #     # logging.warning(">>>>> asr/espnet_model.py  spkid {} \n spkid_lengths {} ".format(spkid, spkid_lengths))
+
+    #     # 1. Encoder
+    #     encoder_out, encoder_out_lens = self.encode(speech, speech_lengths)
+    #     intermediate_outs = None
+    #     if isinstance(encoder_out, tuple):
+    #         intermediate_outs = encoder_out[1]
+    #         encoder_out = encoder_out[0]
+
+    #     loss_att, acc_att, cer_att, wer_att = None, None, None, None
+    #     loss_ctc, cer_ctc = None, None
+    #     loss_transducer, cer_transducer, wer_transducer = None, None, None
+    #     stats = dict()
+
+
+    #     # print("\n ******** espnet_model.py kwargs :  ")
+    #     # for key, value in kwargs.items():
+    #     #     print("kwargs key {}  val : {} \n".format(key, value))
+    #     # print("\n")
+    #     # print("speech {} speech_lengths {} encoder_out {} encoder_out_lens {} text {} text_length {} \n".format(speech.shape, speech_lengths.shape, encoder_out.shape, encoder_out_lens.shape, text.shape, text_lengths.shape))
+
+
+    #     # 1. CTC branch
+    #     if self.ctc_weight != 0.0:
+    #         loss_ctc, cer_ctc = self._calc_ctc_loss(
+    #             encoder_out, encoder_out_lens, text, text_lengths
+    #         )
+
+    #         # Collect CTC branch stats
+    #         stats["loss_ctc"] = loss_ctc.detach() if loss_ctc is not None else None
+    #         stats["cer_ctc"] = cer_ctc
+
+
+
+    #     #################################################################################################################################################################################################################################
+    #     #################################################################################################################################################################################################################################
+    #     #################################################################################################################################################################################################################################
+    #     ### adding a adversarial branch  as done here https://github.com/espnet/espnet/blob/876c75f40a159fb41f82267b64a5bd7d55de1a96/espnet/nets/e2e_asr_th.py#L457
+    #     # For training the adverarial branch, encoder must be frozen
+    #     # self.enc_frozen = False
+        
+    #     #################################################################################################################################################################################################################################
+    #     #################################################################################################################################################################################################################################
+        
+
+
+    #     retval = {} 
+    #     if (self.adv_flag):
+    #         # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+    #         rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+    #         # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+    #         loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, spkid)
+
+    #         # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
+    #         stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
+            
+    #         stats["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
+            
+    #         retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
+    #         retval["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
+            
+
+
+
+
+
+    #     # Intermediate CTC (optional)
+    #     loss_interctc = 0.0
+    #     if self.interctc_weight != 0.0 and intermediate_outs is not None:
+    #         for layer_idx, intermediate_out in intermediate_outs:
+    #             # we assume intermediate_out has the same length & padding
+    #             # as those of encoder_out
+    #             loss_ic, cer_ic = self._calc_ctc_loss(
+    #                 intermediate_out, encoder_out_lens, text, text_lengths
+    #             )
+    #             loss_interctc = loss_interctc + loss_ic
+
+    #             # Collect Intermedaite CTC stats
+    #             stats["loss_interctc_layer{}".format(layer_idx)] = (
+    #                 loss_ic.detach() if loss_ic is not None else None
+    #             )
+    #             stats["cer_interctc_layer{}".format(layer_idx)] = cer_ic
+
+    #         loss_interctc = loss_interctc / len(intermediate_outs)
+
+    #         # calculate whole encoder loss
+    #         loss_ctc = (
+    #             1 - self.interctc_weight
+    #         ) * loss_ctc + self.interctc_weight * loss_interctc
+
+    #     if self.use_transducer_decoder:
+    #         # 2a. Transducer decoder branch
+    #         (
+    #             loss_transducer,
+    #             cer_transducer,
+    #             wer_transducer,
+    #         ) = self._calc_transducer_loss(
+    #             encoder_out,
+    #             encoder_out_lens,
+    #             text,
+    #         )
+
+    #         if loss_ctc is not None:
+    #             loss = loss_transducer + (self.ctc_weight * loss_ctc)
+    #         else:
+    #             loss = loss_transducer
+
+    #         # Collect Transducer branch stats
+    #         stats["loss_transducer"] = (
+    #             loss_transducer.detach() if loss_transducer is not None else None
+    #         )
+    #         stats["cer_transducer"] = cer_transducer
+    #         stats["wer_transducer"] = wer_transducer
+
+    #     else:
+    #         # 2b. Attention decoder branch
+    #         if self.ctc_weight != 1.0:
+    #             loss_att, acc_att, cer_att, wer_att = self._calc_att_loss(
+    #                 encoder_out, encoder_out_lens, text, text_lengths
+    #             )
+
+    #         # 3. CTC-Att loss definition
+    #         if self.ctc_weight == 0.0:
+    #             loss = loss_att
+    #         elif self.ctc_weight == 1.0:
+    #             loss = loss_ctc
+    #         else:
+    #             loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
+
+
+
+
+    #         # Collect Attn branch stats
+    #         stats["loss_att"] = loss_att.detach() if loss_att is not None else None
+    #         stats["acc"] = acc_att
+    #         stats["cer"] = cer_att
+    #         stats["wer"] = wer_att
+            
+
+
+
+
+    #     # Collect total loss stats
+    #     stats["loss"] = loss.detach()
+
+    #     # print(" asr/ESPNET_model.py :  loss : {}   acc_att : {} \n".format(stats["loss"], stats["acc"] ))
+
+    #     # force_gatherable: to-device and to-tensor if scalar for DataParallel
+    #     loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
+        
+
+        
+    #     retval["loss"] = loss   
+    #     retval["stats"] = stats
+    #     retval["weight"] = weight
+    #     retval["loss_ctc"] = loss_ctc
+    #     retval["loss_att"] = loss_att
+        
+    #     # loss_ctc, loss_att, acc, cer, wer, loss_adv, acc_adv
+
+    #     return retval
+
+
+
+
     def forward(
         self,
         speech: torch.Tensor,
@@ -261,19 +464,18 @@ class ESPnetASRModel(AbsESPnetModel):
         text: torch.Tensor,
         text_lengths: torch.Tensor,
         spkid: torch.Tensor,
-        spkid_lengths: torch.Tensor,
+        spkid_lengths: torch.Tensor, 
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """Frontend + Encoder + Decoder + Calc loss
-
         Args:
             speech: (Batch, Length, ...)
             speech_lengths: (Batch, )
             text: (Batch, Length)
             text_lengths: (Batch,)
+            spkid: The shape is (Batch, 1)
+            You can refer spkid for loss computation. 
             kwargs: "utt_id" is among the input.
-            spkid: The shape is (Batch, 1), probably...
-            You can refer spkid for loss computation.
         """
         assert text_lengths.dim() == 1, text_lengths.shape
         # Check that batch_size is unified
@@ -288,7 +490,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # for data-parallel
         text = text[:, : text_lengths.max()]
 
-        # logging.warning(">>>>> asr/espnet_model.py  spkid {} \n spkid_lengths {} ".format(spkid, spkid_lengths))
+
 
         # 1. Encoder
         encoder_out, encoder_out_lens = self.encode(speech, speech_lengths)
@@ -332,26 +534,6 @@ class ESPnetASRModel(AbsESPnetModel):
         #################################################################################################################################################################################################################################
         #################################################################################################################################################################################################################################
         
-
-
-        retval = {} 
-        if (self.adv_flag):
-            # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
-            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-            # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, spkid)
-
-            # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
-            stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-            
-            stats["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
-            
-            retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
-            retval["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
-            
-
-
-
 
 
         # Intermediate CTC (optional)
@@ -417,6 +599,22 @@ class ESPnetASRModel(AbsESPnetModel):
             else:
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
 
+
+            retval = {} 
+            if (self.adv_flag):
+                # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+                rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+                # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+                loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, spkid)
+
+                # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
+                stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
+                retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
+
+                stats["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
+                retval["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
+
+	
 
 
 
