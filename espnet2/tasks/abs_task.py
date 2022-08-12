@@ -2,7 +2,7 @@
 import argparse
 import functools
 import logging
-import os
+import os, re
 from pickle import FALSE
 import sys
 from abc import ABC, abstractmethod
@@ -1100,18 +1100,24 @@ class AbsTask(ABC):
         # default= "asr 20 adv 20 asradv 30", type=str, help='adv_liststr string')
         # Step -1  updated adversarial list
         if(args.adv_flag and cls.__name__ == "ASRTask"):
-            if (args.adv_liststr == "asr 20 adv 20 asradv 30" ):         
-                # print(" Updated adversarial list\n")
-                # args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
-                args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
-                # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
-        
-            elif (args.adv_liststr == "asradvasradv" ):         
+            
+            if (args.adv_liststr == "asradvasradv" ):         
                 # print(" Updated adversarial list\n")
                 args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
                 # args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
                 # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
         
+            elif (args.adv_liststr == "asr 20 adv 20 asradv 30" ):         
+                # print(" Updated adversarial list\n")
+                # args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
+                args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
+                # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
+        
+            else :
+                epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
+                args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
+                
+
         elif(not args.adv_flag and cls.__name__ == "ASRTask"):
             # print(" Updated adversarial list without adversarial \n")
             args.adversarial_list =[ "asr"] * 70 
@@ -1119,7 +1125,7 @@ class AbsTask(ABC):
         else:
             args.adversarial_list =[ "asr"] * 70 
 
-
+        logging.warning(" >>>>>> Adversarial_list {} \n".format(args.adversarial_list))
         # 0. Init distributed process
         distributed_option = build_dataclass(DistributedOption, args)
         # Setting distributed_option.dist_rank, etc.

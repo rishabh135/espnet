@@ -39,11 +39,11 @@ def th_accuracy(pad_outputs, pad_targets, ignore_label):
     """
     # logging.warning(" pad_out_shape {} pad_targets_shape {}  ".format(pad_outputs.shape, pad_targets.shape))
     
-    pad_pred = pad_outputs.view(
-        pad_targets.size(0),
-        pad_targets.size(1),
-        pad_outputs.size(1)).argmax(2)
-    
+    # pad_pred = pad_outputs.view(
+    #     pad_targets.size(0),
+    #     pad_targets.size(1),
+    #     pad_outputs.size(1)).argmax(2)
+    pad_pred = pad_outputs.argmax(1)
     mask = pad_targets != ignore_label
     # logging.warning("\n pad_pred: {}\npad_targ: {}\n".format(pad_pred[::500].tolist(), pad_targets[:500].tolist(), ))
     numerator = torch.sum(pad_pred.masked_select(mask) == pad_targets.masked_select(mask))
@@ -300,7 +300,7 @@ class SpeakerAdv(torch.nn.Module):
         loss = F.cross_entropy(y_hat, labels, size_average=True)
         #loss = F.kl_div(y_hat, labels, size_average=True)
         # logging.warning("Adversarial loss = %f", loss.item())
-        acc = th_accuracy(y_hat, labels.unsqueeze(0), -1)
+        acc = th_accuracy(y_hat, labels, -1)
         # logging.warning("Adversarial accuracy = %f", acc)
 
         return loss, acc
