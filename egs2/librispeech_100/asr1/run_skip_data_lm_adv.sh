@@ -47,8 +47,8 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
-./asr_bypass_data_prep.sh \
-    --skip_data_prep true \
+./asr_skip_data_lm_adv.sh \
+    --skip_data_prep false \
     --skip_train false \
     --skip_eval false \
     --lang en \
@@ -60,7 +60,7 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --audio_format "flac.ark" \
     --feats_type raw \
     --speed_perturb_factors "0.9 1.0 1.1" \
-    --use_lm true \
+    --use_lm false \
     --asr_tag "${asr_tag}" \
     --asr_config "${asr_config}" \
     --inference_config "${inference_config}" \
@@ -70,3 +70,4 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --lm_train_text "${data_dd}/${train_set}/text" \
     --bpe_train_text "${data_dd}/${train_set}/text" "$@" 
     
+
