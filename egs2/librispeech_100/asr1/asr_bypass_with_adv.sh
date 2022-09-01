@@ -46,17 +46,16 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-adversarial_flag=""
-
-adv_liststr="adv 30 asr 10 adv 20 asradv 40"
+adversarial_flag="True"
+adv_liststr="adv 200"
 
 # adv_liststr="asr 20 adv 20 asradv 30"
 
 
-project_name="nancy_aug_29_data_created"
+project_name="nancy_sep_1_just_adv_200_epochs"
 
 
-experiment_name="odim_251_without_adv" # name of the experiment, just change it to create differnet folders
+experiment_name="odim_251_with_adv" # name of the experiment, just change it to create differnet folders
 
 
 
@@ -100,7 +99,9 @@ python=python3       # Specify python to execute espnet commands.
 local_data_opts=${data_dd} # The options given to local/data.sh.
 
 # Speed perturbation related
-speed_perturb_factors=  # perturbation factors, e.g. "0.9 1.0 1.1" (separated by space).
+speed_perturb_factors="0.9 1.0 1.1"  # perturbation factors, e.g. "0.9 1.0 1.1" (separated by space).
+
+
 
 # Feature extraction related
 feats_type=raw       # Feature type (raw or fbank_pitch).
@@ -326,6 +327,13 @@ fi
 
 . ./path.sh
 . ./cmd.sh
+
+
+echo "#############################"
+echo "****************************"
+echo "${speed_perturb_factors}"
+echo "****************************"
+echo "#############################"
 
 
 # Check required arguments
@@ -1650,4 +1658,5 @@ else
 fi
 
 log "Successfully finished. [elapsed=${SECONDS}s]"
+
 
