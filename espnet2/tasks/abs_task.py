@@ -877,6 +877,9 @@ class AbsTask(ABC):
         model: torch.nn.Module,
     ) -> List[torch.optim.Optimizer]:
         
+        adv_name = str(type(model).__name__)
+        logging.warning(" ----->>>>>>>> adv_flag {} asr_lr {} adv_lr {} adv_name {} \n\n".format(args.adv_flag, args.asr_lr, args.adv_lr, adv_name))
+
         if cls.num_optimizers != 1:
             raise RuntimeError(
                 "build_optimizers() must be overridden if num_optimizers != 1"
@@ -889,17 +892,19 @@ class AbsTask(ABC):
 
         # optimi = None
         if ( args.adv_flag):
-            logging.warning(" ----->>> asr_lr {} adv_lr {}".format(args.asr_lr, args.adv_lr))
+            
             if(args.ngpu > 1):        
                 param_grp = [
                     {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
                     {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
                     {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
                 ]            
             else:
                 param_grp = [
                     {'params': model.encoder.parameters(), 'lr': args.asr_lr},
                     {'params': model.decoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.ctc.parameters(), 'lr': args.asr_lr},
                     {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
             
             optimi = optim_class(param_grp)
@@ -1154,6 +1159,8 @@ class AbsTask(ABC):
                 epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
                 if(len(epoch_list) == 4):
                     args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
+                elif(len(epoch_list) == 3):
+                    args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] +  ["asradv"] * epoch_list[2]
                 elif(len(epoch_list) == 2):
                     args.adversarial_list = ["adv"] *  epoch_list[0] +  ["asradv"] * epoch_list[1]
                 else:

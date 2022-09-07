@@ -261,9 +261,9 @@ class Trainer:
 
         start_time = time.perf_counter()
         for iepoch in range(start_epoch, trainer_options.max_epoch + 1):
-            print("\n train/trainer.py <<< current epoch {}  max_epoch {} ******\n".format(iepoch, trainer_options.max_epoch))
+            logging.warning(" train/trainer.py <<< current epoch {}  max_epoch {} ******\n".format(iepoch, trainer_options.max_epoch))
             if iepoch != start_epoch:
-                logging.info(
+                logging.warning(
                     "{}/{}epoch started. Estimated time to finish: {}".format(
                         iepoch,
                         trainer_options.max_epoch,
@@ -519,14 +519,13 @@ class Trainer:
         start_time = time.perf_counter()
  
         if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
+
             if options.ngpu > 1:
                 model.module.freeze_adversarial()
                 model.module.unfreeze_encoder()
             else:
                 model.freeze_adversarial()
                 model.unfreeze_encoder()
-
-
         
         elif (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'adv'):
             if options.ngpu > 1:
@@ -535,8 +534,7 @@ class Trainer:
             else:
                 model.freeze_encoder()
                 model.unfreeze_adversarial()
-
-        
+                    
         elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
             if (options.ngpu > 1):
                 model.module.unfreeze_encoder()
@@ -544,7 +542,25 @@ class Trainer:
             else:
                 model.unfreeze_encoder()
                 model.unfreeze_adversarial()
+            
+ 
+        # logging.warning("{}".format(model))
 
+        # logging.warning("\n\n********************\n\n\n\n")
+
+        # for name, param in model.state_dict().items():
+        #     logging.warning(" Name {} size {} ".format(name, param.size()))
+
+
+        param_group_length = len(optimizers[0].param_groups)
+        # logging.warning("-------->>> {} \n\n".format(optimizers[0].param_groups[0]))
+        # for name, param in optimizers[0].param_groups[0].items():
+        #     logging.warning(" Name {}     value{}  ".format(name, param))
+        #     logging.warning("\n*****\n")
+        current_flr = optimizers[0].param_groups[0]['lr']
+        current_llr = optimizers[0].param_groups[-1]['lr']
+        
+        logging.warning(" --->>>> adv_name {} adv_mode {} current_lr_first_group {} last_group_lr {} param_length {} \n".format(adv_name, adv_mode, current_flr, current_llr, param_group_length))
 
         for iiter, (utt_id, batch) in enumerate(
             reporter.measure_iter_time(iterator, "iter_time"), 1

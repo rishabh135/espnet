@@ -251,6 +251,18 @@ class SpeakerAdv(torch.nn.Module):
     def zero_state(self, hs_pad):
         return hs_pad.new_zeros(2*self.advlayers, hs_pad.size(0), self.advunits)
 
+    # def weights_init(self,):
+    #     for module in self.modules():
+
+    #         for name, param in lstm.named_parameters():
+    #             if 'bias' in name:
+    #                 nn.init.constant(param, 0.0)
+    #             elif 'weight' in name:
+    #                 nn.init.xavier_normal(param)
+    #         if isinstance(module, nn.Conv2d):
+    #             nn.init.normal_(module.weight, mean = 0, std = 1)
+    #             nn.init.constant_(module.bias, 0)
+
     def forward(self, hs_pad, hlens, y_adv):
         '''Adversarial branch forward
         :param torch.Tensor hs_pad: batch of padded hidden state sequences (B, Tmax, D)

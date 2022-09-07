@@ -46,15 +46,15 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-adversarial_flag=""
+adversarial_flag="True"
 
-adv_liststr="adv 100 asradv 100"
+adv_liststr="asr 15 adv 50 asradv 35"
 
 # adv_liststr="asr 20 adv 20 asradv 30"
 
-project_name="nancy_sep_2_adv_100_lr"
+project_name="nancy_sep_7_epochs_100"
 
-experiment_name="odim_251_adv" # name of the experiment, just change it to create differnet folders
+experiment_name="odim_251" # name of the experiment, just change it to create differnet folders
 
 
 
@@ -63,13 +63,13 @@ experiment_name="odim_251_adv" # name of the experiment, just change it to creat
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/dump
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/original_data 
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 # determines all the files creating folder as in the data folder
 
 # data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
@@ -97,8 +97,6 @@ python=python3       # Specify python to execute espnet commands.
 # Data preparation related
 local_data_opts=${data_dd} # The options given to local/data.sh.
 
-# Speed perturbation related
-speed_perturb_factors=  # perturbation factors, e.g. "0.9 1.0 1.1" (separated by space).
 
 # Feature extraction related
 feats_type=raw       # Feature type (raw or fbank_pitch).
@@ -124,6 +122,7 @@ bpe_char_cover=1.0  # character coverage when modeling BPE
 # # /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/ngram_exp/ # Directory to dump features.
 # ngram_num=
 
+speed_perturb_factors="0.9 1.0 1.1" 
 
 # Ngram model related
 use_ngram=true
@@ -326,6 +325,8 @@ fi
 . ./cmd.sh
 
 
+
+
 # Check required arguments
 [ -z "${train_set}" ] && { log "${help_message}"; log "Error: --train_set is required"; exit 2; };
 [ -z "${valid_set}" ] && { log "${help_message}"; log "Error: --valid_set is required"; exit 2; };
@@ -502,6 +503,7 @@ if [ -z "${inference_tag}" ]; then
 fi
 
 
+
 # ========================== Main stages start from here. ==========================
 
 if ! "${skip_data_prep}"; then
@@ -524,15 +526,16 @@ if ! "${skip_data_prep}"; then
                fi
            done
            ${global_dir}/utils/combine_data.sh "${data_dd}/${train_set}_sp" ${_dirs}
+
         else
            log "Skip stage 2: Speed perturbation"
         fi
     fi
 
-
-    if [ -n "${speed_perturb_factors}" ]; then
+    if [  -n "${speed_perturb_factors}" ]; then
         train_set="${train_set}_sp"
     fi
+
 
     log " Important :  Train set  ::    ${train_set}"
     if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
@@ -866,8 +869,6 @@ if ! "${skip_train}"; then
 
 
         if [ ${stage} -le 7 ] && [ ${stop_stage} -ge 7 ]; then
-
-        
             log "Stage 7: LM Training: train_set=${data_feats}/lm_train.txt, dev_set=${lm_dev_text}"
 
             _opts=
@@ -972,8 +973,6 @@ if ! "${skip_train}"; then
             log "PPL: ${lm_test_text}: $(cat ${lm_exp}/perplexity_test/ppl)"
 
         fi
-
-        
 
     else
         log "Stage 6-8: Skip lm-related stages: use_lm=${use_lm}"
@@ -1652,4 +1651,5 @@ else
 fi
 
 log "Successfully finished. [elapsed=${SECONDS}s]"
+
 
