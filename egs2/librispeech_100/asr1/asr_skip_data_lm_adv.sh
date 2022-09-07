@@ -48,13 +48,13 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 adversarial_flag=""
 
-adv_liststr="adv 30 asr 10 adv 20 asradv 40"
+adv_liststr="adv 100 asradv 100"
 
 # adv_liststr="asr 20 adv 20 asradv 30"
 
-project_name="nancy_aug_16_epochs_without_adv"
+project_name="nancy_sep_2_adv_100_lr"
 
-experiment_name="odim_251_without_adv" # name of the experiment, just change it to create differnet folders
+experiment_name="odim_251_adv" # name of the experiment, just change it to create differnet folders
 
 
 
@@ -866,6 +866,8 @@ if ! "${skip_train}"; then
 
 
         if [ ${stage} -le 7 ] && [ ${stop_stage} -ge 7 ]; then
+
+        
             log "Stage 7: LM Training: train_set=${data_feats}/lm_train.txt, dev_set=${lm_dev_text}"
 
             _opts=
@@ -970,6 +972,8 @@ if ! "${skip_train}"; then
             log "PPL: ${lm_test_text}: $(cat ${lm_exp}/perplexity_test/ppl)"
 
         fi
+
+        
 
     else
         log "Stage 6-8: Skip lm-related stages: use_lm=${use_lm}"

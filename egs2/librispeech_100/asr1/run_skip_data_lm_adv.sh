@@ -18,7 +18,7 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-project_name="nancy_aug_12_epochs_speed_shuffle"
+project_name="nancy_sep_2_adv_100_lr"
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data/original_data # determines all the files creating folder as in the data folder
 

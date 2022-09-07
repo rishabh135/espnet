@@ -17,7 +17,8 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
-project_name="nancy_sep_1_just_adv_200_epochs"
+project_name="nancy_sep_6_adv_lr_2_separate_optimizer"
+
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data/original_data # determines all the files creating folder as in the data folder
 
@@ -47,7 +48,7 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ./asr_bypass_with_adv.sh \
-    --skip_data_prep false \
+    --skip_data_prep true \
     --skip_train false \
     --skip_eval false \
     --lang en \
@@ -59,7 +60,7 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --audio_format "flac.ark" \
     --feats_type raw \
     --speed_perturb_factors "0.9 1.0 1.1" \
-    --use_lm true \
+    --use_lm false \
     --asr_tag "${asr_tag}" \
     --asr_config "${asr_config}" \
     --inference_config "${inference_config}" \

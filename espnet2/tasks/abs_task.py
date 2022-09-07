@@ -847,7 +847,7 @@ class AbsTask(ABC):
         group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
 
         group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
-        group.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
+        group.add_argument('--adv_lr', default=2.0, type=float,help='Learning rate for adv branch')
         group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
@@ -1106,26 +1106,31 @@ class AbsTask(ABC):
                 args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
                 # args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
                 # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
-        
-            elif (args.adv_liststr == "asr 20 adv 20 asradv 30" ):         
-                # print(" Updated adversarial list\n")
-                # args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
-                args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
-                # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
-        
+
             else :
                 epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
-                args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
-                
+                if(len(epoch_list) == 4):
+                    args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
+                elif(len(epoch_list) == 2):
+                    args.adversarial_list = ["adv"] *  epoch_list[0] +  ["asradv"] * epoch_list[1]
+                else:
+                    args.adversarial_list = ["adv"] *  epoch_list[0]
+        
+            # elif (args.adv_liststr == "asr 20 adv 20 asradv 30" ):         
+            #     # print(" Updated adversarial list\n")
+            #     # args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
+            #     args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
+            #     # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
+        
 
         elif(not args.adv_flag and cls.__name__ == "ASRTask"):
             # print(" Updated adversarial list without adversarial \n")
-            args.adversarial_list =[ "asr"] * 70 
+            args.adversarial_list =[ "asr"] * args.max_epoch
 
         else:
-            args.adversarial_list =[ "asr"] * 70 
+            args.adversarial_list =[ "asr"] * args.max_epoch
 
-        logging.warning(" >>>>>> Adversarial_list {} \n".format(args.adversarial_list))
+        # logging.warning(" >>>>>> Adversarial_list {} \n".format(args.adversarial_list))
         # 0. Init distributed process
         distributed_option = build_dataclass(DistributedOption, args)
         # Setting distributed_option.dist_rank, etc.
