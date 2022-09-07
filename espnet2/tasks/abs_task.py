@@ -869,31 +869,74 @@ class AbsTask(ABC):
         assert check_return_type(parser)
         return parser
 
+
     @classmethod
     def build_optimizers(
         cls,
         args: argparse.Namespace,
         model: torch.nn.Module,
     ) -> List[torch.optim.Optimizer]:
+        
         if cls.num_optimizers != 1:
             raise RuntimeError(
                 "build_optimizers() must be overridden if num_optimizers != 1"
             )
 
         optim_class = optim_classes.get(args.optim)
+        # print("\n\n -------------------- \n adv flag : {}  gpu: {} \n\n".format(args.adv_flag, args.ngpu))
         if optim_class is None:
             raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
-        if args.sharded_ddp:
-            if fairscale is None:
-                raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
-            optim = fairscale.optim.oss.OSS(
-                params=model.parameters(), optim=optim_class, **args.optim_conf
-            )
-        else:
-            optim = optim_class(model.parameters(), **args.optim_conf)
 
-        optimizers = [optim]
+        # optimi = None
+        if ( args.adv_flag):
+            logging.warning(" ----->>> asr_lr {} adv_lr {}".format(args.asr_lr, args.adv_lr))
+            if(args.ngpu > 1):        
+                param_grp = [
+                    {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
+                ]            
+            else:
+                param_grp = [
+                    {'params': model.encoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.decoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
+            
+            optimi = optim_class(param_grp)
+        else:
+            optimi = optim_class(model.parameters(), **args.optim_conf)
+
+        optimizers = [optimi]
         return optimizers
+
+
+    # @classmethod
+    # def build_optimizers(
+    #     cls,
+    #     args: argparse.Namespace,
+    #     model: torch.nn.Module,
+    # ) -> List[torch.optim.Optimizer]:
+    #     if cls.num_optimizers != 1:
+    #         raise RuntimeError(
+    #             "build_optimizers() must be overridden if num_optimizers != 1"
+    #         )
+
+    #     optim_class = optim_classes.get(args.optim)
+    #     if optim_class is None:
+    #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+    #     if args.sharded_ddp:
+    #         if fairscale is None:
+    #             raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
+    #         optim = fairscale.optim.oss.OSS(
+    #             params=model.parameters(), optim=optim_class, **args.optim_conf
+    #         )
+    #     else:
+    #         optim = optim_class(model.parameters(), **args.optim_conf)
+
+    #     optimizers = [optim]
+    #     return optimizers
+
+
 
     @classmethod
     def exclude_opts(cls) -> Tuple[str, ...]:
