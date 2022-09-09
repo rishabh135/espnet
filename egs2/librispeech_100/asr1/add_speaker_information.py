@@ -21,9 +21,8 @@ def main():
 
 
     """ setting paths plots."""
-    in_global_dir= "/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/original_data/"
-    out_global_dir= "/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/dump/raw"
-    adversarial_flag="True"
+    in_global_dir= "/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/nancy_v2_sep_9/data"
+    out_global_dir= "/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/nancy_v2_sep_9/odim_251_single_lr/dump/raw"
     # project_name="nancy_july_29_data_prep_adv"
     
 

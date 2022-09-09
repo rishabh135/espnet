@@ -263,7 +263,7 @@ class Trainer:
         for iepoch in range(start_epoch, trainer_options.max_epoch + 1):
             print("\n train/trainer.py <<< current epoch {}  max_epoch {} ******\n".format(iepoch, trainer_options.max_epoch))
             if iepoch != start_epoch:
-                logging.info(
+                logging.warning(
                     "{}/{}epoch started. Estimated time to finish: {}".format(
                         iepoch,
                         trainer_options.max_epoch,
@@ -275,7 +275,7 @@ class Trainer:
                     )
                 )
             else:
-                logging.info(f"{iepoch}/{trainer_options.max_epoch}epoch started")
+                logging.warning(f"{iepoch}/{trainer_options.max_epoch}epoch started")
             set_all_random_seed(trainer_options.seed + iepoch)
 
             reporter.set_epoch(iepoch)
@@ -390,7 +390,7 @@ class Trainer:
                 if log_model and trainer_options.use_wandb:
                     import wandb
 
-                    logging.info("Logging Model on this epoch :::::")
+                    logging.warning("Logging Model on this epoch :::::")
                     artifact = wandb.Artifact(
                         name=f"model_{wandb.run.id}",
                         type="model",
@@ -544,6 +544,14 @@ class Trainer:
             else:
                 model.unfreeze_encoder()
                 model.unfreeze_adversarial()
+
+
+        param_group_length = len(optimizers[0].param_groups)
+        current_flr = optimizers[0].param_groups[0]['lr']
+        current_llr = optimizers[0].param_groups[-1]['lr']
+        
+        logging.warning(" --->>>>>>>>> adv_name {} adv_mode {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_name, adv_mode, float(current_flr), float(current_llr), param_group_length))
+
 
 
         for iiter, (utt_id, batch) in enumerate(
@@ -819,7 +827,7 @@ class Trainer:
             # NOTE(kamo): Call log_message() after next()
             reporter.next()
             if iiter % log_interval == 0:
-                logging.info(reporter.log_message(-log_interval))
+                logging.warning(reporter.log_message(-log_interval))
                 if summary_writer is not None:
                     reporter.tensorboard_add_scalar(summary_writer, -log_interval)
                 if use_wandb:

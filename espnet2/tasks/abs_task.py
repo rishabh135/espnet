@@ -1099,31 +1099,34 @@ class AbsTask(ABC):
 
         # default= "asr 20 adv 20 asradv 30", type=str, help='adv_liststr string')
         # Step -1  updated adversarial list
+
         if(args.adv_flag and cls.__name__ == "ASRTask"):
             
-            if (args.adv_liststr == "asradvasradv" ):         
+            if (args.adv_liststr == "asr_adv_asradv" ):         
                 # print(" Updated adversarial list\n")
-                args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
+                args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  
                 # args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
                 # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
-        
-            elif (args.adv_liststr == "asr 20 adv 20 asradv 30" ):         
-                # print(" Updated adversarial list\n")
-                # args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
-                args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
-                # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
-        
+
             else :
                 epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
-                args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
-                
+                if(len(epoch_list) == 4):
+                    args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
+                elif(len(epoch_list) == 3):
+                    args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] +  ["asradv"] * epoch_list[2]
+                elif(len(epoch_list) == 2):
+                    args.adversarial_list = ["adv"] *  epoch_list[0] +  ["asradv"] * epoch_list[1]
+                else:
+                    args.adversarial_list = ["adv"] *  epoch_list[0]
+
 
         elif(not args.adv_flag and cls.__name__ == "ASRTask"):
             # print(" Updated adversarial list without adversarial \n")
-            args.adversarial_list =[ "asr"] * 70 
+            args.adversarial_list =[ "asr"] * args.max_epoch
 
         else:
-            args.adversarial_list =[ "asr"] * 70 
+            args.adversarial_list =[ "asr"] * args.max_epoch
+
 
         logging.warning(" >>>>>> Adversarial_list {} \n".format(args.adversarial_list))
         # 0. Init distributed process
