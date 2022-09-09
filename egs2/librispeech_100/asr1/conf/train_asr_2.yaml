@@ -59,9 +59,12 @@ use_amp: true
 cudnn_deterministic: false  
 cudnn_benchmark: false      
 
+ctc_conf:
+    ignore_nan_grad: true
+
 optim: adam
 optim_conf:
-    lr: 0.002
+    lr: 0.05
     weight_decay: 0.000001
 scheduler: warmuplr
 scheduler_conf:

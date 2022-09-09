@@ -48,13 +48,13 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 adversarial_flag="True"
 
-adv_liststr="adv 100 asradv 100"
+adv_liststr="asr 10 adv 40 asradv 10"
 
 # adv_liststr="asr 20 adv 20 asradv 30"
 
-project_name="nancy_sep_6_adv_lr_2_separate_optimizer"
+project_name="nancy_sep_8_epochs_60_asr_10_adv_40_asradv_10"
 
-experiment_name="odim_251_adv_100_asrdv_100" # name of the experiment, just change it to create differnet folders
+experiment_name="odim_251_single_lr" # name of the experiment, just change it to create differnet folders
 
 
 
@@ -63,13 +63,13 @@ experiment_name="odim_251_adv_100_asrdv_100" # name of the experiment, just chan
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/dump
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/original_data
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 # determines all the files creating folder as in the data folder
 
 # data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
@@ -97,10 +97,6 @@ python=python3       # Specify python to execute espnet commands.
 # Data preparation related
 local_data_opts=${data_dd} # The options given to local/data.sh.
 
-# Speed perturbation related
-speed_perturb_factors="0.9 1.0 1.1"  # perturbation factors, e.g. "0.9 1.0 1.1" (separated by space).
-
-
 
 # Feature extraction related
 feats_type=raw       # Feature type (raw or fbank_pitch).
@@ -126,6 +122,7 @@ bpe_char_cover=1.0  # character coverage when modeling BPE
 # # /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/ngram_exp/ # Directory to dump features.
 # ngram_num=
 
+speed_perturb_factors="0.9 1.0 1.1" 
 
 # Ngram model related
 use_ngram=true
@@ -328,11 +325,6 @@ fi
 . ./cmd.sh
 
 
-echo "#############################"
-echo "****************************"
-echo "${speed_perturb_factors}"
-echo "****************************"
-echo "#############################"
 
 
 # Check required arguments
@@ -510,6 +502,8 @@ if [ -z "${inference_tag}" ]; then
     fi
 fi
 
+
+
 if [  -n "${speed_perturb_factors}" ]; then
     train_set="${train_set}_sp"
 fi
@@ -536,6 +530,7 @@ if ! "${skip_data_prep}"; then
                fi
            done
            ${global_dir}/utils/combine_data.sh "${data_dd}/${train_set}_sp" ${_dirs}
+
         else
            log "Skip stage 2: Speed perturbation"
         fi
@@ -1319,7 +1314,11 @@ if ! "${skip_eval}"; then
           fi
         fi
 
+        # test_sets="dev_other"
+        log "${test_sets}"
+        log "\n *********************** printing testsets **************************\n"
         for dset in ${test_sets}; do
+
             _data="${data_feats}/${dset}"
             _dir="${asr_exp}/${inference_tag}/${dset}"
             _logdir="${_dir}/logdir"

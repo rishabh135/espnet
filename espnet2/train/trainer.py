@@ -54,6 +54,9 @@ except ImportError:
     fairscale = None
 
 
+
+torch.autograd.set_detect_anomaly(True)
+
 @dataclasses.dataclass
 class TrainerOptions:
     ngpu: int
@@ -560,7 +563,7 @@ class Trainer:
         current_flr = optimizers[0].param_groups[0]['lr']
         current_llr = optimizers[0].param_groups[-1]['lr']
         
-        logging.warning(" --->>>> adv_name {} adv_mode {} current_lr_first_group {} last_group_lr {} param_length {} \n".format(adv_name, adv_mode, current_flr, current_llr, param_group_length))
+        logging.warning(" --->>>> adv_name {} adv_mode {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_name, adv_mode, float(current_flr), float(current_llr), param_group_length))
 
         for iiter, (utt_id, batch) in enumerate(
             reporter.measure_iter_time(iterator, "iter_time"), 1
@@ -788,6 +791,7 @@ class Trainer:
                                 continue
                             scaler.step(optimizer)
                             scaler.update()
+                            optimizer.zero_grad()
 
                 else:
                     all_steps_are_invalid = False

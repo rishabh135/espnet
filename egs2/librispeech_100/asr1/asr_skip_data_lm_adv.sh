@@ -48,11 +48,11 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 adversarial_flag="True"
 
-adv_liststr="asr 15 adv 50 asradv 35"
+adv_liststr="asr_adv_asradv"
 
 # adv_liststr="asr 20 adv 20 asradv 30"
 
-project_name="nancy_sep_7_epochs_100"
+project_name="nancy_sep_8_epochs_100"
 
 experiment_name="odim_251" # name of the experiment, just change it to create differnet folders
 
@@ -504,6 +504,10 @@ fi
 
 
 
+if [  -n "${speed_perturb_factors}" ]; then
+    train_set="${train_set}_sp"
+fi
+
 # ========================== Main stages start from here. ==========================
 
 if ! "${skip_data_prep}"; then
@@ -532,9 +536,7 @@ if ! "${skip_data_prep}"; then
         fi
     fi
 
-    if [  -n "${speed_perturb_factors}" ]; then
-        train_set="${train_set}_sp"
-    fi
+
 
 
     log " Important :  Train set  ::    ${train_set}"
@@ -1312,7 +1314,10 @@ if ! "${skip_eval}"; then
           fi
         fi
 
+        log "${test_sets}"
+        log "\n *********************** printing testsets **************************\n"
         for dset in ${test_sets}; do
+
             _data="${data_feats}/${dset}"
             _dir="${asr_exp}/${inference_tag}/${dset}"
             _logdir="${_dir}/logdir"

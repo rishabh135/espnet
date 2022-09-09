@@ -870,76 +870,76 @@ class AbsTask(ABC):
         return parser
 
 
-    @classmethod
-    def build_optimizers(
-        cls,
-        args: argparse.Namespace,
-        model: torch.nn.Module,
-    ) -> List[torch.optim.Optimizer]:
-        
-        adv_name = str(type(model).__name__)
-        logging.warning(" ----->>>>>>>> adv_flag {} asr_lr {} adv_lr {} adv_name {} \n\n".format(args.adv_flag, args.asr_lr, args.adv_lr, adv_name))
-
-        if cls.num_optimizers != 1:
-            raise RuntimeError(
-                "build_optimizers() must be overridden if num_optimizers != 1"
-            )
-
-        optim_class = optim_classes.get(args.optim)
-        # print("\n\n -------------------- \n adv flag : {}  gpu: {} \n\n".format(args.adv_flag, args.ngpu))
-        if optim_class is None:
-            raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
-
-        # optimi = None
-        if ( args.adv_flag):
-            
-            if(args.ngpu > 1):        
-                param_grp = [
-                    {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
-                    {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
-                    {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
-                    {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
-                ]            
-            else:
-                param_grp = [
-                    {'params': model.encoder.parameters(), 'lr': args.asr_lr},
-                    {'params': model.decoder.parameters(), 'lr': args.asr_lr},
-                    {'params': model.ctc.parameters(), 'lr': args.asr_lr},
-                    {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
-            
-            optimi = optim_class(param_grp)
-        else:
-            optimi = optim_class(model.parameters(), **args.optim_conf)
-
-        optimizers = [optimi]
-        return optimizers
-
-
     # @classmethod
     # def build_optimizers(
     #     cls,
     #     args: argparse.Namespace,
     #     model: torch.nn.Module,
     # ) -> List[torch.optim.Optimizer]:
+        
+    #     adv_name = str(type(model).__name__)
+    #     # logging.warning(" ----->>>>>>>> adv_flag {} asr_lr {} adv_lr {} adv_name {} \n\n".format(args.adv_flag, args.asr_lr, args.adv_lr, adv_name))
+
     #     if cls.num_optimizers != 1:
     #         raise RuntimeError(
     #             "build_optimizers() must be overridden if num_optimizers != 1"
     #         )
 
     #     optim_class = optim_classes.get(args.optim)
+    #     # print("\n\n -------------------- \n adv flag : {}  gpu: {} \n\n".format(args.adv_flag, args.ngpu))
     #     if optim_class is None:
     #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
-    #     if args.sharded_ddp:
-    #         if fairscale is None:
-    #             raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
-    #         optim = fairscale.optim.oss.OSS(
-    #             params=model.parameters(), optim=optim_class, **args.optim_conf
-    #         )
-    #     else:
-    #         optim = optim_class(model.parameters(), **args.optim_conf)
 
-    #     optimizers = [optim]
+    #     # optimi = None
+    #     if ( args.adv_flag):
+            
+    #         if(args.ngpu > 1):        
+    #             param_grp = [
+    #                 {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
+    #             ]            
+    #         else:
+    #             param_grp = [
+    #                 {'params': model.encoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.decoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.ctc.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
+            
+    #         optimi = optim_class(param_grp)
+    #     else:
+    #         optimi = optim_class(model.parameters(), **args.optim_conf)
+
+    #     optimizers = [optimi]
     #     return optimizers
+
+
+    @classmethod
+    def build_optimizers(
+        cls,
+        args: argparse.Namespace,
+        model: torch.nn.Module,
+    ) -> List[torch.optim.Optimizer]:
+        if cls.num_optimizers != 1:
+            raise RuntimeError(
+                "build_optimizers() must be overridden if num_optimizers != 1"
+            )
+
+        optim_class = optim_classes.get(args.optim)
+        if optim_class is None:
+            raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+        if args.sharded_ddp:
+            if fairscale is None:
+                raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
+            optim = fairscale.optim.oss.OSS(
+                params=model.parameters(), optim=optim_class, **args.optim_conf
+            )
+        else:
+            optim = optim_class(model.parameters(), **args.optim_conf)
+
+        optimizers = [optim]
+        return optimizers
 
 
 
@@ -1149,9 +1149,9 @@ class AbsTask(ABC):
         # Step -1  updated adversarial list
         if(args.adv_flag and cls.__name__ == "ASRTask"):
             
-            if (args.adv_liststr == "asradvasradv" ):         
+            if (args.adv_liststr == "asr_adv_asradv" ):         
                 # print(" Updated adversarial list\n")
-                args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
+                args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  
                 # args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
                 # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
 
