@@ -489,6 +489,13 @@ fi
 
 # ========================== Main stages start from here. ==========================
 
+
+if "${skip_data_prep}"; then
+    if [ -n "${speed_perturb_factors}" ]; then
+        train_set="${train_set}_sp"
+    fi
+fi
+
 if ! "${skip_data_prep}"; then
     if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
         log "Stage 1: Data preparation for ${data_dd}/${train_set}, ${data_dd}/${valid_set}, etc."
@@ -1045,6 +1052,7 @@ if ! "${skip_train}"; then
                 --collect_stats true \
                 --use_preprocessor true \
                 --project_name "${project_name}" \
+                --adv_liststr "${adv_liststr}" \
                 --adv_flag "${adversarial_flag}" \
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
