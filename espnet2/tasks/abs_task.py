@@ -927,7 +927,7 @@ class AbsTask(ABC):
             optimi = torch.optim.Adam((param_grp), betas=(0.9,0.999),eps=1e-08,weight_decay=0.00001,amsgrad=False)
 
         else:
-            optimi = optim_class(model.parameters(), **args.optim_conf)
+            optimi = optim_class(model.parameters(), lr=args.asr_lr, weight_decay=0.00001)
 
         optimizers = [optimi]
         return optimizers

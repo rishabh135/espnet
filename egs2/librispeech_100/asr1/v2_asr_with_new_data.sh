@@ -49,10 +49,7 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 adversarial_flag="True"
 
 
-
-
-
-project_name="nancy_v2_sep_9"
+project_name="nancy_v2_sep_12_with_adversarial"
 
 adv_liststr="asr 10 adv 60 asradv 33"
 
@@ -167,15 +164,17 @@ batch_size=1
 inference_tag=    # Suffix to the result dir for decoding.
 inference_config= # Config for decoding.
 inference_args=   # Arguments for decoding, e.g., "--lm_weight 0.1".
-                  # Note that it will overwrite args in inference config.
-inference_lm=valid.loss.ave.pth       # Language model path for decoding.
-inference_ngram=${ngram_num}gram.bin
-inference_asr_model=valid.acc.ave.pth # ASR model path for decoding.
-                                      # e.g.
-                                      # inference_asr_model=train.loss.best.pth
-                                      # inference_asr_model=3epoch.pth
-                                      # inference_asr_model=valid.acc.best.pth
-                                      # inference_asr_model=valid.loss.ave.pth
+# Note that it will overwrite args in inference config.
+
+inference_lm=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp/lm_train_en_bpe5000/valid.loss.ave.pth       # Language model path for decoding.
+inference_ngram=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/ngram_exp/${ngram_num}gram.bin
+inference_asr_model=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/valid.acc.ave.pth 
+# ASR model path for decoding.
+# e.g.
+# inference_asr_model=train.loss.best.pth
+# inference_asr_model=3epoch.pth
+# inference_asr_model=valid.acc.best.pth
+# inference_asr_model=valid.loss.ave.pth
 download_model= # Download a model from Model Zoo and use it for decoding.
 
 # [Task dependent] Set the datadir name created by local/data.sh
