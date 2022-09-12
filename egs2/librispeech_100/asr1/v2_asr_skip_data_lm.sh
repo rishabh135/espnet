@@ -48,31 +48,30 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 adversarial_flag="True"
 
+adv_liststr="asr 10 adv 60 asradv 30"
 
+project_name="nancy_v2_sep_12_with_2_param"
 
-
-
-project_name="nancy_v2_sep_9"
-
-adv_liststr="asr 10 adv 60 asradv 33"
-
-experiment_name="odim_251_single_lr" # name of the experiment, just change it to create differnet folders
+experiment_name="odim_251" # name of the experiment, just change it to create differnet folders
 
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
 
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
-expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/data # determines all the files creating folder as in the data folder
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/dump
+
+expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/original_data
 
 # data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
 
 
 echo "\n******************************\n"
 echo "${project_name}"
+
+echo "${adv_liststr}"
 echo "$dumpdir"
 echo "$expdir"
 echo "********\n Important setting data direcotry  *********** \n"
@@ -116,7 +115,7 @@ bpe_char_cover=1.0  # character coverage when modeling BPE
 
 # Ngram model related
 use_ngram=true
-ngram_exp=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/ngram/exp # Directory to dump features.
+ngram_exp=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/ngram_exp/ # Directory to dump features.
 ngram_num=3
 
 # Language model related
@@ -491,7 +490,6 @@ if [ -z "${inference_tag}" ]; then
 fi
 
 # ========================== Main stages start from here. ==========================
-
 
 if "${skip_data_prep}"; then
     if [ -n "${speed_perturb_factors}" ]; then
@@ -1055,8 +1053,8 @@ if ! "${skip_train}"; then
                 --collect_stats true \
                 --use_preprocessor true \
                 --project_name "${project_name}" \
-                --adv_liststr "${adv_liststr}" \
                 --adv_flag "${adversarial_flag}" \
+                --adv_liststr "${adv_liststr}" \
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
