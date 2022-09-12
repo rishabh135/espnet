@@ -860,9 +860,6 @@ class AbsTask(ABC):
         parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
 
         
-        # ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10 , type=list,help='adversarial mode list')
-        
-
         cls.trainer.add_arguments(parser)
         cls.add_task_arguments(parser)
 
@@ -875,6 +872,20 @@ class AbsTask(ABC):
     # params = list(map(lambda x: x[1],list(filter(lambda kv: kv[0] in my_list, model.named_parameters()))))
     # base_params = list(map(lambda x: x[1],list(filter(lambda kv: kv[0] not in my_list, model.named_parameters()))))
     # optimizer = SGD([{'params': base_params}, {'params': params, 'lr': '1e-4'}], lr=3e-6, momentum=0.9)
+
+
+
+    # my_regex = "adversarial_branch"
+    # adv_params = list(map(lambda x: x[1],list(filter(lambda kv: kv[0].startswith(my_regex), model.named_parameters()))))
+    # adv_params_names = list(map(lambda x: x[0],list(filter(lambda kv: kv[0].startswith(my_regex), model.named_parameters()))))
+    
+    # base_params = list(map(lambda x: x[1],list(filter(lambda kv: kv[0] not in adv_params_names, model.named_parameters()))))
+    # base_params_names = list(map(lambda x: x[0],list(filter(lambda kv: kv[0] not in adv_params_names, model.named_parameters()))))
+    
+    # logging.warning(" >>>>>>>>>>> insider optimizer : adv_params {} \n\n".format (adv_params_names))
+    # logging.warning("  insider optimizer : base_params {} \n\n".format (  base_params_names))
+
+    # optimi = torch.optim.Adam([{'params': base_params}, {'params': adv_params, 'lr': args.adv_lr }], lr= args.asr_lr, weight_decay=0.00001)
 
 
 
@@ -893,41 +904,27 @@ class AbsTask(ABC):
                 "build_optimizers() must be overridden if num_optimizers != 1"
             )
 
-        # optim_class = optim_classes.get(args.optim)
-        # print("\n\n -------------------- \n adv flag : {}  gpu: {} \n\n".format(args.adv_flag, args.ngpu))
-        # if optim_class is None:
-        #     raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+        optim_class = optim_classes.get(args.optim)
+        if optim_class is None:
+            raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
 
-        # if(args.ngpu > 1):        
-        #     param_grp = [
-        #         {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
-        #         {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
-        #         {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
-        #         {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
-        #     ]            
-        # else:
-        #     param_grp = [
-        #         {'params': model.encoder.parameters(), 'lr': args.asr_lr},
-        #         {'params': model.decoder.parameters(), 'lr': args.asr_lr},
-        #         {'params': model.ctc.parameters(), 'lr': args.asr_lr},
-        #         {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]       
-        # optimi = torch.optim.Adam((param_grp), betas=(0.9,0.999),eps=1e-08,weight_decay=0.00001,amsgrad=False)
 
-        # optimi = None
         if ( args.adv_flag):
+            if(args.ngpu > 1):        
+                param_grp = [
+                    {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
+                    {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
+                ]            
+            else:
+                param_grp = [
+                    {'params': model.encoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.decoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.ctc.parameters(), 'lr': args.asr_lr},
+                    {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]       
             
-            my_regex = "adversarial_branch"
-            adv_params = list(map(lambda x: x[1],list(filter(lambda kv: kv[0].startswith(my_regex), model.named_parameters()))))
-            adv_params_names = list(map(lambda x: x[0],list(filter(lambda kv: kv[0].startswith(my_regex), model.named_parameters()))))
-            
-            base_params = list(map(lambda x: x[1],list(filter(lambda kv: kv[0] not in adv_params_names, model.named_parameters()))))
-            base_params_names = list(map(lambda x: x[0],list(filter(lambda kv: kv[0] not in adv_params_names, model.named_parameters()))))
-            
-            logging.warning(" >>>>>>>>>>> insider optimizer : adv_params {} \n\n".format (adv_params_names))
-            logging.warning("  insider optimizer : base_params {} \n\n".format (  base_params_names))
-
-            optimi = torch.optim.Adam([{'params': base_params}, {'params': adv_params, 'lr': args.adv_lr }], lr= args.asr_lr, weight_decay=0.00001)
-
+            optimi = torch.optim.Adam((param_grp), betas=(0.9,0.999),eps=1e-08,weight_decay=0.00001,amsgrad=False)
 
         else:
             optimi = optim_class(model.parameters(), **args.optim_conf)
@@ -939,31 +936,31 @@ class AbsTask(ABC):
 
 
 
-    @classmethod
-    def build_optimizers(
-        cls,
-        args: argparse.Namespace,
-        model: torch.nn.Module,
-    ) -> List[torch.optim.Optimizer]:
-        if cls.num_optimizers != 1:
-            raise RuntimeError(
-                "build_optimizers() must be overridden if num_optimizers != 1"
-            )
+    # @classmethod
+    # def build_optimizers(
+    #     cls,
+    #     args: argparse.Namespace,
+    #     model: torch.nn.Module,
+    # ) -> List[torch.optim.Optimizer]:
+    #     if cls.num_optimizers != 1:
+    #         raise RuntimeError(
+    #             "build_optimizers() must be overridden if num_optimizers != 1"
+    #         )
 
-        optim_class = optim_classes.get(args.optim)
-        if optim_class is None:
-            raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
-        if args.sharded_ddp:
-            if fairscale is None:
-                raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
-            optim = fairscale.optim.oss.OSS(
-                params=model.parameters(), optim=optim_class, **args.optim_conf
-            )
-        else:
-            optim = optim_class(model.parameters(), **args.optim_conf)
+    #     optim_class = optim_classes.get(args.optim)
+    #     if optim_class is None:
+    #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+    #     if args.sharded_ddp:
+    #         if fairscale is None:
+    #             raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
+    #         optim = fairscale.optim.oss.OSS(
+    #             params=model.parameters(), optim=optim_class, **args.optim_conf
+    #         )
+    #     else:
+    #         optim = optim_class(model.parameters(), **args.optim_conf)
 
-        optimizers = [optim]
-        return optimizers
+    #     optimizers = [optim]
+    #     return optimizers
 
 
 
@@ -1320,7 +1317,7 @@ class AbsTask(ABC):
             # Perform on collect_stats mode. This mode has two roles
             # - Derive the length and dimension of all input data
             # - Accumulate feats, square values, and the length for whitening
-            logging.info(args)
+            logging.warning(args)
 
             if args.valid_batch_size is None:
                 args.valid_batch_size = args.batch_size

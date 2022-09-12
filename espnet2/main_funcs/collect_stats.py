@@ -103,7 +103,7 @@ def collect_stats(
                             npy_scp_writers[(key, mode)][uttid] = seq
 
                 if iiter % log_interval == 0:
-                    logging.info(f"Niter: {iiter}")
+                    logging.warning(f" Niter: {iiter} ")
 
         for key in sum_dict:
             np.savez(
