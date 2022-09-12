@@ -847,7 +847,7 @@ class AbsTask(ABC):
         group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
 
         group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
-        group.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
+        group.add_argument('--adv_lr', default=2.0, type=float,help='Learning rate for adv branch')
         group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
         group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
@@ -868,6 +868,13 @@ class AbsTask(ABC):
 
         assert check_return_type(parser)
         return parser
+
+
+
+
+
+   
+
 
     @classmethod
     def build_optimizers(

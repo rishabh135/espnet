@@ -53,7 +53,6 @@ adv_liststr="asr 10 adv 60 asradv 30"
 
 
 project_name="nancy_v2_sep_9"
-
 experiment_name="odim_251_single_lr" # name of the experiment, just change it to create differnet folders
 
 
