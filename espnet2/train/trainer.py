@@ -706,21 +706,19 @@ class Trainer:
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
                         loss_adversarial = retval["loss_adversarial"]
                         # loss_adversarial.requires_grad = True
+                        # Scales loss.  Calls backward() on scaled loss
+                        # to create scaled gradients.
+                        # Backward passes under autocast are not recommended.
+                        # Backward ops run in the same dtype autocast chose
+                        # for corresponding forward ops.
                         loss = loss + loss_adversarial
                         scaler.scale(loss).backward()
                         # scaler.scale(loss_adversarial).backward()
 
-
-
-
-                    # Scales loss.  Calls backward() on scaled loss
-                    # to create scaled gradients.
-                    # Backward passes under autocast are not recommended.
-                    # Backward ops run in the same dtype autocast chose
-                    # for corresponding forward ops.
-                    
-                else:
-                    loss.backward()
+                    else:
+                        # logging.warning("\n\n Entered into normal asr mode \n")
+                        scaler.scale(loss).backward()
+                        # loss.backward()
 
             if iiter % accum_grad == 0:
                 if scaler is not None:

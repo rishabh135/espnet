@@ -49,11 +49,11 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 adversarial_flag="True"
 
 
-project_name="nancy_v2_sep_12_with_adversarial"
+project_name="nancy_v2_sep_14_new_data_lm_ngram"
 
-adv_liststr="asr 10 adv 60 asradv 33"
+adv_liststr="asr 2 adv 68 asradv 30"
 
-experiment_name="odim_251_single_lr" # name of the experiment, just change it to create differnet folders
+experiment_name="asr_2_adv_68_100_epochs_lr_0.002" # name of the experiment, just change it to create differnet folders
 
 
 
@@ -166,9 +166,9 @@ inference_config= # Config for decoding.
 inference_args=   # Arguments for decoding, e.g., "--lm_weight 0.1".
 # Note that it will overwrite args in inference config.
 
-inference_lm=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp/lm_train_en_bpe5000/valid.loss.ave.pth       # Language model path for decoding.
-inference_ngram=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/ngram_exp/${ngram_num}gram.bin
-inference_asr_model=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/valid.acc.ave.pth 
+inference_lm=valid.loss.ave.pth       # Language model path for decoding.
+inference_ngram=${ngram_num}gram.bin
+inference_asr_model=valid.acc.ave.pth 
 # ASR model path for decoding.
 # e.g.
 # inference_asr_model=train.loss.best.pth
@@ -948,7 +948,7 @@ if ! "${skip_train}"; then
             log "Stage 8: Calc perplexity: ${lm_test_text}"
             _opts=
             # TODO(kamo): Parallelize?
-            log "Perplexity calculation started... log: '${lm_exp}/perplexity_test/lm_calc_perplexity.log'"
+            log "Perplexity calculation started... log: '${lm_exp}/perplexity_test/lm_calc_perplexity.log' model_file "${lm_exp}/${inference_lm}"  "
             # shellcheck disable=SC2086
             ${cuda_cmd} --gpu "${ngpu}" "${lm_exp}"/perplexity_test/lm_calc_perplexity.log \
                 ${python} -m espnet2.bin.lm_calc_perplexity \
