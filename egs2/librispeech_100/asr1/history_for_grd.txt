@@ -1,0 +1,301 @@
+    1  cd /srv/storage/
+    2  ls
+    3  cd talc2@talc-data2.nancy
+    4  ls
+    5  cd multispeech/
+    6  ls
+    7  ls
+    8  ls
+    9  cd calcul/
+   10  ls
+   11  cd ..
+   12  ls
+   13  cd calcul/
+   14  ls
+   15  cd users/
+   16  mkdir rgupta
+   17  vim ~/.bashrc
+   18  clear
+   19  pwd
+   20  ls
+   21  tmux attach -t 0
+   22  tmux
+   23  clear
+   24  tmux ls
+   25  clear
+   26  source ~/.bashrc
+   27  ls
+   28  cd public/
+   29  ls
+   30  cd..
+   31  tmux new -s espnet
+   32  ls
+   33  ls -a
+   34  pwd
+   35  ls
+   36  wget https://repo.anaconda.com/archive/Anaconda3-2022.05-Linux-x86_64.sh
+   37  bash Anaconda3-2022.05-Linux-x86_64.sh 
+   38  source ~/.bashrc
+   39  cat >> ~/.bashrc
+   40  clear
+   41  source ~/.bashrc
+   42  ls
+   43  rm -rf Anaconda3-2022.05-Linux-x86_64.sh 
+   44  cat >> pyt_environment.yml
+   45  clear
+   46  conda env import pyt_environment.yml 
+   47  conda env create -n pyt --file pyt_environment.yml 
+   48  !
+   49  ls
+   50  source ~/.bashrc
+   51  ls -alhs
+   52  tmux
+   53  clear
+   54  ls -alhs
+   55  cat >> .tmux.conf
+   56  tmux source-file ~/.tmux.conf
+   57  tmux new -s nancy_espnet
+   58  clear
+   59  tmux ls
+   60  tmux tmux source ~/.tmux.conf
+   61  tmux new -s nesp
+   62  source ~/.bashrc
+   63  tmux attach -n  nesp
+   64  tmux attach -t  nesp
+   65  tmux ls
+   66  tmux attach -t nesp
+   67  tmux attach -t  nesp
+   68  clear
+   69  tmux ls
+   70  tmux attach -t nesp
+   71  tmux attach -t nesp
+   72  tmux attach -t nesp
+   73  tmux attach -t nesp
+   74  tmux attach -t nesp
+   75  tmux attach -t nesp
+   76  tmux attach -t nesp
+   77  tmux attach -t nesp
+   78  tmux attach -t nesp
+   79  tmux attach -t nesp
+   80  tmux attach -t nesp
+   81  oarstat -u
+   82  oarstat -u
+   83  tmux ls
+   84  tmux create --name nespnet
+   85  clear
+   86  tmux new -s nespnet
+   87  oarstat -u
+   88  oarsub -C 3671718
+   89  source ~/.bashrc
+   90  conda activate pyt
+   91  nvidia-smi -l 2
+   92  nvidia-smi
+   93  wf
+   94  nvidia-smi
+   95  oardel 3671718
+   96  clear
+   97  tmux attach -t nespnet
+   98  oarstat -u
+   99  oardel 3672276
+  100  oarsub -q production -l walltime=28:00:00 -t deploy 'sleep infinity' -p "cluster='graffiti'"  --project magnet --json -v
+  101  oarstat -u
+  102  oarstat
+  103  oarsub -C 3672276
+  104  tmux attach -t nespnet
+  105  clear
+  106  tmux attach -t nespnet
+  107  env|grep OAR
+  108  oarsub -C 3672378
+  109  35
+  110  tmux attach -t nespnet
+  111  tmux ls
+  112  tmux attach -t nespnet
+  113  grd bs -q production -w 24 -l {graffiti}/nodes=1 -p magnet -e debian11-min -c
+  114  grd bs -q production -w 24 -l {graffiti}/nodes=1 -p magnet -c
+  115  oarstat -u
+  116  oarsub -q production -l walltime=8:00:00 -t deploy 'sleep infinity' -p "cluster='graffiti'"  --project magnet --json -v
+  117  oarsub -C 3672635
+  118  oarstat -u
+  119  oarstat -u
+  120  oarstat -u
+  121  oarsub -C 3672635
+  122  oarsub -C 3672378
+  123  nvidia-smi
+  124  oarstat -u
+  125  oarsub -C 3672378
+  126  nvidia-smi
+  127  grd list
+  128  grd --help
+  129  grd list
+  130  grd list
+  131  grd list
+  132  grd list
+  133  grd -C 3672378
+  134  grd bs --help
+  135  grd bs -s nancy -l nodes=3  -w 24:00:00 -e debian11-x64-min -f setup-script -c -n rguptanancy -p magnet
+  136  grd bs --site nancy   -w 24:00:00 -e debian11-x64-min -f setup-script -c -n rguptanancy
+  137  grd bs --site nancy   -w 24:00:00 -e debian11-x64-min -f setup-script -c -n rguptanancy --project magnet
+  138  grd
+  139  grd list
+  140  oarsub -C 3672378
+  141  source ~/.bashrc
+  142  conda activate pyt
+  143  wf
+  144  nvidia-smi
+  145  nvidia-smi
+  146  grd bs -q production -w 24 -l {graffiti}/nodes=1 -p magnet -e debian11-min -c -n rguptanancy
+  147  grd bs -q production -w 24 -l {graffiti}/nodes=1 -p magnet -e debian11-min -c
+  148  grd bs -q production -w 24 -l {graffiti}/nodes=1 -c
+  149  nvidia-smi
+  150  oardel 3673992
+  151  ssh rgupta@graffiti-9.nancy.grid5000.fr
+  152  grd bs -q production -w 24 -l {graffiti}/nodes=1  -e debian11-min -c
+  153  clear
+  154  tmux attach -t nespnet
+  155  tmux attach -t nespnet
+  156  tmux attach -t nespnet
+  157  tmux create --name nespnet2
+  158  tmux --name nespnet2
+  159  tmux --help
+  160  tmux new -t nespnet2
+  161  tmux attach -t nespnet2
+  162  tmux attach -t nespnet2
+  163  tmux attach -t nespnet2
+  164  tmux attach -t nespnet
+  165  tmux attach -t nespnet2
+  166  tmux attach -t nespnet2
+  167  tmux attach -t nespnet2
+  168  tmux list
+  169  tmux ls
+  170  tmux attach -t nespnet
+  171  tmux attach -t nespnet2
+  172  tmux attach -t nespnet2
+  173  tmux attach -t nespnet2
+  174  tmux attach -t nespnet2
+  175  tmux attach -t nespnet2
+  176  tmux attach -t nespnet2
+  177  tmux attach -t nespnet2
+  178  tmux attach -t nespnet2
+  179  grd list
+  180  nvidia-smi
+  181  tmux attach -t nespnet
+  182  tmux attach -t nespnet2
+  183  tmux attach -t nespnet
+  184  tmux attach -t nespnet
+  185  tmux attach -t nespnet2
+  186  tmux attach -t nespnet2
+  187  tmux attach -t nespnet
+  188  tmux attach -t nespnet
+  189  tmux attach -t nespnet
+  190  tmux attach -t nespnet
+  191  tmux attach -t nespnet
+  192  tmux attach -t nespnet
+  193  tmux attach -t nespnet
+  194  tmux attach -t nespnet2
+  195  tmux attach -t nespnet
+  196  tmux attach -t nespnet
+  197  tmux attach -t nespnet2
+  198  tmux attach -t nespnet2
+  199  tmux attach -t nespnet
+  200  tmux attach -t nespnet2
+  201  tmux attach -t nespnet
+  202  tmux attach -t nespnet2
+  203  tmux attach -t nespnet
+  204  tmux new -t nespnet2
+  205  tmux new -t nespnet2
+  206  ssh rgupta@gruss-2.nancy.grid5000.fr
+  207  tmux attach -t nespnet
+  208  tmux attach -t nespnet2
+  209  tmux ls
+  210  tmux attach -t nespnet2-0
+  211  tmux attach -t nespnet2-1
+  212  tmux attach -t nespnet2-2
+  213  clear
+  214  grd list
+  215  grd list
+  216  ssh rgupta@gruss-2.nancy.grid5000.fr
+  217  grd list
+  218  clear
+  219  grd list
+  220  ssh rgupta@gruss-2.nancy.grid5000.fr
+  221  ssh rgupta@grue-4.nancy.grid5000.fr
+  222  oarsh rgupta@grue-4.nancy.grid5000.fr
+  223  grd list
+  224  grd list
+  225  source ~/.bashrc
+  226  grd list
+  227  tmux ls
+  228  tmux --help
+  229  tmux kill-session -t nespnet2-0
+  230  tmux kill-session -t nespnet2-2
+  231  tmux ls
+  232  tmux kill-session -t nespnet2-1
+  233  ssh -o StrictHostKeyChecking=accept-new rgupta@gruss-2.nancy.grid5000.fr
+  234  tmux new -t nespnet
+  235  clear
+  236  tmux attach -t nespnet
+  237  tmux ls
+  238  tmux new -s nesp
+  239  tmux attach -t nesp
+  240  tmux attach -t nesp
+  241  tmux ls
+  242  tmux attach -t nesp
+  243  tmux attach -t nesp
+  244  tmux attach -t nesp
+  245  tmux attach -t nesp
+  246  tmux attach -t nesp
+  247  cd /srv/storage/magnet@storage1.lille.grid5000.fr/brij/librispeech_adv_exp
+  248  ls
+  249  pwd
+  250  ls
+  251  clear
+  252  ls
+  253  cd icassp20/
+  254  ls
+  255  cd ..
+  256  ls
+  257  cd train_960_pytorch_adv_units1024_layers3_grlalpha0.5/
+  258  .s
+  259  ls
+  260  pwd
+  261  tmux attach -t nesp
+  262  tmux attach -t nesp
+  263  cd /srv/storage/magnet@storage1.lille.grid5000.fr/brij/librispeech_adv_exp/
+  264  ls
+  265  ls
+  266  cd icassp20/
+  267  ls
+  268  ls
+  269  cd ..
+  270  ls
+  271  cd is19models/
+  272  ls
+  273  cd asr460_adv2.0/
+  274  ls
+  275  cd ..
+  276  cd ..
+  277  tmux attach -t nesp
+  278  tmux attach -t nesp
+  279  grd bs -q production -w 30 -l {grue}/nodes=1 -p magnet -c -n neps2
+  280  clear
+  281  grd bs -q production -w 30 -l {grue}/nodes=1 -p magnet -c -n neps2
+  282  grd bs -q production -w 24 -l {graffitti}/nodes=1 -p magnet -c -n neps2
+  283  grd bs -q production -w 24 -l {grafitti}/nodes=1 -p magnet -c -n neps2
+  284  grd bs -q production -w 24 -l {grafiti}/nodes=1 -p magnet -c -n neps2
+  285  grd bs -q production -w 24 -l {graffiti}/nodes=1 -p magnet -c -n neps2
+  286  grd bs -q production -w 24 -l {gruss}/nodes=1 -p magnet -c -n neps2
+  287  grd bs -q production -w 48 -l {graffiti}/nodes=1 -p magnet -c -n neps2
+  288  clear
+  289  grd bs -q production -w 48 -l {grimani}/nodes=1 -p magnet -c -n neps2
+  290  grd bs -q production -w 48 -l {gruss}/nodes=1 -p magnet -c -n neps2
+  291  grd bs -q production -w 72 -l {gruss}/nodes=1 -p magnet -c -n neps2
+  292  clear
+  293  grd bs -q production -w 48 -l {grimani}/nodes=1 -p magnet -c -n neps2
+  294  grd bs -q production -w 48 -l {grue}/nodes=1 -p magnet -c -n neps2
+  295  grd bs -q production -w 48 -l {graffitit}/nodes=1 -p magnet -c -n neps2
+  296  grd bs -q production -w 48 -l {graffiti}/nodes=1 -p magnet -c -n neps2
+  297  wf
+  298  wf
+  299  source ~/.bashrc
+  300  wf
+  301  history >> ./history_for_grd.txt
