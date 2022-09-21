@@ -48,10 +48,10 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 adversarial_flag="True"
 
-adv_liststr="asr 10 adv 60 asradv 30"
+adv_liststr="asr 2 adv 68 asradv 30"
 
 
-project_name="nancy_v2_adv_sep_16_freeze_ctc"
+project_name="nancy_v2_adv_sep_21_grad_zero"
 experiment_name="freezing_ctc_one_optimizer" # name of the experiment, just change it to create differnet folders
 
 

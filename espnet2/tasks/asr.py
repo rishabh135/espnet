@@ -477,7 +477,11 @@ class ASRTask(AbsTask):
         encoder_class = encoder_choices.get_class(args.encoder)
         encoder = encoder_class(input_size=input_size, **args.encoder_conf)
 
-
+        # adding fc_mu and fc_variance
+        # self.fc_mu = torch.nn.Linear(hidden_dims[-1]*4, latent_dim)
+        # self.fc_var = nn.Linear(hidden_dims[-1]*4, latent_dim)
+        # self.decoder_input = nn.Linear(latent_dim, hidden_dims[-1] * 4)
+        # hidden_dims.reverse()
 
 
 

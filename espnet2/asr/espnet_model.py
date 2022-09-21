@@ -196,19 +196,31 @@ class ESPnetASRModel(AbsESPnetModel):
     # self.enc_frozen = False
 
 
+    def print_flags(self,):
+        logging.warning(" encoder frozen : {} adversarial_frozen : {}".format(self.encoder_frozen_flag, self.adversarial_frozen_flag))
 
     
     def freeze_encoder(self):
         if not self.encoder_frozen_flag:
             for param in self.encoder.parameters():
                 param.requires_grad = False
+                if param.grad is not None:
+                    # p.grad.detach_()
+                    param.grad.zero_()
             for param in self.decoder.parameters():
                 param.requires_grad = False
+                if param.grad is not None:
+                    # p.grad.detach_()
+                    param.grad.zero_()
+                
             for param in self.ctc.parameters():
                 param.requires_grad = False
+                if param.grad is not None:
+                    # p.grad.detach_()
+                    param.grad.zero_()
             
             self.encoder_frozen_flag = True
-
+        print_flags()
    
     def unfreeze_encoder(self):
         if self.encoder_frozen_flag:
@@ -226,7 +238,11 @@ class ESPnetASRModel(AbsESPnetModel):
         if not self.adversarial_frozen_flag:
             for param in self.adversarial_branch.parameters():
                 param.requires_grad = False
+                if param.grad is not None:
+                    # p.grad.detach_()
+                    param.grad.zero_()
             self.adversarial_frozen_flag = True
+        print_flags()
 
    
     def unfreeze_adversarial(self):
@@ -518,15 +534,14 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         # 1. CTC branch
-        if self.ctc_weight != 0.0:
+        if (self.ctc_weight != 0.0) and (not self.encoder_frozen_flag):
             loss_ctc, cer_ctc = self._calc_ctc_loss(
                 encoder_out, encoder_out_lens, text, text_lengths
             )
-
             # Collect CTC branch stats
             stats["loss_ctc"] = loss_ctc.detach() if loss_ctc is not None else None
             stats["cer_ctc"] = cer_ctc
-
+            logging.warning(" CTC branch loss_ctc  {}   cer_ctc {} ".format( loss_ctc.detach(), cer_ctc ))
 
 
         #################################################################################################################################################################################################################################
@@ -543,7 +558,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # Intermediate CTC (optional)
         loss_interctc = 0.0
-        if self.interctc_weight != 0.0 and intermediate_outs is not None:
+        if (self.interctc_weight != 0.0) and (intermediate_outs is not None) and (not self.encoder_frozen_flag):
             for layer_idx, intermediate_out in intermediate_outs:
                 # we assume intermediate_out has the same length & padding
                 # as those of encoder_out
@@ -559,11 +574,25 @@ class ESPnetASRModel(AbsESPnetModel):
                 stats["cer_interctc_layer{}".format(layer_idx)] = cer_ic
 
             loss_interctc = loss_interctc / len(intermediate_outs)
-
             # calculate whole encoder loss
-            loss_ctc = (
-                1 - self.interctc_weight
-            ) * loss_ctc + self.interctc_weight * loss_interctc
+            loss_ctc = (1 - self.interctc_weight) * loss_ctc + self.interctc_weight * loss_interctc
+            logging.warning(" Interctc  Branch {} ".format( loss_ctc.detach() ))
+
+
+        retval = {} 
+        if (self.adv_flag):
+            # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+            # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, spkid)
+
+            # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
+            stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
+            retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
+
+            stats["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
+            retval["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
+
 
         if self.use_transducer_decoder:
             # 2a. Transducer decoder branch
@@ -605,32 +634,12 @@ class ESPnetASRModel(AbsESPnetModel):
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
 
 
-            retval = {} 
-            if (self.adv_flag):
-                # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
-                rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-                # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-                loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, spkid)
-
-                # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
-                stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-                retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
-
-                stats["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
-                retval["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
-
-	
-
-
-
             # Collect Attn branch stats
             stats["loss_att"] = loss_att.detach() if loss_att is not None else None
             stats["acc"] = acc_att
             stats["cer"] = cer_att
             stats["wer"] = wer_att
             
-
-
 
 
         # Collect total loss stats
@@ -641,7 +650,6 @@ class ESPnetASRModel(AbsESPnetModel):
         # force_gatherable: to-device and to-tensor if scalar for DataParallel
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
         
-
         
         retval["loss"] = loss   
         retval["stats"] = stats

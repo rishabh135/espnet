@@ -499,10 +499,8 @@ class Trainer:
         
         # logging.warning( " >>>> adv_name {} ".format(adv_name))
         # logging.warning(" model_vars {} \n\n".format( vars(model)))
-        # logging.warning("******************************\n\n")
         
-        # logging.warning(" cls_vars {} \n\n".format( vars(cls)))
-        # logging.warning("******************************\n\n")
+        logging.warning("******************************\n\n")
         
         if log_interval is None:
             try:
@@ -511,6 +509,7 @@ class Trainer:
                 log_interval = 100
 
         model.train()
+        
         all_steps_are_invalid = True
         # [For distributed] Because iteration counts are not always equals between
         # processes, send stop-flag to the other processes if iterator is finished
@@ -553,6 +552,17 @@ class Trainer:
         logging.warning(" --->>>>>>>>> adv_name {} adv_mode {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_name, adv_mode, float(current_flr), float(current_llr), param_group_length))
 
 
+        # logging.warning(model)
+        logging.warning("******************************\n\n")
+        logging.warning(" ctc weight grad {}  \n ctc bias grad {}  \n ".format(  model.ctc.ctc_lo.weight.grad,  model.ctc.ctc_lo.bias.grad  ) )    
+        logging.warning(" encoder weight grad {}  \n encoder bias grad {}  \n ".format(  model.encoder.encoders[0].feed_forward.w_1.weight.grad, model.encoder.encoders[0].feed_forward.w_1.bias.grad   ) )
+
+        if(model.ctc.ctc_lo.bias.grad is not None):
+            logging.warning("******************************\n\n")
+            logging.warning(" ctc weight grad {}  \n ctc bias grad {}  \n ".format(  model.ctc.ctc_lo.weight.grad.shape,  model.ctc.ctc_lo.bias.grad.shape  ) )
+
+        # logging.warning(" cls_vars {} \n\n".format( vars(cls)))
+        # logging.warning(model)
 
         for iiter, (utt_id, batch) in enumerate(
             reporter.measure_iter_time(iterator, "iter_time"), 1
