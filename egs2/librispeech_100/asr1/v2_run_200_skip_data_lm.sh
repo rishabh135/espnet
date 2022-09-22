@@ -20,7 +20,9 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 
 
-project_name="nancy_v2_adv_sep_22_epochs_170"
+project_name="nancy_v2_adv_sep_23_100ep_2op_lr_0.2"
+
+
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/original_data # determines all the files creating folder as in the data folder
 
 
@@ -41,14 +43,14 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 # data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
 
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_with_adversarial.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
-./v2_asr_skip_data_lm_sep16.sh \
+./v2_asr_200_skip_data_lm.sh \
     --skip_data_prep true \
     --skip_train false \
     --skip_eval false \

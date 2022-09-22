@@ -220,7 +220,7 @@ class ESPnetASRModel(AbsESPnetModel):
                     param.grad.zero_()
             
             self.encoder_frozen_flag = True
-        print_flags()
+        self.print_flags()
    
     def unfreeze_encoder(self):
         if self.encoder_frozen_flag:
@@ -242,7 +242,7 @@ class ESPnetASRModel(AbsESPnetModel):
                     # p.grad.detach_()
                     param.grad.zero_()
             self.adversarial_frozen_flag = True
-        print_flags()
+        self.print_flags()
 
    
     def unfreeze_adversarial(self):
@@ -541,7 +541,7 @@ class ESPnetASRModel(AbsESPnetModel):
             # Collect CTC branch stats
             stats["loss_ctc"] = loss_ctc.detach() if loss_ctc is not None else None
             stats["cer_ctc"] = cer_ctc
-            logging.warning(" CTC branch loss_ctc  {}   cer_ctc {} ".format( loss_ctc.detach(), cer_ctc ))
+            # logging.warning(" CTC branch loss_ctc  {}   cer_ctc {} ".format( loss_ctc.detach(), cer_ctc ))
 
 
         #################################################################################################################################################################################################################################
@@ -576,11 +576,11 @@ class ESPnetASRModel(AbsESPnetModel):
             loss_interctc = loss_interctc / len(intermediate_outs)
             # calculate whole encoder loss
             loss_ctc = (1 - self.interctc_weight) * loss_ctc + self.interctc_weight * loss_interctc
-            logging.warning(" Interctc  Branch {} ".format( loss_ctc.detach() ))
+            # logging.warning(" Interctc  Branch {} ".format( loss_ctc.detach() ))
 
 
         retval = {} 
-        if (self.adv_flag):
+        if (self.adv_flag and  (not self.adversarial_frozen_flag) ):
             # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
             rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
             # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
@@ -626,9 +626,10 @@ class ESPnetASRModel(AbsESPnetModel):
                 )
 
             # 3. CTC-Att loss definition
-            if self.ctc_weight == 0.0:
+            # logging.warning(" >>>>>>> loss_ctc {} loss_att {} ".format(loss_ctc, loss_att))
+            if (self.ctc_weight == 0.0 or loss_ctc is None):
                 loss = loss_att
-            elif self.ctc_weight == 1.0:
+            elif (self.ctc_weight == 1.0 or  loss_att is None):
                 loss = loss_ctc
             else:
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
@@ -643,7 +644,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         # Collect total loss stats
-        stats["loss"] = loss.detach()
+        stats["loss_without_adv"] = loss.detach()
 
         # print(" asr/ESPNET_model.py :  loss : {}   acc_att : {} \n".format(stats["loss"], stats["acc"] ))
 

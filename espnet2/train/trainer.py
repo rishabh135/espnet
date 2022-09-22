@@ -697,10 +697,9 @@ class Trainer:
                 
 
             reporter.register(stats, weight)
-
+            # logging.warning(" >>>>> adv_flag {}  adv_name  {} adv_mode {} ".format(adv_flag, adv_name, adv_mode) )
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
-
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
                         scaler.scale(loss).backward()
                         # loss_adversarial = retval["loss_adversarial"]
@@ -710,6 +709,7 @@ class Trainer:
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
                         loss_adversarial = retval["loss_adversarial"]
+                        # loss = loss_adversarial
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     
@@ -721,7 +721,7 @@ class Trainer:
                         # Backward passes under autocast are not recommended.
                         # Backward ops run in the same dtype autocast chose
                         # for corresponding forward ops.
-                        loss = loss + loss_adversarial
+                        loss += loss_adversarial
                         scaler.scale(loss).backward()
                         # scaler.scale(loss_adversarial).backward()
 
@@ -764,12 +764,11 @@ class Trainer:
 
 
                 if( (iiter % 100) == 0):        
-                    logging.warning(" iiter {} adv_flag {} adv_mode {}  >>>>   asr_loss {} grad_norm {} ".format( iiter, adv_flag, adv_mode, stats["loss"].detach(), grad_norm ))
-                    if(adv_flag == True and adv_name == "ESPnetASRModel"):
+                    logging.warning(" iiter {} adv_flag {} adv_mode {}  >>>>   asr_loss {} grad_norm {} ".format( iiter, adv_flag, adv_mode, stats["loss_without_adv"].detach(), grad_norm ))
+                    if(adv_flag == True and adv_name == "ESPnetASRModel" and (adv_mode == "adv" or adv_mode == "asradv") ):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
     
                 
-
 
                 # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
                 # print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))

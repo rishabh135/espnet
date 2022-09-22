@@ -48,11 +48,11 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 adversarial_flag="True"
 
-adv_liststr="asr 10 adv 60 asradv 100"
+adv_liststr="asr 10 adv 40 asradv 50"
 
+project_name="nancy_v2_adv_sep_23_100ep_2op_lr_0.2"
 
-project_name="nancy_v2_adv_sep_22_epochs_170"
-experiment_name="one_optimizer_002" # name of the experiment, just change it to create differnet folders
+experiment_name="asr10_40_50" # name of the experiment, just change it to create differnet folders
 
 
 

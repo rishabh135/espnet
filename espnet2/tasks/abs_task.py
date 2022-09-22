@@ -924,7 +924,7 @@ class AbsTask(ABC):
     #                 {'params': model.ctc.parameters(), 'lr': args.asr_lr},
     #                 {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]       
             
-    #         optimi = torch.optim.Adam((param_grp), betas=(0.9,0.999),eps=1e-08,weight_decay=0.00001,amsgrad=False)
+    #         optimi = torch.optim.Adam((param_grp), betas=(0.9,0.999),weight_decay=0.00001)
 
     #     else:
     #         optimi = optim_class(model.parameters(), lr=args.asr_lr, weight_decay=0.00001)
