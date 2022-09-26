@@ -20,8 +20,7 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 
 
-project_name="nancy_v2_adv_sep_23_100ep_2op_lr_0.2"
-
+project_name="nancy_v2_adv_sep_23_100ep_1op_lr_0.2"
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/original_data # determines all the files creating folder as in the data folder
 
