@@ -109,15 +109,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
         self.encoder_frozen_flag = False
         self.adversarial_frozen_flag = False
-        # adv_mode = adversarial_list[current_epoch]
 
-        # if(self.adv_mode == 'spk'):
-        #     self.encoder_frozen_flag = True
-
-        # elif(self.adv_mode == 'asr'):
-        #     self.encoder_frozen_flag = False
-         
-
+        
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
             self.encoder.interctc_use_conditioning = False
@@ -251,17 +244,6 @@ class ESPnetASRModel(AbsESPnetModel):
                 param.requires_grad = True
             self.adversarial_frozen_flag = False
 
-
-
-    # if adv_mode == 'spk':
-    #     self.model.module.predictor.freeze_encoder()
-    #     loss = loss_adv
-    # elif adv_mode == 'asr':
-    #     self.model.module.predictor.unfreeze_encoder()
-    #     loss = loss_asr
-    # else:
-    #     self.model.module.predictor.unfreeze_encoder()
-    #     loss = loss_asr + loss_adv
 
 
 
@@ -534,7 +516,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         # 1. CTC branch
-        if (self.ctc_weight != 0.0) and (not self.encoder_frozen_flag):
+        if (self.ctc_weight != 0.0):
             loss_ctc, cer_ctc = self._calc_ctc_loss(
                 encoder_out, encoder_out_lens, text, text_lengths
             )
@@ -558,7 +540,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # Intermediate CTC (optional)
         loss_interctc = 0.0
-        if (self.interctc_weight != 0.0) and (intermediate_outs is not None) and (not self.encoder_frozen_flag):
+        if (self.interctc_weight != 0.0) and (intermediate_outs is not None):
             for layer_idx, intermediate_out in intermediate_outs:
                 # we assume intermediate_out has the same length & padding
                 # as those of encoder_out
@@ -579,19 +561,7 @@ class ESPnetASRModel(AbsESPnetModel):
             # logging.warning(" Interctc  Branch {} ".format( loss_ctc.detach() ))
 
 
-        retval = {} 
-        if (self.adv_flag and  (not self.adversarial_frozen_flag) ):
-            # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
-            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-            # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, spkid)
 
-            # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
-            stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-            retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
-
-            stats["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
-            retval["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
 
 
         if self.use_transducer_decoder:
@@ -627,9 +597,9 @@ class ESPnetASRModel(AbsESPnetModel):
 
             # 3. CTC-Att loss definition
             # logging.warning(" >>>>>>> loss_ctc {} loss_att {} ".format(loss_ctc, loss_att))
-            if (self.ctc_weight == 0.0 or loss_ctc is None):
+            if (self.ctc_weight == 0.0):
                 loss = loss_att
-            elif (self.ctc_weight == 1.0 or  loss_att is None):
+            elif (self.ctc_weight == 1.0):
                 loss = loss_ctc
             else:
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
@@ -637,10 +607,24 @@ class ESPnetASRModel(AbsESPnetModel):
 
             # Collect Attn branch stats
             stats["loss_att"] = loss_att.detach() if loss_att is not None else None
-            stats["acc"] = acc_att
-            stats["cer"] = cer_att
-            stats["wer"] = wer_att
+            stats["accuracy_attention"] = acc_att * 100
+            stats["cer_attention"] = cer_att
+            stats["wer_attention"] = wer_att
             
+
+        retval = {} 
+        if (self.adv_flag ):
+            # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
+            rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
+            # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
+            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, spkid)
+
+            # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
+            stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
+            retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
+
+            stats["accuracy_adversarial"]= acc_adv * 100 if acc_adv is not None else None
+            retval["accuracy_adversarial"]= acc_adv * 100 if acc_adv is not None else None
 
 
         # Collect total loss stats

@@ -1172,7 +1172,7 @@ class AbsTask(ABC):
             
             if (args.adv_liststr == "asr_adv_asradv" ):         
                 # print(" Updated adversarial list\n")
-                args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 15 + ["asradv"] * 10  
+                args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 25 + ["asradv"] * 20
                 # args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
                 # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
 
@@ -1184,8 +1184,11 @@ class AbsTask(ABC):
                 if (sum(epoch_list) !=  args.max_epoch):
                     raise RuntimeError("Please check total_number of epochs {}  are not equivakent to max_epochs {} ".format(sum(epoch_list), args.max_epoch))
                 
-                if(len(epoch_list) == 4):
-                    args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
+
+                if(len(epoch_list) == 5):
+                    args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] + ["asr"] * epoch_list[2] + ["adv"] * epoch_list[3] +  ["asradv"] * epoch_list[4]
+                elif(len(epoch_list) == 4):
+                    args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] + ["asr"] * epoch_list[2] + ["asradv"] * epoch_list[3]
                 elif(len(epoch_list) == 3):
                     args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] +  ["asradv"] * epoch_list[2]
                 elif(len(epoch_list) == 2):

@@ -49,7 +49,7 @@ def th_accuracy(pad_outputs, pad_targets, ignore_label):
     numerator = torch.sum(pad_pred.masked_select(mask) == pad_targets.masked_select(mask))
     denominator = torch.sum(mask)
     # logging.warning("******************************\n\n")
-    return float(numerator) / float(denominator)*100
+    return float(numerator) / float(denominator)
 
 class ReverseLayerF(Function):
 

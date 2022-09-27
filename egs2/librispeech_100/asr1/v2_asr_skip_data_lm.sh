@@ -46,15 +46,16 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-adversarial_flag=""
+adversarial_flag="True"
 
-adv_liststr="asr 10 adv 60 asradv 30"
+# adv_liststr="asr 5 adv 65  asradv 100"
+adv_liststr="asr 10 adv 20 asr 20 adv 40 asradv 80"
+
+project_name="nancy_v2_sep_27_split_5"
 
 
 
-project_name="nancy_v2_without_adv_sep_15"
-
-experiment_name="skipping_data_lm" # name of the experiment, just change it to create differnet folders
+experiment_name="one_optimizer_002" # name of the experiment, just change it to create differnet folders
 
 
 

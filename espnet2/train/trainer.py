@@ -553,13 +553,15 @@ class Trainer:
 
 
         # logging.warning(model)
-        logging.warning("******************************\n\n")
-        logging.warning(" ctc weight grad {}  \n ctc bias grad {}  \n ".format(  model.ctc.ctc_lo.weight.grad,  model.ctc.ctc_lo.bias.grad  ) )    
-        logging.warning(" encoder weight grad {}  \n encoder bias grad {}  \n ".format(  model.encoder.encoders[0].feed_forward.w_1.weight.grad, model.encoder.encoders[0].feed_forward.w_1.bias.grad   ) )
+        logging.warning("******************************")
+        logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.ctc.ctc_lo.weight.grad,  model.ctc.ctc_lo.bias.grad  ) )    
+        logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.encoder.encoders[0].feed_forward.w_1.weight.grad, model.encoder.encoders[0].feed_forward.w_1.bias.grad   ) )
+        logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.adversarial_branch.output.weight.grad, model.adversarial_branch.output.bias.grad   ) )
 
-        if(model.ctc.ctc_lo.bias.grad is not None):
-            logging.warning("******************************\n\n")
-            logging.warning(" ctc weight grad {}  \n ctc bias grad {}  \n ".format(  model.ctc.ctc_lo.weight.grad.shape,  model.ctc.ctc_lo.bias.grad.shape  ) )
+
+        # if(model.ctc.ctc_lo.bias.grad is not None):
+        #     logging.warning("******************************\n\n")
+        #     logging.warning(" ctc weight grad {}  \n ctc bias grad {}  \n ".format(  model.ctc.ctc_lo.weight.grad.shape,  model.ctc.ctc_lo.bias.grad.shape  ) )
 
         # logging.warning(" cls_vars {} \n\n".format( vars(cls)))
         # logging.warning(model)
@@ -766,7 +768,7 @@ class Trainer:
                 if( (iiter % 100) == 0):        
                     logging.warning(" iiter {} adv_flag {} adv_mode {}  >>>>   asr_loss {} grad_norm {} ".format( iiter, adv_flag, adv_mode, stats["loss_without_adv"].detach(), grad_norm ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel" and (adv_mode == "adv" or adv_mode == "asradv") ):
-                        logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
+                        logging.warning(" adversarial_loss : {}   accuracy_adversarial {}\n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
     
                 
 
