@@ -1167,18 +1167,34 @@ class AbsTask(ABC):
     def main_worker(cls, args: argparse.Namespace):
         assert check_argument_types()
 
+<<<<<<< HEAD
 
+=======
+        # default= "asr 20 adv 20 asradv 30", type=str, help='adv_liststr string')
+        # Step -1  updated adversarial list
+>>>>>>> parent of 0fc29f580 (working till epoch 7 now adding varied lr)
         if(args.adv_flag and cls.__name__ == "ASRTask"):
             
-            if (args.adv_liststr == "asr_adv_asradv" ):         
+            if (args.adv_liststr == "asradvasradv" ):         
                 # print(" Updated adversarial list\n")
+<<<<<<< HEAD
                 args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 25 + ["asradv"] * 20
+=======
+                args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
+>>>>>>> parent of 0fc29f580 (working till epoch 7 now adding varied lr)
                 # args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
                 # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
-
+        
+            elif (args.adv_liststr == "asr 20 adv 20 asradv 30" ):         
+                # print(" Updated adversarial list\n")
+                # args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  + ["asr"] * 10
+                args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
+                # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
+        
             else :
 
                 epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
+<<<<<<< HEAD
                 logging.warning("->>> adv_liststr {} epoch_list {} ".format(args.adv_liststr, epoch_list))
 
                 if (sum(epoch_list) !=  args.max_epoch):
@@ -1196,14 +1212,17 @@ class AbsTask(ABC):
                 else:
                     args.adversarial_list = ["adv"] *  epoch_list[0]
 
+=======
+                args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
+                
+>>>>>>> parent of 0fc29f580 (working till epoch 7 now adding varied lr)
 
         elif(not args.adv_flag and cls.__name__ == "ASRTask"):
             # print(" Updated adversarial list without adversarial \n")
-            args.adversarial_list =[ "asr"] * args.max_epoch
+            args.adversarial_list =[ "asr"] * 70 
 
         else:
-            args.adversarial_list =[ "asr"] * args.max_epoch
-
+            args.adversarial_list =[ "asr"] * 70 
 
         logging.warning(" >>>>>> Adversarial_list {} \n".format(args.adversarial_list))
         # 0. Init distributed process
