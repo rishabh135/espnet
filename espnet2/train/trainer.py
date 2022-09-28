@@ -54,6 +54,22 @@ except ImportError:
     fairscale = None
 
 
+
+
+class Hook():
+    def __init__(self, module, module_name, backward=False):
+        self.name = module_name
+        if backward==False:
+            self.hook = module.register_forward_hook(self.hook_fn)
+        else:
+            self.hook = module.register_backward_hook(self.hook_fn)
+    def hook_fn(self, module, input, output):
+        self.input = input
+        self.output = output
+    def close(self):
+        self.hook.remove()
+
+
 @dataclasses.dataclass
 class TrainerOptions:
     ngpu: int
@@ -260,6 +276,14 @@ class Trainer:
             train_summary_writer = None
 
         start_time = time.perf_counter()
+
+        module_names = list(dp_model._modules.items())
+        # for nn in module_names:
+        #     logging.warning("{}".format(nn[0]))
+        #     logging.warning("{}".format(nn[1]))
+            
+        hookB = [Hook(layer[1], layer[0], backward=True) for layer in list(dp_model._modules.items())]
+
         for iepoch in range(start_epoch, trainer_options.max_epoch + 1):
             print("\n train/trainer.py <<< current epoch {}  max_epoch {} ******\n".format(iepoch, trainer_options.max_epoch))
             if iepoch != start_epoch:
@@ -480,6 +504,9 @@ class Trainer:
     ) -> bool:
         assert check_argument_types()
 
+
+        
+
         grad_noise = options.grad_noise
         accum_grad = options.accum_grad
         grad_clip = options.grad_clip
@@ -497,12 +524,7 @@ class Trainer:
         # 'espnet2.asr.espnet_model.ESPnetASRModel'
         adv_name = str(type(model).__name__)
         
-        # logging.warning( " >>>> adv_name {} ".format(adv_name))
-        # logging.warning(" model_vars {} \n\n".format( vars(model)))
-        # logging.warning("******************************\n\n")
-        
-        # logging.warning(" cls_vars {} \n\n".format( vars(cls)))
-        # logging.warning("******************************\n\n")
+
         
         if log_interval is None:
             try:
@@ -552,6 +574,12 @@ class Trainer:
         
         logging.warning(" --->>>>>>>>> adv_name {} adv_mode {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_name, adv_mode, float(current_flr), float(current_llr), param_group_length))
 
+
+        # logging.warning(model)
+        logging.warning("******************************")
+        logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.ctc.ctc_lo.weight.grad,  model.ctc.ctc_lo.bias.grad  ) )    
+        logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.encoder.encoders[0].feed_forward.w_1.weight.grad, model.encoder.encoders[0].feed_forward.w_1.bias.grad   ) )
+        logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.adversarial_branch.output.weight.grad, model.adversarial_branch.output.bias.grad   ) )
 
 
         for iiter, (utt_id, batch) in enumerate(
@@ -682,12 +710,11 @@ class Trainer:
                     # NOTE(kamo): Multiply world_size because DistributedDataParallel
                     # automatically normalizes the gradient by world_size.
                     loss *= torch.distributed.get_world_size()
-
+                # logging.warning(" $$ loss : {} accum_grad {} ".format(loss.detach(), accum_grad ))
                 loss /= accum_grad
                 
 
             reporter.register(stats, weight)
-
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
 
@@ -697,7 +724,6 @@ class Trainer:
                         # total_loss = loss
                         # loss = total_loss
 
-                    
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
                         loss_adversarial = retval["loss_adversarial"]
                         # loss_adversarial.requires_grad = True
@@ -708,17 +734,16 @@ class Trainer:
                         # loss_adversarial.requires_grad = True
                         loss = loss + loss_adversarial
                         scaler.scale(loss).backward()
+                    else:
+                        scaler.scale(loss).backward()
+
                         # scaler.scale(loss_adversarial).backward()
-
-
-
-
-                    # Scales loss.  Calls backward() on scaled loss
-                    # to create scaled gradients.
-                    # Backward passes under autocast are not recommended.
-                    # Backward ops run in the same dtype autocast chose
-                    # for corresponding forward ops.
-                    
+                        # Scales loss.  Calls backward() on scaled loss
+                        # to create scaled gradients.
+                        # Backward passes under autocast are not recommended.
+                        # Backward ops run in the same dtype autocast chose
+                        # for corresponding forward ops.
+                        
                 else:
                     loss.backward()
 
@@ -755,12 +780,17 @@ class Trainer:
                 ###################################################################################
 
 
-                if( (iiter % 20) == 0):        
-                    logging.warning(" iiter {} adv_flag {} adv_mode {}  >>>>   asr_loss {}  ".format( iiter, adv_flag, adv_mode, stats["loss"].detach()))
+                if( (iiter % 100) == 0):        
+                    logging.warning(" MODE : {}   iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {} ".format( adv_mode, iiter, adv_flag,  stats["loss"].detach(), grad_norm ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
     
-                
+                    if( (iiter == 200) ):
+                        logging.warning( '***'*3+'  Backward Hooks Inputs & Outputs  '+'***'*3)
+                        for hook in hookB:             
+                            logging.warning( "{} {} ".format( hook.name, hook.input))
+                            logging.warning( "{} {} ".format( hook.name, hook.output))        
+                            logging.warning('---'*17)
 
 
                 # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))

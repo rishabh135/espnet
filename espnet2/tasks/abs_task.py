@@ -847,8 +847,8 @@ class AbsTask(ABC):
         group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
 
         group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
-        group.add_argument('--adv_lr', default=1.0, type=float,help='Learning rate for adv branch')
-        group.add_argument('--asr_lr', default=0.05, type=float,help='Learning rate for ASR encoder and decoder')
+        group.add_argument('--adv_lr', default=0.002, type=float,help='Learning rate for adv branch')
+        group.add_argument('--asr_lr', default=0.002, type=float,help='Learning rate for ASR encoder and decoder')
         group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
         # group.add_argument('--adversarial_list', default= ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30 , type=list,help='adversarial mode list')
@@ -1104,21 +1104,27 @@ class AbsTask(ABC):
             
             if (args.adv_liststr == "asr_adv_asradv" ):         
                 # print(" Updated adversarial list\n")
-                args.adversarial_list = ["asr", "asr", "adv", "adv", "asradv", "asradv"] * 10  
+                args.adversarial_list = ["asr", "asr", "asr", "adv", "adv", "adv", "asr", "asr", "asr", "adv", "adv", "adv",  "asradv", "asradv", "asradv", "asr", "asr", "adv", "adv", "asr" ] * 8 + ["asradv"] * 10
                 # args.adversarial_list = ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30
                 # ["asr"] * 20 + ["adv"] * 20 + ["asradv"]*30
 
             else :
                 epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
-                if(len(epoch_list) == 4):
-                    args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
+                logging.warning("->>> adv_liststr {} epoch_list {} ".format(args.adv_liststr, epoch_list))
+
+                if (sum(epoch_list) !=  args.max_epoch):
+                    raise RuntimeError("Please check total_number of epochs {}  are not equivakent to max_epochs {} ".format(sum(epoch_list), args.max_epoch))
+                
+                if(len(epoch_list) == 5):
+                    args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] + ["asr"] * epoch_list[2] + ["adv"] * epoch_list[3] +  ["asradv"] * epoch_list[4]
+                elif(len(epoch_list) == 4):
+                    args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] + ["asr"] * epoch_list[2] + ["asradv"] * epoch_list[3]
                 elif(len(epoch_list) == 3):
                     args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] +  ["asradv"] * epoch_list[2]
                 elif(len(epoch_list) == 2):
                     args.adversarial_list = ["adv"] *  epoch_list[0] +  ["asradv"] * epoch_list[1]
                 else:
                     args.adversarial_list = ["adv"] *  epoch_list[0]
-
 
         elif(not args.adv_flag and cls.__name__ == "ASRTask"):
             # print(" Updated adversarial list without adversarial \n")
@@ -1128,7 +1134,9 @@ class AbsTask(ABC):
             args.adversarial_list =[ "asr"] * args.max_epoch
 
 
-        logging.warning(" >>>>>> Adversarial_list {} \n".format(args.adversarial_list))
+        logging.warning(" >>>> Adversarial_list {} \n".format(args.adversarial_list))
+
+
         # 0. Init distributed process
         distributed_option = build_dataclass(DistributedOption, args)
         # Setting distributed_option.dist_rank, etc.
