@@ -695,7 +695,7 @@ class Trainer:
                     # automatically normalizes the gradient by world_size.
                     loss *= torch.distributed.get_world_size()
 
-                loss /= accum_grad
+                # loss /= accum_grad
                 
 
             reporter.register(stats, weight)
@@ -703,6 +703,7 @@ class Trainer:
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
+                        loss /= accum_grad
                         scaler.scale(loss).backward()
                         # loss_adversarial = retval["loss_adversarial"]
                         # total_loss = loss
@@ -711,6 +712,7 @@ class Trainer:
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
                         loss_adversarial = retval["loss_adversarial"]
+                        loss_adversarial /= accum_grad
                         # loss = loss_adversarial
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
@@ -724,11 +726,13 @@ class Trainer:
                         # Backward ops run in the same dtype autocast chose
                         # for corresponding forward ops.
                         loss += loss_adversarial
+                        loss /= accum_grad
                         scaler.scale(loss).backward()
                         # scaler.scale(loss_adversarial).backward()
 
                     else:
                         # logging.warning("\n\n Entered into normal asr mode \n")
+                        loss /= accum_grad
                         scaler.scale(loss).backward()
                         # loss.backward()
 
