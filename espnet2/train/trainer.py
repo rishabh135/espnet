@@ -261,7 +261,7 @@ class Trainer:
 
         start_time = time.perf_counter()
         for iepoch in range(start_epoch, trainer_options.max_epoch + 1):
-            print("\n train/trainer.py <<< current epoch {}  max_epoch {} ******\n".format(iepoch, trainer_options.max_epoch))
+            # print("\n train/trainer.py <<< current epoch {}  max_epoch {} ******\n".format(iepoch, trainer_options.max_epoch))
             if iepoch != start_epoch:
                 logging.warning(
                     "{}/{}epoch started. Estimated time to finish: {}".format(
@@ -379,9 +379,7 @@ class Trainer:
                 if len(_improved) == 0:
                     logging.warning(" IMPORTANT: There are no improvements in this epoch")
                 else:
-                    logging.warning(
-                        " IMPORTANT : The best model has been updated: " + ", ".join(_improved)
-                    )
+                    logging.warning(" IMPORTANT : The best model has been updated: " + ", ".join(_improved))
 
                 log_model = (
                     trainer_options.wandb_model_log_interval > 0
@@ -709,15 +707,11 @@ class Trainer:
                         loss = loss + loss_adversarial
                         scaler.scale(loss).backward()
                         # scaler.scale(loss_adversarial).backward()
-
-
-
-
-                    # Scales loss.  Calls backward() on scaled loss
-                    # to create scaled gradients.
-                    # Backward passes under autocast are not recommended.
-                    # Backward ops run in the same dtype autocast chose
-                    # for corresponding forward ops.
+                        # Scales loss.  Calls backward() on scaled loss
+                        # to create scaled gradients.
+                        # Backward passes under autocast are not recommended.
+                        # Backward ops run in the same dtype autocast chose
+                        # for corresponding forward ops.
                     
                 else:
                     loss.backward()
