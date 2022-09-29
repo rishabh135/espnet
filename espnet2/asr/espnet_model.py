@@ -611,7 +611,7 @@ class ESPnetASRModel(AbsESPnetModel):
                 stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
                 retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
 
-                stats["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
+                stats["accuracy_adversarial"]= acc_adv * 100 if acc_adv is not None else None
                 retval["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
 
 	
@@ -620,7 +620,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
             # Collect Attn branch stats
             stats["loss_att"] = loss_att.detach() if loss_att is not None else None
-            stats["acc"] = acc_att
+            stats["acc"] = acc_att * 100
             stats["cer"] = cer_att
             stats["wer"] = wer_att
             

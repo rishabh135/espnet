@@ -755,12 +755,18 @@ class Trainer:
                 ###################################################################################
 
 
-                if( (iiter % 20) == 0):        
-                    logging.warning(" iiter {} adv_flag {} adv_mode {}  >>>>   asr_loss {}  ".format( iiter, adv_flag, adv_mode, stats["loss"].detach()))
+                if( (iiter % 100) == 0):        
+                    logging.warning(" MODE: {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {}  ".format( adv_mode, iiter, adv_flag,  stats["loss"].detach(), grad_norm ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
     
-                
+                    if(iiter == 200):
+                        # logging.warning(model)
+                        logging.warning("******************************")
+                        logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.ctc.ctc_lo.weight.grad,  model.ctc.ctc_lo.bias.grad  ) )    
+                        logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.encoder.encoders[0].feed_forward.w_1.weight.grad, model.encoder.encoders[0].feed_forward.w_1.bias.grad   ) )
+                        logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.adversarial_branch.output.weight.grad, model.adversarial_branch.output.bias.grad   ) )
+
 
 
                 # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
