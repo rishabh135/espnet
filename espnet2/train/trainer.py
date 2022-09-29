@@ -59,10 +59,10 @@ except ImportError:
 class Hook():
     def __init__(self, module, module_name, backward=False):
         self.name = module_name
-        if backward==False:
-            self.hook = module.register_forward_hook(self.hook_fn)
-        else:
-            self.hook = module.register_backward_hook(self.hook_fn)
+        # if backward==False:
+        #     self.hook = module.register_forward_hook(self.hook_fn)
+        # else:
+        self.hook = module.register_backward_hook(self.hook_fn)
     def hook_fn(self, module, input, output):
         self.input = input
         self.output = output
@@ -282,7 +282,7 @@ class Trainer:
         #     logging.warning("{}".format(nn[0]))
         #     logging.warning("{}".format(nn[1]))
             
-        hookB = [Hook(layer[1], layer[0], backward=True) for layer in list(dp_model._modules.items())]
+        # hookB = [Hook(layer[1], layer[0], backward=True) for layer in list(dp_model._modules.items())]
 
         for iepoch in range(start_epoch, trainer_options.max_epoch + 1):
             print("\n train/trainer.py <<< current epoch {}  max_epoch {} ******\n".format(iepoch, trainer_options.max_epoch))
@@ -785,12 +785,12 @@ class Trainer:
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
     
-                    if( (iiter == 200) ):
-                        logging.warning( '***'*3+'  Backward Hooks Inputs & Outputs  '+'***'*3)
-                        for hook in hookB:             
-                            logging.warning( "{} {} ".format( hook.name, hook.input))
-                            logging.warning( "{} {} ".format( hook.name, hook.output))        
-                            logging.warning('---'*17)
+                    # if( (iiter == 200) ):
+                    #     logging.warning( '***'*3+'  Backward Hooks Inputs & Outputs  '+'***'*3)
+                    #     for hook in hookB:             
+                    #         logging.warning( "{} {} ".format( hook.name, hook.input))
+                    #         logging.warning( "{} {} ".format( hook.name, hook.output))        
+                    #         logging.warning('---'*17)
 
 
                 # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))

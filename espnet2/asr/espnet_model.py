@@ -209,16 +209,16 @@ class ESPnetASRModel(AbsESPnetModel):
         if not self.encoder_frozen_flag:
             for param in self.encoder.parameters():
                 param.requires_grad = False
-                # if param.grad is not None:
-                #     param.grad.zero_()
+                if param.grad is not None:
+                    param.grad.zero_()
             for param in self.decoder.parameters():
                 param.requires_grad = False
-                # if param.grad is not None:
-                #     param.grad.zero_()
+                if param.grad is not None:
+                    param.grad.zero_()
             for param in self.ctc.parameters():
                 param.requires_grad = False
-                # if param.grad is not None:
-                #     param.grad.zero_()
+                if param.grad is not None:
+                    param.grad.zero_()
             self.encoder_frozen_flag = True
         self.print_flags()
    
@@ -238,8 +238,8 @@ class ESPnetASRModel(AbsESPnetModel):
         if not self.adversarial_frozen_flag:
             for param in self.adversarial_branch.parameters():
                 param.requires_grad = False
-                # if param.grad is not None:
-                #     param.grad.zero_()
+                if param.grad is not None:
+                    param.grad.zero_()
             self.adversarial_frozen_flag = True
         self.print_flags()
 
