@@ -261,7 +261,7 @@ class Trainer:
 
         start_time = time.perf_counter()
         for iepoch in range(start_epoch, trainer_options.max_epoch + 1):
-            # print("\n train/trainer.py <<< current epoch {}  max_epoch {} ******\n".format(iepoch, trainer_options.max_epoch))
+            logging.warning(" current epoch {}  max_epoch {} ******".format(iepoch, trainer_options.max_epoch))
             if iepoch != start_epoch:
                 logging.warning(
                     "{}/{}epoch started. Estimated time to finish: {}".format(
@@ -681,7 +681,7 @@ class Trainer:
                     # automatically normalizes the gradient by world_size.
                     loss *= torch.distributed.get_world_size()
 
-                loss /= accum_grad
+                # loss /= accum_grad
                 
 
             reporter.register(stats, weight)
@@ -690,6 +690,7 @@ class Trainer:
                 if scaler is not None:
 
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
+                        loss /= accum_grad
                         scaler.scale(loss).backward()
                         # loss_adversarial = retval["loss_adversarial"]
                         # total_loss = loss
@@ -698,6 +699,7 @@ class Trainer:
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
                         loss_adversarial = retval["loss_adversarial"]
+                        loss_adversarial /= accum_grad
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     
@@ -705,6 +707,10 @@ class Trainer:
                         loss_adversarial = retval["loss_adversarial"]
                         # loss_adversarial.requires_grad = True
                         loss = loss + loss_adversarial
+                        loss /= accum_grad
+                        scaler.scale(loss).backward()
+                    else:
+                        loss /= accum_grad
                         scaler.scale(loss).backward()
                         # scaler.scale(loss_adversarial).backward()
                         # Scales loss.  Calls backward() on scaled loss
@@ -714,6 +720,7 @@ class Trainer:
                         # for corresponding forward ops.
                     
                 else:
+                    loss /= accum_grad
                     loss.backward()
 
             if iiter % accum_grad == 0:
@@ -759,7 +766,8 @@ class Trainer:
                         logging.warning("******************************")
                         logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.ctc.ctc_lo.weight.grad,  model.ctc.ctc_lo.bias.grad  ) )    
                         logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.encoder.encoders[0].feed_forward.w_1.weight.grad, model.encoder.encoders[0].feed_forward.w_1.bias.grad   ) )
-                        logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.adversarial_branch.output.weight.grad, model.adversarial_branch.output.bias.grad   ) )
+                        if(adv_flag == True and adv_name == "ESPnetASRModel"):
+                            logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.adversarial_branch.output.weight.grad, model.adversarial_branch.output.bias.grad   ) )
 
 
 
