@@ -57,8 +57,8 @@ best_model_criterion:
 keep_nbest_models: 10
 
 use_amp: true      
-cudnn_deterministic: false  
-cudnn_benchmark: false      
+cudnn_deterministic: true  
+cudnn_benchmark: false   
 
 optim: adam
 optim_conf:

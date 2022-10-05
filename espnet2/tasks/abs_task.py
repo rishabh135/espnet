@@ -1108,7 +1108,7 @@ class AbsTask(ABC):
             
             if (args.adv_liststr == "asr_adv_asradv" ):         
                 # print(" Updated adversarial list\n")
-                args.adversarial_list = ["asr", "asr", "asr", "adv", "adv", "adv", "asr", "asr", "asr", "adv", "adv", "adv",  "asradv", "asradv", "asradv", "asr", "asr", "adv", "adv", "asr" ] * 8 + ["asradv"] * 10
+                args.adversarial_list = ["asr", "asr", "adv", "adv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * 8 + ["asradv"] * 10
                 
             else :
                 epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))

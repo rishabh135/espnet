@@ -21,8 +21,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 # project_name="nancy_v4_sep_30_standard_170"
 
-
-project_name="nancy_v4_oct_4_standard_170"
+project_name="nancy_v4_oct_5_standard_180"
 
 
 ###################################################################################################################################################################################################

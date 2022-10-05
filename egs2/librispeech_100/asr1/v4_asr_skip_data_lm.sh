@@ -61,7 +61,7 @@ adversarial_flag="True"
 adv_liststr="asr_adv_asradv"
 
 
-project_name="nancy_v4_oct_3_testing_freezing"
+project_name="nancy_v4_oct_5_testing_freezing_2"
 experiment_name="one_optimizer_002" # name of the experiment, just change it to create differnet folders
 
 
