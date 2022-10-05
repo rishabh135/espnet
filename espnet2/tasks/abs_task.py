@@ -543,6 +543,9 @@ class AbsTask(ABC):
             default=True,
             help="Enable resuming if checkpoint is existing",
         )
+
+        group.add_argument('--save_every_epoch', default=5, type=int, help='Number of epochs which will be saved ')
+
         group.add_argument(
             "--train_dtype",
             default="float32",
@@ -845,6 +848,7 @@ class AbsTask(ABC):
         
         group.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
         group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
+
 
         group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
         group.add_argument('--adv_lr', default=0.002, type=float,help='Learning rate for adv branch')

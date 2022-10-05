@@ -45,8 +45,9 @@ sort_in_batch: descending       # how to sort data in making batch
 sort_batch: descending          # how to sort created batches
 batch_type: numel
 batch_bins: 58000000
+unused_parameters: true 
 accum_grad: 4
-max_epoch: 250
+max_epoch: 170
 patience: none
 init: none
 best_model_criterion:

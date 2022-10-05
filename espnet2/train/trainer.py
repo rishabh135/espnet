@@ -83,6 +83,7 @@ class TrainerOptions:
     wandb_model_log_interval: int
     adversarial_list: list
     adv_flag: bool
+    save_every_epoch: int
 
 
 class Trainer:
@@ -354,6 +355,19 @@ class Trainer:
                     output_dir / "checkpoint.pth",
                 )
 
+                if(iepoch% trainer_options.save_every_epoch == 0 ):
+                    # 4.2 Saving every 5th epoch as the checkpoint
+                    torch.save(
+                        {
+                            "model": model.state_dict(),
+                            "reporter": reporter.state_dict(),
+                            "optimizers": [o.state_dict() for o in optimizers],
+                            "schedulers": [
+                                s.state_dict() if s is not None else None
+                                for s in schedulers
+                            ],
+                            "scaler": scaler.state_dict() if scaler is not None else None,
+                        }, "{}/{}_checkpoint.pth".format( output_dir, iepoch),)
 
                 # 5. Save and log the model and update the link to the best model
                 torch.save(model.state_dict(), output_dir / f"{iepoch}epoch.pth")
@@ -426,12 +440,13 @@ class Trainer:
                     )
 
                 for e in range(1, iepoch):
-                    p = output_dir / f"{e}epoch.pth"
-                    if p.exists() and e not in nbests:
-                        p.unlink()
-                        _removed.append(str(p))
+                    if( e% trainer_options.save_every_epoch > 0):
+                        p = output_dir / f"{e}epoch.pth"
+                        if p.exists() and e not in nbests:
+                            p.unlink()
+                            _removed.append(str(p))
                 if len(_removed) != 0:
-                    logging.info("The model files were removed: " + ", ".join(_removed))
+                    logging.warning("The model files were removed: " + ", ".join(_removed))
 
             # 7. If any updating haven't happened, stops the training
             if all_steps_are_invalid:
@@ -493,8 +508,17 @@ class Trainer:
         adv_mode = options.adversarial_list[current_epoch-1]
         adv_flag = options.adv_flag
         # 'espnet2.asr.espnet_model.ESPnetASRModel'
-        adv_name = str(type(model).__name__)
         
+        
+        if(options.ngpu > 1):
+            adv_name = str(type(model.module).__name__)
+            # logging.warning(" ------->>>>>>>>>>> ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
+        else:
+            adv_name = str(type(model).__name__)
+
+
+        # for name, layer in model.named_modules():
+        #     logging.warning( " {} ".format(name))
         # logging.warning( " >>>> adv_name {} ".format(adv_name))
         # logging.warning(" model_vars {} \n\n".format( vars(model)))
         # logging.warning("******************************\n\n")
@@ -548,7 +572,7 @@ class Trainer:
         current_flr = optimizers[0].param_groups[0]['lr']
         current_llr = optimizers[0].param_groups[-1]['lr']
         
-        logging.warning(" --->>>>>>>>> adv_name {} adv_mode {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_name, adv_mode, float(current_flr), float(current_llr), param_group_length))
+        logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(current_flr), float(current_llr), param_group_length))
 
 
 
@@ -764,10 +788,19 @@ class Trainer:
                     if(iiter == 200):
                         # logging.warning(model)
                         logging.warning("******************************")
-                        logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.ctc.ctc_lo.weight.grad,  model.ctc.ctc_lo.bias.grad  ) )    
-                        logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.encoder.encoders[0].feed_forward.w_1.weight.grad, model.encoder.encoders[0].feed_forward.w_1.bias.grad   ) )
-                        if(adv_flag == True and adv_name == "ESPnetASRModel"):
-                            logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.adversarial_branch.output.weight.grad, model.adversarial_branch.output.bias.grad   ) )
+
+                        if(options.ngpu > 1): 
+                            logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
+                            logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.module.encoder.encoders[2].feed_forward.w_1.weight.grad, model.module.encoder.encoders[2].feed_forward.w_1.bias.grad   ) )
+                            if(adv_flag == True and adv_name == "ESPnetASRModel"):
+                                logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.module.adversarial_branch.output.weight.grad, model.module.adversarial_branch.output.bias.grad   ) )
+
+                        else:
+                            logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.ctc.ctc_lo.weight.grad,  model.ctc.ctc_lo.bias.grad  ) )    
+                            logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.encoder.encoders[2].feed_forward.w_1.weight.grad, model.encoder.encoders[2].feed_forward.w_1.bias.grad   ) )
+                            if(adv_flag == True and adv_name == "ESPnetASRModel"):
+                                logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.adversarial_branch.output.weight.grad, model.adversarial_branch.output.bias.grad   ) )
+
 
 
 

@@ -56,8 +56,10 @@ adversarial_flag="True"
 # adv_liststr="asr_adv_asradv"
 
 adv_liststr="asr 50 adv 100 asradv 100"
-project_name="nancy_v4_sep_30_modified_250"
-experiment_name="one_optimizer_002" # name of the experiment, just change it to create differnet folders
+
+project_name="nancy_v4_oct_5_modified_170"
+
+experiment_name="saving_every_5th_epoch" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump
