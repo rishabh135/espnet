@@ -206,15 +206,16 @@ class ESPnetASRModel(AbsESPnetModel):
                 if param.grad is not None:
                     param.grad.zero_()
                 
-            for param in self.ctc.parameters():
+            for param in self.ctc.ctc_lo.parameters():
                 param.requires_grad = False
                 if param.grad is not None:
                     param.grad.zero_()
             
-            for param in self.criterion_att.parameters():
-                param.requires_grad = False
-                if param.grad is not None:
-                    param.grad.zero_()
+            # for param in self.criterion_att.parameters():
+            #     param.requires_grad = False
+            #     if param.grad is not None:
+            #         param.grad.zero_()
+
             self.encoder_frozen_flag = True
         self.print_flags()
    
@@ -224,8 +225,11 @@ class ESPnetASRModel(AbsESPnetModel):
                 param.requires_grad = True
             for param in self.decoder.parameters():
                 param.requires_grad = True
-            for param in self.ctc.parameters():
+            for param in self.ctc_lo.parameters():
                 param.requires_grad = True
+            
+            # for param in self.criterion_att.parameters():
+            #     param.requires_grad = True
 
             self.encoder_frozen_flag = False
     
