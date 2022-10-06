@@ -263,7 +263,20 @@ class ASRTask(AbsTask):
         )
 
 
+        group.add_argument(
+            "--project_name",
+            type=str,
+            default=None,
+            help="Specify wandb project name",
+        )
 
+<<<<<<< HEAD
+=======
+        group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
+        group.add_argument('--adv_liststr', default= "asr 20 adv 20 asradv 30", type=str, help='adv_liststr string')
+        
+
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
         group = parser.add_argument_group(description="Preprocess related")
         group.add_argument(
             "--use_preprocessor",
@@ -406,8 +419,17 @@ class ASRTask(AbsTask):
     def optional_data_names(
         cls, train: bool = True, inference: bool = False
     ) -> Tuple[str, ...]:
+
+        # logging.warning("\n\n >>>> Inside optional data names \n\n")
+        if not inference: 
+            retval = ( "spkid", "speech", "text" ) 
+        else: 
+            # Inference mode 
+            retval = ("speech", "text" ) 
+
+
         retval = ()
-        assert check_return_type(retval)
+        # assert check_return_type(retval)
         return retval
 
 
@@ -427,8 +449,7 @@ class ASRTask(AbsTask):
             raise RuntimeError("token_list must be str or list")
         vocab_size = len(token_list)
         logging.info(f"Vocabulary size: {vocab_size }")
-        print("Vocabulary size :  {} \n".format(vocab_size))
-
+        
         # 1. frontend
         if args.input_size is None:
             # Extract features in the model
@@ -561,7 +582,7 @@ class ASRTask(AbsTask):
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
-            adversarial_branch = SpeakerAdv(vocab_size, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
+            adversarial_branch = SpeakerAdv(args.odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
         else:
             adversarial_branch = None
 

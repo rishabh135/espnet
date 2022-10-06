@@ -36,7 +36,6 @@ nj=32                # The number of parallel jobs.
 inference_nj=32      # The number of parallel jobs in decoding.
 gpu_inference=false  # Whether to perform gpu decoding.
 
-adv_flag=False
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
@@ -47,40 +46,43 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 # project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
-<<<<<<< HEAD
 adversarial_flag="True"
-project_name="june_27_adv_trigram_tformer_lm"
+adv_liststr="adv 200"
 
-experiment_name="70e_adv_acc_varied_lr" # name of the experiment, just change it to create differnet folders
-=======
-project_name="june_20_with_adversarial_trigram_rnn"
+# adv_liststr="asr 20 adv 20 asradv 30"
 
-experiment_name="standard_settings_trigram_rnn_decoder" # name of the experiment, just change it to create differnet folders
->>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
+
+project_name="nancy_sep_1_just_adv_200_epochs"
+
+
+experiment_name="odim_251_with_adv" # name of the experiment, just change it to create differnet folders
+
+
 
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
 
+# dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/dump
 
-
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/dump # Directory to dump features.
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/data # determines all the files creating folder as in the data folder
+
+
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/original_data
+# determines all the files creating folder as in the data folder
 
 # data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
 
-echo
-echo -e "\n******************************\n"
+
+echo "\n******************************\n"
 echo "${project_name}"
-echo 
 echo "$dumpdir"
-echo 
 echo "$expdir"
-echo -e "********\n Important setting data direcotry  *********** \n"
-echo -e "\n data directory : ${data_dd}  \n"
-echo -e "\n****************************\n"
+echo "********\n Important setting data direcotry  *********** \n"
+echo "\n data directory : ${data_dd}  \n"
+echo "\n****************************\n"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
@@ -97,7 +99,9 @@ python=python3       # Specify python to execute espnet commands.
 local_data_opts=${data_dd} # The options given to local/data.sh.
 
 # Speed perturbation related
-speed_perturb_factors=  # perturbation factors, e.g. "0.9 1.0 1.1" (separated by space).
+speed_perturb_factors="0.9 1.0 1.1"  # perturbation factors, e.g. "0.9 1.0 1.1" (separated by space).
+
+
 
 # Feature extraction related
 feats_type=raw       # Feature type (raw or fbank_pitch).
@@ -117,13 +121,20 @@ bpe_input_sentence_size=100000000 # Size of input sentence for BPE.
 bpe_nlsyms=         # non-linguistic symbols list, separated by a comma, for BPE
 bpe_char_cover=1.0  # character coverage when modeling BPE
 
+# # Ngram model related
+# use_ngram=
+# ngram_exp=
+# # /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/ngram_exp/ # Directory to dump features.
+# ngram_num=
+
+
 # Ngram model related
 use_ngram=true
-ngram_exp=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/ngram/exp # Directory to dump features.
+ngram_exp=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/ngram_exp/ # Directory to dump features.
 ngram_num=3
 
 # Language model related
-use_lm=true       # Use language model for ASR decoding.
+use_lm=       # Use language model for ASR decoding.
 lm_tag=           # Suffix to the result dir for language model training.
 lm_exp=           # Specify the directory path for LM experiment.
                   # If this option is specified, lm_tag is ignored.
@@ -318,6 +329,13 @@ fi
 . ./cmd.sh
 
 
+echo "#############################"
+echo "****************************"
+echo "${speed_perturb_factors}"
+echo "****************************"
+echo "#############################"
+
+
 # Check required arguments
 [ -z "${train_set}" ] && { log "${help_message}"; log "Error: --train_set is required"; exit 2; };
 [ -z "${valid_set}" ] && { log "${help_message}"; log "Error: --valid_set is required"; exit 2; };
@@ -493,6 +511,7 @@ if [ -z "${inference_tag}" ]; then
     fi
 fi
 
+
 # ========================== Main stages start from here. ==========================
 
 if ! "${skip_data_prep}"; then
@@ -520,10 +539,12 @@ if ! "${skip_data_prep}"; then
         fi
     fi
 
+
     if [ -n "${speed_perturb_factors}" ]; then
         train_set="${train_set}_sp"
     fi
 
+    log " Important :  Train set  ::    ${train_set}"
     if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
         if [ "${feats_type}" = raw ]; then
             log "Stage 3: Format wav.scp: ${data_dd}/ -> ${data_feats}"
@@ -918,17 +939,17 @@ if ! "${skip_train}"; then
                 --log "${lm_exp}"/train.log \
                 --ngpu "${ngpu}" \
                 --num_nodes "${num_nodes}" \
-                --adv_flag "False" \
                 --init_file_prefix "${lm_exp}"/.dist_init_ \
                 --multiprocessing_distributed true -- \
                 ${python} -m espnet2.bin.lm_train \
                     --ngpu "${ngpu}" \
                     --use_preprocessor true \
                     --bpemodel "${bpemodel}" \
+                    --adv_flag "" \
+                    --max_epoch 40 \
+                    --project_name "${project_name}" \
                     --token_type "${lm_token_type}"\
                     --token_list "${lm_token_list}" \
-                    --adv_flag "" \
-                    --project_name "Language_modeling_${project_name}" \
                     --non_linguistic_symbols "${nlsyms_txt}" \
                     --cleaner "${cleaner}" \
                     --g2p "${g2p}" \
@@ -1042,7 +1063,7 @@ if ! "${skip_train}"; then
         #       but it's used only for deciding the sample ids.
 
 
-        log "\n *********************** changing directories Stage 10    **************************\n"
+        log "\n *********************** changing directories Stage 10  inside what we want   **************************\n"
         cd "${global_dir}"
         cd "../../../"
 
@@ -1051,18 +1072,20 @@ if ! "${skip_train}"; then
             ${python} -m espnet2.bin.asr_train \
                 --collect_stats true \
                 --use_preprocessor true \
+                --project_name "${project_name}" \
+                --adv_flag "${adversarial_flag}" \
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
-                --adv_flag "${adversarial_flag}" \
-                --project_name "${project_name}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
+                --allow_variable_data_keys true \
                 --g2p "${g2p}" \
                 --train_data_path_and_name_and_type "${_asr_train_dir}/${_scp},speech,${_type}" \
                 --train_data_path_and_name_and_type "${_asr_train_dir}/text,text,text" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/${_scp},speech,${_type}" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/text,text,text" \
+                --train_data_path_and_name_and_type "${_asr_train_dir}/utt2spkid.txt,spkid,text_int" \
                 --train_shape_file "${_logdir}/train.JOB.scp" \
                 --valid_shape_file "${_logdir}/valid.JOB.scp" \
                 --output_dir "${_logdir}/stats.JOB" \
@@ -1186,11 +1209,15 @@ if ! "${skip_train}"; then
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
-                --adv_flag "True" \
+                --adv_flag "${adversarial_flag}" \
+                --adv_liststr "${adv_liststr}" \
                 --project_name "${project_name}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \
+                --allow_variable_data_keys true \
+                --train_data_path_and_name_and_type "${_asr_train_dir}/utt2spkid.txt,spkid,text_int" \
+                --valid_data_path_and_name_and_type "${_asr_valid_dir}/utt2spkid.txt,spkid,text_int" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/${_scp},speech,${_type}" \
                 --valid_data_path_and_name_and_type "${_asr_valid_dir}/text,text,text" \
                 --valid_shape_file "${asr_stats_dir}/valid/speech_shape" \
@@ -1455,8 +1482,8 @@ if ! "${skip_eval}"; then
 
                 fi
 
-                sclite \
-		    ${score_opts} \
+                ${global_dir}../../../tools/kaldi/tools/sctk-20159b5/bin/sclite \
+                        ${score_opts} \
                     -r "${_scoredir}/ref.trn" trn \
                     -h "${_scoredir}/hyp.trn" trn \
                     -i rm -o all stdout > "${_scoredir}/result.txt"
@@ -1631,3 +1658,5 @@ else
 fi
 
 log "Successfully finished. [elapsed=${SECONDS}s]"
+
+

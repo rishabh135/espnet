@@ -2,7 +2,7 @@
 import argparse
 import functools
 import logging
-import os
+import os, re
 from pickle import FALSE
 import sys
 from abc import ABC, abstractmethod
@@ -543,6 +543,9 @@ class AbsTask(ABC):
             default=True,
             help="Enable resuming if checkpoint is existing",
         )
+
+        group.add_argument('--save_every_epoch', default=5, type=int, help='Number of epochs which will be saved ')
+
         group.add_argument(
             "--train_dtype",
             default="float32",
@@ -581,6 +584,7 @@ class AbsTask(ABC):
             default=True,
             help="Enable wandb logging",
         )
+<<<<<<< HEAD
 
         # group.add_argument(
         #     "--project_name",
@@ -588,6 +592,8 @@ class AbsTask(ABC):
         #     default=None,
         #     help="Specify wandb project name",
         # )
+=======
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
         
         group.add_argument(
             "--wandb_id",
@@ -666,7 +672,7 @@ class AbsTask(ABC):
         group.add_argument(
             "--batch_size",
             type=int,
-            default=20,
+            default=30,
             help="The mini-batch size used for training. Used if batch_type='unsorted',"
             " 'sorted', or 'folded'.",
         )
@@ -790,7 +796,7 @@ class AbsTask(ABC):
         group.add_argument(
             "--allow_variable_data_keys",
             type=str2bool,
-            default=False,
+            default=True,
             help="Allow the arbitrary keys for mini-batch with ignoring "
             "the task requirements",
         )
@@ -847,6 +853,7 @@ class AbsTask(ABC):
             )
 
 
+<<<<<<< HEAD
         group = parser.add_argument_group("Adversarial part related ")
         parser.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
         # parser.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
@@ -859,14 +866,32 @@ class AbsTask(ABC):
         # parser.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
         parser.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
         parser.add_argument('--adversarial_list', default=[ "asr"] * 20 + ["adv" ] * 20 + ["asradv" ] * 30 ,  type=list,help='adversarial mode list')
+=======
+        group = parser.add_argument_group("Adversarial part related related")
+        group.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
+        
+        group.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
+        group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
 
         # + ["adv" ] * 20 + ["asradv" ] * 30
 
+        group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
+        group.add_argument('--adv_lr', default=0.002, type=float,help='Learning rate for adv branch')
+        group.add_argument('--asr_lr', default=0.002, type=float,help='Learning rate for ASR encoder and decoder')
+        group.add_argument('--reinit_adv', default=False, action='store_true',help='To reinitialize the speaker adversarial branch')
+        group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
+        # group.add_argument('--adversarial_list', default= ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30 , type=list,help='adversarial mode list')
+        
+        # 251 vs 585 ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10
+        group.add_argument('--odim_adv', default=251, type=int, help='Output of adversarial units used for labeling')
 
         parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
         parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
 
-
+        
+        # ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10 , type=list,help='adversarial mode list')
+        
 
         cls.trainer.add_arguments(parser)
         cls.add_task_arguments(parser)
@@ -1083,6 +1108,7 @@ class AbsTask(ABC):
 
         # "distributed" is decided using the other command args
         resolve_distributed_mode(args)
+
         if not args.distributed or not args.multiprocessing_distributed:
             cls.main_worker(args)
 
@@ -1141,6 +1167,39 @@ class AbsTask(ABC):
     def main_worker(cls, args: argparse.Namespace):
         assert check_argument_types()
 
+        # default= "asr 20 adv 20 asradv 30", type=str, help='adv_liststr string')
+        # Step -1  updated adversarial list
+
+        if(args.adv_flag and cls.__name__ == "ASRTask"):
+            
+            if (args.adv_liststr == "asr_adv_asradv" ):         
+                # print(" Updated adversarial list\n")
+                args.adversarial_list = ["asr", "asr", "adv", "adv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * 8 + ["asradv"] * 10
+                
+            else :
+                epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
+
+                if(len(epoch_list) == 5):
+                    args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] + ["asr"] * epoch_list[2] + ["adv"] * epoch_list[3] +  ["asradv"] * epoch_list[4]
+                elif(len(epoch_list) == 4):
+                    args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
+                elif(len(epoch_list) == 3):
+                    args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] +  ["asradv"] * epoch_list[2]
+                elif(len(epoch_list) == 2):
+                    args.adversarial_list = ["adv"] *  epoch_list[0] +  ["asradv"] * epoch_list[1]
+                else:
+                    args.adversarial_list = ["adv"] *  epoch_list[0]
+
+
+        elif(not args.adv_flag and cls.__name__ == "ASRTask"):
+            # print(" Updated adversarial list without adversarial \n")
+            args.adversarial_list =[ "asr"] * args.max_epoch
+
+        else:
+            args.adversarial_list =[ "asr"] * args.max_epoch
+
+
+        logging.warning(" >>>>>> Adversarial_list {} \n".format(args.adversarial_list))
         # 0. Init distributed process
         distributed_option = build_dataclass(DistributedOption, args)
         # Setting distributed_option.dist_rank, etc.
@@ -1198,6 +1257,11 @@ class AbsTask(ABC):
             
         model = cls.build_model(args=args)
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
         if not isinstance(model, AbsESPnetModel):
             raise RuntimeError(
                 f"model must inherit {AbsESPnetModel.__name__}, but got {type(model)}"
@@ -1364,7 +1428,11 @@ class AbsTask(ABC):
                     not distributed_option.distributed
                     or distributed_option.dist_rank == 0
                 ):
+<<<<<<< HEAD
 
+=======
+                    
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
                     if args.project_name is None:
                         today = date.today()
                         d2 = today.strftime("%B_%d_")
@@ -1382,6 +1450,7 @@ class AbsTask(ABC):
                         name =  d2 + "__" + time 
                     else:
                         name = args.wandb_name
+<<<<<<< HEAD
                         
                         # str(Path(".").resolve() ).replace("/", "_") 
                         # # dd/mm/YY
@@ -1390,6 +1459,8 @@ class AbsTask(ABC):
 
                         # Textual month, day and year	
                         # print("d2 =", d2)
+=======
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
 
                     wandb.init(
                         entity=args.wandb_entity,
@@ -1399,7 +1470,7 @@ class AbsTask(ABC):
                         id=args.wandb_id,
                         resume=args.resume,
                     )
-                    wandb.config.update(args)
+                    wandb.config.update(args, allow_val_change=True)
                 else:
                     # wandb also supports grouping for distributed training,
                     # but we only logs aggregated data,

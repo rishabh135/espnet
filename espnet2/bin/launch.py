@@ -12,10 +12,13 @@ from pathlib import Path
 from espnet2.utils.types import str2bool, str_or_none
 from espnet.utils.cli_utils import get_commandline_args
 
+<<<<<<< HEAD
 logging.info (" \n ********* Inside  bin/launch.py  *********  \n ")
 print("\n ********* Inside  bin/launch.py  *********  \n")
 
 
+=======
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
 
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -42,6 +45,7 @@ def get_parser():
     )
     
 
+<<<<<<< HEAD
 
 
     # parser.add_argument('--eprojs', default=256, type=int, help='Number of encoder projection units')
@@ -57,6 +61,8 @@ def get_parser():
     # parser.add_argument('--adversarial_list', default=[ "spk"] * 20  + ["asr" ] * 20 + ["spkasr" ] * 30 , type=list,help='adversarial mode list')
 
 
+=======
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
 
     egroup = parser.add_mutually_exclusive_group()
     egroup.add_argument("--num_nodes", type=int, default=1, help="The number of nodes")

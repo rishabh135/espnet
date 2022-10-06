@@ -83,6 +83,7 @@ class TrainerOptions:
     wandb_model_log_interval: int
     adversarial_list: list
     adv_flag: bool
+    save_every_epoch: int
 
 
 class Trainer:
@@ -261,9 +262,9 @@ class Trainer:
 
         start_time = time.perf_counter()
         for iepoch in range(start_epoch, trainer_options.max_epoch + 1):
-            print("\n train/trainer.py <<< current epoch {}  max_epoch {} ******\n".format(iepoch, trainer_options.max_epoch))
+            logging.warning(" current epoch {}  max_epoch {} ******".format(iepoch, trainer_options.max_epoch))
             if iepoch != start_epoch:
-                logging.info(
+                logging.warning(
                     "{}/{}epoch started. Estimated time to finish: {}".format(
                         iepoch,
                         trainer_options.max_epoch,
@@ -275,7 +276,7 @@ class Trainer:
                     )
                 )
             else:
-                logging.info(f"{iepoch}/{trainer_options.max_epoch}epoch started")
+                logging.warning(f"{iepoch}/{trainer_options.max_epoch}epoch started")
             set_all_random_seed(trainer_options.seed + iepoch)
 
             reporter.set_epoch(iepoch)
@@ -354,6 +355,20 @@ class Trainer:
                     output_dir / "checkpoint.pth",
                 )
 
+                if(iepoch% trainer_options.save_every_epoch == 0 ):
+                    # 4.2 Saving every 5th epoch as the checkpoint
+                    torch.save(
+                        {
+                            "model": model.state_dict(),
+                            "reporter": reporter.state_dict(),
+                            "optimizers": [o.state_dict() for o in optimizers],
+                            "schedulers": [
+                                s.state_dict() if s is not None else None
+                                for s in schedulers
+                            ],
+                            "scaler": scaler.state_dict() if scaler is not None else None,
+                        }, "{}/{}_checkpoint.pth".format( output_dir, iepoch),)
+
                 # 5. Save and log the model and update the link to the best model
                 torch.save(model.state_dict(), output_dir / f"{iepoch}epoch.pth")
 
@@ -376,11 +391,9 @@ class Trainer:
                             p.symlink_to(f"{iepoch}epoch.pth")
                             _improved.append(f"{_phase}.{k}")
                 if len(_improved) == 0:
-                    logging.info("There are no improvements in this epoch")
+                    logging.warning(" IMPORTANT: There are no improvements in this epoch")
                 else:
-                    logging.info(
-                        "The best model has been updated: " + ", ".join(_improved)
-                    )
+                    logging.warning(" IMPORTANT : The best model has been updated: " + ", ".join(_improved))
 
                 log_model = (
                     trainer_options.wandb_model_log_interval > 0
@@ -389,7 +402,7 @@ class Trainer:
                 if log_model and trainer_options.use_wandb:
                     import wandb
 
-                    logging.info("Logging Model on this epoch :::::")
+                    logging.warning("Logging Model on this epoch :::::")
                     artifact = wandb.Artifact(
                         name=f"model_{wandb.run.id}",
                         type="model",
@@ -427,12 +440,13 @@ class Trainer:
                     )
 
                 for e in range(1, iepoch):
-                    p = output_dir / f"{e}epoch.pth"
-                    if p.exists() and e not in nbests:
-                        p.unlink()
-                        _removed.append(str(p))
+                    if( e% trainer_options.save_every_epoch > 0):
+                        p = output_dir / f"{e}epoch.pth"
+                        if p.exists() and e not in nbests:
+                            p.unlink()
+                            _removed.append(str(p))
                 if len(_removed) != 0:
-                    logging.info("The model files were removed: " + ", ".join(_removed))
+                    logging.warning("The model files were removed: " + ", ".join(_removed))
 
             # 7. If any updating haven't happened, stops the training
             if all_steps_are_invalid:
@@ -489,9 +503,35 @@ class Trainer:
         use_wandb = options.use_wandb
         distributed = distributed_option.distributed
 
+<<<<<<< HEAD
         adv_mode = options.adversarial_list[current_epoch-1]
         adv_flag = options.adv_flag
+=======
+       
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
 
+        # "ASRTask"
+        adv_mode = options.adversarial_list[current_epoch-1]
+        adv_flag = options.adv_flag
+        # 'espnet2.asr.espnet_model.ESPnetASRModel'
+        
+        
+        if(options.ngpu > 1):
+            adv_name = str(type(model.module).__name__)
+            # logging.warning(" ------->>>>>>>>>>> ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
+        else:
+            adv_name = str(type(model).__name__)
+
+
+        # for name, layer in model.named_modules():
+        #     logging.warning( " {} ".format(name))
+        # logging.warning( " >>>> adv_name {} ".format(adv_name))
+        # logging.warning(" model_vars {} \n\n".format( vars(model)))
+        # logging.warning("******************************\n\n")
+        
+        # logging.warning(" cls_vars {} \n\n".format( vars(cls)))
+        # logging.warning("******************************\n\n")
+        
         if log_interval is None:
             try:
                 log_interval = max(len(iterator) // 20, 10)
@@ -505,9 +545,94 @@ class Trainer:
         iterator_stop = torch.tensor(0).to("cuda" if ngpu > 0 else "cpu")
 
         start_time = time.perf_counter()
+<<<<<<< HEAD
         
         for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
+=======
+ 
+        if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
+            if options.ngpu > 1:
+                model.module.freeze_adversarial()
+                model.module.unfreeze_encoder()
+            else:
+                model.freeze_adversarial()
+                model.unfreeze_encoder()
+
+
+        
+        elif (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'adv'):
+            if options.ngpu > 1:
+                model.module.freeze_encoder()
+                model.module.unfreeze_adversarial()
+            else:
+                model.freeze_encoder()
+                model.unfreeze_adversarial()
+
+        
+        elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
+            if (options.ngpu > 1):
+                model.module.unfreeze_encoder()
+                model.module.unfreeze_adversarial()
+            else:
+                model.unfreeze_encoder()
+                model.unfreeze_adversarial()
+
+
+        param_group_length = len(optimizers[0].param_groups)
+        current_flr = optimizers[0].param_groups[0]['lr']
+        current_llr = optimizers[0].param_groups[-1]['lr']
+        
+        logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(current_flr), float(current_llr), param_group_length))
+
+
+
+        for iiter, (utt_id, batch) in enumerate(
+            reporter.measure_iter_time(iterator, "iter_time"), 1
+        ):
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
             assert isinstance(batch, dict), type(batch)
+
+            # logging.warning(" prinitng iiter {} ")
+            # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
+            # logging.warning("**************   Batch ************")
+            # for keys,values in batch.items():
+            #     logging.warning(" {}  >> {} \n".format(keys, values))
+                
+            # logging.warning("**************************\n\n")
+
+            # logging.warning(" len {} utt_id {} \n".format( len(utt_id), utt_id))
+
+            # ['sp1.1-5703-47212-0024', 'sp1.1-5561-41615-0030', 'sp1.1-3723-171115-0030', 'sp1.1-3214-167607-0035', 'sp1.1-2817-142380-0037', 'sp1.1-2514-149482-0056', 'sp1.1-1624-142933-0016', 'sp0.9-78-369-0052', 'sp0.9-7067-76048-0024', 'sp0.9-5049-25947-0006', 'sp0.9-4481-17499-0016', 'sp0.9-3879-174923-0004', 'sp0.9-211-122442-0003', '441-128982-0006', '3857-182315-0042', '2764-36619-0037', 'sp1.1-1455-138263-0030', 'sp1.1-909-131045-0016', 'sp1.1-8975-270782-0084', 'sp1.1-8238-274553-0024', 'sp1.1-8051-118101-0022', 'sp1.1-7113-86041-0050', 'sp1.1-6081-42010-0021', 'sp1.1-5688-15787-0001', 'sp1.1-4267-287369-0019', 'sp1.1-403-128339-0046', 'sp1.1-332-128985-0040', 'sp1.1-332-128985-0038', 'sp1.1-3240-131232-0004', 'sp1.1-226-131533-0005', 'sp1.1-211-122442-0002', 'sp0.9-4853-27670-0017', 'sp0.9-481-123719-0021', 'sp0.9-445-123857-0021', 'sp0.9-4340-15220-0086', '911-130578-0007', '6836-61803-0037', '6385-34669-0018', '4267-287369-0008']
+            # **************************
+            # speech  >> tensor([[-1.3733e-03, -7.9346e-04,  3.3569e-04,  ..., -1.1292e-03,
+            #         -1.6174e-03, -2.2278e-03],
+            #     [ 1.6174e-03,  2.9297e-03,  2.1973e-03,  ..., -3.3569e-04,
+            #         -4.5776e-04, -7.0190e-04],
+            #     [-1.2207e-04,  6.1035e-04,  1.1902e-03,  ..., -4.5776e-03,
+            #         -4.7913e-03, -2.5635e-03],
+            #     ...,
+            #     [-3.9673e-04, -3.6621e-04, -3.0518e-04,  ...,  0.0000e+00,
+            #         0.0000e+00,  0.0000e+00],
+            #     [ 3.9673e-04,  7.3242e-04,  1.2512e-03,  ...,  0.0000e+00,
+            #         0.0000e+00,  0.0000e+00],
+            #     [ 6.1035e-05,  6.1035e-05,  1.2207e-04,  ...,  0.0000e+00,
+            #         0.0000e+00,  0.0000e+00]]) 
+            # speech_lengths  >> tensor([180218, 180218, 180218, 180218, 180218, 180218, 180218, 180178, 180178,
+            #     180178, 180178, 180178, 180178, 180160, 180160, 180160, 180146, 180145,
+            #     180145, 180145, 180145, 180145, 180145, 180145, 180145, 180145, 180145,
+            #     180145, 180145, 180145, 180145, 180089, 180089, 180089, 180089, 180080,
+            #     180080, 180080, 180080]) 
+            # text  >> tensor([[  11,   12,  425,  ...,  321,   -1,   -1],
+            #     [  10,   70,   26,  ...,   20,   89,   -1],
+            #     [   4,  497,   11,  ...,   -1,   -1,   -1],
+            #     ...,
+            #     [ 607,   86,    2,  ...,   -1,   -1,   -1],
+            #     [   2,  121, 4357,  ...,   -1,   -1,   -1],
+            #     [  13,   18,   66,  ...,   -1,   -1,   -1]]) 
+            # text_lengths  >> tensor([47, 48, 35, 34, 43, 42, 37, 37, 38, 39, 37, 36, 34, 40, 46, 34, 39, 41,
+            #     44, 47, 43, 38, 29, 49, 31, 39, 48, 45, 44, 33, 38, 27, 42, 31, 38, 38,
+            #     36, 38, 28]) 
+
 
             if distributed:
                 torch.distributed.all_reduce(iterator_stop, ReduceOp.SUM)
@@ -532,8 +657,9 @@ class Trainer:
                         loss = retval["loss"]
                         stats = retval["stats"]
                         weight = retval["weight"]
-                        loss_adv = retval.get("loss_adv")
                         optim_idx = retval.get("optim_idx")
+
+                        # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
                         if optim_idx is not None and not isinstance(optim_idx, int):
                             if not isinstance(optim_idx, torch.Tensor):
                                 raise RuntimeError(
@@ -558,20 +684,17 @@ class Trainer:
 
                     #   b. tuple or list type
                     else:
-                        if(adv_flag):
-                            loss, stats, weight, loss_adv = retval
-                        else:
-                            loss, stats, weight = retval
+                        loss, stats, weight = retval
                         
                         optim_idx = None
 
 
-
                 ###################################################################################
                 ###################################################################################
                 ###################################################################################
 
 
+<<<<<<< HEAD
                 print("/*** train/trainer.py adv_flag {} adv_mode {}  asr_loss {}   ".format(adv_flag, adv_mode, loss.detach() ))
                 if(adv_flag):
                     print(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["adversarial_loss"].detach(), stats["adversarial_accuracy"] ))
@@ -642,6 +765,8 @@ class Trainer:
                 
 
                    
+=======
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
                 
 
 
@@ -649,14 +774,10 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-
-
-
-
                 stats = {k: v for k, v in stats.items() if v is not None}
                 if ngpu > 1 or distributed:
                     # Apply weighted averaging for loss and stats
-                    loss = (loss * weight.type(loss.dtype)).sum()
+                    loss = (loss * weight.type(loss.dtype)).sum()                    
 
                     # if distributed, this method can also apply all_reduce()
                     stats, weight = recursive_average(stats, weight, distributed)
@@ -668,20 +789,46 @@ class Trainer:
                     # automatically normalizes the gradient by world_size.
                     loss *= torch.distributed.get_world_size()
 
-                loss /= accum_grad
+                # loss /= accum_grad
+                
 
-            
             reporter.register(stats, weight)
 
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
-                    # Scales loss.  Calls backward() on scaled loss
-                    # to create scaled gradients.
-                    # Backward passes under autocast are not recommended.
-                    # Backward ops run in the same dtype autocast chose
-                    # for corresponding forward ops.
-                    scaler.scale(loss).backward()
+
+                    if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
+                        loss /= accum_grad
+                        scaler.scale(loss).backward()
+                        # loss_adversarial = retval["loss_adversarial"]
+                        # total_loss = loss
+                        # loss = total_loss
+
+                    
+                    elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
+                        loss_adversarial = retval["loss_adversarial"]
+                        loss_adversarial /= accum_grad
+                        # loss_adversarial.requires_grad = True
+                        scaler.scale(loss_adversarial).backward()
+                    
+                    elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
+                        loss_adversarial = retval["loss_adversarial"]
+                        # loss_adversarial.requires_grad = True
+                        loss = loss + loss_adversarial
+                        loss /= accum_grad
+                        scaler.scale(loss).backward()
+                    else:
+                        loss /= accum_grad
+                        scaler.scale(loss).backward()
+                        # scaler.scale(loss_adversarial).backward()
+                        # Scales loss.  Calls backward() on scaled loss
+                        # to create scaled gradients.
+                        # Backward passes under autocast are not recommended.
+                        # Backward ops run in the same dtype autocast chose
+                        # for corresponding forward ops.
+                    
                 else:
+                    loss /= accum_grad
                     loss.backward()
 
             if iiter % accum_grad == 0:
@@ -712,7 +859,51 @@ class Trainer:
                 if not isinstance(grad_norm, torch.Tensor):
                     grad_norm = torch.tensor(grad_norm)
 
+                ###################################################################################
+                ###################################################################################
+                ###################################################################################
 
+
+                if( (iiter % 100) == 0):        
+                    logging.warning(" MODE: {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {}  ".format( adv_mode, iiter, adv_flag,  stats["loss"].detach(), grad_norm ))
+                    if(adv_flag == True and adv_name == "ESPnetASRModel"):
+                        logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
+    
+                    if(iiter == 200):
+                        # logging.warning(model)
+                        logging.warning("******************************")
+
+                        if(options.ngpu > 1): 
+                            logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
+                            logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.module.encoder.encoders[2].feed_forward.w_1.weight.grad, model.module.encoder.encoders[2].feed_forward.w_1.bias.grad   ) )
+                            if(adv_flag == True and adv_name == "ESPnetASRModel"):
+                                logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.module.adversarial_branch.output.weight.grad, model.module.adversarial_branch.output.bias.grad   ) )
+
+                        elif(options.ngpu == 1):
+
+                            logging.warning(" ctc weight grad {}   shape {}  ctc bias grad {}".format(  torch.count_nonzero(model.ctc.ctc_lo.weight.grad), model.ctc.ctc_lo.weight.grad.shape ,  torch.count_nonzero(model.ctc.ctc_lo.bias.grad)  ) )    
+                            logging.warning(" encoder weight grad {}  shape {}  encoder bias grad {}".format(  torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad), model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape, torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   ) )
+                            if(adv_flag == True and adv_name == "ESPnetASRModel"):
+                                if(model.adversarial_branch.output.weight.grad is not None):
+                                    logging.warning(" adversarial weight grad {} shape {}  adversarial bias grad {}".format( torch.count_nonzero(model.adversarial_branch.output.weight.grad), model.adversarial_branch.output.weight.grad.shape, torch.count_nonzero(model.adversarial_branch.output.bias.grad)   ) )
+
+
+
+                            # if(self.encoder_weight_layer is not None):
+                            #     tmpx =  model.encoder.encoders[2].feed_forward.w_1.weight - self.encoder_weight_layer
+                            #     tmpy =  model.ctc.ctc_lo.weight - self.ctc_weight_layer
+                                
+                            #     if(self.adversarial_weight_layer is not None):
+                            #         tmpz = model.adversarial_branch.output.weight - self.adversarial_weight_layer
+                            #         logging.warning(" adversarial {}   ".format(torch.count_nonzero(tmpz)))
+                            #     logging.warning(" encoder : {} ctc {}  ".format(torch.count_nonzero(tmpx), torch.count_nonzero(tmpy)))
+
+                            # self.encoder_weight_layer = model.encoder.encoders[2].feed_forward.w_1.weight
+                            # self.ctc_weight_layer = model.ctc.ctc_lo.weight
+                            # if(adv_mode == "adv" or adv_mode == "asradv"):
+                            #     self.adversarial_weight_layer = model.adversarial_branch.output.weight
+                        
+                            
 
 
 
@@ -780,7 +971,7 @@ class Trainer:
             # NOTE(kamo): Call log_message() after next()
             reporter.next()
             if iiter % log_interval == 0:
-                logging.info(reporter.log_message(-log_interval))
+                logging.warning(reporter.log_message(-log_interval))
                 if summary_writer is not None:
                     reporter.tensorboard_add_scalar(summary_writer, -log_interval)
                 if use_wandb:
@@ -820,6 +1011,15 @@ class Trainer:
                 torch.distributed.all_reduce(iterator_stop, ReduceOp.SUM)
                 if iterator_stop > 0:
                     break
+
+            # logging.warning(" prinitng iiter {} ")
+            # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
+            # logging.warning("**************   Batch ************")
+            # for keys,values in batch.items():
+            #     logging.warning(" {}  >> {} \n".format(keys, values))
+                
+            # logging.warning("**************************\n\n")
+
 
             batch["utt_id"] = utt_id
 

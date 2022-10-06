@@ -10,6 +10,7 @@ import torch.nn.functional as F
 # import warpctc_pytorch as warp_ctc
 from torch.autograd import Function
 
+from collections import Counter
 
 #-------------------- Adversarial Network ------------------------------------
 # Brij: Added the gradient reversal layer
@@ -29,8 +30,6 @@ def to_cuda(m, x):
 
 
 
-
-
 def th_accuracy(pad_outputs, pad_targets, ignore_label):
     """Function to calculate accuracy
     :param torch.Tensor pad_outputs: prediction tensors (B*Lmax, D)
@@ -39,13 +38,18 @@ def th_accuracy(pad_outputs, pad_targets, ignore_label):
     :retrun: accuracy value (0.0 - 1.0)
     :rtype: float
     """
-    pad_pred = pad_outputs.view(
-        pad_targets.size(0),
-        pad_targets.size(1),
-        pad_outputs.size(1)).argmax(2)
+    # logging.warning(" pad_out_shape {} pad_targets_shape {}  ".format(pad_outputs.shape, pad_targets.shape))
+    
+    # pad_pred = pad_outputs.view(
+    #     pad_targets.size(0),
+    #     pad_targets.size(1),
+    #     pad_outputs.size(1)).argmax(2)
+    pad_pred = pad_outputs.argmax(1)
     mask = pad_targets != ignore_label
+    # logging.warning("\n pad_pred: {}\npad_targ: {}\n".format(pad_pred[::500].tolist(), pad_targets[:500].tolist(), ))
     numerator = torch.sum(pad_pred.masked_select(mask) == pad_targets.masked_select(mask))
     denominator = torch.sum(mask)
+    # logging.warning("******************************\n\n")
     return float(numerator) / float(denominator)
 
 class ReverseLayerF(Function):
@@ -127,24 +131,19 @@ class SpeakerAdv(torch.nn.Module):
     def zero_state(self, hs_pad):
         return hs_pad.new_zeros(2*self.advlayers, hs_pad.size(0), self.advunits)
 
-    def forward(self, hs_pad, hlens, text_length):
+    def forward(self, hs_pad, hlens, y_adv):
         '''Adversarial branch forward
         :param torch.Tensor hs_pad: batch of padded hidden state sequences (B, Tmax, D)
         :param torch.Tensor hlens: batch of lengths of hidden state sequences (B)
-        :param torch.Tensor speech_length: list of speaker index so that we can create a per frame label to used for y_adv by extending the tensor to a dimnetion of (B, average_sequence_length) with each frame  (B)
         :param torch.Tensor y_adv: batch of speaker class (B, #Speakers)
         :return: loss value
         :rtype: torch.Tensor
         :return: accuracy
         :rtype: float
         '''
-    
-        # CUDA runtime error (59) : device-side assert triggered  
-        # Necessary to replace speech_length to text_length
-        # https://stackoverflow.com/questions/51691563/cuda-runtime-error-59-device-side-assert-triggered
 
-       
         # initialization
+<<<<<<< HEAD
         # logging.info("initializing hidden states for LSTM")
         h_0 = self.zero_state(hs_pad)
         c_0 = self.zero_state(hs_pad)
@@ -168,22 +167,26 @@ class SpeakerAdv(torch.nn.Module):
         
         # print("adversarial target size  = {} \n".format(y_adv.shape))
         
+=======
+        # logging.warning("initializing new modified forward")
+        h_0 = self.zero_state(hs_pad)
+        c_0 = self.zero_state(hs_pad)
+
+        # logging.warning("Passing encoder output through advnet {} ".format(hs_pad.shape))
+        # logging.warning(" spkid inside adversarial {} ".format(y_adv))
+        self.advnet.flatten_parameters()
+        out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
+
+        # logging.warning("advnet output size = %s", str(out_x.shape))
+        # logging.warning("adversarial target size = %s", str(y_adv.shape))
+
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
         y_hat = self.output(out_x)
 
         # Create labels tensor by replicating speaker label
         batch_size, avg_seq_len, out_dim = y_hat.size()
 
-        # print(" y_hat size  = {} and batch size {}  \n".format(y_hat.shape, batch_size))
-     
-
-
-        # for every frame the same speaked index, hence extend the vector to mimic the save value across average sequence length
-        labels = torch.zeros([batch_size, avg_seq_len], dtype=torch.int64)
-        
-        y_adv = text_length.repeat(1, avg_seq_len).view(-1, avg_seq_len)
-        # print(" ****** asr/adversarial_branch.py   y_adv shape  = {} \n".format(y_adv.shape))
-        
-
+        labels = torch.zeros([batch_size, avg_seq_len], dtype=torch.float64)
         for ix in range(batch_size):
             labels[ix, :] = y_adv[ix]
 
@@ -196,16 +199,29 @@ class SpeakerAdv(torch.nn.Module):
         y_hat = y_hat.view((-1, out_dim))
         labels = labels.contiguous().view(-1)
         labels = to_cuda(self, labels.long())
-        # logging.info("adversarial output size = %s", str(y_hat.shape))
-        # logging.info("artificial label size = %s", str(labels.shape))
+        #labels = to_cuda(self, labels.float())
+        # logging.warning("adversarial output size = %s", str(y_hat.shape))
+        # logging.warning("artificial label size = %s", str(labels.shape))
 
         loss = F.cross_entropy(y_hat, labels, size_average=True)
+<<<<<<< HEAD
         
         # logging.info("Adversarial loss = %f", loss.item())
         acc = th_accuracy(y_hat, labels.unsqueeze(0), -1)
         # logging.info("Adversarial accuracy = %f", acc)
+=======
+        #loss = F.kl_div(y_hat, labels, size_average=True)
+        # logging.warning("Adversarial loss = %f", loss.item())
+        acc = th_accuracy(y_hat, labels, -1)
+        # logging.warning("Adversarial accuracy = %f", acc)
+>>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
 
         return loss, acc
+    
+    
+    
+
+
 
 
 #-------------------- Adversarial Network ------------------------------------

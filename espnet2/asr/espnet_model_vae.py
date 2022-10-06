@@ -110,6 +110,10 @@ class ESPnetASRModel(AbsESPnetModel):
         self.encoder_frozen_flag = False
         self.adversarial_frozen_flag = False
 
+        # self.fc_mu = nn.Linear(hidden_dims[-1]*4, latent_dim)
+        # self.fc_var = nn.Linear(hidden_dims[-1]*4, latent_dim)
+
+        # self.reconstruction_decoder_input = nn.Linear(latent_dim, hidden_dims[-1] * 4)
 
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
@@ -206,16 +210,15 @@ class ESPnetASRModel(AbsESPnetModel):
                 if param.grad is not None:
                     param.grad.zero_()
                 
-            for param in self.ctc.ctc_lo.parameters():
+            for param in self.ctc.parameters():
                 param.requires_grad = False
                 if param.grad is not None:
                     param.grad.zero_()
             
-            # for param in self.criterion_att.parameters():
-            #     param.requires_grad = False
-            #     if param.grad is not None:
-            #         param.grad.zero_()
-
+            for param in self.criterion_att.parameters():
+                param.requires_grad = False
+                if param.grad is not None:
+                    param.grad.zero_()
             self.encoder_frozen_flag = True
         self.print_flags()
    
@@ -225,11 +228,8 @@ class ESPnetASRModel(AbsESPnetModel):
                 param.requires_grad = True
             for param in self.decoder.parameters():
                 param.requires_grad = True
-            for param in self.ctc_lo.parameters():
+            for param in self.ctc.parameters():
                 param.requires_grad = True
-            
-            # for param in self.criterion_att.parameters():
-            #     param.requires_grad = True
 
             self.encoder_frozen_flag = False
     
@@ -415,7 +415,6 @@ class ESPnetASRModel(AbsESPnetModel):
                 1 - self.interctc_weight
             ) * loss_ctc + self.interctc_weight * loss_interctc
 
-
         if self.use_transducer_decoder:
             # 2a. Transducer decoder branch
             (
@@ -455,41 +454,6 @@ class ESPnetASRModel(AbsESPnetModel):
             else:
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att
 
-<<<<<<< HEAD
-
-            # Collect Attn branch stats
-            stats["attention_loss"] = loss_att.detach() if loss_att is not None else None
-            stats["attention_accuracy"] = acc_att
-            stats["attention_cer"] = cer_att
-            stats["attention_wer"] = wer_att
-            
-
-
-
-            retval = {} 
-            if (self.adv_flag):
-                # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
-                rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
-                # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-                loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, text_lengths)
-                # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
-                
-                stats["adversarial_loss"] = loss_adv.detach() if loss_adv is not None else None
-                stats["adversarial_accuracy"] = acc_adv if acc_adv is not None else None
-                
-                
-                retval["loss_adv"]= loss_adv if loss_adv is not None else None
-                retval["accuracy_adversarial"] = acc_adv if acc_adv is not None else None
-
-
-
-        # Collect total loss stats
-        stats["asr_loss"] = loss.detach()
-
-        # force_gatherable: to-device and to-tensor if scalar for DataParallel
-        loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
-        
-=======
             # Collect Attn branch stats
             stats["loss_att"] = loss_att.detach() if loss_att is not None else None
             stats["acc"] = acc_att * 100
@@ -503,16 +467,57 @@ class ESPnetASRModel(AbsESPnetModel):
         # force_gatherable: to-device and to-tensor if scalar for DataParallel
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
                 
->>>>>>> 1180fdc965d5d9d5153def25eeee50ba26349232
         retval["loss"] = loss   
         retval["stats"] = stats
         retval["weight"] = weight
         retval["loss_ctc"] = loss_ctc
         retval["loss_att"] = loss_att
         
+        # loss_ctc, loss_att, acc, cer, wer, loss_adv, acc_adv
+
         return retval
 
 
+
+    # self.fc_mu = nn.Linear(hidden_dims[-1]*4, latent_dim)
+    # self.fc_var = nn.Linear(hidden_dims[-1]*4, latent_dim)
+    # mu = self.fc_mu(result)
+    # log_var = self.fc_var(result)
+    # return [mu, log_var]
+    
+    # self.decoder_input = nn.Linear(latent_dim, hidden_dims[-1] * 4)
+
+
+    def vae_loss_function(self, recon_decoder_output, encoder_input, mu, log_var, kld_weight ) -> dict:
+        """
+        Computes the VAE loss function.
+        KL(N(\mu, \sigma), N(0, 1)) = \log \frac{1}{\sigma} + \frac{\sigma^2 + \mu^2}{2} - \frac{1}{2}
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        # recons = args[0]
+        # input = args[1]
+        # mu = args[2]
+        # log_var = args[3]
+        # kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
+        
+        recons_loss = F.mse_loss(recon_decoder_output, encoder_input)
+        kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
+        loss = recons_loss + kld_weight * kld_loss
+        return {'loss': loss, 'Reconstruction_Loss':recons_loss.detach(), 'KLD':-kld_loss.detach()}
+
+    def reparameterize(self, mu: Tensor, logvar: Tensor) -> Tensor:
+        """
+        Reparameterization trick to sample from N(mu, var) from
+        N(0,1).
+        :param mu: (Tensor) Mean of the latent Gaussian [B x D]
+        :param logvar: (Tensor) Standard deviation of the latent Gaussian [B x D]
+        :return: (Tensor) [B x D]
+        """
+        std = torch.exp(0.5 * logvar)
+        eps = torch.randn_like(std)
+        return eps * std + mu
 
 
 
