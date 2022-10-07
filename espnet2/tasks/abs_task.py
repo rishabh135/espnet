@@ -546,6 +546,8 @@ class AbsTask(ABC):
 
         group.add_argument('--save_every_epoch', default=5, type=int, help='Number of epochs which will be saved ')
 
+        group.add_argument('--resume_from_checkpoint', default=10, type=int, help='Number of epochs which will be saved ')
+
         group.add_argument(
             "--train_dtype",
             default="float32",

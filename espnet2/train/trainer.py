@@ -9,6 +9,7 @@ from dataclasses import is_dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
+import os, sys
 import humanfriendly
 import numpy as np
 import torch
@@ -84,6 +85,7 @@ class TrainerOptions:
     adversarial_list: list
     adv_flag: bool
     save_every_epoch: int
+    resume_from_checkpoint: int
 
 
 class Trainer:
@@ -196,9 +198,9 @@ class Trainer:
         else:
             scaler = None
 
-        if trainer_options.resume and (output_dir / "checkpoint.pth").exists():
+        if trainer_options.resume and ( os.path.exists("{}/{}_checkpoint.pth".format(output_dir, trainer_options.resume_from_checkpoint))):
             cls.resume(
-                checkpoint=output_dir / "checkpoint.pth",
+                checkpoint= "{}/{}_checkpoint.pth".format(output_dir, trainer_options.resume_from_checkpoint) ,
                 model=model,
                 optimizers=optimizers,
                 schedulers=schedulers,
@@ -791,15 +793,19 @@ class Trainer:
                         logging.warning("******************************")
 
                         if(options.ngpu > 1): 
-                            logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
-                            logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.module.encoder.encoders[2].feed_forward.w_1.weight.grad, model.module.encoder.encoders[2].feed_forward.w_1.bias.grad   ) )
+                            
+                            # logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
+                            # logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.module.encoder.encoders[2].feed_forward.w_1.weight.grad, model.module.encoder.encoders[2].feed_forward.w_1.bias.grad   ) )
+                            
                             if(adv_flag == True and adv_name == "ESPnetASRModel"):
                                 logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.module.adversarial_branch.output.weight.grad, model.module.adversarial_branch.output.bias.grad   ) )
 
                         elif(options.ngpu == 1):
 
-                            logging.warning(" ctc weight grad {}   shape {}  ctc bias grad {}".format(  torch.count_nonzero(model.ctc.ctc_lo.weight.grad), model.ctc.ctc_lo.weight.grad.shape ,  torch.count_nonzero(model.ctc.ctc_lo.bias.grad)  ) )    
-                            logging.warning(" encoder weight grad {}  shape {}  encoder bias grad {}".format(  torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad), model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape, torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   ) )
+                            if(model.ctc.ctc_lo.weight.grad is not None):
+                                logging.warning(" ctc weight grad {}   shape {}  ctc bias grad {}".format(  torch.count_nonzero(model.ctc.ctc_lo.weight.grad), model.ctc.ctc_lo.weight.grad.shape ,  torch.count_nonzero(model.ctc.ctc_lo.bias.grad)  ) )    
+                                logging.warning(" encoder weight grad {}  shape {}  encoder bias grad {}".format(  torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad), model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape, torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   ) )
+                                
                             if(adv_flag == True and adv_name == "ESPnetASRModel"):
                                 if(model.adversarial_branch.output.weight.grad is not None):
                                     logging.warning(" adversarial weight grad {} shape {}  adversarial bias grad {}".format( torch.count_nonzero(model.adversarial_branch.output.weight.grad), model.adversarial_branch.output.weight.grad.shape, torch.count_nonzero(model.adversarial_branch.output.bias.grad)   ) )
@@ -868,7 +874,7 @@ class Trainer:
                 for iopt, optimizer in enumerate(optimizers):
                     if optim_idx is not None and iopt != optim_idx:
                         continue
-                    optimizer.zero_grad()
+                    optimizer.zero_grad(set_to_none=True)
 
                 # Register lr and train/load time[sec/step],
                 # where step refers to accum_grad * mini-batch

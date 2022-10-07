@@ -199,17 +199,20 @@ class ESPnetASRModel(AbsESPnetModel):
         if not self.encoder_frozen_flag:
             for param in self.encoder.parameters():
                 param.requires_grad = False
-                if param.grad is not None:
-                    param.grad.zero_()
+                param.grad = None
+                # if param.grad is not None:
+                #     param.grad.zero_()
             for param in self.decoder.parameters():
                 param.requires_grad = False
-                if param.grad is not None:
-                    param.grad.zero_()
+                param.grad = None
+                # if param.grad is not None:
+                #     param.grad.zero_()
                 
             for param in self.ctc.ctc_lo.parameters():
                 param.requires_grad = False
-                if param.grad is not None:
-                    param.grad.zero_()
+                param.grad = None
+                # if param.grad is not None:
+                #     param.grad.zero_()
             
             # for param in self.criterion_att.parameters():
             #     param.requires_grad = False
@@ -225,7 +228,7 @@ class ESPnetASRModel(AbsESPnetModel):
                 param.requires_grad = True
             for param in self.decoder.parameters():
                 param.requires_grad = True
-            for param in self.ctc_lo.parameters():
+            for param in self.ctc.ctc_lo.parameters():
                 param.requires_grad = True
             
             # for param in self.criterion_att.parameters():
@@ -238,9 +241,10 @@ class ESPnetASRModel(AbsESPnetModel):
         if not self.adversarial_frozen_flag:
             for param in self.adversarial_branch.parameters():
                 param.requires_grad = False
-                if param.grad is not None:
-                    # p.grad.detach_()
-                    param.grad.zero_()
+                param.grad = None
+                # if param.grad is not None:
+                #     # p.grad.detach_()
+                #     param.grad.zero_()
             self.adversarial_frozen_flag = True
         self.print_flags()
 
