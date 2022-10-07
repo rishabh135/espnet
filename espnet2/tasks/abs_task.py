@@ -863,6 +863,11 @@ class AbsTask(ABC):
         parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
         parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
 
+
+
+        group.add_argument('--vae_hidden_dim', default=256, type=int,help='Number for hidden dim for vae input')
+        group.add_argument('--vae_latent_dim', default=100, type=int, help='Number for latent dim for vae ')
+
         
         # ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10 , type=list,help='adversarial mode list')
         

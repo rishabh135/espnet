@@ -780,18 +780,24 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
+ 
 
-                if( (iiter % 100) == 0):        
+                if( (iiter % 100) == 0): 
+                    # logging.warning("******************************\n")
+                    # logging.warning(" >>>>>>>   encoder_out.shape {}  encoder_out_lens shape {} ".format( stats["encoder_out"].shape , stats["encoder_out_lens"].shape))
+                    # logging.warning("\n******************************")       
                     logging.warning(" MODE: {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {}  ".format( adv_mode, iiter, adv_flag,  stats["loss"].detach(), grad_norm ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
     
                     if(iiter == 200):
                         # logging.warning(model)
-                        logging.warning("******************************")
-
+                        logging.warning("******************************\n")
+                        # logging.warning(" >>>>>>>   encoder_out.shape {}  encoder_out_lens shape {} ".format( stats["encoder_out"].shape , stats["encoder_out_lens"].shape))
+                        # logging.warning("\n******************************")
+                        
                         if(options.ngpu > 1): 
-                            logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
+                            logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad ) )    
                             logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.module.encoder.encoders[2].feed_forward.w_1.weight.grad, model.module.encoder.encoders[2].feed_forward.w_1.bias.grad   ) )
                             if(adv_flag == True and adv_name == "ESPnetASRModel"):
                                 logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.module.adversarial_branch.output.weight.grad, model.module.adversarial_branch.output.bias.grad   ) )

@@ -4,7 +4,12 @@ from typing import Callable, Collection, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
+from torch import nn
 from typeguard import check_argument_types, check_return_type
+
+
+
+import espnet2.tasks.recon_modules as custom_nn
 
 from espnet2.asr.ctc import CTC
 from espnet2.asr.decoder.abs_decoder import AbsDecoder
@@ -39,7 +44,7 @@ from espnet2.asr.encoder.rnn_encoder import RNNEncoder
 from espnet2.asr.encoder.transformer_encoder import TransformerEncoder
 from espnet2.asr.encoder.vgg_rnn_encoder import VGGRNNEncoder
 from espnet2.asr.encoder.wav2vec2_encoder import FairSeqWav2Vec2Encoder
-from espnet2.asr.espnet_model import ESPnetASRModel
+from espnet2.asr.espnet_model_vae import ESPnetASRModel
 from espnet2.asr.frontend.abs_frontend import AbsFrontend
 from espnet2.asr.frontend.default import DefaultFrontend
 from espnet2.asr.frontend.fused import FusedFrontends
@@ -78,6 +83,86 @@ from espnet2.utils.types import float_or_none, int_or_none, str2bool, str_or_non
 
 
 from pprint import pprint
+
+
+
+class VanillaVAEDecoder(torch.nn.Module):
+    def __init__(self, hidden_dims: List = None, **kwargs) -> None:
+        super(VanillaVAEDecoder, self).__init__()
+
+        # Build Decoder
+        modules = []
+        if(hidden_dims is None):
+            hidden_dims = [32, 64, 128, 256]
+        hidden_dims.reverse()
+
+        for i in range(len(hidden_dims) - 1):
+            modules.append(
+                torch.nn.Sequential(
+                    torch.nn.ConvTranspose2d(hidden_dims[i],
+                                       hidden_dims[i + 1],
+                                       kernel_size=3,
+                                       stride = 2,
+                                       padding=1,
+                                       output_padding=1),
+                    torch.nn.BatchNorm2d(hidden_dims[i + 1]),
+                    torch.nn.LeakyReLU())
+            )
+
+
+
+        self.decoder = torch.nn.Sequential(*modules)
+
+        self.final_layer = torch.nn.Sequential(
+                            torch.nn.ConvTranspose2d(hidden_dims[-1],
+                                               hidden_dims[-1],
+                                               kernel_size=3,
+                                               stride=2,
+                                               padding=1,
+                                               output_padding=1),
+                            torch.nn.BatchNorm2d(hidden_dims[-1]),
+                            torch.nn.LeakyReLU(),
+                            torch.nn.Conv2d(hidden_dims[-1], out_channels= 3,
+                                      kernel_size= 3, padding= 1),
+                            torch.nn.Tanh())
+                        
+    def forward(self, inp: torch.Tensor, **kwargs) -> torch.Tensor:
+        result = self.decoder(inp)
+        result = self.final_layer(inp)
+        return result
+
+
+
+
+
+class ReconDecoder(nn.Module):
+    def __init__(self, eprojs, local_z_size):
+        super(ReconDecoder, self).__init__()
+        
+        self.fc = nn.Sequential(
+            custom_nn.Transpose((1,2)),
+            nn.Conv1d(eprojs, local_z_size, kernel_size = 1, stride = 1),
+            nn.Tanh(),
+            nn.BatchNorm1d(local_z_size),
+            
+            nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
+            nn.Tanh(),
+            nn.BatchNorm1d(local_z_size),
+            
+            nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
+            nn.Tanh(),
+            nn.BatchNorm1d(local_z_size),
+            
+            nn.Conv1d(local_z_size, local_z_size, kernel_size=1, stride=1),
+            nn.Sigmoid(),
+            custom_nn.Transpose((1,2)),
+        )
+    
+    def forward(self, input):        
+        out = self.fc(input)
+        
+        return out
+
 
 frontend_choices = ClassChoices(
     name="frontend",
@@ -518,6 +603,11 @@ class ASRTask(AbsTask):
 
             joint_network = None
 
+        
+        feats_val = 80
+        reconstruction_decoder = ReconDecoder(args.eprojs, feats_val)
+        # reconstruction_decoder = decoder_class( vocab_size=vocab_size, encoder_output_size=encoder_output_size, **args.decoder_conf,)
+
         # 6. CTC
         ctc = CTC(
             odim=vocab_size, encoder_output_size=encoder_output_size, **args.ctc_conf
@@ -587,6 +677,7 @@ class ASRTask(AbsTask):
             adv_flag=args.adv_flag,
             grlalpha=args.grlalpha,
             # adversarial_list=args.adversarial_list,
+            reconstruction_decoder=reconstruction_decoder,
             vocab_size=vocab_size,
             frontend=frontend,
             specaug=specaug,
