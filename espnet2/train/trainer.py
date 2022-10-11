@@ -86,6 +86,7 @@ class TrainerOptions:
     adv_flag: bool
     save_every_epoch: int
     resume_from_checkpoint: int
+    adv_loss_weight: float
 
 
 class Trainer:
@@ -198,16 +199,23 @@ class Trainer:
         else:
             scaler = None
 
-        if trainer_options.resume and ( os.path.exists("{}/{}_checkpoint.pth".format(output_dir, trainer_options.resume_from_checkpoint))):
-            cls.resume(
-                checkpoint= "{}/{}_checkpoint.pth".format(output_dir, trainer_options.resume_from_checkpoint) ,
-                model=model,
-                optimizers=optimizers,
-                schedulers=schedulers,
-                reporter=reporter,
-                scaler=scaler,
-                ngpu=trainer_options.ngpu,
-            )
+        if trainer_options.resume :
+            
+            if(trainer_options.resume_from_checkpoint < 5):
+                loading_path = "{}/checkpoint.pth".format(output_dir)
+            else:
+                loading_path = "{}/{}_checkpoint.pth".format(output_dir, trainer_options.resume_from_checkpoint)
+            logging.warning(">>>>> IMP: Loading resume from CHEKCPOINT :  {} ".format(trainer_options.resume_from_checkpoint))
+            if(os.path.exists(loading_path)):
+                cls.resume(
+                    checkpoint= loading_path,
+                    model=model,
+                    optimizers=optimizers,
+                    schedulers=schedulers,
+                    reporter=reporter,
+                    scaler=scaler,
+                    ngpu=trainer_options.ngpu,
+                )
 
         start_epoch = reporter.get_epoch() + 1
         if start_epoch == trainer_options.max_epoch + 1:
@@ -733,7 +741,7 @@ class Trainer:
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
                         loss_adversarial = retval["loss_adversarial"]
                         # loss_adversarial.requires_grad = True
-                        loss = loss + loss_adversarial
+                        loss = loss + options.adv_loss_weight * loss_adversarial
                         loss /= accum_grad
                         scaler.scale(loss).backward()
                     else:

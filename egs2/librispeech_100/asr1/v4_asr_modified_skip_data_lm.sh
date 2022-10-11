@@ -55,7 +55,7 @@ adversarial_flag="True"
 
 # adv_liststr="asr_adv_asradv"
 
-adv_liststr="asr 30 adv 50 asradv 40"
+adv_liststr="asr 30 adv 50 asradv 100"
 
 project_name="nancy_v4_oct_7_modified_120"
 
