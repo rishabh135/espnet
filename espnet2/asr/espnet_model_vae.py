@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from typing import Dict, List, Optional, Tuple, Union
 
 import torch
+from torch.nn import functional as F
 from packaging.version import parse as V
 from typeguard import check_argument_types
 
@@ -55,6 +56,7 @@ class ESPnetASRModel(AbsESPnetModel):
         adv_flag,
         grlalpha,
         # adversarial_list: list,
+        reconstruction_decoder,
         vocab_size: int,
         token_list: Union[Tuple[str, ...], List[str]],        
         frontend: Optional[AbsFrontend],
@@ -100,7 +102,7 @@ class ESPnetASRModel(AbsESPnetModel):
         self.postencoder = postencoder
         self.encoder = encoder
         
-        
+        self.reconstruction_decoder = reconstruction_decoder
         self.adversarial_branch = adversarial_branch
         self.adv_flag = adv_flag
         self.grlalpha = grlalpha
@@ -110,10 +112,15 @@ class ESPnetASRModel(AbsESPnetModel):
         self.encoder_frozen_flag = False
         self.adversarial_frozen_flag = False
 
-        # self.fc_mu = nn.Linear(hidden_dims[-1]*4, latent_dim)
-        # self.fc_var = nn.Linear(hidden_dims[-1]*4, latent_dim)
+        
+        self.latent_dim = 128
+        self.final_encoder_dim = 256
+        self.fc_mu = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
+        self.fc_var = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
 
-        # self.reconstruction_decoder_input = nn.Linear(latent_dim, hidden_dims[-1] * 4)
+        self.decoder_input = torch.nn.Linear(self.latent_dim, self.final_encoder_dim )
+
+
 
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
@@ -333,7 +340,33 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         # 1. Encoder
-        encoder_out, encoder_out_lens = self.encode(speech, speech_lengths)
+        encoder_out, encoder_out_lens, feats, feats_lengths = self.encode(speech, speech_lengths)       
+        logging.warning(" >>>>>>>   encoder_out.shape {}  encoder_out_lens shape {}".format(encoder_out.shape , encoder_out_lens.shape ))
+
+
+        result = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
+        # Split the result into mu and var components
+        # of the latent Gaussian distribution
+        mu = self.fc_mu(result)
+        log_var = self.fc_var(result)
+        z = self.reparameterize(mu, log_var)
+        decoder_input = self.decoder_input(z)
+        encoder_out = decoder_input.view(-1, encoder_out_lens[0], self.final_encoder_dim)
+        logging.warning(" >>>   result  {} mu {}  log_var {}  z {} decoder_input {} encoder_out {} ".format(result.shape, mu.shape, log_var.shape, z.shape, decoder_input.shape, encoder_out.shape  ))        
+
+        reconstruction_decoder_input = encoder_out 
+        # ys_in_pad, ys_out_pad = add_sos_eos(text, self.sos, self.eos, self.ignore_id)
+        # ys_in_lens = text_lengths + 1
+        # reconstruction_decoder_output, recons_lens  = self.reconstruction_decoder(encoder_out, encoder_out_lens, ys_in_pad, ys_in_lens)  # [batch, seqlen, dim]
+        
+        reconstruction_decoder_output = self.reconstruction_decoder(encoder_out)
+        
+        logging.warning(" >>>   reconstruction_decoder_input {} reconstruction_decoder_output {}  feats {} feats_lengths {}, feats_lengths\n {}  ".format(reconstruction_decoder_input.shape, reconstruction_decoder_output.shape, feats.shape, feats_lengths.shape, feats_lengths  ))        
+
+        reconstruction_loss , kld_loss = self.vae_loss_function(reconstruction_decoder_output, feats, mu, log_var)
+
+
+
         intermediate_outs = None
         if isinstance(encoder_out, tuple):
             intermediate_outs = encoder_out[1]
@@ -488,7 +521,7 @@ class ESPnetASRModel(AbsESPnetModel):
     # self.decoder_input = nn.Linear(latent_dim, hidden_dims[-1] * 4)
 
 
-    def vae_loss_function(self, recon_decoder_output, encoder_input, mu, log_var, kld_weight ) -> dict:
+    def vae_loss_function(self, recon_decoder_output, recons_decoder_input, mu, log_var ):
         """
         Computes the VAE loss function.
         KL(N(\mu, \sigma), N(0, 1)) = \log \frac{1}{\sigma} + \frac{\sigma^2 + \mu^2}{2} - \frac{1}{2}
@@ -502,12 +535,12 @@ class ESPnetASRModel(AbsESPnetModel):
         # log_var = args[3]
         # kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
         
-        recons_loss = F.mse_loss(recon_decoder_output, encoder_input)
+        recons_loss = F.mse_loss(recon_decoder_output, recons_decoder_input)
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
-        loss = recons_loss + kld_weight * kld_loss
-        return {'loss': loss, 'Reconstruction_Loss':recons_loss.detach(), 'KLD':-kld_loss.detach()}
+        # loss = recons_loss + kld_weight * kld_loss
+        return recons_loss, kld_loss
 
-    def reparameterize(self, mu: Tensor, logvar: Tensor) -> Tensor:
+    def reparameterize(self, mu: torch.Tensor, logvar: torch.Tensor ) -> torch.Tensor:
         """
         Reparameterization trick to sample from N(mu, var) from
         N(0,1).
@@ -598,7 +631,7 @@ class ESPnetASRModel(AbsESPnetModel):
         if intermediate_outs is not None:
             return (encoder_out, intermediate_outs), encoder_out_lens
 
-        return encoder_out, encoder_out_lens
+        return encoder_out, encoder_out_lens, feats, feats_lengths
 
     def _extract_feats(
         self, speech: torch.Tensor, speech_lengths: torch.Tensor
