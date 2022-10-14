@@ -56,7 +56,7 @@ class ESPnetASRModel(AbsESPnetModel):
         adv_flag,
         grlalpha,
         # adversarial_list: list,
-        reconstruction_decoder,
+        reconstruction_decoder: Optional,
         vocab_size: int,
         token_list: Union[Tuple[str, ...], List[str]],        
         frontend: Optional[AbsFrontend],

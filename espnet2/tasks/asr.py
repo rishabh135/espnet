@@ -40,8 +40,8 @@ from espnet2.asr.encoder.transformer_encoder import TransformerEncoder
 from espnet2.asr.encoder.vgg_rnn_encoder import VGGRNNEncoder
 from espnet2.asr.encoder.wav2vec2_encoder import FairSeqWav2Vec2Encoder
 
-from espnet2.asr.espnet_model import ESPnetASRModel
-# from espnet2.asr.espnet_model_vae import ESPnetASRModel
+# from espnet2.asr.espnet_model import ESPnetASRModel
+from espnet2.asr.espnet_model_vae import ESPnetASRModel
 
 from espnet2.asr.frontend.abs_frontend import AbsFrontend
 from espnet2.asr.frontend.default import DefaultFrontend
@@ -135,26 +135,26 @@ class VanillaVAEDecoder(torch.nn.Module):
 
 
 
-class ReconDecoder(nn.Module):
+class ReconDecoder(torch.nn.Module):
     def __init__(self, eprojs, local_z_size):
         super(ReconDecoder, self).__init__()
 
-        self.fc = nn.Sequential(
+        self.fc = torch.nn.Sequential(
             custom_nn.Transpose((1,2)),
-            nn.Conv1d(eprojs, local_z_size, kernel_size = 1, stride = 1),
-            nn.Tanh(),
-            nn.BatchNorm1d(local_z_size),
+            torch.nn.Conv1d(eprojs, local_z_size, kernel_size = 1, stride = 1),
+            torch.nn.Tanh(),
+            torch.nn.BatchNorm1d(local_z_size),
 
-            nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
-            nn.Tanh(),
-            nn.BatchNorm1d(local_z_size),
+            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
+            torch.nn.Tanh(),
+            torch.nn.BatchNorm1d(local_z_size),
 
-            nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
-            nn.Tanh(),
-            nn.BatchNorm1d(local_z_size),
+            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
+            torch.nn.Tanh(),
+            torch.nn.BatchNorm1d(local_z_size),
 
-            nn.Conv1d(local_z_size, local_z_size, kernel_size=1, stride=1),
-            nn.Sigmoid(),
+            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size=1, stride=1),
+            torch.nn.Sigmoid(),
             custom_nn.Transpose((1,2)),
         )
 

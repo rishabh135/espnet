@@ -21,7 +21,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="nancy_vae_oct_6_modified_120"
+project_name="nancy_vae_oct_14_modified_130"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
@@ -39,7 +39,7 @@ project_name="nancy_vae_oct_6_modified_120"
 # data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
 
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_with_adversarial.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 

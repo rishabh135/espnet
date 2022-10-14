@@ -55,11 +55,11 @@ adversarial_flag="True"
 
 # adv_liststr="asr_adv_asradv"
 
-adv_liststr="asr 30 adv 50 asradv 40"
+adv_liststr="asr 30 adv 50 asradv 50"
 
-project_name="nancy_vae_oct_6_modified_120"
+project_name="nancy_vae_oct_14_modified_130"
 
-experiment_name="30_50_40_single_optim" # name of the experiment, just change it to create differnet folders
+experiment_name="30_50_50_single_optim" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump
