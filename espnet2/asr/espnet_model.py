@@ -55,7 +55,7 @@ class ESPnetASRModel(AbsESPnetModel):
         adv_flag,
         grlalpha,
         # adversarial_list: list,
-        reconstruction_decoder: Optional,
+        # reconstruction_decoder: Optional[torch.nn.Module],
         vocab_size: int,
         token_list: Union[Tuple[str, ...], List[str]],        
         frontend: Optional[AbsFrontend],
@@ -110,6 +110,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
         self.encoder_frozen_flag = False
         self.adversarial_frozen_flag = False
+        self.reinit_adv_flag = False
 
 
 
@@ -190,8 +191,11 @@ class ESPnetASRModel(AbsESPnetModel):
     # self.enc_frozen = False
 
 
-
-
+    def reinit_adv(self,):
+        if(self.reinit_adv_flag == False):
+            self.adversarial_branch.reinit_adv()
+            self.reinit_adv_flag = True
+        
     def print_flags(self,):
         logging.warning(" encoder frozen : {} adversarial_frozen : {}".format(self.encoder_frozen_flag, self.adversarial_frozen_flag))
 

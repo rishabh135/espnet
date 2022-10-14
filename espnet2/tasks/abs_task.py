@@ -546,7 +546,7 @@ class AbsTask(ABC):
 
         group.add_argument('--save_every_epoch', default=5, type=int, help='Number of epochs which will be saved ')
 
-        group.add_argument('--resume_from_checkpoint', default=-1, type=int, help='Number of epochs which will be saved ')
+        group.add_argument('--resume_from_checkpoint', default=180, type=int, help='Number of epochs which will be saved ')
 
         group.add_argument(
             "--train_dtype",
@@ -1121,7 +1121,7 @@ class AbsTask(ABC):
                 if(len(epoch_list) == 5):
                     args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] + ["asr"] * epoch_list[2] + ["adv"] * epoch_list[3] +  ["asradv"] * epoch_list[4]
                 elif(len(epoch_list) == 4):
-                    args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["adv"] * epoch_list[2] + ["asradv"] * epoch_list[3]
+                    args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["asradv"] * epoch_list[2] + ["reinit_adv"] * epoch_list[3]
                 elif(len(epoch_list) == 3):
                     args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] +  ["asradv"] * epoch_list[2]
                 elif(len(epoch_list) == 2):

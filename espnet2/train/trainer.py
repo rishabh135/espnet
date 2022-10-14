@@ -577,6 +577,21 @@ class Trainer:
             else:
                 model.unfreeze_encoder()
                 model.unfreeze_adversarial()
+            
+
+        elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'reinit_adv'):
+            if options.ngpu > 1:
+                model.module.freeze_encoder()
+                model.module.unfreeze_adversarial()
+            else:
+                model.freeze_encoder()
+                model.unfreeze_adversarial()
+                model.reinit_adv()
+            
+
+
+
+            
 
 
         param_group_length = len(optimizers[0].param_groups)
@@ -744,6 +759,12 @@ class Trainer:
                         loss = loss + options.adv_loss_weight * loss_adversarial
                         loss /= accum_grad
                         scaler.scale(loss).backward()
+                    
+                    elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'reinit_adv'):
+                        loss_adversarial = retval["loss_adversarial"]
+                        loss_adversarial /= accum_grad
+                        # loss_adversarial.requires_grad = True
+                        scaler.scale(loss_adversarial).backward()
                     else:
                         loss /= accum_grad
                         scaler.scale(loss).backward()

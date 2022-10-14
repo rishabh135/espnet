@@ -40,8 +40,8 @@ from espnet2.asr.encoder.transformer_encoder import TransformerEncoder
 from espnet2.asr.encoder.vgg_rnn_encoder import VGGRNNEncoder
 from espnet2.asr.encoder.wav2vec2_encoder import FairSeqWav2Vec2Encoder
 
-# from espnet2.asr.espnet_model import ESPnetASRModel
-from espnet2.asr.espnet_model_vae import ESPnetASRModel
+from espnet2.asr.espnet_model import ESPnetASRModel
+# from espnet2.asr.espnet_model_vae import ESPnetASRModel
 
 from espnet2.asr.frontend.abs_frontend import AbsFrontend
 from espnet2.asr.frontend.default import DefaultFrontend
@@ -604,8 +604,14 @@ class ASRTask(AbsTask):
 
 
 
-        feats_val = 80
-        reconstruction_decoder = ReconDecoder(args.eprojs, feats_val)
+        # feats_val = 80
+        # reconstruction_decoder_class = decoder_choices.get_class("transformer")
+        # reconstruction_decoder = reconstruction_decoder_class(
+        #         vocab_size=vocab_size,
+        #         encoder_output_size=encoder_output_size,
+        #         **args.decoder_conf,
+        #     )
+        # reconstruction_decoder = ReconDecoder(args.eprojs, feats_val)
 
         # 6. CTC
         ctc = CTC(
@@ -676,7 +682,7 @@ class ASRTask(AbsTask):
             adv_flag=args.adv_flag,
             grlalpha=args.grlalpha,
             # adversarial_list=args.adversarial_list,
-            reconstruction_decoder=reconstruction_decoder,
+            # reconstruction_decoder=reconstruction_decoder,
             vocab_size=vocab_size,
             frontend=frontend,
             specaug=specaug,
