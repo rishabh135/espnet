@@ -57,7 +57,7 @@ adversarial_flag="True"
 
 adv_liststr="asr 30 adv 50 asradv 50"
 
-project_name="nancy_vae_oct_14_modified_130"
+project_name="nancy_vae_oct_18_modified_130"
 
 experiment_name="30_50_50_single_optim" # name of the experiment, just change it to create differnet folders
 

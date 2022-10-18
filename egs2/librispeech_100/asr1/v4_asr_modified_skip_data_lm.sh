@@ -55,8 +55,9 @@ adversarial_flag="True"
 
 # adv_liststr="asr_adv_asradv"
 
-adv_liststr="asr 30 adv 50 asradv 100"
-
+adv_liststr="asr 30 adv 50 asradv 100 reinit_adv 50"
+resume_checkpoint=180
+adv_weight=10.0
 project_name="nancy_v4_oct_7_modified_120"
 
 
@@ -1196,6 +1197,8 @@ if ! "${skip_train}"; then
                 --adv_liststr "${adv_liststr}" \
                 --adv_flag "${adversarial_flag}" \
                 --project_name "${project_name}" \
+                --project_name "${project_name}" \
+                --resume_from_checkpoint "${resume_checkpoint}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \

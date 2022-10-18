@@ -851,7 +851,7 @@ class AbsTask(ABC):
         group.add_argument('--adv_layers', default=1, type=int,help='Number of decoder layers')
         group.add_argument('--adv_units', default=256, type=int, help='Number of decoder hidden units')
 
-        group.add_argument('--adv_loss_weight', default=10.0, type=float, help='weightage of adversarial loss during the joint training phase, asradv')
+        group.add_argument('--adv_loss_weight', default=1.0, type=float, help='weightage of adversarial loss during the joint training phase, asradv')
 
 
 

@@ -627,39 +627,8 @@ class ASRTask(AbsTask):
         ################################################################################################################
         ################################################################################################################
 
-        # 4.1 Adversarial branch class definition
-
-        # odim = int(valid_json[utts[0]]['output'][0]['shape'][1])
-        # logging.info('#input dims : ' + str(idim))
-        # logging.info('#output dims: ' + str(odim))
-        # odim_adv = None
-        # if args.adv:
-        #     odim_adv = int(valid_json[utts[0]]['output'][1]['shape'][1])
-        #     logging.info('#output dims adversarial: ' + str(odim_adv))
-
-        # grlalpha = args.grlalpha
-    
-        # :param int odim_adv: dimension of outputs for adversarial class (default None)
-        
-
-
-
-        # logging.info("\n\n ******* cls.adv_flag {}  and  adv_flag {} *******\n".format(cls.adv_flag, args.adv_flag))
-        
-        ################################################################################################################
-        ################################################################################################################
-
-        # creating encoder as a class property
-
-        # cls.adv_flag__ = args.adv_flag
-        # cls.grlalpha__ = args.grlalpha
-        # cls.encoder_ = encoder 
-
-        ################################################################################################################
-        ################################################################################################################
 
         
-        # print(" *******  adv_flag {} and decoder {} *******\n".format( args.adv_flag, args.decoder))
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
@@ -682,7 +651,7 @@ class ASRTask(AbsTask):
             adv_flag=args.adv_flag,
             grlalpha=args.grlalpha,
             # adversarial_list=args.adversarial_list,
-            # reconstruction_decoder=reconstruction_decoder,
+            reconstruction_decoder=reconstruction_decoder,
             vocab_size=vocab_size,
             frontend=frontend,
             specaug=specaug,
