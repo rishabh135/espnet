@@ -216,6 +216,8 @@ Options:
     --expdir         # Directory to save experiments (default="${expdir}").
     --python         # Specify python to execute espnet commands (default="${python}").
 
+    --use_xvector      # Whether to use X-vector (default="${use_xvector}").
+
     # Data preparation related
     --local_data_opts # The options given to local/data.sh (default="${local_data_opts}").
 
@@ -522,6 +524,87 @@ if ! "${skip_data_prep}"; then
            log "Skip stage 2: Speed perturbation"
         fi
     fi
+
+    # Extract X-vector
+    if "${use_xvector}"; then
+        if [ "${xvector_tool}" = "kaldi" ]; then
+            log "Stage 2+: Extract X-vector: data/ -> ${dumpdir}/xvector (Require Kaldi)"
+            # Download X-vector pretrained model
+            xvector_exp=${expdir}/xvector_nnet_1a
+            if [ ! -e "${xvector_exp}" ]; then
+                log " X-vector model does not exist. Download pre-trained model."
+                wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
+                tar xvf 0008_sitw_v2_1a.tar.gz
+                [ ! -e "${expdir}" ] && mkdir -p "${expdir}"
+                mv 0008_sitw_v2_1a/exp/xvector_nnet_1a "${xvector_exp}"
+                rm -rf 0008_sitw_v2_1a.tar.gz 0008_sitw_v2_1a
+            fi
+
+            # Generate the MFCC features, VAD decision, and X-vector
+            for dset in "${train_set}" "${valid_set}" ${test_sets}; do
+                if [ "${dset}" = "${train_set}" ] || [ "${dset}" = "${valid_set}" ]; then
+                    _suf="/org"
+                else
+                    _suf=""
+                fi
+                # 1. Copy datadir and resample to 16k
+                utils/copy_data_dir.sh "${data_feats}${_suf}/${dset}" "${dumpdir}/mfcc/${dset}"
+                utils/data/resample_data_dir.sh 16000 "${dumpdir}/mfcc/${dset}"
+
+                # 2. Extract mfcc features
+                _nj=$(min "${nj}" "$(<${dumpdir}/mfcc/${dset}/utt2spk wc -l)")
+                steps/make_mfcc.sh --nj "${_nj}" --cmd "${train_cmd}" \
+                    --write-utt2num-frames true \
+                    --mfcc-config conf/mfcc.conf \
+                    "${dumpdir}/mfcc/${dset}"
+                utils/fix_data_dir.sh "${dumpdir}/mfcc/${dset}"
+
+                # 3. Compute VAD decision
+                _nj=$(min "${nj}" "$(<${dumpdir}/mfcc/${dset}/spk2utt wc -l)")
+                sid/compute_vad_decision.sh --nj ${_nj} --cmd "${train_cmd}" \
+                    --vad-config conf/vad.conf \
+                    "${dumpdir}/mfcc/${dset}"
+                utils/fix_data_dir.sh "${dumpdir}/mfcc/${dset}"
+
+                # 4. Extract X-vector
+                sid/nnet3/xvector/extract_xvectors.sh --nj "${_nj}" --cmd "${train_cmd}" \
+                    "${xvector_exp}" \
+                    "${dumpdir}/mfcc/${dset}" \
+                    "${dumpdir}/xvector/${dset}"
+
+                # 5. Filter scp
+                # NOTE(kan-bayashi): Since sometimes mfcc or x-vector extraction is failed,
+                #   the number of utts will be different from the original features (raw or fbank).
+                #   To avoid this mismatch, perform filtering of the original feature scp here.
+                cp "${data_feats}${_suf}/${dset}"/wav.{scp,scp.bak}
+                <"${data_feats}${_suf}/${dset}/wav.scp.bak" \
+                    utils/filter_scp.pl "${dumpdir}/xvector/${dset}/xvector.scp" \
+                    >"${data_feats}${_suf}/${dset}/wav.scp"
+                utils/fix_data_dir.sh "${data_feats}${_suf}/${dset}"
+            done
+        else
+            # Assume that others toolkits are python-based
+            log "Stage 2+: Extract X-vector: data/ -> ${dumpdir}/xvector using python toolkits"
+            for dset in "${train_set}" "${valid_set}" ${test_sets}; do
+                if [ "${dset}" = "${train_set}" ] || [ "${dset}" = "${valid_set}" ]; then
+                    _suf="/org"
+                else
+                    _suf=""
+                fi
+                pyscripts/utils/extract_xvectors.py \
+                    --pretrained_model ${xvector_model} \
+                    --toolkit ${xvector_tool} \
+                    ${data_feats}${_suf}/${dset} \
+                    ${dumpdir}/xvector/${dset}
+            done
+        fi
+    fi
+
+
+
+
+
+
 
     if [ -n "${speed_perturb_factors}" ]; then
         train_set="${train_set}_sp"

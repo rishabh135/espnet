@@ -105,6 +105,8 @@ class SpeakerAdv(torch.nn.Module):
 
 
     def reinit_adv(self,):
+        # for param in self.decoder.parameters():
+        #     param.requires_grad = False
         self.advnet.reset_parameters()
         self.output.reset_parameters()
         # self.output.apply(self.init_weights)

@@ -17,6 +17,11 @@ from espnet2.asr.decoder.transformer_decoder import (
     LightweightConvolutionTransformerDecoder,
     TransformerDecoder,
 )
+
+from espnet.nets.pytorch_backend.transformer.decoder import ReconDecoder
+from espnet2.asr.decoder.transformer_reconstruction_decoder import TransformerReconDecoder
+from espnet2.asr.decoder.Disentangled_sequentual_autoencoder_yatindandi import DisentangledVAE
+
 from espnet2.asr.encoder.abs_encoder import AbsEncoder
 from espnet2.asr.adversarial_branch import SpeakerAdv
 
@@ -40,8 +45,8 @@ from espnet2.asr.encoder.transformer_encoder import TransformerEncoder
 from espnet2.asr.encoder.vgg_rnn_encoder import VGGRNNEncoder
 from espnet2.asr.encoder.wav2vec2_encoder import FairSeqWav2Vec2Encoder
 
-from espnet2.asr.espnet_model import ESPnetASRModel
-# from espnet2.asr.espnet_model_vae import ESPnetASRModel
+# from espnet2.asr.espnet_model import ESPnetASRModel
+from espnet2.asr.espnet_model_vae import ESPnetASRModel
 
 from espnet2.asr.frontend.abs_frontend import AbsFrontend
 from espnet2.asr.frontend.default import DefaultFrontend
@@ -135,33 +140,36 @@ class VanillaVAEDecoder(torch.nn.Module):
 
 
 
-class ReconDecoder(torch.nn.Module):
-    def __init__(self, eprojs, local_z_size):
-        super(ReconDecoder, self).__init__()
+# class ReconDecoder(torch.nn.Module):
+#     def __init__(self, eprojs, local_z_size):
+#         super(ReconDecoder, self).__init__()
 
-        self.fc = torch.nn.Sequential(
-            custom_nn.Transpose((1,2)),
-            torch.nn.Conv1d(eprojs, local_z_size, kernel_size = 1, stride = 1),
-            torch.nn.Tanh(),
-            torch.nn.BatchNorm1d(local_z_size),
+#         self.fc = torch.nn.Sequential(
+#             custom_nn.Transpose((1,2)),
+#             torch.nn.Conv1d(eprojs, local_z_size, kernel_size = 1, stride = 1),
+#             torch.nn.Tanh(),
+#             torch.nn.BatchNorm1d(local_z_size),
 
-            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
-            torch.nn.Tanh(),
-            torch.nn.BatchNorm1d(local_z_size),
+#             torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
+#             torch.nn.Tanh(),
+#             torch.nn.BatchNorm1d(local_z_size),
 
-            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
-            torch.nn.Tanh(),
-            torch.nn.BatchNorm1d(local_z_size),
+#             torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
+#             torch.nn.Tanh(),
+#             torch.nn.BatchNorm1d(local_z_size),
 
-            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size=1, stride=1),
-            torch.nn.Sigmoid(),
-            custom_nn.Transpose((1,2)),
-        )
+#             torch.nn.Conv1d(local_z_size, local_z_size, kernel_size=1, stride=1),
+#             torch.nn.Sigmoid(),
+#             custom_nn.Transpose((1,2)),
+#         )
 
-    def forward(self, input):        
-        out = self.fc(input)
+#     def forward(self, input):        
+#         out = self.fc(input)
 
-        return out
+#         return out
+
+
+
 
 frontend_choices = ClassChoices(
     name="frontend",
@@ -249,6 +257,7 @@ decoder_choices = ClassChoices(
         rnn=RNNDecoder,
         transducer=TransducerDecoder,
         mlm=MLMDecoder,
+        recon=TransformerReconDecoder,
     ),
     type_check=AbsDecoder,
     default="rnn",
@@ -604,14 +613,6 @@ class ASRTask(AbsTask):
 
 
 
-        # feats_val = 80
-        # reconstruction_decoder_class = decoder_choices.get_class("transformer")
-        # reconstruction_decoder = reconstruction_decoder_class(
-        #         vocab_size=vocab_size,
-        #         encoder_output_size=encoder_output_size,
-        #         **args.decoder_conf,
-        #     )
-        # reconstruction_decoder = ReconDecoder(args.eprojs, feats_val)
 
         # 6. CTC
         ctc = CTC(
@@ -622,7 +623,41 @@ class ASRTask(AbsTask):
 
         ################################################################################################################
         ################################################################################################################
-        # TO DO rishabh create adversarial branch and link it with the encoder
+        # TO DO rishabh create reconstruction decoder branch and link it with the encoder
+                # reconstruction_decoder = ReconDecoder(
+        #     odim=odim,  # odim is needed when no prenet is used
+        #     attention_dim=adim,
+        #     attention_heads=aheads,
+        #     linear_units=dunits,
+        #     num_blocks=dlayers,
+        #     dropout_rate=transformer_dec_dropout_rate,
+        #     positional_dropout_rate=transformer_dec_positional_dropout_rate,
+        #     self_attention_dropout_rate=transformer_dec_attn_dropout_rate,
+        #     src_attention_dropout_rate=transformer_enc_dec_attn_dropout_rate,
+        #     input_layer=decoder_input_layer,
+        #     use_output_layer=False,
+        #     pos_enc_class=pos_enc_class,
+        #     normalize_before=decoder_normalize_before,
+        #     concat_after=decoder_concat_after,
+        # )
+
+        # define final projection
+        # self.feat_out = torch.nn.Linear(adim, odim * reduction_factor)
+        # self.prob_out = torch.nn.Linear(adim, reduction_factor)
+
+
+        # feats_val = 80
+        # reconstruction_decoder_class = decoder_choices.get_class("recon")
+        
+        # reconstruction_decoder = reconstruction_decoder_class(vocab_size, embed_pad=0)
+
+        # reconstruction_decoder = reconstruction_decoder_class(
+        #         vocab_size=80,
+        #         encoder_output_size=256,
+        #         **args.decoder_conf,
+        #     )
+            
+        # reconstruction_decoder = ReconDecoder(args.eprojs, feats_val)
 
         ################################################################################################################
         ################################################################################################################
@@ -651,7 +686,7 @@ class ASRTask(AbsTask):
             adv_flag=args.adv_flag,
             grlalpha=args.grlalpha,
             # adversarial_list=args.adversarial_list,
-            reconstruction_decoder=reconstruction_decoder,
+            # reconstruction_decoder=reconstruction_decoder,
             vocab_size=vocab_size,
             frontend=frontend,
             specaug=specaug,

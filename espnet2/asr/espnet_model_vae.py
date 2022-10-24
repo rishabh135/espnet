@@ -344,27 +344,59 @@ class ESPnetASRModel(AbsESPnetModel):
         logging.warning(" >>>>>>>   encoder_out.shape {}  encoder_out_lens shape {}".format(encoder_out.shape , encoder_out_lens.shape ))
 
 
-        result = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
+        mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         # Split the result into mu and var components
         # of the latent Gaussian distribution
-        mu = self.fc_mu(result)
-        log_var = self.fc_var(result)
+        mu = self.fc_mu(mu_log_var_combined)
+        log_var = self.fc_var(mu_log_var_combined)
         z = self.reparameterize(mu, log_var)
         decoder_input = self.decoder_input(z)
-        encoder_out = decoder_input.view(-1, encoder_out_lens[0], self.final_encoder_dim)
-        logging.warning(" >>>   result  {} mu {}  log_var {}  z {} decoder_input {} encoder_out {} ".format(result.shape, mu.shape, log_var.shape, z.shape, decoder_input.shape, encoder_out.shape  ))        
+        logging.warning(" >>>   mu {}  log_var {}  z {} decoder_input {} encoder_out {} ".format(  mu.shape, log_var.shape, z.shape, decoder_input.shape, encoder_out.shape  ))        
 
-        reconstruction_decoder_input = encoder_out 
+
+
+        ################################################################################################################################################################################################
+        ################################################################################################################################################################################################
+        ################################################################################################################################################################################################
+        ################################################################################################################################################################################################
+        # https://github.com/espnet/espnet/blob/695c9954e20800875b22d985e9c0b0a70e8e2082/espnet2/tts/transformer/transformer.py
+        
+        # for reconstruction decoder ys-> x_vectors hs->encoder_outputs(mu and logvar)
+        if self.reduction_factor > 1:
+            ys_in = ys[:, self.reduction_factor - 1 :: self.reduction_factor]
+            olens_in = olens.new([olen // self.reduction_factor for olen in olens])
+        else:
+            ys_in, olens_in = ys, olens
+
+        # add first zero frame and remove last frame for auto-regressive
+        ys_in = self._add_first_frame_and_remove_last_frame(ys_in)
+
+        # forward decoder
+        y_masks = self._target_mask(olens_in)
+        zs, _ = self.reconstruction_decoder(ys_in, y_masks, hs, h_masks)
+        
+        
+        ################################################################################################################################################################################################
+        ################################################################################################################################################################################################
+        ################################################################################################################################################################################################
+
+
+
+
+        # reconstruction_decoder_input = encoder_out 
         # ys_in_pad, ys_out_pad = add_sos_eos(text, self.sos, self.eos, self.ignore_id)
         # ys_in_lens = text_lengths + 1
         # reconstruction_decoder_output, recons_lens  = self.reconstruction_decoder(encoder_out, encoder_out_lens, ys_in_pad, ys_in_lens)  # [batch, seqlen, dim]
-        
-        reconstruction_decoder_output = self.reconstruction_decoder(encoder_out)
-        
-        logging.warning(" >>>   reconstruction_decoder_input {} reconstruction_decoder_output {}  feats {} feats_lengths {}, feats_lengths\n {}  ".format(reconstruction_decoder_input.shape, reconstruction_decoder_output.shape, feats.shape, feats_lengths.shape, feats_lengths  ))        
+        # reconstruction_decoder_output  = self.reconstruction_decoder(decoder_input)  # [batch, seqlen, dim]
+        logging.warning(" >>>   reconstruction_decoder_input {} reconstruction_decoder_output {}  feats {} feats_lengths {},  ".format(decoder_input.shape, reconstruction_decoder_output.shape, feats.shape, feats_lengths.shape  ))        
+        # reconstruction_decoder_output = self.recon_decoder_nll( encoder_out, encoder_out_lens, ys_pad, ys_pad_lens) 
+                
+        # reconstruction_loss , kld_loss = self.vae_loss_function(reconstruction_decoder_output, feats, mu, log_var)
 
-        reconstruction_loss , kld_loss = self.vae_loss_function(reconstruction_decoder_output, feats, mu, log_var)
-
+        
+        
+        encoder_out = decoder_input.view(-1, encoder_out_lens[0], self.final_encoder_dim)
+        
 
 
         intermediate_outs = None
@@ -651,6 +683,49 @@ class ESPnetASRModel(AbsESPnetModel):
             # No frontend and no feature extract
             feats, feats_lengths = speech, speech_lengths
         return feats, feats_lengths
+
+
+
+    def recon_decoder_nll(
+        self,
+        encoder_out: torch.Tensor,
+        encoder_out_lens: torch.Tensor,
+        ys_pad: torch.Tensor,
+        ys_pad_lens: torch.Tensor,
+    ) -> torch.Tensor:
+        """Compute negative log likelihood(nll) from transformer-decoder
+
+        Normally, this function is called in batchify_nll.
+
+        Args:
+            encoder_out: (Batch, Length, Dim)
+            encoder_out_lens: (Batch,)
+            ys_pad: (Batch, Length)
+            ys_pad_lens: (Batch,)
+        """
+        ys_in_pad, ys_out_pad = add_sos_eos(ys_pad, self.sos, self.eos, self.ignore_id)
+        ys_in_lens = ys_pad_lens + 1
+
+        # 1. Forward decoder
+        decoder_out, _ = self.reconstruction_decoder(
+            encoder_out, encoder_out_lens, ys_in_pad, ys_in_lens
+        )  # [batch, seqlen, dim]
+        batch_size = decoder_out.size(0)
+        decoder_num_class = decoder_out.size(2)
+        # nll: negative log-likelihood
+        nll = torch.nn.functional.cross_entropy(
+            decoder_out.view(-1, decoder_num_class),
+            ys_out_pad.view(-1),
+            ignore_index=self.ignore_id,
+            reduction="none",
+        )
+        nll = nll.view(batch_size, -1)
+        nll = nll.sum(dim=1)
+        assert nll.size(0) == batch_size
+        return nll
+
+
+
 
     def nll(
         self,
