@@ -205,7 +205,7 @@ class Trainer:
                 loading_path = "{}/checkpoint.pth".format(output_dir)
             else:
                 loading_path = "{}/{}_checkpoint.pth".format(output_dir, trainer_options.resume_from_checkpoint)
-            logging.warning(">>>>> IMP: Loading resume from CHEKCPOINT :  {} ".format(trainer_options.resume_from_checkpoint))
+            logging.warning(">>>>> IMP: Loading resume from CHEKCPOINT :  {} adv_weight {}  ".format(trainer_options.resume_from_checkpoint, trainer_options.adv_loss_weight))
             if(os.path.exists(loading_path)):
                 cls.resume(
                     checkpoint= loading_path,
@@ -588,12 +588,6 @@ class Trainer:
                 model.unfreeze_adversarial()
                 model.reinit_adv()
             
-
-
-
-            
-
-
         param_group_length = len(optimizers[0].param_groups)
         current_flr = optimizers[0].param_groups[0]['lr']
         current_llr = optimizers[0].param_groups[-1]['lr']
@@ -813,14 +807,12 @@ class Trainer:
 
 
                 if( (iiter % 100) == 0):        
-                    logging.warning(" MODE: {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {}  ".format( adv_mode, iiter, adv_flag,  stats["loss"].detach(), grad_norm ))
+                    logging.warning("\n >>>>>>>> MODE: {} adv_loss_weight {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {}  ".format( adv_mode, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach(), grad_norm ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
     
                     if(iiter == 200):
                         # logging.warning(model)
-                        logging.warning("******************************")
-
                         if(options.ngpu > 1): 
                             
                             # logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
@@ -839,6 +831,7 @@ class Trainer:
                                 if(model.adversarial_branch.output.weight.grad is not None):
                                     logging.warning(" adversarial weight grad {} shape {}  adversarial bias grad {}".format( torch.count_nonzero(model.adversarial_branch.output.weight.grad), model.adversarial_branch.output.weight.grad.shape, torch.count_nonzero(model.adversarial_branch.output.bias.grad)   ) )
 
+                        logging.warning("******************************")
 
 
                             # if(self.encoder_weight_layer is not None):

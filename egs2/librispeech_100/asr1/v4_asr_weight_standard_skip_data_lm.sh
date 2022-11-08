@@ -55,13 +55,12 @@ adversarial_flag="True"
 
 # adv_liststr="asr_adv_asradv"
 
-adv_liststr="asr 10 adv 60 asradv 100 reinit_adv 60"
-resume_checkpoint=70
-adv_weight=5.0
+adv_liststr="asr 30 adv 50 asradv 100 reinit_adv 50"
+resume_checkpoint=165
+adv_weight=100.0
 # project_name="nancy_v4_sep_30_standard_170"
-project_name="nancy_v4_oct_7_standard_170"
-
-experiment_name="standard_10_60_determininstic" # name of the experiment, just change it to create differnet folders
+project_name="nancy_v4_oct_25_modified_230"
+experiment_name="modified_30_50_100_50_reinit_adv_weight_100" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump

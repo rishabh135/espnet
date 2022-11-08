@@ -878,6 +878,61 @@ class AbsTask(ABC):
         assert check_return_type(parser)
         return parser
 
+
+
+
+
+    # @classmethod
+    # def build_optimizers(
+    #     cls,
+    #     args: argparse.Namespace,
+    #     model: torch.nn.Module,
+    # ) -> List[torch.optim.Optimizer]:
+        
+    #     adv_name = str(type(model).__name__)
+    #     logging.warning(" ----->>>>>>>> adv_flag {} asr_lr {} adv_lr {} adv_name {} \n\n".format(args.adv_flag, args.asr_lr, args.adv_lr, adv_name))
+
+    #     if cls.num_optimizers != 1:
+    #         raise RuntimeError(
+    #             "build_optimizers() must be overridden if num_optimizers != 1"
+    #         )
+
+    #     optim_class = optim_classes.get(args.optim)
+    #     if optim_class is None:
+    #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+
+
+    #     if ( args.adv_flag):
+    #         if(args.ngpu > 1):        
+    #             param_grp = [
+    #                 {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
+    #             ]            
+    #         else:
+    #             param_grp = [
+    #                 {'params': model.encoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.decoder.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.ctc.parameters(), 'lr': args.asr_lr},
+    #                 {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]       
+            
+    #         optimi = torch.optim.Adam((param_grp), betas=(0.9,0.999),weight_decay=0.00001)
+
+    #     else:
+    #         optimi = optim_class(model.parameters(), lr=args.asr_lr, weight_decay=0.00001)
+
+    #     optimizers = [optimi]
+    #     return optimizers
+
+
+
+
+
+
+
+
+
     @classmethod
     def build_optimizers(
         cls,
@@ -1111,17 +1166,20 @@ class AbsTask(ABC):
 
         if(args.adv_flag and cls.__name__ == "ASRTask"):
             
+
             if (args.adv_liststr == "asr_adv_asradv" ):         
-                # print(" Updated adversarial list\n")
                 args.adversarial_list = ["asr", "asr", "adv", "adv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * 8 + ["asradv"] * 10
                 
             else :
                 epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
+                logging.warning("->>> adv_liststr {} epoch_list {} ".format(args.adv_liststr, epoch_list))
+                if (sum(epoch_list) !=  args.max_epoch):
+                    raise RuntimeError("Please check total_number of epochs {}  are not equivakent to max_epochs {} ".format(sum(epoch_list), args.max_epoch))
 
                 if(len(epoch_list) == 5):
                     args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] + ["asr"] * epoch_list[2] + ["adv"] * epoch_list[3] +  ["asradv"] * epoch_list[4]
                 elif(len(epoch_list) == 4):
-                    args.adversarial_list = ["adv"] *  epoch_list[0] + ["asr"] * epoch_list[1] + ["asradv"] * epoch_list[2] + ["reinit_adv"] * epoch_list[3]
+                    args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] + ["asradv"] * epoch_list[2] + ["reinit_adv"] * epoch_list[3]
                 elif(len(epoch_list) == 3):
                     args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] +  ["asradv"] * epoch_list[2]
                 elif(len(epoch_list) == 2):
@@ -1138,7 +1196,7 @@ class AbsTask(ABC):
             args.adversarial_list =[ "asr"] * args.max_epoch
 
 
-        logging.warning(" >>>>>> Adversarial_list {} \n".format(args.adversarial_list))
+        logging.warning(" >>  Adversarial_list {} \n".format(args.adversarial_list))
         # 0. Init distributed process
         distributed_option = build_dataclass(DistributedOption, args)
         # Setting distributed_option.dist_rank, etc.

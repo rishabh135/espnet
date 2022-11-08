@@ -298,6 +298,21 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
+    # Train critic multiple times
+    
+    # for _ in range(CRITIC_ITERATIONS):
+    #     with torch.cuda.amp.autocast():
+    #         fake = gen(noise)
+    #         crit_real = crit(real).reshape(-1)  # Flatten
+    #         crit_fake = crit(fake).reshape(-1)
+    #         loss_crit = -(torch.mean(crit_real) - torch.mean(crit_fake))
+
+    #     optimizer_crit.zero_grad()
+    #     c_scaler.scale(loss_crit).backward()
+    #     c_scaler.step(optimizer_crit)
+    #     c_scaler.update()
+
+
 
     #################################################################################################################################################################################################################################
     #################################################################################################################################################################################################################################

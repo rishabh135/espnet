@@ -55,13 +55,11 @@ adversarial_flag="True"
 
 # adv_liststr="asr_adv_asradv"
 
-adv_liststr="asr 10 adv 60 asradv 100 reinit_adv 60"
-resume_checkpoint=70
-adv_weight=5.0
-# project_name="nancy_v4_sep_30_standard_170"
-project_name="nancy_v4_oct_7_standard_170"
-
-experiment_name="standard_10_60_determininstic" # name of the experiment, just change it to create differnet folders
+adv_liststr="asr 40 adv 50 asradv 70 reinit_adv 40"
+resume_checkpoint=-1
+adv_weight=25.0
+project_name="v5_nov_6_modified_200"
+experiment_name="modified_40_50_70_40_reinit_adv_weight_25" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump
@@ -1644,6 +1642,7 @@ else
 fi
 
 log "Successfully finished. [elapsed=${SECONDS}s]"
+
 
 
 

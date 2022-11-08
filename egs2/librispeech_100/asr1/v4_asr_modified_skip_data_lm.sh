@@ -56,8 +56,8 @@ adversarial_flag="True"
 # adv_liststr="asr_adv_asradv"
 
 adv_liststr="asr 30 adv 50 asradv 100 reinit_adv 50"
-resume_checkpoint=180
-adv_weight=10.0
+resume_checkpoint=80
+adv_weight=100.0
 project_name="nancy_v4_oct_7_modified_120"
 
 
