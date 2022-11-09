@@ -854,6 +854,8 @@ class AbsTask(ABC):
         group.add_argument('--adv_loss_weight', default=1.0, type=float, help='weightage of adversarial loss during the joint training phase, asradv')
 
 
+        group.add_argument('--adv_branch', default=1, type=int, help='number of adversarial branches for adversarial training ')
+
 
         group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
         group.add_argument('--adv_lr', default=0.002, type=float,help='Learning rate for adv branch')

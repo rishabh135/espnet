@@ -56,8 +56,8 @@ adversarial_flag="True"
 # adv_liststr="asr_adv_asradv"
 
 adv_liststr="asr 40 adv 50 asradv 70 reinit_adv 40"
-resume_checkpoint=-1
-adv_weight=25.0
+resume_checkpoint=85
+adv_weight=35.5
 project_name="v5_nov_6_modified_200"
 experiment_name="modified_40_50_70_40_reinit_adv_weight_25" # name of the experiment, just change it to create differnet folders
 

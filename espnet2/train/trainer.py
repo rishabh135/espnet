@@ -87,6 +87,7 @@ class TrainerOptions:
     save_every_epoch: int
     resume_from_checkpoint: int
     adv_loss_weight: float
+    adv_branch: int
 
 
 class Trainer:
@@ -742,20 +743,20 @@ class Trainer:
 
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
-                        loss_adversarial = retval["loss_adversarial"]
+                        loss_adversarial = torch.sum(retval["loss_adversarial"])
                         loss_adversarial /= accum_grad
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
-                        loss_adversarial = retval["loss_adversarial"]
+                        loss_adversarial = torch.sum(retval["loss_adversarial"])
                         # loss_adversarial.requires_grad = True
                         loss = loss + options.adv_loss_weight * loss_adversarial
                         loss /= accum_grad
                         scaler.scale(loss).backward()
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'reinit_adv'):
-                        loss_adversarial = retval["loss_adversarial"]
+                        loss_adversarial = torch.sum(retval["loss_adversarial"])
                         loss_adversarial /= accum_grad
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
@@ -809,47 +810,26 @@ class Trainer:
                 if( (iiter % 100) == 0):        
                     logging.warning("\n >>>>>>>> MODE: {} adv_loss_weight {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {}  ".format( adv_mode, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach(), grad_norm ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
-                        logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
-    
+                        for branch in range(options.adv_branch):
+                            logging.warning(" adversarial_loss_discriminator_{} : {}   accuracy_adversarial_discriminator_{}:   {}".format(  branch,   stats["loss_adversarial_discriminator_{}".format(branch) ].detach(), branch,  stats["accuracy_adversarial_discriminator_{}".format(branch)] ))
+                    logging.warning("******************************************************************************************************************************************")
+                    
                     if(iiter == 200):
-                        # logging.warning(model)
-                        if(options.ngpu > 1): 
-                            
-                            # logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
-                            # logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.module.encoder.encoders[2].feed_forward.w_1.weight.grad, model.module.encoder.encoders[2].feed_forward.w_1.bias.grad   ) )
-                            
-                            if(adv_flag == True and adv_name == "ESPnetASRModel"):
-                                logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.module.adversarial_branch.output.weight.grad, model.module.adversarial_branch.output.bias.grad   ) )
-
-                        elif(options.ngpu == 1):
-
+                        if(options.ngpu == 1):
                             if(model.ctc.ctc_lo.weight.grad is not None):
-                                logging.warning(" ctc weight grad {}   shape {}  ctc bias grad {}".format(  torch.count_nonzero(model.ctc.ctc_lo.weight.grad), model.ctc.ctc_lo.weight.grad.shape ,  torch.count_nonzero(model.ctc.ctc_lo.bias.grad)  ) )    
-                                logging.warning(" encoder weight grad {}  shape {}  encoder bias grad {}".format(  torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad), model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape, torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   ) )
+                                logging.warning(" ----> ctc weight grad {}   shape {}  ctc bias grad {}".format(  torch.count_nonzero(model.ctc.ctc_lo.weight.grad), model.ctc.ctc_lo.weight.grad.shape ,  torch.count_nonzero(model.ctc.ctc_lo.bias.grad)  ) )    
+                                logging.warning(" ----> encoder weight grad {}  shape {}  encoder bias grad {}".format(  torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad), model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape, torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   ) )
                                 
                             if(adv_flag == True and adv_name == "ESPnetASRModel"):
-                                if(model.adversarial_branch.output.weight.grad is not None):
-                                    logging.warning(" adversarial weight grad {} shape {}  adversarial bias grad {}".format( torch.count_nonzero(model.adversarial_branch.output.weight.grad), model.adversarial_branch.output.weight.grad.shape, torch.count_nonzero(model.adversarial_branch.output.bias.grad)   ) )
-
-                        logging.warning("******************************")
-
-
-                            # if(self.encoder_weight_layer is not None):
-                            #     tmpx =  model.encoder.encoders[2].feed_forward.w_1.weight - self.encoder_weight_layer
-                            #     tmpy =  model.ctc.ctc_lo.weight - self.ctc_weight_layer
+                                if(options.adv_branch > 1 ):
+                                    tmpmodel = model.adversarial_branch[-1]
+                                else:
+                                    tmpmodel = model.adversarial_branch[0]
                                 
-                            #     if(self.adversarial_weight_layer is not None):
-                            #         tmpz = model.adversarial_branch.output.weight - self.adversarial_weight_layer
-                            #         logging.warning(" adversarial {}   ".format(torch.count_nonzero(tmpz)))
-                            #     logging.warning(" encoder : {} ctc {}  ".format(torch.count_nonzero(tmpx), torch.count_nonzero(tmpy)))
+                                if(tmpmodel.output.weight.grad is not None):
+                                    logging.warning(" ----------->> adversarial weight grad {} shape {}  adversarial bias grad {}".format( torch.count_nonzero( tmpmodel.output.weight.grad), tmpmodel.output.weight.grad.shape, torch.count_nonzero(tmpmodel.output.bias.grad)  ) )
 
-                            # self.encoder_weight_layer = model.encoder.encoders[2].feed_forward.w_1.weight
-                            # self.ctc_weight_layer = model.ctc.ctc_lo.weight
-                            # if(adv_mode == "adv" or adv_mode == "asradv"):
-                            #     self.adversarial_weight_layer = model.adversarial_branch.output.weight
-                        
-                            
-
+                            logging.warning("******************************")
 
 
                 # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))

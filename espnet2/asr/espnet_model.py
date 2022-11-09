@@ -63,11 +63,12 @@ class ESPnetASRModel(AbsESPnetModel):
         normalize: Optional[AbsNormalize],
         preencoder: Optional[AbsPreEncoder],
         encoder: AbsEncoder,
-        adversarial_branch: Optional[SpeakerAdv],
+        adversarial_branch: list[SpeakerAdv],
         postencoder: Optional[AbsPostEncoder],
         decoder: AbsDecoder,
         ctc: CTC,
         joint_network: Optional[torch.nn.Module],
+        adv_branch: int=1,
         ctc_weight: float = 0.5,
         interctc_weight: float = 0.0,
         ignore_id: int = -1,
@@ -105,6 +106,7 @@ class ESPnetASRModel(AbsESPnetModel):
         self.adversarial_branch = adversarial_branch
         self.adv_flag = adv_flag
         self.grlalpha = grlalpha
+        self.adv_branch = adv_branch
 
 
 
@@ -193,7 +195,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
     def reinit_adv(self,):
         if(self.reinit_adv_flag == False):
-            self.adversarial_branch.reinit_adv()
+            for branch in range(self.adv_branch):
+                self.adversarial_branch[branch].reinit_adv()
             self.reinit_adv_flag = True
         
     def print_flags(self,):
@@ -244,20 +247,24 @@ class ESPnetASRModel(AbsESPnetModel):
     
     def freeze_adversarial(self):
         if not self.adversarial_frozen_flag:
-            for param in self.adversarial_branch.parameters():
-                param.requires_grad = False
-                param.grad = None
-                # if param.grad is not None:
-                #     # p.grad.detach_()
-                #     param.grad.zero_()
+            for branch in range(self.adv_branch):
+                tmp_adversarial_branch = self.adversarial_branch[branch]    
+                for param in tmp_adversarial_branch.parameters():
+                    param.requires_grad = False
+                    param.grad = None
+                    # if param.grad is not None:
+                    #     # p.grad.detach_()
+                    #     param.grad.zero_()
             self.adversarial_frozen_flag = True
         self.print_flags()
 
    
     def unfreeze_adversarial(self):
         if self.adversarial_frozen_flag:
-            for param in self.adversarial_branch.parameters():
-                param.requires_grad = True
+            for branch in range(self.adv_branch):
+                tmp_adversarial_branch = self.adversarial_branch[branch]  
+                for param in tmp_adversarial_branch.parameters():
+                    param.requires_grad = True
             self.adversarial_frozen_flag = False
 
 
@@ -404,14 +411,19 @@ class ESPnetASRModel(AbsESPnetModel):
             # logging.info("Computing adversarial loss and flag inside {}  \n".format(self.adv_flag))
             rev_hs_pad = ReverseLayerF.apply(encoder_out, self.grlalpha)
             # print("\n\n rev hs pad : {} \n  encoder: out {}  \n text len {}  \n\n\n".format(rev_hs_pad.shape, encoder_out_lens.shape, text.shape ))
-            loss_adv, acc_adv = self.adversarial_branch(rev_hs_pad, encoder_out_lens, spkid)
+            # stats["loss_adversarial"] = []
+            # stats["accuracy_adversarial"] = []
+            retval["loss_adversarial"] = []
+            retval["accuracy_adversarial"] = []
+            for branch in range (self.adv_branch):
+                loss_adv, acc_adv = self.adversarial_branch[branch](rev_hs_pad, encoder_out_lens, spkid)
 
-            # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
-            stats["loss_adversarial"] = loss_adv.detach() if loss_adv is not None else None
-            retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
+                # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
+                stats["loss_adversarial_discriminator_{}".format(branch) ] =   loss_adv.detach() if loss_adv is not None else None
+                retval["loss_adversarial"].append( loss_adv if loss_adv is not None else None)
 
-            stats["accuracy_adversarial"]= acc_adv * 100 if acc_adv is not None else None
-            retval["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
+                stats["accuracy_adversarial_discriminator_{}".format(branch) ] =   acc_adv * 100 if acc_adv is not None else None
+                retval["accuracy_adversarial"].append(  acc_adv if acc_adv is not None else None)
 
 
         # Intermediate CTC (optional)

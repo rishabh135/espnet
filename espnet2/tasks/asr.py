@@ -667,7 +667,11 @@ class ASRTask(AbsTask):
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
-            adversarial_branch = SpeakerAdv(args.odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
+            adversarial_branch = []
+            for x in range(args.adv_branch):
+                tmpmodel = SpeakerAdv(args.odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
+                tmpmodel = tmpmodel.to(dtype=getattr(torch, args.train_dtype), device="cuda" if args.ngpu > 0 else "cpu",)
+                adversarial_branch.append(tmpmodel)
         else:
             adversarial_branch = None
 
@@ -697,6 +701,7 @@ class ASRTask(AbsTask):
             postencoder=postencoder,
             decoder=decoder,
             ctc=ctc,
+            adv_branch=args.adv_branch,
             joint_network=joint_network,
             token_list=token_list,
             **args.model_conf,
