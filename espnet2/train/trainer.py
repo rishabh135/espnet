@@ -779,46 +779,87 @@ class Trainer:
                         # for corresponding forward ops.
                     
                 else:
+
+                    # GMAN (Durugkar et al., 2016) multi gradient descent
+                    # losses_list_float = []
+                    # losses_list_var = []
+                    # loss_G = 0
+                    # for disc in self.disc_list:
+                    #     losses_list_var.append(F.binary_cross_entropy(disc.forward(out).squeeze(), y_real_))
+                    #     losses_list_float.append(losses_list_var[-1].item())
+
+                    # losses = torch.FloatTensor(losses_list_float)
+                    # self.proba = torch.nn.functional.softmax(self.alpha * losses, dim=0).detach().cpu().numpy()
+
+                    # for loss_weight in zip(losses_list_var, self.proba):
+                    #     loss_G += loss_weight[0] * float(loss_weight[1])
+                    
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
                         loss /= accum_grad
                         loss.backward()
 
-                        # loss_adversarial = retval["loss_adversarial"]
-                        # total_loss = loss
-                        # loss = total_loss
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
-                        logging.warning("\n ****** $$$$$$$$$$$ ********* \n")
+                        tloss = []
+                        losses_list_float = []
                         for branch in range(options.adv_branch):
-                            tloss = retval["loss_adversarial_{}".format(branch)]
-                            logging.warning(" adding  tloss {} ".format(  tloss.item() ))
-                            # scaler.scale(tloss).backward( retain_graph = True) 
-                            tloss /= accum_grad
-                            tloss.backward() 
+                            tloss.append(retval["loss_adversarial_{}".format(branch)])
+                            losses_list_float.append(tloss[branch].item())
                         
-                        # for idx, tloss in enumerate(retval["loss_adversarial"] ):
-                        #     tloss /= accum_grad
-                        #     # loss_adversarial.requires_grad = True
-                        #     logging.warning(" $$$$$$ --->>> adding scaled loss  ")
-                        #     scaler.scale(tloss).backward(retain_graph=True)           
-                        # loss_adversarial = sum(retval["loss_adversarial"])/options.adv_branch
-                    
+                        loss_G = 0
+                        losses = torch.FloatTensor(losses_list_float)
+                        proba = torch.nn.functional.softmax( 0.8 * losses, dim=0).detach().cpu().numpy()
+
+                        for loss_weight in zip(tloss, proba):
+                            loss_G += loss_weight[0] * float(loss_weight[1])
+                        
+                        loss_G /= accum_grad
+                        loss_G.backward() 
+                        
+                        
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
-                        loss_adversarial = sum(retval["loss_adversarial"])
-                        # loss_adversarial.requires_grad = True
-                        loss = loss + options.adv_loss_weight * loss_adversarial
+
+                        tloss =[]
+                        for branch in range(options.adv_branch):
+                            tloss.append( retval["loss_adversarial_{}".format(branch)])
+                            losses_list_float.append(tloss[branch].item())
+                        
+                        # loss_adversarial = sum(tloss)/options.adv_branch
+
+                        loss_G = 0
+                        losses = torch.FloatTensor(losses_list_float)
+                        proba = torch.nn.functional.softmax( 0.8 * losses, dim=0).detach().cpu().numpy()
+
+                        for loss_weight in zip(tloss, proba):
+                            loss_G += loss_weight[0] * float(loss_weight[1])
+
+                        loss = loss + options.adv_loss_weight * loss_G
                         loss /= accum_grad
-                        tloss.backward() 
+                        loss.backward() 
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'reinit_adv'):
-                        for idx, tloss in enumerate(retval["loss_adversarial"] ):
-                            tloss /= accum_grad
-                            logging.warning(" >>>>>>------ tloss {} ".format(tloss))
-                            # loss_adversarial.requires_grad = True
-                            tloss.backward()  
+                        tloss = []
+                        losses_list_float = []
+                        for branch in range(options.adv_branch):
+                            tloss.append(retval["loss_adversarial_{}".format(branch)])
+                            losses_list_float.append(tloss[branch].item())
+                        
+                        loss_G = 0
+                        losses = torch.FloatTensor(losses_list_float)
+                        proba = torch.nn.functional.softmax( 0.8 * losses, dim=0).detach().cpu().numpy()
+
+                        for loss_weight in zip(tloss, proba):
+                            loss_G += loss_weight[0] * float(loss_weight[1])
+                        
+                        loss_G /= accum_grad
+                        loss_G.backward() 
+
+                    
                     else:
                         loss /= accum_grad
                         loss.backward()
+
+
                         # scaler.scale(loss_adversarial).backward()
                         # Scales loss.  Calls backward() on scaled loss
                         # to create scaled gradients.
@@ -861,10 +902,10 @@ class Trainer:
 
 
                 if( (iiter % 100) == 0):        
-                    logging.warning("\n >>>>>>>> MODE: {} adv_loss_weight {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {}  ".format( adv_mode, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach(), grad_norm ))
+                    logging.warning("\n >>>>>>>> MODE: {}  branches {} adversarial_loss_weight {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {}  ".format( adv_mode, options.adv_branch, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach().item(), grad_norm ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         for branch in range(options.adv_branch):
-                            logging.warning(" adversarial_loss_discriminator_{} : {}   accuracy_adversarial_discriminator_{}:   {}".format(  branch,   stats["loss_adversarial_discriminator_{}".format(branch) ].detach(), branch,  stats["accuracy_adversarial_discriminator_{}".format(branch)] ))
+                            logging.warning(" adversarial_loss_discriminator_{} : {}   accuracy_adversarial_discriminator_{}:   {}".format(  branch,   stats["loss_adversarial_discriminator_{}".format(branch) ].detach().item(), branch,  stats["accuracy_adversarial_discriminator_{}".format(branch)] ))
                     logging.warning("******************************************************************************************************************************************")
                     
                     if(iiter == 200):

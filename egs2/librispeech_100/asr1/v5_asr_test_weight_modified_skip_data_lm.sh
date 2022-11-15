@@ -52,9 +52,9 @@ adversarial_flag="True"
 adv_liststr="asr_adv_asradv"
 resume_checkpoint=-1
 adv_weight=35.5
-adv_branch=1
+adv_branch=3
 # project_name="v5_nov_6_modified_200"
-project_name="v5_test_modified_200"
+project_name="v5_test_multi_adv_modified_200"
 experiment_name="modified_test_weight_35" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
@@ -1193,6 +1193,7 @@ if ! "${skip_train}"; then
                 --project_name "${project_name}" \
                 --resume_from_checkpoint "${resume_checkpoint}" \
                 --adv_loss_weight "${adv_weight}" \
+                --adv_branch "${adv_branch}"\
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \
