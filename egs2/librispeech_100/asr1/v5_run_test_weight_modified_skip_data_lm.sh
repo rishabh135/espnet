@@ -14,29 +14,13 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 ###################################################################################################################################################################################################
 
-
-# project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
-
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 
 # project_name="v5_nov_6_modified_200"
-project_name="v5_nov_9_modified_200"
+project_name="v5_test_modified_200"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
-# asr_config=conf/train_asr.yaml
-# inference_config=conf/decode_asr.yaml
-
-# srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}
-# experiment_n=asr_lmt_trigram_wo_adv
-# experiment_n=pyt_adversarial_june_7 # name of the experiment, just change it to create differnet folders
-# experiment_n=pyt_adversarial_june_7 # name of the experiment, just change it to create differnet folders
-
-
-# data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/data # determines all the files creating folder as in the data folder
-
-# data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
-
 
 asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_modified.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
@@ -45,7 +29,7 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
-./v5_asr_weight_modified_skip_data_lm.sh \
+./v5_asr_test_weight_modified_skip_data_lm.sh \
     --skip_data_prep true \
     --skip_train false \
     --skip_eval false \
@@ -141,4 +125,5 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --lm_train_text "${data_dd}/${train_set}/text" \
     --bpe_train_text "${data_dd}/${train_set}/text" "$@" 
     
+
 

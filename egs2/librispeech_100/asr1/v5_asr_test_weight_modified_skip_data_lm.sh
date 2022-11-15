@@ -43,25 +43,19 @@ gpu_inference=false  # Whether to perform gpu decoding.
 
 global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
 
-# project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
 adversarial_flag="True"
 
 
-# dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
-# expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
 
-
-# adv_liststr="asr_adv_asradv"
-
-adv_liststr="asr 40 adv 50 asradv 70 reinit_adv 40"
-resume_checkpoint=40
+adv_liststr="asr_adv_asradv"
+resume_checkpoint=-1
 adv_weight=35.5
 adv_branch=1
 # project_name="v5_nov_6_modified_200"
-project_name="v5_nov_9_modified_200"
-experiment_name="modified_40_50_70_40_reinit_adv_weight_35" # name of the experiment, just change it to create differnet folders
+project_name="v5_test_modified_200"
+experiment_name="modified_test_weight_35" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump

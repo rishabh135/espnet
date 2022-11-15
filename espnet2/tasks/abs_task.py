@@ -930,6 +930,42 @@ class AbsTask(ABC):
 
 
 
+    # @classmethod
+    # def build_optimizers(
+    #     cls,
+    #     args: argparse.Namespace,
+    #     model: torch.nn.Module,
+    # ) -> List[torch.optim.Optimizer]:
+        
+    #     if cls.num_optimizers != 1:
+    #         raise RuntimeError(
+    #             "build_optimizers() must be overridden if num_optimizers != 1"
+    #         )
+
+    #     optim_class = optim_classes.get(args.optim)
+    #     if optim_class is None:
+    #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+
+
+
+    #     optimizers = []
+    #     encoder_optimizer =  optim_class( list(model.encoder.parameters()) +  list(model.decoder.parameters()) + list(model.ctc.parameters()),  **args.optim_conf )
+    #     optimizers.append(encoder_optimizer)
+    #     for branch in args.adv_branch:
+    #         tmpoptimizer = optim_class( list(model.adversarial_branch[branch].parameters()),  **args.optim_conf )
+    #         optimizers.append(tmpoptimizer)
+
+
+    #     # if args.sharded_ddp:
+    #     #     if fairscale is None:
+    #     #         raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
+    #     #     optim = fairscale.optim.oss.OSS(
+    #     #         params=model.parameters(), optim=optim_class, **args.optim_conf
+    #     #     )
+    #     # else:
+    #     #     optim = optim_class(model.parameters(), **args.optim_conf)
+
+    #     return optimizers
 
 
 
@@ -1170,7 +1206,7 @@ class AbsTask(ABC):
             
 
             if (args.adv_liststr == "asr_adv_asradv" ):         
-                args.adversarial_list = ["asr", "asr", "adv", "adv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * 8 + ["asradv"] * 10
+                args.adversarial_list = ["asr", "asr", "adv", "adv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * (args.max_epoch//20)  + ["asradv"] * (args.max_epoch%20)
                 
             else :
                 epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))

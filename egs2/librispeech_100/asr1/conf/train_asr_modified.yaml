@@ -55,7 +55,7 @@ best_model_criterion:
     - max
 keep_nbest_models: 3
 
-use_amp: true      
+use_amp: false     
 cudnn_deterministic: true  
 cudnn_benchmark: false      
 unused_parameters: true 
