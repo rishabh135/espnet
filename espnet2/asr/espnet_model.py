@@ -418,12 +418,14 @@ class ESPnetASRModel(AbsESPnetModel):
             # stats["accuracy_adversarial"] = []
             # retval["loss_adversarial"] = []
             # retval["accuracy_adversarial"] = []
+            losses_list_float = []
             for branch in range (self.adv_branch):
                 loss_adv, acc_adv = self.adversarial_branch[branch](rev_hs_pad, encoder_out_lens, spkid)
 
                 # print("espnet_model.py adversarial_loss {} and accuracy {} \n".format(loss_adv, acc_adv))
                 stats["loss_adversarial_discriminator_{}".format(branch) ] =   loss_adv.detach() if loss_adv is not None else None
                 retval["loss_adversarial_{}".format(branch) ] =  loss_adv if loss_adv is not None else None
+                losses_list_float.append( loss_adv.item() if loss_adv is not None else None)
                 
                 # retval["loss_adversarial"].append( loss_adv if loss_adv is not None else None)
 
@@ -431,6 +433,11 @@ class ESPnetASRModel(AbsESPnetModel):
                 retval["accuracy_adversarial_{}".format(branch) ] =   acc_adv * 100 if acc_adv is not None else None
                 
                 # retval["accuracy_adversarial"].append(  acc_adv if acc_adv is not None else None)
+
+            losses = torch.FloatTensor(losses_list_float)
+            self.proba = torch.nn.functional.softmax( 0.8 * losses, dim=0).detach().cpu().numpy()
+            retval["proba"] = self.proba
+
 
 
         # Intermediate CTC (optional)

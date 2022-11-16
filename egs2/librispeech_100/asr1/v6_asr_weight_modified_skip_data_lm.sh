@@ -57,10 +57,11 @@ adversarial_flag="True"
 
 resume_checkpoint=-1
 adv_weight=35.5
-adv_branch=2
-adv_liststr="asr 40 adv 50 asradv 70 reinit_adv 40"
-project_name="v6_nov_9_multi_adv_200"
-experiment_name="modified_40_50_70_40_reinit_adv_weight_35" # name of the experiment, just change it to create differnet folders
+adv_branch=3
+max_epoch=160
+adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
+project_name="v6_nov_15_multi_adv_160"
+experiment_name="modified_40_each_3_br_adv_35" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump
@@ -1199,6 +1200,7 @@ if ! "${skip_train}"; then
                 --resume_from_checkpoint "${resume_checkpoint}" \
                 --adv_loss_weight "${adv_weight}" \
                 --adv_branch "${adv_branch}" \
+                --max_epoch "${max_epoch}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \

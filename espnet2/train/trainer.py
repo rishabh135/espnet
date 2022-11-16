@@ -804,15 +804,14 @@ class Trainer:
                         losses_list_float = []
                         for branch in range(options.adv_branch):
                             tloss.append(retval["loss_adversarial_{}".format(branch)])
-                            losses_list_float.append(tloss[branch].item())
                         
                         loss_G = 0
-                        losses = torch.FloatTensor(losses_list_float)
-                        proba = torch.nn.functional.softmax( 0.8 * losses, dim=0).detach().cpu().numpy()
+                        proba = retval["proba"]
 
                         for loss_weight in zip(tloss, proba):
                             loss_G += loss_weight[0] * float(loss_weight[1])
                         
+                        stats["loss_G_gman_multigrad"] = loss_G.detach() if loss_G is not None else None 
                         loss_G /= accum_grad
                         loss_G.backward() 
                         
@@ -822,16 +821,14 @@ class Trainer:
                         tloss =[]
                         for branch in range(options.adv_branch):
                             tloss.append( retval["loss_adversarial_{}".format(branch)])
-                            losses_list_float.append(tloss[branch].item())
-                        
-                        # loss_adversarial = sum(tloss)/options.adv_branch
 
                         loss_G = 0
-                        losses = torch.FloatTensor(losses_list_float)
-                        proba = torch.nn.functional.softmax( 0.8 * losses, dim=0).detach().cpu().numpy()
+                        proba = retval["proba"]
 
                         for loss_weight in zip(tloss, proba):
                             loss_G += loss_weight[0] * float(loss_weight[1])
+
+                        stats["loss_G_gman_multigrad"] = loss_G.detach() if loss_G is not None else None 
 
                         loss = loss + options.adv_loss_weight * loss_G
                         loss /= accum_grad
@@ -839,18 +836,15 @@ class Trainer:
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'reinit_adv'):
                         tloss = []
-                        losses_list_float = []
                         for branch in range(options.adv_branch):
                             tloss.append(retval["loss_adversarial_{}".format(branch)])
-                            losses_list_float.append(tloss[branch].item())
                         
                         loss_G = 0
-                        losses = torch.FloatTensor(losses_list_float)
-                        proba = torch.nn.functional.softmax( 0.8 * losses, dim=0).detach().cpu().numpy()
-
+                        proba = retval["proba"]
                         for loss_weight in zip(tloss, proba):
                             loss_G += loss_weight[0] * float(loss_weight[1])
                         
+                        stats["loss_G_gman_multigrad"] = loss_G.detach() if loss_G is not None else None 
                         loss_G /= accum_grad
                         loss_G.backward() 
 
