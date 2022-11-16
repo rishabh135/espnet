@@ -593,7 +593,7 @@ class Trainer:
         current_flr = optimizers[0].param_groups[0]['lr']
         current_llr = optimizers[0].param_groups[-1]['lr']
         
-        logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(current_flr), float(current_llr), param_group_length))
+        logging.warning(" --->>>>>   adv_mode {}  save_every_x_epochs:{} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(current_flr), float(current_llr), param_group_length))
 
 
 
@@ -781,77 +781,36 @@ class Trainer:
                 else:
 
                     # GMAN (Durugkar et al., 2016) multi gradient descent
-                    # losses_list_float = []
-                    # losses_list_var = []
-                    # loss_G = 0
-                    # for disc in self.disc_list:
-                    #     losses_list_var.append(F.binary_cross_entropy(disc.forward(out).squeeze(), y_real_))
-                    #     losses_list_float.append(losses_list_var[-1].item())
-
-                    # losses = torch.FloatTensor(losses_list_float)
-                    # self.proba = torch.nn.functional.softmax(self.alpha * losses, dim=0).detach().cpu().numpy()
-
-                    # for loss_weight in zip(losses_list_var, self.proba):
-                    #     loss_G += loss_weight[0] * float(loss_weight[1])
-                    
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
                         loss /= accum_grad
                         loss.backward()
 
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
-                        tloss = []
-                        losses_list_float = []
-                        for branch in range(options.adv_branch):
-                            tloss.append(retval["loss_adversarial_{}".format(branch)])
-                        
-                        loss_G = 0
-                        proba = retval["proba"]
 
-                        for loss_weight in zip(tloss, proba):
-                            loss_G += loss_weight[0] * float(loss_weight[1])
-                        
-                        stats["loss_G_gman_multigrad"] = loss_G.detach() if loss_G is not None else None 
+                        loss_G = retval["loss_G"] 
                         loss_G /= accum_grad
                         loss_G.backward() 
                         
                         
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
 
-                        tloss =[]
-                        for branch in range(options.adv_branch):
-                            tloss.append( retval["loss_adversarial_{}".format(branch)])
-
-                        loss_G = 0
-                        proba = retval["proba"]
-
-                        for loss_weight in zip(tloss, proba):
-                            loss_G += loss_weight[0] * float(loss_weight[1])
-
-                        stats["loss_G_gman_multigrad"] = loss_G.detach() if loss_G is not None else None 
-
+                        loss_G = retval["loss_G"] 
                         loss = loss + options.adv_loss_weight * loss_G
                         loss /= accum_grad
                         loss.backward() 
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'reinit_adv'):
-                        tloss = []
-                        for branch in range(options.adv_branch):
-                            tloss.append(retval["loss_adversarial_{}".format(branch)])
                         
-                        loss_G = 0
-                        proba = retval["proba"]
-                        for loss_weight in zip(tloss, proba):
-                            loss_G += loss_weight[0] * float(loss_weight[1])
-                        
-                        stats["loss_G_gman_multigrad"] = loss_G.detach() if loss_G is not None else None 
+                        loss_G = retval["loss_G"] 
                         loss_G /= accum_grad
                         loss_G.backward() 
-
+                        
                     
                     else:
                         loss /= accum_grad
                         loss.backward()
+
 
 
                         # scaler.scale(loss_adversarial).backward()
@@ -861,6 +820,8 @@ class Trainer:
                         # Backward ops run in the same dtype autocast chose
                         # for corresponding forward ops.
 
+
+            # reporter.register(stats, weight)
 
             if iiter % accum_grad == 0:
                 if scaler is not None:
@@ -896,8 +857,9 @@ class Trainer:
 
 
                 if( (iiter % 100) == 0):        
-                    logging.warning("\n >>>>>>>> MODE: {}  branches {} adversarial_loss_weight {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {}  ".format( adv_mode, options.adv_branch, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach().item(), grad_norm ))
+                    logging.warning("\n >>>>> MODE: {}  branches {} adversarial_loss_weight {} iiter {} adv_flag {} asr_loss {} grad_norm {} ".format( adv_mode, options.adv_branch, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach().item(), grad_norm ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
+                        logging.warning(" loss_G  {} ".format( retval["loss_G"].detach().item() ))
                         for branch in range(options.adv_branch):
                             logging.warning(" adversarial_loss_discriminator_{} : {}   accuracy_adversarial_discriminator_{}:   {}".format(  branch,   stats["loss_adversarial_discriminator_{}".format(branch) ].detach().item(), branch,  stats["accuracy_adversarial_discriminator_{}".format(branch)] ))
                     logging.warning("******************************************************************************************************************************************")
@@ -905,8 +867,8 @@ class Trainer:
                     if(iiter == 200):
                         if(options.ngpu == 1):
                             if(model.ctc.ctc_lo.weight.grad is not None):
-                                logging.warning(" ----> ctc weight grad {}   shape {}  ctc bias grad {}".format(  torch.count_nonzero(model.ctc.ctc_lo.weight.grad), model.ctc.ctc_lo.weight.grad.shape ,  torch.count_nonzero(model.ctc.ctc_lo.bias.grad)  ) )    
-                                logging.warning(" ----> encoder weight grad {}  shape {}  encoder bias grad {}".format(  torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad), model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape, torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   ) )
+                                logging.warning(" ----> ctc  non_zero weight_grad {}   weight_grad_shape {}  ctc  non_zero_bias grad {}".format(  torch.count_nonzero(model.ctc.ctc_lo.weight.grad), model.ctc.ctc_lo.weight.grad.shape ,  torch.count_nonzero(model.ctc.ctc_lo.bias.grad)  ) )    
+                                logging.warning(" ----> encoder weight non_zero_grad {}  weight_grad_shape {}  encoder non_zero bias grad {}".format(  torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad), model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape, torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   ) )
                                 
                             if(adv_flag == True and adv_name == "ESPnetASRModel"):
                                 if(options.adv_branch > 1 ):
@@ -915,7 +877,7 @@ class Trainer:
                                     tmpmodel = model.adversarial_branch[0]
                                 
                                 if(tmpmodel.output.weight.grad is not None):
-                                    logging.warning(" ----------->> adversarial weight grad {} shape {}  adversarial bias grad {}".format( torch.count_nonzero( tmpmodel.output.weight.grad), tmpmodel.output.weight.grad.shape, torch.count_nonzero(tmpmodel.output.bias.grad)  ) )
+                                    logging.warning(" -----> adv non_zeros_weight_grad {} weight_grad_shape {}  adv non_zero_bias grad {}".format( torch.count_nonzero( tmpmodel.output.weight.grad), tmpmodel.output.weight.grad.shape, torch.count_nonzero(tmpmodel.output.bias.grad)  ) )
 
                             logging.warning("******************************")
 

@@ -434,9 +434,19 @@ class ESPnetASRModel(AbsESPnetModel):
                 
                 # retval["accuracy_adversarial"].append(  acc_adv if acc_adv is not None else None)
 
-            losses = torch.FloatTensor(losses_list_float)
-            self.proba = torch.nn.functional.softmax( 0.8 * losses, dim=0).detach().cpu().numpy()
-            retval["proba"] = self.proba
+
+              
+            if(self.adv_branch > 1):
+                losses = torch.FloatTensor(losses_list_float)
+                self.proba = torch.nn.functional.softmax( 0.8 * losses, dim=0).detach().cpu().numpy()
+                loss_G = 0  
+                for loss_weight in zip(tloss, proba):
+                        loss_G += loss_weight[0] * float(loss_weight[1])     
+                stats["loss_G_gman_multigrad"] = loss_G.detach() if loss_G is not None else None
+                retval["loss_G"] = loss_G if loss_G is not None else None
+            else:
+                stats["loss_G_gman_multigrad"] = stats["loss_adversarial_discriminator_0"]
+                retval["loss_G"] = retval["loss_adversarial_0"]
 
 
 
