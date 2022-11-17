@@ -60,8 +60,9 @@ adv_weight=35.5
 adv_branch=3
 max_epoch=160
 adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
-project_name="v6_nov_15_multi_adv_160"
-experiment_name="modified_40_each_3_br_adv_35" # name of the experiment, just change it to create differnet folders
+# project_name="v6_nov_15_multi_adv_160"
+project_name="v6_nov_17_branch_3_multi_adv_160"
+experiment_name="modified_40_each_branch_3_adv_35" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump

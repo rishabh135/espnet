@@ -53,7 +53,7 @@ best_model_criterion:
 -   - valid
     - acc
     - max
-keep_nbest_models: 3
+keep_nbest_models: 1
 
 use_amp: false     
 cudnn_deterministic: true  

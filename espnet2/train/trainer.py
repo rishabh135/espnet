@@ -737,46 +737,28 @@ class Trainer:
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
                         loss /= accum_grad
                         scaler.scale(loss).backward()
-                        # loss_adversarial = retval["loss_adversarial"]
-                        # total_loss = loss
-                        # loss = total_loss
+
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
-                        logging.warning("\n ****** $$$$$$$$$$$ ********* \n")
-                        for branch in range(options.adv_branch):
-                            tloss = retval["loss_adversarial_{}".format(branch)]
-                            logging.warning(" adding  tloss {} ".format(  tloss.item() ))
-                            scaler.scale(tloss).backward( retain_graph = True)  
+                        loss_G = retval["loss_G"] 
+                        loss_G /= accum_grad
+                        scaler.scale(loss_G).backward()  
                         
-                        # for idx, tloss in enumerate(retval["loss_adversarial"] ):
-                        #     tloss /= accum_grad
-                        #     # loss_adversarial.requires_grad = True
-                        #     logging.warning(" $$$$$$ --->>> adding scaled loss  ")
-                        #     scaler.scale(tloss).backward(retain_graph=True)           
-                        # loss_adversarial = sum(retval["loss_adversarial"])/options.adv_branch
-                    
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
-                        loss_adversarial = sum(retval["loss_adversarial"])
-                        # loss_adversarial.requires_grad = True
-                        loss = loss + options.adv_loss_weight * loss_adversarial
+                        
+                        loss_G = retval["loss_G"] 
+                        loss = loss + options.adv_loss_weight * loss_G
                         loss /= accum_grad
                         scaler.scale(loss).backward()
                     
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'reinit_adv'):
-                        for idx, tloss in enumerate(retval["loss_adversarial"] ):
-                            tloss /= accum_grad
-                            logging.warning(" >>>>>>------ tloss {} ".format(tloss))
-                            # loss_adversarial.requires_grad = True
-                            scaler.scale(tloss).backward()  
+                        loss_G = retval["loss_G"] 
+                        loss_G /= accum_grad
+                        scaler.scale(loss_G).backward()  
                     else:
                         loss /= accum_grad
                         scaler.scale(loss).backward()
-                        # scaler.scale(loss_adversarial).backward()
-                        # Scales loss.  Calls backward() on scaled loss
-                        # to create scaled gradients.
-                        # Backward passes under autocast are not recommended.
-                        # Backward ops run in the same dtype autocast chose
-                        # for corresponding forward ops.
+
                     
                 else:
 
@@ -785,14 +767,12 @@ class Trainer:
                         loss /= accum_grad
                         loss.backward()
 
-                    
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
 
                         loss_G = retval["loss_G"] 
                         loss_G /= accum_grad
                         loss_G.backward() 
-                        
-                        
+            
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
 
                         loss_G = retval["loss_G"] 
@@ -806,22 +786,10 @@ class Trainer:
                         loss_G /= accum_grad
                         loss_G.backward() 
                         
-                    
                     else:
                         loss /= accum_grad
                         loss.backward()
 
-
-
-                        # scaler.scale(loss_adversarial).backward()
-                        # Scales loss.  Calls backward() on scaled loss
-                        # to create scaled gradients.
-                        # Backward passes under autocast are not recommended.
-                        # Backward ops run in the same dtype autocast chose
-                        # for corresponding forward ops.
-
-
-            # reporter.register(stats, weight)
 
             if iiter % accum_grad == 0:
                 if scaler is not None:

@@ -17,12 +17,12 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 
 # project_name="v5_nov_6_modified_200"
-project_name="v5_test_multi_adv_modified_200"
+project_name="v5_test_multi_adv_modified_160"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_modified.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 
