@@ -62,9 +62,9 @@ class VariationalDropout(torch.nn.Module):
 
 class BetterLSTM(torch.nn.LSTM):
     def __init__(self, *args, dropouti: float=0.3,
-                 dropoutw: float=0., dropouto: float=0.05,
+                 dropoutw: float=0., dropouto: float=0.05,  bidirectional=True,
                  batch_first=True, unit_forget_bias=True, **kwargs):
-        super().__init__(*args, **kwargs, batch_first=batch_first)
+        super().__init__(*args, **kwargs,  bidirectional=True,  batch_first=batch_first)
         self.unit_forget_bias = unit_forget_bias
         self.dropoutw = dropoutw
         self.input_drop = VariationalDropout(dropouti,
@@ -94,11 +94,16 @@ class BetterLSTM(torch.nn.LSTM):
                     torch.nn.functional.dropout(param.data, p=self.dropoutw,
                                                 training=self.training).contiguous()
 
-    def forward(self, input, hx=None):
+    def forward(self, inp, hx=None):
         self._drop_weights()
-        input = self.input_drop(input)
-        seq, state = super().forward(input, hx=hx)
-        return self.output_drop(seq), 
+        inp = self.input_drop(inp)
+        seq, state = super().forward(inp, hx=hx )
+        out_x = self.output_drop(seq)
+        (h_0, c_0) = state
+        # out_x, (h_0, c_0)
+        # 
+        # logging.warning("  >>>>>> Better LSTM  out_x: {}  shape {} h_0 {} h_0.shape {} ".format( type(out_x), out_x.shape, type(h_0), h_0.shape ))
+        return out_x, (h_0, c_0)
 
 
 ##############################################################################################################################################################
@@ -178,10 +183,11 @@ class SpeakerAdv(torch.nn.Module):
         super(SpeakerAdv, self).__init__()
         self.advunits = advunits
         self.advlayers = advlayers
-        self.advnet = BetterLSTM(eprojs, advunits, self.advlayers,
-                                    batch_first=True, dropoutw=dropout_rate,
-                                    bidirectional=True)
-        logging.warning(" Created better lstm with dropout_w = {}  ".format(dropout_rate))
+        
+        self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropoutw=dropout_rate, bidirectional=True)
+        # self.advnet = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_rate, bidirectional=True)
+        
+        # logging.warning(" Created better lstm with dropout_w = {}  ".format(dropout_rate))
         '''
         linears = [torch.nn.Linear(eprojs, advunits), torch.nn.ReLU(),
                    torch.nn.Dropout(p=dropout_rate)]
@@ -237,6 +243,8 @@ class SpeakerAdv(torch.nn.Module):
         # logging.warning(" spkid inside adversarial {} ".format(y_adv))
         self.advnet.flatten_parameters()
         out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
+
+        # logging.warning(" ------>>> lstm out_x {} , h_0 {} , c_0 {}, out_x.shape {} h_0.shape {} c_0.shape {}  ".format( type(out_x), type(h_0), type(c_0), out_x.shape, h_0.shape, c_0.shape) )
 
         # logging.warning("advnet output size = %s", str(out_x.shape))
         # logging.warning("adversarial target size = %s", str(y_adv.shape))

@@ -1168,7 +1168,7 @@ class AbsTask(ABC):
             
 
             if (args.adv_liststr == "asr_adv_asradv" ):         
-                args.adversarial_list = ["asr", "asr", "adv", "adv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * 8 + ["asradv"] * 10
+                args.adversarial_list = ["asradv", "adv", "adv", "asradv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * 8 + ["asradv"] * 10
                 
             else :
                 epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
@@ -1432,6 +1432,7 @@ class AbsTask(ABC):
                         time = datetime.now().strftime("_time__%H_%M")
                         # d = date_time.strftime("%d %B, %Y")
                         name =  d2 + "__" + time + "__adv_loss_weight:_" + str(args.adv_loss_weight) + "__maxepoch:_" +  str(args.max_epoch)
+                        logging.warning("Starting training with wandbname : {} ".format(name))
                     else:
                         name = args.wandb_name
 
