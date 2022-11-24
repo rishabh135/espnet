@@ -344,7 +344,7 @@ class ESPnetASRModel(AbsESPnetModel):
         logging.warning(" >>>>>>>   encoder_out.shape {}  encoder_out_lens shape {}".format(encoder_out.shape , encoder_out_lens.shape ))
 
 
-        mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
+        # mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         # Split the result into mu and var components
         # of the latent Gaussian distribution
         mu = self.fc_mu(mu_log_var_combined)
