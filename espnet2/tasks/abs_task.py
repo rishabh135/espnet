@@ -1431,7 +1431,7 @@ class AbsTask(ABC):
                         d2 = today.strftime("Run_%B_%d_")
                         time = datetime.now().strftime("_time__%H_%M")
                         # d = date_time.strftime("%d %B, %Y")
-                        name =  d2 + "__" + time 
+                        name =  d2 + "__" + time + "__adv_loss_weight:_" + str(args.adv_loss_weight) + "__maxepoch:_" +  str(args.max_epoch)
                     else:
                         name = args.wandb_name
 
