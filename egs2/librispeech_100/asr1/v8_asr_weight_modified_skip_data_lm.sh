@@ -60,7 +60,7 @@ resume_checkpoint=-1
 max_epoch=250
 adv_weight=45.0
 # project_name="v8_better_lstm_test"
-project_name="v8_better_lstm_nov_24_modified_250"
+project_name="v8_better_lstm_nov_29_modified_250"
 experiment_name="modified_40_40_40_130_reinit_adv_weight_45" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
