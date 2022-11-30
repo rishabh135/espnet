@@ -46,7 +46,7 @@ sort_batch: descending          # how to sort created batches
 batch_type: numel
 batch_bins: 60000000
 accum_grad: 4
-max_epoch: 250
+max_epoch: 200
 patience: none
 init: none
 best_model_criterion:

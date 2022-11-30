@@ -55,13 +55,14 @@ adversarial_flag="True"
 
 
 # adv_liststr="asr_adv_asradv"
-adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 130"
+adv_liststr="asr 40 adv 50 asradv 40 reinit_adv 70"
 resume_checkpoint=-1
 max_epoch=250
-adv_weight=45.0
+adv_weight=50.0
+adv_dropout_rate=0.2
 # project_name="v8_better_lstm_test"
-project_name="v8_better_lstm_nov_29_modified_250"
-experiment_name="modified_40_40_40_130_reinit_adv_weight_45" # name of the experiment, just change it to create differnet folders
+project_name="v8_better_lstm_nov_30_modified_200"
+experiment_name="modified_40_50_40_70_reinit_adv_weight_50" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump
@@ -1195,6 +1196,7 @@ if ! "${skip_train}"; then
                 --token_list "${token_list}" \
                 --adv_liststr "${adv_liststr}" \
                 --adv_flag "${adversarial_flag}" \
+                --adv_dropout_rate "${adv_dropout_rate}" \
                 --max_epoch "${max_epoch}" \
                 --project_name "${project_name}" \
                 --resume_from_checkpoint "${resume_checkpoint}" \

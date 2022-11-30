@@ -61,8 +61,8 @@ class VariationalDropout(torch.nn.Module):
             return x
 
 class BetterLSTM(torch.nn.LSTM):
-    def __init__(self, *args, dropouti: float=0.3,
-                 dropoutw: float=0., dropouto: float=0.,  bidirectional=True,
+    def __init__(self, *args, dropouti: float=0.4,
+                 dropoutw: float=0.2, dropouto: float=0.,  bidirectional=True,
                  batch_first=True, unit_forget_bias=True, **kwargs):
         super().__init__(*args, **kwargs,  bidirectional=True,  batch_first=batch_first)
         logging.warning("Better lstm initialized with dropouti : {}  dropoutw{} dropout_output {} ".format(dropouti, dropoutw, dropouto))
@@ -185,6 +185,9 @@ class SpeakerAdv(torch.nn.Module):
         
         self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropoutw=dropout_rate, bidirectional=True)
         # self.advnet = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_rate, bidirectional=True)
+        # self.advnet = DropoutLSTMModel( input_size=eprojs, hidden_size=advunits, n_layers=self.advlayers, dropoutw=dropout_rate, bidirectional=True)
+       
+        
         
         # logging.warning(" Created better lstm with dropout_w = {}  ".format(dropout_rate))
         '''
@@ -299,16 +302,16 @@ class SpeakerAdv(torch.nn.Module):
 
 
 
-# import torch
-# import torch.nn as nn
+# # import torch
+# # import torch.nn as nn
 # from torch.autograd import Variable
 # from torch.nn import Parameter
-# import torch.nn.functional as F
+# # import torch.nn.functional as F
 
 
-# class DropoutLSTMModel(nn.Module):
+# class DropoutLSTMModel(torch.nn.Module):
 #     def __init__(self, input_size, n_layers, hidden_size,
-#                  dropout_i=0, dropout_h=0, return_states=False):
+#                  dropout_i=0, dropout_h=0, return_states=True):
 #         """
 #         An LSTM model with Variational Dropout applied to the inputs and
 #         model activations. For details see Eq. 7 of
@@ -342,11 +345,11 @@ class SpeakerAdv(torch.nn.Module):
 
 #         cells = []
 #         for i in range(n_layers):
-#             cells.append(nn.LSTMCell(input_size if i == 0 else hidden_size,
+#             cells.append(torch.nn.LSTMCell(input_size if i == 0 else hidden_size,
 #                                      hidden_size,
 #                                      bias=True))
 
-#         self._cells = nn.ModuleList(cells)
+#         self._cells = torch.nn.ModuleList(cells)
 #         self._input_drop = SampleDrop(dropout=self._dropout_i)
 #         self._state_drop = SampleDrop(dropout=self._dropout_h)
 
@@ -418,7 +421,7 @@ class SpeakerAdv(torch.nn.Module):
 #         return (ht, states)
 
 
-# class SampleDrop(nn.Module):
+# class SampleDrop(torch.nn.Module):
 #     """Applies dropout to input samples with a fixed mask."""
 #     def __init__(self, dropout=0):
 #         super().__init__()
