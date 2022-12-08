@@ -859,7 +859,9 @@ class AbsTask(ABC):
         group.add_argument('--adv_lr', default=0.002, type=float,help='Learning rate for adv branch')
         group.add_argument('--asr_lr', default=0.002, type=float,help='Learning rate for ASR encoder and decoder')
         group.add_argument('--recon_mode', default=False, help='To use the vae mode for the reconstruction decoder')
-        group.add_argument('--adv_dropout_rate', default=0.2, type=float,help='adversarial Dropout rate')
+        group.add_argument('--adv_dropout_rate', default=0.0, type=float,help='adversarial Dropout rate')
+        group.add_argument('--adv_dropout_rate_input', default=0.2, type=float,help='adversarial Dropout rate')
+        
         # group.add_argument('--adversarial_list', default= ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30 , type=list,help='adversarial mode list')
         
         # 251 vs 585 ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10

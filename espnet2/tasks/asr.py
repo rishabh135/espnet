@@ -86,6 +86,7 @@ from espnet2.utils.types import float_or_none, int_or_none, str2bool, str_or_non
 
 
 import espnet2.tasks.recon_modules as custom_nn
+torch.backends.cudnn.benchmark = True
 
 from pprint import pprint
 
@@ -667,7 +668,7 @@ class ASRTask(AbsTask):
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
-            adversarial_branch = SpeakerAdv(args.odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate)
+            adversarial_branch = SpeakerAdv(args.odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate, dropout_inp= args.adv_dropout_rate_input)
         else:
             adversarial_branch = None
 

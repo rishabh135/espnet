@@ -61,14 +61,14 @@ class VariationalDropout(torch.nn.Module):
             return x
 
 class BetterLSTM(torch.nn.LSTM):
-    def __init__(self, *args, dropouti: float=0.4,
-                 dropoutw: float=0.2, dropouto: float=0.,  bidirectional=True,
+    def __init__(self, *args, dropout_inp: float=0.2,
+                 dropoutw: float=0.2, dropouto: float=0.0,  bidirectional=True,
                  batch_first=True, unit_forget_bias=True, **kwargs):
         super().__init__(*args, **kwargs,  bidirectional=True,  batch_first=batch_first)
-        logging.warning("Better lstm initialized with dropouti : {}  dropoutw{} dropout_output {} ".format(dropouti, dropoutw, dropouto))
+        logging.warning("Better lstm initialized with dropout_inp : {}  dropoutw {} dropout_output {} ".format(dropout_inp, dropoutw, dropouto))
         self.unit_forget_bias = unit_forget_bias
         self.dropoutw = dropoutw
-        self.input_drop = VariationalDropout(dropouti, batch_first=batch_first)
+        self.input_drop = VariationalDropout(dropout_inp, batch_first=batch_first)
         self.output_drop = VariationalDropout(dropouto, batch_first=batch_first)
         self._init_weights()
 
@@ -89,9 +89,7 @@ class BetterLSTM(torch.nn.LSTM):
     def _drop_weights(self):
         for name, param in self.named_parameters():
             if "weight_hh" in name:
-                getattr(self, name).data = \
-                    torch.nn.functional.dropout(param.data, p=self.dropoutw,
-                                                training=self.training).contiguous()
+                getattr(self, name).data = torch.nn.functional.dropout(param.data, p=self.dropoutw, training=self.training).contiguous()
 
     def forward(self, inp, hx=None):
         self._drop_weights()
@@ -178,12 +176,12 @@ class SpeakerAdv(torch.nn.Module):
     :param float dropout_rate: dropout rate (0.0 ~ 1.0)
     """
 
-    def __init__(self, odim, eprojs, advunits, advlayers, dropout_rate=0.2):
+    def __init__(self, odim, eprojs, advunits, advlayers, dropout_rate=0.2, dropout_inp=0.0):
         super(SpeakerAdv, self).__init__()
         self.advunits = advunits
         self.advlayers = advlayers
         
-        self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropoutw=dropout_rate, bidirectional=True)
+        self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropoutw=dropout_rate, dropout_inp=dropout_inp, bidirectional=True)
         # self.advnet = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_rate, bidirectional=True)
         # self.advnet = DropoutLSTMModel( input_size=eprojs, hidden_size=advunits, n_layers=self.advlayers, dropoutw=dropout_rate, bidirectional=True)
        
