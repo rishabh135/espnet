@@ -86,7 +86,7 @@ from espnet2.utils.types import float_or_none, int_or_none, str2bool, str_or_non
 
 
 import espnet2.tasks.recon_modules as custom_nn
-torch.backends.cudnn.benchmark = True
+# torch.backends.cudnn.benchmark = True
 
 from pprint import pprint
 

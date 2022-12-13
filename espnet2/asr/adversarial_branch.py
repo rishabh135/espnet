@@ -24,6 +24,10 @@ from torch.nn.utils.rnn import PackedSequence
 from typing import *
 
 
+
+
+
+
 class VariationalDropout(torch.nn.Module):
     """
     Applies the same dropout mask across the temporal dimension
@@ -85,6 +89,11 @@ class BetterLSTM(torch.nn.LSTM):
             elif "bias" in name and self.unit_forget_bias:
                 torch.nn.init.zeros_(param.data)
                 param.data[self.hidden_size:2 * self.hidden_size] = 1
+
+
+
+
+
 
     def _drop_weights(self):
         for name, param in self.named_parameters():
@@ -210,10 +219,19 @@ class SpeakerAdv(torch.nn.Module):
         return hs_pad.new_zeros(2*self.advlayers, hs_pad.size(0), self.advunits)
 
 
+    def set_dropout(self, model, drop_rate=0):
+        for name, child in model.named_children():
+            if isinstance(child, torch.nn.Dropout):
+                child.p = drop_rate
+            self.set_dropout(child, drop_rate=drop_rate)
+    
+
+
     def reinit_adv(self,):
         # for param in self.decoder.parameters():
         #     param.requires_grad = False
         self.advnet.reset_parameters()
+        self.set_dropout(model=self.advnet, drop_rate=0)
         self.output.reset_parameters()
         # self.output.apply(self.init_weights)
 

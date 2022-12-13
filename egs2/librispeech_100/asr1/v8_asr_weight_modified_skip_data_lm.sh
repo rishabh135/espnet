@@ -63,7 +63,9 @@ adv_dropout_rate=0.2
 adv_dropout_rate_input=0.4
 batch_bins=15000000
 # project_name="v8_better_lstm_test"
-project_name="v8_better_lstm_dec_1_modified_200"
+
+project_name="v8_better_lstm_dec_12_modified_200"
+
 experiment_name="modified_40_50_40_70_reinit_adv_weight_30" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
