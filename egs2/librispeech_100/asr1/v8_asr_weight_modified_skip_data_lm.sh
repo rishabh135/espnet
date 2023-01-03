@@ -58,10 +58,10 @@ adversarial_flag="True"
 adv_liststr="asr 40 adv 50 asradv 40 reinit_adv 70"
 resume_checkpoint=90
 max_epoch=200
-adv_weight=35.0
+adv_weight=40.0
 adv_dropout_rate=0.2
 adv_dropout_rate_input=0.4
-batch_bins=15000000
+batch_bins=60000000
 # project_name="v8_better_lstm_test"
 
 project_name="v8_better_lstm_dec_12_modified_200"
