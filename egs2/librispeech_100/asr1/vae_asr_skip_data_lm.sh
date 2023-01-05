@@ -816,7 +816,7 @@ if "${use_xvector}"; then
     done
 
     # Check pretrained model existence
-    nnet_dir=exp/xvector_nnet_1a
+    nnet_dir=${dumpdir}/nnet/
     if [ ! -e ${nnet_dir} ]; then
         echo "X-vector model does not exist. Download pre-trained model."
         wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
