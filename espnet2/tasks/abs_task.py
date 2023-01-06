@@ -64,6 +64,10 @@ from espnet2.utils.types import (
 from espnet2.utils.yaml_no_alias_safe_dump import yaml_no_alias_safe_dump
 from espnet.utils.cli_utils import get_commandline_args
 
+torch.backends.cudnn.benchmark = True
+
+logging.info(" ******* torch_version: {} cuda_version {} cudnn_version {} ******** \n".format(  torch.__version__ ,torch.version.cuda, torch.backends.cudnn.version()  ))  # => 1.2.0
+
 
 from datetime import date, datetime
 

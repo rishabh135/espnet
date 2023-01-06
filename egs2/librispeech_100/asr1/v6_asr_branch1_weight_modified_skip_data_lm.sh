@@ -53,15 +53,16 @@ adversarial_flag="True"
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
 
 
-# adv_liststr="asr_adv_asradv"
+adv_liststr="asr_adv_asradv"
 
 resume_checkpoint=-1
 adv_weight=35.5
 adv_branch=1
 max_epoch=160
-adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
-project_name="v6_branch_1_nov_16_multi_adv_160"
-experiment_name="modified_40_each_1_br_adv_35" # name of the experiment, just change it to create differnet folders
+batch_bins=38000000
+# adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
+project_name="multiadv_branch_1_jan_5_multi_adv_160"
+experiment_name="modified_check_asradv_branch_1_adv_35" # name of the experiment, just change it to create differnet folders
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/dump
@@ -1201,6 +1202,7 @@ if ! "${skip_train}"; then
                 --adv_loss_weight "${adv_weight}" \
                 --adv_branch "${adv_branch}" \
                 --max_epoch "${max_epoch}" \
+                --batch_bins "${batch_bins}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \

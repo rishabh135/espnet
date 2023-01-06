@@ -824,13 +824,12 @@ class Trainer:
                 ###################################################################################
 
 
-                if( (iiter % 100) == 0):        
+                if( (iiter % 200) == 0):        
                     logging.warning("\n >>>>> MODE: {}  branches {} adversarial_loss_weight {} iiter {} adv_flag {} asr_loss {} grad_norm {} ".format( adv_mode, options.adv_branch, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach().item(), grad_norm ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
-                        logging.warning(" loss_G  {} ".format( retval["loss_G"].detach().item() ))
+                        logging.warning(" loss_GMAN  {} ".format( retval["loss_G"].detach().item() ))
                         for branch in range(options.adv_branch):
                             logging.warning(" adversarial_loss_discriminator_{} : {}   accuracy_adversarial_discriminator_{}:   {}".format(  branch,   stats["loss_adversarial_discriminator_{}".format(branch) ].detach().item(), branch,  stats["accuracy_adversarial_discriminator_{}".format(branch)] ))
-                    logging.warning("******************************************************************************************************************************************")
                     
                     if(iiter == 200):
                         if(options.ngpu == 1):
@@ -848,7 +847,8 @@ class Trainer:
                                     logging.warning(" -----> adv non_zeros_weight_grad {} weight_grad_shape {}  adv non_zero_bias grad {}".format( torch.count_nonzero( tmpmodel.output.weight.grad), tmpmodel.output.weight.grad.shape, torch.count_nonzero(tmpmodel.output.bias.grad)  ) )
 
                             logging.warning("******************************")
-
+                    logging.warning("********************************* Check per epoch completed*********************************************************************************************************\n")
+                    
 
                 # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
                 # print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
