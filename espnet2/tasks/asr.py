@@ -668,7 +668,7 @@ class ASRTask(AbsTask):
         
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
-            adversarial_branch = SpeakerAdv(args.odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_rate=args.adv_dropout_rate, dropout_inp= args.adv_dropout_rate_input)
+            adversarial_branch = SpeakerAdv(args.odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_mid=args.adv_dropout_mid, dropout_inp= args.adv_dropout_inp, dropout_out=args.adv_dropout_out)
         else:
             adversarial_branch = None
 
