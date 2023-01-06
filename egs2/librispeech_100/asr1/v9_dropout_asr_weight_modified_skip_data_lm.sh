@@ -58,10 +58,12 @@ adv_liststr="asr 40 adv 50 asradv 40 reinit_adv 70"
 resume_checkpoint=-1
 max_epoch=200
 adv_weight=30.0
-adv_dropout_rate=0.2
-adv_dropout_rate_input=0.2
+adv_dropout_out=0.2
+adv_dropout_mid=0.2
+adv_dropout_inp=0.2
+
 # project_name="v8_better_lstm_test"
-project_name="v8_better_lstm_jan_5_modified_200"
+project_name="v9_better_lstm_jan_5_modified_200"
 
 experiment_name="modified_40_50_40_70_reinit_adv_weight_30" # name of the experiment, just change it to create differnet folders
 
@@ -1197,7 +1199,9 @@ if ! "${skip_train}"; then
                 --token_list "${token_list}" \
                 --adv_liststr "${adv_liststr}" \
                 --adv_flag "${adversarial_flag}" \
-                --adv_dropout_rate "${adv_dropout_rate}" \
+                --adv_dropout_out "${adv_dropout_out}" \
+                --adv_dropout_inp "${adv_dropout_inp}" \
+                --adv_dropout_mid "${adv_dropout_mid}" \
                 --max_epoch "${max_epoch}" \
                 --project_name "${project_name}" \
                 --resume_from_checkpoint "${resume_checkpoint}" \
@@ -1647,6 +1651,7 @@ else
 fi
 
 log "Successfully finished. [elapsed=${SECONDS}s]"
+
 
 
 
