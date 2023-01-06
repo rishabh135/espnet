@@ -59,12 +59,12 @@ resume_checkpoint=-1
 max_epoch=160
 batch_bins=60000000
 adv_weight=36.0
-adv_dropout_out=0.2
-adv_dropout_mid=0.2
-adv_dropout_inp=0.2
+adv_dropout_out=0.0
+adv_dropout_mid=0.0
+adv_dropout_inp=0.0
 
 # project_name="v8_better_lstm_test"
-project_name="v9_better_lstm_jan_6_modified_160_dropout_0.2"
+project_name="v9_better_lstm_jan_7_modified_160_dropout_0"
 
 experiment_name="modified_40_each_reinit_adv_weight_36" # name of the experiment, just change it to create differnet folders
 
@@ -1655,6 +1655,7 @@ else
 fi
 
 log "Successfully finished. [elapsed=${SECONDS}s]"
+
 
 
 
