@@ -17,8 +17,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-
-project_name="v9_better_lstm_jan_11_modified_200_dropout_only_mid_0.2"
+project_name="v9_better_lstm_jan_12_160_dropout_only_mid_0.02"
 
 
 ###################################################################################################################################################################################################
