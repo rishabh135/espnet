@@ -832,7 +832,7 @@ if "${use_xvector}"; then
     done
     # Update json
     for name in ${train_set} ${dev_set} ${eval_set}; do
-        local/update_json.sh ${dumpdir}/${name}/data.json ${nnet_dir}/xvectors_${name}/xvector.scp
+        ./local/update_json.sh ${dumpdir}/${name}/data.json ${nnet_dir}/xvectors_${name}/xvector.scp
     done
 
 

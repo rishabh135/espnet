@@ -7,6 +7,7 @@ from typing import Callable, Collection, Dict, List, Optional, Tuple
 import numpy as np
 import torch
 import torch.nn.functional as F
+from espnet2.asr.tdnn import TDNN
 # import warpctc_pytorch as warp_ctc
 from torch.autograd import Function
 
@@ -185,7 +186,11 @@ class SpeakerAdv(torch.nn.Module):
         self.advunits = advunits
         self.advlayers = advlayers
         
-        self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout_mid=dropout_mid, dropout_inp=dropout_inp, dropout_out=dropout_out, bidirectional=True)
+        self.advnet = TDNN(input_dim=eprojs, output_dim=2*advunits, context_size=3, dilation=2)
+        self.advnet = TDNN(input_dim=eprojs, output_dim=2*advunits, context_size=3, dilation=2)
+        
+
+        # self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout_mid=dropout_mid, dropout_inp=dropout_inp, dropout_out=dropout_out, bidirectional=True)
         # self.advnet = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_rate, bidirectional=True)
         # self.advnet = DropoutLSTMModel( input_size=eprojs, hidden_size=advunits, n_layers=self.advlayers, dropoutw=dropout_rate, bidirectional=True)
        
@@ -222,11 +227,20 @@ class SpeakerAdv(torch.nn.Module):
     
 
 
+    def weight_reset(self, m):
+        if isinstance(m, torch.nn.Conv2d) or isinstance(m, torch.nn.Linear):
+            m.reset_parameters()
+
+
+
+
+
     def reinit_adv(self,):
+        self.advnet.apply(self.weight_reset)
         # for param in self.decoder.parameters():
         #     param.requires_grad = False
-        self.advnet.reset_parameters()
-        self.set_dropout(model=self.advnet, drop_rate=0)
+        # self.advnet.reset_parameters()
+        # self.set_dropout(model=self.advnet, drop_rate=0)
         self.output.reset_parameters()
         # self.output.apply(self.init_weights)
 
@@ -254,8 +268,20 @@ class SpeakerAdv(torch.nn.Module):
 
         # logging.warning("Passing encoder output through advnet {} ".format(hs_pad.shape))
         # logging.warning(" spkid inside adversarial {} ".format(y_adv))
-        self.advnet.flatten_parameters()
-        out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
+
+
+
+        # self.advnet.flatten_parameters()
+        # out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
+
+        logging.warning(" ------>>> lstm hs_pad.shape {} h_0.shape {} c_0.shape {}  ".format(  hs_pad.shape, h_0.shape, c_0.shape) )
+
+        out_x = self.advnet(hs_pad)
+
+
+
+
+
 
         # logging.warning(" ------>>> lstm out_x {} , h_0 {} , c_0 {}, out_x.shape {} h_0.shape {} c_0.shape {}  ".format( type(out_x), type(h_0), type(c_0), out_x.shape, h_0.shape, c_0.shape) )
 

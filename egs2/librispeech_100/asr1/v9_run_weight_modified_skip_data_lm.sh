@@ -16,7 +16,7 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_2/original_data
 
 
-project_name="v9_better_lstm_jan_10_modified_160_dropout_0"
+project_name="v9_tdnn_jan_16_modified_160_adv_34"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
