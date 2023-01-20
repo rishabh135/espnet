@@ -801,35 +801,38 @@ if "${use_xvector}"; then
     # Make MFCCs and compute the energy-based VAD for each dataset
     mfccdir=${data_dd}/mfccdir
     vaddir=${data_dd}/mfcc
-    for name in ${train_set} ${dev_set} ${eval_set}; do
-        ${global_dir}/utils/copy_data_dir.sh ${data_dd}/${name} ${data_dd}/${name}_mfcc_16k
-        ${global_dir}/utils/data/resample_data_dir.sh 16000 ${data_dd}/${name}_mfcc_16k
-        ${global_dir}/steps/make_mfcc.sh  \
-            --write-utt2num-frames true \
-            --mfcc-config ${global_dir}/conf/mfcc.conf \
-            --nj ${nj} --cmd "$train_cmd" \
-            ${data_dd}/${name}_mfcc_16k ${expdir}/make_mfcc_16k ${mfccdir}
-        ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
-        ${global_dir}/steps/compute_vad_decision.sh --nj ${nj} --cmd "$train_cmd" \
-            ${data_dd}/${name}_mfcc_16k ${expdir}/make_vad ${vaddir}
-        ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
-    done
-
-    # Check pretrained model existence
     nnet_dir=${dumpdir}/nnet/
-    if [ ! -e ${nnet_dir} ]; then
-        echo "X-vector model does not exist. Download pre-trained model."
-        wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
-        tar xvf ./0008_sitw_v2_1a.tar.gz
-        mv ./0008_sitw_v2_1a/exp/xvector_nnet_1a ${nnet_dir}
-        rm -rf 0008_sitw_v2_1a.tar.gz 0008_sitw_v2_1a
-    fi
-    # Extract x-vector
-    for name in ${train_set} ${dev_set} ${eval_set}; do
-        ${global_dir}/../../../tools/kaldi/egs/sre08/v1/sid/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 4G" --nj ${nj} \
-            ${nnet_dir} ${data_dd}/${name}_mfcc_16k \
-            ${nnet_dir}/xvectors_${name}
-    done
+    
+    # for name in ${train_set} ${dev_set} ${eval_set}; do
+    #     ${global_dir}/utils/copy_data_dir.sh ${data_dd}/${name} ${data_dd}/${name}_mfcc_16k
+    #     ${global_dir}/utils/data/resample_data_dir.sh 16000 ${data_dd}/${name}_mfcc_16k
+    #     ${global_dir}/steps/make_mfcc.sh  \
+    #         --write-utt2num-frames true \
+    #         --mfcc-config ${global_dir}/conf/mfcc.conf \
+    #         --nj ${nj} --cmd "$train_cmd" \
+    #         ${data_dd}/${name}_mfcc_16k ${expdir}/make_mfcc_16k ${mfccdir}
+    #     ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
+    #     ${global_dir}/steps/compute_vad_decision.sh --nj ${nj} --cmd "$train_cmd" \
+    #         ${data_dd}/${name}_mfcc_16k ${expdir}/make_vad ${vaddir}
+    #     ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
+    # done
+
+    # # Check pretrained model existence
+
+    # if [ ! -e ${nnet_dir} ]; then
+    #     echo "X-vector model does not exist. Download pre-trained model."
+    #     wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
+    #     tar xvf ./0008_sitw_v2_1a.tar.gz
+    #     mv ./0008_sitw_v2_1a/exp/xvector_nnet_1a ${nnet_dir}
+    #     rm -rf 0008_sitw_v2_1a.tar.gz 0008_sitw_v2_1a
+    # fi
+    # # Extract x-vector
+    # for name in ${train_set} ${dev_set} ${eval_set}; do
+    #     ${global_dir}/../../../tools/kaldi/egs/sre08/v1/sid/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 4G" --nj ${nj} \
+    #         ${nnet_dir} ${data_dd}/${name}_mfcc_16k \
+    #         ${nnet_dir}/xvectors_${name}
+    # done
+
     # Update json
     for name in ${train_set} ${dev_set} ${eval_set}; do
         ./local/update_json.sh ${dumpdir}/${name}/data.json ${nnet_dir}/xvectors_${name}/xvector.scp
@@ -1150,13 +1153,14 @@ if ! "${skip_train}"; then
             # "sound" supports "wav", "flac", etc.
             _type=sound
         fi
-
-
-       if "${use_xvector}"; then
+        # https://github.com/espnet/espnet/blob/master/egs2/TEMPLATE/tts1/tts.sh
+        # /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/dump/nnet/xvectors_train_clean_100_sp/spk_xvector.scp
+        if "${use_xvector}"; then
             _xvector_train_dir="${dumpdir}/xvector/${train_set}"
+            log "${_xvector_train_dir}"
             _xvector_valid_dir="${dumpdir}/xvector/${valid_set}"
-            _opts+="--train_data_path_and_name_and_type ${_xvector_train_dir}/xvector.scp,spembs,kaldi_ark "
-            _opts+="--valid_data_path_and_name_and_type ${_xvector_valid_dir}/xvector.scp,spembs,kaldi_ark "
+            _opts+="--train_data_path_and_name_and_type ${_xvector_train_dir}/spk_xvector.scp,spembs,kaldi_ark "
+            _opts+="--valid_data_path_and_name_and_type ${_xvector_valid_dir}/spk_xvector.scp,spembs,kaldi_ark "
         fi
 
 

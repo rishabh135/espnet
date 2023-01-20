@@ -64,7 +64,7 @@ adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 
 # project_name="v8_better_lstm_test"
-project_name="v9_tdnn_jan_16_modified_160_adv_34"
+project_name="v9_tdnn_jan_20_modified_160_adv_34"
 
 
 experiment_name="modified_40_each_reinit_adv_weight_34" # name of the experiment, just change it to create differnet folders

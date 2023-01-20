@@ -186,8 +186,15 @@ class SpeakerAdv(torch.nn.Module):
         self.advunits = advunits
         self.advlayers = advlayers
         
-        self.advnet = TDNN(input_dim=eprojs, output_dim=2*advunits, context_size=3, dilation=2)
-        self.advnet = TDNN(input_dim=eprojs, output_dim=2*advunits, context_size=3, dilation=2)
+        self.advnet = TDNN(input_dim=eprojs, output_dim=advunits, context_size=9, dilation=2)
+        self.advnet2 = TDNN(input_dim=advunits, output_dim=advunits, context_size=9, dilation=1)
+        self.advnet3 = TDNN(input_dim=advunits, output_dim=advunits, context_size=7, dilation=2)
+        self.advnet4 = TDNN(input_dim=advunits, output_dim=advunits, context_size=7, dilation=1)
+        self.advnet5 = TDNN(input_dim=advunits, output_dim=advunits, context_size=5, dilation=2)
+        self.advnet6 = TDNN(input_dim=advunits, output_dim=advunits, context_size=5, dilation=1)
+        self.advnet5 = TDNN(input_dim=advunits, output_dim=advunits, context_size=3, dilation=2)
+        self.advnet6 = TDNN(input_dim=advunits, output_dim=advunits, context_size=3, dilation=1)
+        
         
 
         # self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout_mid=dropout_mid, dropout_inp=dropout_inp, dropout_out=dropout_out, bidirectional=True)
@@ -212,7 +219,7 @@ class SpeakerAdv(torch.nn.Module):
         #    layer_arr.extend([torch.nn.Linear(advunits, advunits),
         #                    torch.nn.ReLU(), torch.nn.Dropout(p=dropout_rate)])
         #self.advnet = torch.nn.Sequential(*layer_arr)
-        self.output = torch.nn.Linear(2*advunits, odim)
+        self.output = torch.nn.Linear(advunits, odim)
 
 
     def zero_state(self, hs_pad):
@@ -277,9 +284,11 @@ class SpeakerAdv(torch.nn.Module):
         logging.warning(" ------>>> lstm hs_pad.shape {} h_0.shape {} c_0.shape {}  ".format(  hs_pad.shape, h_0.shape, c_0.shape) )
 
         out_x = self.advnet(hs_pad)
-
-
-
+        out_x = self.advnet2(out_x)
+        out_x = self.advnet3(out_x)
+        out_x = self.advnet4(out_x)
+        out_x = self.advnet5(out_x)
+        out_x = self.advnet6(out_x)
 
 
 
