@@ -15,6 +15,12 @@ from collections import Counter
 
 
 
+from espnet2.asr.statistical_pooling import StatisticsPooling
+from espnet2.asr.tdnn_xvector import Conv1d, Linear, BatchNorm1d
+# from speechbrain.nnet.linear import Linear
+# from speechbrain.nnet.normalization import BatchNorm1d
+
+
 ##############################################################################################################################################################
 ##############################################################################################################################################################
 # https://github.com/keitakurita/Better_LSTM_PyTorch/tree/master/better_lstm
@@ -25,6 +31,93 @@ from torch.nn.utils.rnn import PackedSequence
 from typing import *
 
 
+
+
+class Xvector(torch.nn.Module):
+    """This model extracts X-vectors for speaker recognition and diarization.
+    Arguments
+    ---------
+    device : str
+        Device used e.g. "cpu" or "cuda".
+    activation : torch class
+        A class for constructing the activation layers.
+    tdnn_blocks : int
+        Number of time-delay neural (TDNN) layers.
+    tdnn_channels : list of ints
+        Output channels for TDNN layer.
+    tdnn_kernel_sizes : list of ints
+        List of kernel sizes for each TDNN layer.
+    tdnn_dilations : list of ints
+        List of dilations for kernels in each TDNN layer.
+    lin_neurons : int
+        Number of neurons in linear layers.
+    Example
+    -------
+    >>> compute_xvect = Xvector('cpu')
+    >>> input_feats = torch.rand([5, 10, 40])
+    >>> outputs = compute_xvect(input_feats)
+    >>> outputs.shape
+    torch.Size([5, 1, 512])
+    """
+
+    def __init__(
+        self,
+        device="cuda",
+        activation=torch.nn.LeakyReLU,
+        tdnn_blocks=5,
+        tdnn_channels=[512, 512, 512, 512, 1500],
+        tdnn_kernel_sizes=[5, 3, 3, 1, 1],
+        tdnn_dilations=[1, 2, 3, 1, 1],
+        lin_neurons=512,
+        in_channels=40,
+    ):
+
+        super().__init__()
+        self.blocks = nn.ModuleList()
+
+        # TDNN layers
+        for block_index in range(tdnn_blocks):
+            out_channels = tdnn_channels[block_index]
+            self.blocks.extend(
+                [
+                    Conv1d(
+                        in_channels=in_channels,
+                        out_channels=out_channels,
+                        kernel_size=tdnn_kernel_sizes[block_index],
+                        dilation=tdnn_dilations[block_index],
+                    ),
+                    activation(),
+                    BatchNorm1d(input_size=out_channels),
+                ]
+            )
+            in_channels = tdnn_channels[block_index]
+
+        # Statistical pooling
+        self.blocks.append(StatisticsPooling())
+
+        # Final linear transformation
+        self.blocks.append(
+            Linear(
+                input_size=out_channels * 2,
+                n_neurons=lin_neurons,
+                bias=True,
+                combine_dims=False,
+            )
+        )
+
+    def forward(self, x, lens=None):
+        """Returns the x-vectors.
+        Arguments
+        ---------
+        x : torch.Tensor
+        """
+
+        for layer in self.blocks:
+            try:
+                x = layer(x, lengths=lens)
+            except TypeError:
+                x = layer(x)
+        return 
 
 
 
@@ -281,7 +374,7 @@ class SpeakerAdv(torch.nn.Module):
         # self.advnet.flatten_parameters()
         # out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
 
-        logging.warning(" ------>>> lstm hs_pad.shape {} h_0.shape {} c_0.shape {}  ".format(  hs_pad.shape, h_0.shape, c_0.shape) )
+        # logging.warning(" ------>>> lstm hs_pad.shape {} h_0.shape {} c_0.shape {}  ".format(  hs_pad.shape, h_0.shape, c_0.shape) )
 
         out_x = self.advnet(hs_pad)
         out_x = self.advnet2(out_x)

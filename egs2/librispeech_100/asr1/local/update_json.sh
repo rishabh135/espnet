@@ -8,9 +8,9 @@
 
 . ./path.sh
 
-verbose=0
+verbose=1
 
-. utils/parse_options.sh
+./utils/parse_options.sh
 set -e
 set -u
 
@@ -21,8 +21,17 @@ fi
 
 json=$1
 feat=$2
+
 dir=$(dirname ${json})
+echo "${dir}"
+echo "${json}"
+echo "${feat}"
 tmpdir=`mktemp -d ${dir}/tmp-XXXXX`
+
+echo "${tmpdir}"
+
+
+
 rm -f ${tmpdir}/*.scp
 
 # feats scp

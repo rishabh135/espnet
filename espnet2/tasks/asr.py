@@ -84,6 +84,9 @@ from espnet2.utils.nested_dict_action import NestedDictAction
 from espnet2.utils.types import float_or_none, int_or_none, str2bool, str_or_none
 
 
+from espnet2.asr.espnet_model import ESPnetASRModel
+# from espnet2.asr.espnet_model_vae import ESPnetASRModel
+
 
 import espnet2.tasks.recon_modules as custom_nn
 # torch.backends.cudnn.benchmark = True
@@ -356,6 +359,9 @@ class ASRTask(AbsTask):
         group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
         group.add_argument('--adv_liststr', default= "asr 20 adv 20 asradv 30", type=str, help='adv_liststr string')
         
+        group.add_argument('--vae_flag', default=False , type=bool, help='flag for whether to use speaker')
+        
+
 
         group = parser.add_argument_group(description="Preprocess related")
         group.add_argument(

@@ -311,7 +311,8 @@ class ESPnetASRModel(AbsESPnetModel):
         text: torch.Tensor,
         text_lengths: torch.Tensor,
         spkid: torch.Tensor,
-        spkid_lengths: torch.Tensor, 
+        spkid_lengths: torch.Tensor,
+        spembs: Optional[torch.Tensor] = None, 
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """Frontend + Encoder + Decoder + Calc loss
@@ -337,7 +338,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # for data-parallel
         text = text[:, : text_lengths.max()]
 
-
+        logging.warning(" >>>>>  spembs.shape {}  ".format(spembs.shape))
 
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths = self.encode(speech, speech_lengths)       
