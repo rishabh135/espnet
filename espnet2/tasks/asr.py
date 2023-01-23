@@ -84,8 +84,8 @@ from espnet2.utils.nested_dict_action import NestedDictAction
 from espnet2.utils.types import float_or_none, int_or_none, str2bool, str_or_none
 
 
-from espnet2.asr.espnet_model import ESPnetASRModel
-# from espnet2.asr.espnet_model_vae import ESPnetASRModel
+# from espnet2.asr.espnet_model import ESPnetASRModel
+from espnet2.asr.espnet_model_vae import ESPnetASRModel
 
 
 import espnet2.tasks.recon_modules as custom_nn
@@ -654,15 +654,15 @@ class ASRTask(AbsTask):
 
 
         # feats_val = 80
-        # reconstruction_decoder_class = decoder_choices.get_class("recon")
+        reconstruction_decoder_class = decoder_choices.get_class("recon")
         
         # reconstruction_decoder = reconstruction_decoder_class(vocab_size, embed_pad=0)
 
-        # reconstruction_decoder = reconstruction_decoder_class(
-        #         vocab_size=80,
-        #         encoder_output_size=256,
-        #         **args.decoder_conf,
-        #     )
+        reconstruction_decoder = reconstruction_decoder_class(
+                vocab_size=80,
+                encoder_output_size=512,
+                **args.decoder_conf,
+            )
             
         # reconstruction_decoder = ReconDecoder(args.eprojs, feats_val)
 
@@ -693,7 +693,7 @@ class ASRTask(AbsTask):
             adv_flag=args.adv_flag,
             grlalpha=args.grlalpha,
             # adversarial_list=args.adversarial_list,
-            # reconstruction_decoder=reconstruction_decoder,
+            reconstruction_decoder=reconstruction_decoder,
             vocab_size=vocab_size,
             frontend=frontend,
             specaug=specaug,

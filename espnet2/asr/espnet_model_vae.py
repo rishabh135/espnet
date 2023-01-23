@@ -8,6 +8,11 @@ from torch.nn import functional as F
 from packaging.version import parse as V
 from typeguard import check_argument_types
 
+from espnet.nets.pytorch_backend.nets_utils import make_non_pad_mask, make_pad_mask
+from espnet.nets.pytorch_backend.transformer.mask import subsequent_mask
+
+
+
 from espnet2.asr.ctc import CTC
 from espnet2.asr.decoder.abs_decoder import AbsDecoder
 from espnet2.asr.encoder.abs_encoder import AbsEncoder
@@ -118,7 +123,7 @@ class ESPnetASRModel(AbsESPnetModel):
         self.fc_mu = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
         self.fc_var = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
 
-        self.decoder_input = torch.nn.Linear(self.latent_dim, self.final_encoder_dim )
+        self.decoder_input = torch.nn.Linear(self.latent_dim, 512 )
 
 
 
@@ -300,6 +305,68 @@ class ESPnetASRModel(AbsESPnetModel):
     #################################################################################################################################################################################################################################
     #################################################################################################################################################################################################################################
 
+
+    def _integrate_with_spk_embed(
+        self, hs: torch.Tensor, spembs: torch.Tensor
+    ) -> torch.Tensor:
+        """Integrate speaker embedding with hidden states.
+        Args:
+            hs (Tensor): Batch of hidden state sequences (B, Tmax, adim).
+            spembs (Tensor): Batch of speaker embeddings (B, spk_embed_dim).
+        Returns:
+            Tensor: Batch of integrated hidden state sequences (B, Tmax, adim).
+        """
+
+        # if self.spk_embed_integration_type == "add":
+        #     self.projection = torch.nn.Linear(self.spk_embed_dim, adim)
+        # else:
+        #     self.projection = torch.nn.Linear(adim + self.spk_embed_dim, adim)
+
+        self.spk_embed_integration_type = "concat"
+        if self.spk_embed_integration_type == "add":
+            # apply projection and then add to hidden states
+            spembs = F.normalize(spembs)
+            hs = hs + spembs.unsqueeze(1)
+        elif self.spk_embed_integration_type == "concat":
+            # concat hidden states with spk embeds and then apply projection
+            spembs = F.normalize(spembs).unsqueeze(1).expand(-1, hs.size(1), -1)
+            hs = torch.cat([hs, spembs], dim=-1)
+        else:
+            raise NotImplementedError("support only add or concat.")
+
+        return hs
+
+
+
+
+
+    def _target_mask(self, olens: torch.Tensor) -> torch.Tensor:
+        """Make masks for masked self-attention.
+        Args:
+            olens (LongTensor): Batch of lengths (B,).
+        Returns:
+            Tensor: Mask tensor for masked self-attention.
+                dtype=torch.uint8 in PyTorch 1.2-
+                dtype=torch.bool in PyTorch 1.2+ (including 1.2)
+        Examples:
+            >>> olens = [5, 3]
+            >>> self._target_mask(olens)
+            tensor([[[1, 0, 0, 0, 0],
+                     [1, 1, 0, 0, 0],
+                     [1, 1, 1, 0, 0],
+                     [1, 1, 1, 1, 0],
+                     [1, 1, 1, 1, 1]],
+                    [[1, 0, 0, 0, 0],
+                     [1, 1, 0, 0, 0],
+                     [1, 1, 1, 0, 0],
+                     [1, 1, 1, 0, 0],
+                     [1, 1, 1, 0, 0]]], dtype=torch.uint8)
+        """
+        y_masks = make_non_pad_mask(olens).to(next(self.parameters()).device)
+        s_masks = subsequent_mask(y_masks.size(-1), device=y_masks.device).unsqueeze(0)
+        return y_masks.unsqueeze(-2) & s_masks
+
+
     #################################################################################################################################################################################################################################
 
  
@@ -341,18 +408,25 @@ class ESPnetASRModel(AbsESPnetModel):
         logging.warning(" >>>>>  spembs.shape {}  ".format(spembs.shape))
 
         # 1. Encoder
-        encoder_out, encoder_out_lens, feats, feats_lengths = self.encode(speech, speech_lengths)       
+        encoder_out, encoder_out_lens, feats, feats_lengths = self.encode(speech, speech_lengths) 
+
+
+        ys = feats
+        olens = feats_lengths
+
         logging.warning(" >>>>>>>   encoder_out.shape {}  encoder_out_lens shape {}".format(encoder_out.shape , encoder_out_lens.shape ))
 
 
-        # mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
+        mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         # Split the result into mu and var components
         # of the latent Gaussian distribution
         mu = self.fc_mu(mu_log_var_combined)
         log_var = self.fc_var(mu_log_var_combined)
         z = self.reparameterize(mu, log_var)
-        decoder_input = self.decoder_input(z)
-        logging.warning(" >>>   mu {}  log_var {}  z {} decoder_input {} encoder_out {} ".format(  mu.shape, log_var.shape, z.shape, decoder_input.shape, encoder_out.shape  ))        
+
+        decoder_input = self.decoder_input(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)  
+
+        logging.warning(" >>> decoder_input {}  mu {}  log_var {}  z {}  encoder_out {} feats {} ".format( decoder_input.shape, mu.shape, log_var.shape, z.shape,  encoder_out.shape, feats.shape  ))        
 
 
 
@@ -363,17 +437,41 @@ class ESPnetASRModel(AbsESPnetModel):
         # https://github.com/espnet/espnet/blob/695c9954e20800875b22d985e9c0b0a70e8e2082/espnet2/tts/transformer/transformer.py
         
         # for reconstruction decoder ys-> x_vectors hs->encoder_outputs(mu and logvar)
+
+        self.spk_embed_dim = 512
+        if self.spk_embed_dim is not None:
+            hs = self._integrate_with_spk_embed(decoder_input, spembs)
+
+        # logging.warning(" >>>   hs {} ".format(  hs.shape ))        
+
+
+
+        # if self.reduction_factor > 1:
+        #     ys_in = ys[:, self.reduction_factor - 1 :: self.reduction_factor]
+        #     olens_in = olens.new([olen // self.reduction_factor for olen in olens])
+        # else:
+        #     ys_in, olens_in = ys, olens
+
+        # add first zero frame and remove last frame for auto-regressive
+        # ys_in = self._add_first_frame_and_remove_last_frame(ys_in)
+
+        # forward decoder
+        # y_masks = self._target_mask(olens)
+
+
+        self.reduction_factor=1
         if self.reduction_factor > 1:
             ys_in = ys[:, self.reduction_factor - 1 :: self.reduction_factor]
             olens_in = olens.new([olen // self.reduction_factor for olen in olens])
         else:
             ys_in, olens_in = ys, olens
 
-        # add first zero frame and remove last frame for auto-regressive
-        ys_in = self._add_first_frame_and_remove_last_frame(ys_in)
-
-        # forward decoder
         y_masks = self._target_mask(olens_in)
+        h_masks = encoder_out_lens   
+
+        logging.warning(" >>> ys_in {}  y_masks.shape {}  hs.shape {}   h_masks.shape {}  ".format( ys_in.shape, y_masks.shape, hs.shape,  h_masks.shape ))        
+
+
         zs, _ = self.reconstruction_decoder(ys_in, y_masks, hs, h_masks)
         
         

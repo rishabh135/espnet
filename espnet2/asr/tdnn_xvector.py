@@ -7,6 +7,11 @@ Authors
 """
 import torch
 import torch.nn as nn
+# import torch
+import logging
+# import torch.nn as nn
+
+logger = logging.getLogger(__name__)
 
 
 class BatchNorm1d(nn.Module):
@@ -623,6 +628,21 @@ class PCEN(nn.Module):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """Library implementing linear transformation.
 
 Authors
@@ -630,11 +650,6 @@ Authors
  * Davide Borra 2021
 """
 
-# import torch
-# import logging
-# import torch.nn as nn
-
-logger = logging.getLogger(__name__)
 
 
 class Linear(torch.nn.Module):
