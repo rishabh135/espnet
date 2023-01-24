@@ -57,14 +57,14 @@ adversarial_flag="True"
 adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 resume_checkpoint=-1
 max_epoch=160
-batch_bins=60000000
+batch_bins=52000000
 adv_weight=34.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 
 # project_name="v8_better_lstm_test"
-project_name="v9_tdnn_jan_20_modified_160_adv_34"
+project_name="v9_tdnn_xvector_jan_23_modified_160_adv_34"
 
 
 experiment_name="modified_40_each_reinit_adv_weight_34" # name of the experiment, just change it to create differnet folders

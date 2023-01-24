@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+# https://github.com/keitakurita/Better_LSTM_PyTorch/tree/master/better_lstm
 
 import argparse
 import logging
@@ -23,7 +24,13 @@ from espnet2.asr.tdnn_xvector import Conv1d, Linear, BatchNorm1d
 
 ##############################################################################################################################################################
 ##############################################################################################################################################################
-# https://github.com/keitakurita/Better_LSTM_PyTorch/tree/master/better_lstm
+
+
+
+
+
+# https://github.com/speechbrain/speechbrain/blob/develop/speechbrain/nnet/CNN.py
+
 
 # import torch
 # import torch.nn as nn
@@ -73,7 +80,7 @@ class Xvector(torch.nn.Module):
     ):
 
         super().__init__()
-        self.blocks = nn.ModuleList()
+        self.blocks = torch.nn.ModuleList()
 
         # TDNN layers
         for block_index in range(tdnn_blocks):
@@ -117,7 +124,8 @@ class Xvector(torch.nn.Module):
                 x = layer(x, lengths=lens)
             except TypeError:
                 x = layer(x)
-        return 
+        
+        return x
 
 
 
@@ -279,14 +287,18 @@ class SpeakerAdv(torch.nn.Module):
         self.advunits = advunits
         self.advlayers = advlayers
         
-        self.advnet = TDNN(input_dim=eprojs, output_dim=advunits, context_size=9, dilation=2)
-        self.advnet2 = TDNN(input_dim=advunits, output_dim=advunits, context_size=9, dilation=1)
-        self.advnet3 = TDNN(input_dim=advunits, output_dim=advunits, context_size=7, dilation=2)
-        self.advnet4 = TDNN(input_dim=advunits, output_dim=advunits, context_size=7, dilation=1)
-        self.advnet5 = TDNN(input_dim=advunits, output_dim=advunits, context_size=5, dilation=2)
-        self.advnet6 = TDNN(input_dim=advunits, output_dim=advunits, context_size=5, dilation=1)
-        self.advnet5 = TDNN(input_dim=advunits, output_dim=advunits, context_size=3, dilation=2)
-        self.advnet6 = TDNN(input_dim=advunits, output_dim=advunits, context_size=3, dilation=1)
+
+        self.advnet = Xvector(lin_neurons=advunits, in_channels=eprojs)
+
+        # self.advnet = TDNN(input_dim=eprojs, output_dim=advunits, context_size=9, dilation=2)
+        
+        # self.advnet2 = TDNN(input_dim=advunits, output_dim=advunits, context_size=9, dilation=1)
+        # self.advnet3 = TDNN(input_dim=advunits, output_dim=advunits, context_size=7, dilation=2)
+        # self.advnet4 = TDNN(input_dim=advunits, output_dim=advunits, context_size=7, dilation=1)
+        # self.advnet5 = TDNN(input_dim=advunits, output_dim=advunits, context_size=5, dilation=2)
+        # self.advnet6 = TDNN(input_dim=advunits, output_dim=advunits, context_size=5, dilation=1)
+        # self.advnet5 = TDNN(input_dim=advunits, output_dim=advunits, context_size=3, dilation=2)
+        # self.advnet6 = TDNN(input_dim=advunits, output_dim=advunits, context_size=3, dilation=1)
         
         
 
@@ -377,11 +389,11 @@ class SpeakerAdv(torch.nn.Module):
         # logging.warning(" ------>>> lstm hs_pad.shape {} h_0.shape {} c_0.shape {}  ".format(  hs_pad.shape, h_0.shape, c_0.shape) )
 
         out_x = self.advnet(hs_pad)
-        out_x = self.advnet2(out_x)
-        out_x = self.advnet3(out_x)
-        out_x = self.advnet4(out_x)
-        out_x = self.advnet5(out_x)
-        out_x = self.advnet6(out_x)
+        # out_x = self.advnet2(out_x)
+        # out_x = self.advnet3(out_x)
+        # out_x = self.advnet4(out_x)
+        # out_x = self.advnet5(out_x)
+        # out_x = self.advnet6(out_x)
 
 
 

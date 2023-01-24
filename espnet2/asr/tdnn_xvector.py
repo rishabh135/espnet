@@ -5,8 +5,24 @@ Authors
  * Guillermo Cámbara 2021
  * Sarthak Yadav 2022
 """
+
+
+
+import math
 import torch
+import logging
+import numpy as np
 import torch.nn as nn
+import torch.nn.functional as F
+import torchaudio
+from typing import Tuple
+
+# import torch
+import logging
+# import torch.nn as nn
+
+logger = logging.getLogger(__name__)
+
 
 
 class BatchNorm1d(nn.Module):
@@ -623,6 +639,19 @@ class PCEN(nn.Module):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 """Library implementing linear transformation.
 
 Authors
@@ -630,11 +659,6 @@ Authors
  * Davide Borra 2021
 """
 
-# import torch
-# import logging
-# import torch.nn as nn
-
-logger = logging.getLogger(__name__)
 
 
 class Linear(torch.nn.Module):
@@ -954,3 +978,70 @@ class Conv1d(nn.Module):
     def remove_weight_norm(self):
         """Removes weight normalization at inference if used during training."""
         self.conv = nn.utils.remove_weight_norm(self.conv)
+
+
+
+
+
+
+
+
+
+
+
+
+# https://github.com/speechbrain/speechbrain/blob/develop/speechbrain/nnet/CNN.py
+
+
+
+    
+def get_padding_elem(L_in: int, stride: int, kernel_size: int, dilation: int):
+    """This function computes the number of elements to add for zero-padding.
+    Arguments
+    ---------
+    L_in : int
+    stride: int
+    kernel_size : int
+    dilation : int
+    """
+    if stride > 1:
+        padding = [math.floor(kernel_size / 2), math.floor(kernel_size / 2)]
+
+    else:
+        L_out = (
+            math.floor((L_in - dilation * (kernel_size - 1) - 1) / stride) + 1
+        )
+        padding = [
+            math.floor((L_in - L_out) / 2),
+            math.floor((L_in - L_out) / 2),
+        ]
+    return padding
+
+
+def get_padding_elem_transposed(
+    L_out: int,
+    L_in: int,
+    stride: int,
+    kernel_size: int,
+    dilation: int,
+    output_padding: int,
+):
+    """This function computes the required padding size for transposed convolution
+    Arguments
+    ---------
+    L_out : int
+    L_in : int
+    stride: int
+    kernel_size : int
+    dilation : int
+    output_padding : int
+    """
+
+    padding = -0.5 * (
+        L_out
+        - (L_in - 1) * stride
+        - dilation * (kernel_size - 1)
+        - output_padding
+        - 1
+    )
+    return int(padding)
