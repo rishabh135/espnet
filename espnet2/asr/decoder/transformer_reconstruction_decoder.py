@@ -27,6 +27,21 @@ from espnet.nets.scorer_interface import BatchScorerInterface
 
 import espnet2.tasks.recon_modules as custom_nn
 
+
+def to_cuda(m, x):
+    """Function to send tensor into corresponding device
+    :param torch.nn.Module m: torch module
+    :param torch.Tensor x: torch tensor
+    :return: torch tensor located in the same place as torch module
+    :rtype: torch.Tensor
+    """
+    assert isinstance(m, torch.nn.Module)
+    device = next(m.parameters()).device
+    return x.to(device)
+
+
+
+
 class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
     """Base class of Transfomer decoder module.
 
@@ -53,8 +68,6 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
         self,
         vocab_size: int,
         encoder_output_size: int,
-        local_z_size: int = 80,
-        max_len_sequences: int = 1500,
         dropout_rate: float = 0.1,
         positional_dropout_rate: float = 0.1,
         input_layer: str = "embed",
@@ -67,7 +80,6 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
         attention_dim = encoder_output_size
 
         if input_layer == "embed":
-            # self.embed = torch.nn.Embedding(vocab_size, attention_dim)
             self.embed = torch.nn.Sequential(
                 torch.nn.Embedding(vocab_size, attention_dim),
                 pos_enc_class(attention_dim, positional_dropout_rate),
@@ -86,37 +98,13 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
         self.normalize_before = normalize_before
         if self.normalize_before:
             self.after_norm = LayerNorm(attention_dim)
-        
         if use_output_layer:
-            self.output_layer = torch.nn.Sequential(
-                                        torch.nn.Linear(attention_dim, vocab_size),
-                                        custom_nn.Transpose((1,2)),
-                                        torch.nn.Conv1d(vocab_size, local_z_size, kernel_size = 1, stride = 1),
-                                        torch.nn.Tanh(),
-                                        torch.nn.BatchNorm1d(local_z_size),
-
-                                        torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
-                                        torch.nn.Tanh(),
-                                        torch.nn.BatchNorm1d(local_z_size),
-
-                                        torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
-                                        torch.nn.Tanh(),
-                                        torch.nn.BatchNorm1d(local_z_size),
-
-                                        torch.nn.Conv1d(local_z_size, local_z_size, kernel_size=1, stride=1),
-                                        torch.nn.Sigmoid(),
-                                        custom_nn.Transpose((1,2)),
-                                    )
-
+            self.output_layer = torch.nn.Linear(attention_dim, vocab_size)
         else:
             self.output_layer = None
 
         # Must set by the inheritance
         self.decoders = None
-
-
-
-        
 
     def forward(
         self,
@@ -142,7 +130,7 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
                 if use_output_layer is True,
             olens: (batch, )
         """
-        tgt = ys_in_pad
+        tgt = ys_in_pad 
         # tgt_mask: (B, 1, L)
         tgt_mask = (~make_pad_mask(ys_in_lens)[:, None, :]).to(tgt.device)
         # m: (1, L, L)
@@ -154,6 +142,8 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
         memory_mask = (~make_pad_mask(hlens, maxlen=memory.size(1)))[:, None, :].to(
             memory.device
         )
+
+        logging.warning(" tgt_mask {} memory_mask {} ".format(tgt_mask.shape, memory_mask.shape ))
         # Padding for Longformer
         if memory_mask.shape[-1] != memory.shape[1]:
             padlen = memory.shape[1] - memory_mask.shape[-1]
@@ -161,20 +151,28 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
                 memory_mask, (0, padlen), "constant", False
             )
 
-        logging.warning(" inside transformer before embedding tgt {} ".format(tgt.shape))
-        x = self.embed(tgt)
-        logging.warning(" inside transformer decoder after self.embed print x.shape {} ".format(x.shape))
+
+        # tgt = torch.tensor(tgt).to("cuda").long()
+        # tgt = to_cuda(self, tgt.long())
+        
+        logging.warning(" justbefore tgt_shape {} tgt type {} ".format(tgt.shape, type(tgt)))
+        # x = self.embed(tgt.to(torch.int16) )
+        x = tgt
+
         x, tgt_mask, memory, memory_mask = self.decoders(
             x, tgt_mask, memory, memory_mask
         )
         if self.normalize_before:
             x = self.after_norm(x)
-        
         if self.output_layer is not None:
             x = self.output_layer(x)
 
         olens = tgt_mask.sum(1)
         return x, olens
+
+
+
+
 
     def forward_one_step(
         self,
@@ -266,7 +264,6 @@ class TransformerReconDecoder(BaseTransformerDecoder):
         self,
         vocab_size: int,
         encoder_output_size: int,
-        local_z_size: int = 80,
         attention_heads: int = 4,
         linear_units: int = 2048,
         num_blocks: int = 6,
@@ -279,6 +276,7 @@ class TransformerReconDecoder(BaseTransformerDecoder):
         pos_enc_class=PositionalEncoding,
         normalize_before: bool = True,
         concat_after: bool = False,
+        layer_drop_rate: float = 0.0,
     ):
         assert check_argument_types()
         super().__init__(
@@ -290,10 +288,8 @@ class TransformerReconDecoder(BaseTransformerDecoder):
             use_output_layer=use_output_layer,
             pos_enc_class=pos_enc_class,
             normalize_before=normalize_before,
-            # reconstruction_decoder_flag=reconstruction_decoder_flag,
         )
 
-        # self.reconstruction_decoder_flag = reconstruction_decoder_flag
         attention_dim = encoder_output_size
         self.decoders = repeat(
             num_blocks,

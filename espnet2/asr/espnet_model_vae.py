@@ -118,12 +118,15 @@ class ESPnetASRModel(AbsESPnetModel):
         self.adversarial_frozen_flag = False
 
         
+       
+        self.final_encoder_dim = 128
         self.latent_dim = 128
-        self.final_encoder_dim = 256
+        self.spk_embed_dim = 512
+
         self.fc_mu = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
         self.fc_var = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
-
-        self.decoder_input = torch.nn.Linear(self.latent_dim, 512 )
+        self.fc_spemb = torch.nn.Linear(self.spk_embed_dim , self.latent_dim)
+        self.decoder_input = torch.nn.Linear(self.latent_dim, self.latent_dim/2)
 
 
 
@@ -405,16 +408,20 @@ class ESPnetASRModel(AbsESPnetModel):
         # for data-parallel
         text = text[:, : text_lengths.max()]
 
-        logging.warning(" >>>>>  spembs.shape {}  ".format(spembs.shape))
+        spembs = self.fc_spemb(spembs)
+
+        logging.warning(" speech {} specch_lengths {} text {} text_lengths{} ".format(speech.shape, speech_lengths.shape, text.shape, text_lengths.shape))
 
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths = self.encode(speech, speech_lengths) 
 
 
+        logging.warning(" >>>>>  spembs.shape {}  encoder_out {}  encoder_out_lens {}  feats {} feats_lengths {} feats_lengths[0] {}  ".format(spembs.shape, encoder_out.shape, encoder_out_lens.shape, feats.shape, feats_lengths.shape, feats_lengths[0].int()))
+
         ys = feats
         olens = feats_lengths
 
-        logging.warning(" >>>>>>>   encoder_out.shape {}  encoder_out_lens shape {}".format(encoder_out.shape , encoder_out_lens.shape ))
+        # logging.warning(" >>>>>>>   encoder_out.shape {}  encoder_out_lens shape {}".format(encoder_out.shape , encoder_out_lens.shape ))
 
 
         mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
@@ -423,10 +430,10 @@ class ESPnetASRModel(AbsESPnetModel):
         mu = self.fc_mu(mu_log_var_combined)
         log_var = self.fc_var(mu_log_var_combined)
         z = self.reparameterize(mu, log_var)
-
         decoder_input = self.decoder_input(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)  
 
-        logging.warning(" >>> decoder_input {}  mu {}  log_var {}  z {}  encoder_out {} feats {} ".format( decoder_input.shape, mu.shape, log_var.shape, z.shape,  encoder_out.shape, feats.shape  ))        
+
+        logging.warning(" >>> decoder_input {}  mu {}  log_var {}  z {} ".format( decoder_input.shape, mu.shape, log_var.shape, z.shape  ))        
 
 
 
@@ -438,9 +445,11 @@ class ESPnetASRModel(AbsESPnetModel):
         
         # for reconstruction decoder ys-> x_vectors hs->encoder_outputs(mu and logvar)
 
-        self.spk_embed_dim = 512
-        if self.spk_embed_dim is not None:
-            hs = self._integrate_with_spk_embed(decoder_input, spembs)
+        # self.spk_embed_dim = 512
+        # hs = torch.cat( (spembs.unsqueeze(1).expand(-1, decoder_input.shape[1],-1) , decoder_input), dim=-1)
+
+        # if self.spk_embed_dim is not None:
+        #     hs = self._integrate_with_spk_embed(decoder_input, spembs)
 
         # logging.warning(" >>>   hs {} ".format(  hs.shape ))        
 
@@ -459,22 +468,28 @@ class ESPnetASRModel(AbsESPnetModel):
         # y_masks = self._target_mask(olens)
 
 
-        self.reduction_factor=1
-        if self.reduction_factor > 1:
-            ys_in = ys[:, self.reduction_factor - 1 :: self.reduction_factor]
-            olens_in = olens.new([olen // self.reduction_factor for olen in olens])
-        else:
-            ys_in, olens_in = ys, olens
+        # self.reduction_factor=1
+        # if self.reduction_factor > 1:
+        #     ys_in = ys[:, self.reduction_factor - 1 :: self.reduction_factor]
+        #     olens_in = olens.new([olen // self.reduction_factor for olen in olens])
+        # else:
+        #     ys_in, olens_in = ys, olens
 
-        y_masks = self._target_mask(olens_in)
-        h_masks = encoder_out_lens   
+        # y_masks = self._target_mask(olens_in)
 
-        logging.warning(" >>> ys_in {}  y_masks.shape {}  hs.shape {}   h_masks.shape {}  ".format( ys_in.shape, y_masks.shape, hs.shape,  h_masks.shape ))        
+        hs = decoder_input
+        h_masks = encoder_out_lens
+        # ys_in [22, 128]
+        ys_in = spembs.unsqueeze(1).expand(-1, feats.shape[1],-1) 
+        #[22, 1422, 128]
+        y_masks = feats_lengths   
+
+        logging.warning(" >>>  hs.shape {}   h_masks.shape {}  ys_in {}  y_masks.shape {}  ".format(  hs.shape,  h_masks.shape, ys_in.shape, y_masks.shape ))        
 
 
-        zs, _ = self.reconstruction_decoder(ys_in, y_masks, hs, h_masks)
+        zs, _ = self.reconstruction_decoder( hs, h_masks, ys_in, y_masks)
         
-        
+        logging.warning(" zs shape {} ".format(zs.shape))
         ################################################################################################################################################################################################
         ################################################################################################################################################################################################
         ################################################################################################################################################################################################
@@ -487,14 +502,12 @@ class ESPnetASRModel(AbsESPnetModel):
         # ys_in_lens = text_lengths + 1
         # reconstruction_decoder_output, recons_lens  = self.reconstruction_decoder(encoder_out, encoder_out_lens, ys_in_pad, ys_in_lens)  # [batch, seqlen, dim]
         # reconstruction_decoder_output  = self.reconstruction_decoder(decoder_input)  # [batch, seqlen, dim]
-        logging.warning(" >>>   reconstruction_decoder_input {} reconstruction_decoder_output {}  feats {} feats_lengths {},  ".format(decoder_input.shape, reconstruction_decoder_output.shape, feats.shape, feats_lengths.shape  ))        
+        # logging.warning(" >>>   reconstruction_decoder_input {} reconstruction_decoder_output {}  feats {} feats_lengths {},  ".format(decoder_input.shape, reconstruction_decoder_output.shape, feats.shape, feats_lengths.shape  ))        
         # reconstruction_decoder_output = self.recon_decoder_nll( encoder_out, encoder_out_lens, ys_pad, ys_pad_lens) 
                 
         # reconstruction_loss , kld_loss = self.vae_loss_function(reconstruction_decoder_output, feats, mu, log_var)
 
         
-        
-        encoder_out = decoder_input.view(-1, encoder_out_lens[0], self.final_encoder_dim)
         
 
 
@@ -517,6 +530,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         # 1. CTC branch
+        # encoder_out = 
         if self.ctc_weight != 0.0:
             loss_ctc, cer_ctc = self._calc_ctc_loss(
                 encoder_out, encoder_out_lens, text, text_lengths
