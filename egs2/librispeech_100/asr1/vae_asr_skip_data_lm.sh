@@ -55,11 +55,11 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-adv_liststr="asr_adv_asradv"
-# adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
+# adv_liststr="asr_adv_asradv"
+adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 resume_checkpoint=-1
-max_epoch=60
-batch_bins=10000000
+max_epoch=160
+batch_bins=30000000
 adv_weight=34.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -67,8 +67,8 @@ adv_dropout_inp=0.0
 
 
 
-project_name="vae_jan_20_modified_60"
-experiment_name="testing_vae"
+project_name="vae_jan_24_modified_60"
+experiment_name="running_vae"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 

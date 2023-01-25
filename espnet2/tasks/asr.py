@@ -655,14 +655,23 @@ class ASRTask(AbsTask):
 
         # feats_val = 80
         reconstruction_decoder_class = decoder_choices.get_class("recon")
+        reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=128)
         
         # reconstruction_decoder = reconstruction_decoder_class(vocab_size, embed_pad=0)
 
-        reconstruction_decoder = reconstruction_decoder_class(
-                vocab_size=80,
-                encoder_output_size=128,
-                **args.decoder_conf,
-            )
+        # recon_decoder_conf={"embed_size": 8, "attention_heads": 2, "linear_units": 1024, "num_blocks": 3, "dropout_rate": 0.1, "positional_dropout_rate": 0.1, "self_attention_dropout_rate": 0.1, "src_attention_dropout_rate": 0.1}
+
+        # reconstruction_decoder = reconstruction_decoder_class(
+        #         vocab_size=80,
+        #         encoder_output_size=128,
+        #         attention_heads=2,
+        #         linear_units=1024,
+        #         num_blocks=3,
+        #         dropout_rate=0.1,
+        #         positional_dropout_rate=0.1,
+        #         self_attention_dropout_rate=0.1,
+        #         src_attention_dropout_rate=0.1)
+
             
         # reconstruction_decoder = ReconDecoder(args.eprojs, feats_val)
 

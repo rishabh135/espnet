@@ -143,7 +143,7 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
             memory.device
         )
 
-        logging.warning(" tgt_mask {} memory_mask {} ".format(tgt_mask.shape, memory_mask.shape ))
+        # logging.warning(" tgt_mask {} memory_mask {} ".format(tgt_mask.shape, memory_mask.shape ))
         # Padding for Longformer
         if memory_mask.shape[-1] != memory.shape[1]:
             padlen = memory.shape[1] - memory_mask.shape[-1]
@@ -155,7 +155,7 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
         # tgt = torch.tensor(tgt).to("cuda").long()
         # tgt = to_cuda(self, tgt.long())
         
-        logging.warning(" justbefore tgt_shape {} tgt type {} ".format(tgt.shape, type(tgt)))
+        # logging.warning(" justbefore tgt_shape {} tgt type {} ".format(tgt.shape, type(tgt)))
         # x = self.embed(tgt.to(torch.int16) )
         x = tgt
 
@@ -264,9 +264,9 @@ class TransformerReconDecoder(BaseTransformerDecoder):
         self,
         vocab_size: int,
         encoder_output_size: int,
-        attention_heads: int = 4,
-        linear_units: int = 2048,
-        num_blocks: int = 6,
+        attention_heads: int = 2,
+        linear_units: int = 1024,
+        num_blocks: int = 3,
         dropout_rate: float = 0.1,
         positional_dropout_rate: float = 0.1,
         self_attention_dropout_rate: float = 0.0,

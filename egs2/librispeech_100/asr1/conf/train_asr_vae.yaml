@@ -27,6 +27,15 @@ decoder_conf:
     self_attention_dropout_rate: 0.1
     src_attention_dropout_rate: 0.1
 
+# recon_decoder: transformer
+# recon_decoder_conf:
+#     attention_heads: 2
+#     linear_units: 1024
+#     num_blocks: 3
+#     dropout_rate: 0.1
+#     positional_dropout_rate: 0.1
+#     self_attention_dropout_rate: 0.1
+#     src_attention_dropout_rate: 0.1
 
 # recon_decoder: transducer
 # decoder_conf:

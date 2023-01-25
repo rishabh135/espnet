@@ -90,6 +90,7 @@ enh_attributes = [
     "separator_conf",
     "decoder",
     "decoder_conf",
+    "recon_decoder_conf",
     "criterions",
 ]
 
@@ -110,6 +111,7 @@ asr_attributes = [
     "postencoder_conf",
     "decoder",
     "decoder_conf",
+    "recon_decoder_conf",
     "ctc_conf",
 ]
 
@@ -131,6 +133,7 @@ st_attributes = [
     "postencoder_conf",
     "decoder",
     "decoder_conf",
+    "recon_decoder_conf",
     "ctc_conf",
     "extra_asr_decoder",
     "extra_asr_decoder_conf",
