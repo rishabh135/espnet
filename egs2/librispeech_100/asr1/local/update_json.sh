@@ -2,15 +2,12 @@
 
 # Copyright 2017 Johns Hopkins University (Shinji Watanabe)
 #  Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
-# https://raw.githubusercontent.com/espnet/espnet/master/egs/libritts/tts1/local/update_json.sh
-
-
 
 . ./path.sh
 
-verbose=1
+verbose=0
 
-./utils/parse_options.sh
+. utils/parse_options.sh
 set -e
 set -u
 
@@ -21,17 +18,8 @@ fi
 
 json=$1
 feat=$2
-
 dir=$(dirname ${json})
-echo "${dir}"
-echo "${json}"
-echo "${feat}"
 tmpdir=`mktemp -d ${dir}/tmp-XXXXX`
-
-echo "${tmpdir}"
-
-
-
 rm -f ${tmpdir}/*.scp
 
 # feats scp
