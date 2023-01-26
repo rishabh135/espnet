@@ -801,45 +801,43 @@ fi
 # Extract X-vector
 if "${use_xvector}"; then
     echo "stage 3: x-vector extraction"
-    dev_set=dev_clean
-    eval_set=test_clean
     # Make MFCCs and compute the energy-based VAD for each dataset
     mfccdir=${data_dd}/mfccdir
     vaddir=${data_dd}/mfcc
     nnet_dir=${dumpdir}/nnet/
     
-    # for name in ${train_set} ${dev_set} ${eval_set}; do
-    #     ${global_dir}/utils/copy_data_dir.sh ${data_dd}/${name} ${data_dd}/${name}_mfcc_16k
-    #     ${global_dir}/utils/data/resample_data_dir.sh 16000 ${data_dd}/${name}_mfcc_16k
-    #     ${global_dir}/steps/make_mfcc.sh  \
-    #         --write-utt2num-frames true \
-    #         --mfcc-config ${global_dir}/conf/mfcc.conf \
-    #         --nj ${nj} --cmd "$train_cmd" \
-    #         ${data_dd}/${name}_mfcc_16k ${expdir}/make_mfcc_16k ${mfccdir}
-    #     ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
-    #     ${global_dir}/steps/compute_vad_decision.sh --nj ${nj} --cmd "$train_cmd" \
-    #         ${data_dd}/${name}_mfcc_16k ${expdir}/make_vad ${vaddir}
-    #     ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
-    # done
+    for name in ${train_set} ${valid_set} ${test_sets}; do
+        ${global_dir}/utils/copy_data_dir.sh ${data_dd}/${name} ${data_dd}/${name}_mfcc_16k
+        ${global_dir}/utils/data/resample_data_dir.sh 16000 ${data_dd}/${name}_mfcc_16k
+        ${global_dir}/steps/make_mfcc.sh  \
+            --write-utt2num-frames true \
+            --mfcc-config ${global_dir}/conf/mfcc.conf \
+            --nj ${nj} --cmd "$train_cmd" \
+            ${data_dd}/${name}_mfcc_16k ${expdir}/make_mfcc_16k ${mfccdir}
+        ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
+        ${global_dir}/steps/compute_vad_decision.sh --nj ${nj} --cmd "$train_cmd" \
+            ${data_dd}/${name}_mfcc_16k ${expdir}/make_vad ${vaddir}
+        ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
+    done
 
-    # # Check pretrained model existence
-    # 
-    # if [ ! -e ${nnet_dir} ]; then
-    #     echo "X-vector model does not exist. Download pre-trained model."
-    #     wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
-    #     tar xvf ./0008_sitw_v2_1a.tar.gz
-    #     mv ./0008_sitw_v2_1a/exp/xvector_nnet_1a ${nnet_dir}
-    #     rm -rf 0008_sitw_v2_1a.tar.gz 0008_sitw_v2_1a
-    # fi
-    # # Extract x-vector
-    # for name in ${train_set} ${dev_set} ${eval_set}; do
-    #     ${global_dir}/../../../tools/kaldi/egs/sre08/v1/sid/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 4G" --nj ${nj} \
-    #         ${nnet_dir} ${data_dd}/${name}_mfcc_16k \
-    #         ${nnet_dir}/xvectors_${name}
-    # done
+    # Check pretrained model existence
+    
+    if [ ! -e ${nnet_dir} ]; then
+        echo "X-vector model does not exist. Download pre-trained model."
+        wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
+        tar xvf ./0008_sitw_v2_1a.tar.gz
+        mv ./0008_sitw_v2_1a/exp/xvector_nnet_1a ${nnet_dir}
+        rm -rf 0008_sitw_v2_1a.tar.gz 0008_sitw_v2_1a
+    fi
+    # Extract x-vector
+    for name in ${train_set} ${valid_set} ${test_sets}; do
+        ${global_dir}/../../../tools/kaldi/egs/sre08/v1/sid/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 4G" --nj ${nj} \
+            ${nnet_dir} ${data_dd}/${name}_mfcc_16k \
+            ${nnet_dir}/xvectors_${name}
+    done
 
     # # Update json
-    # for name in ${train_set} ${dev_set} ${eval_set}; do
+    # for name in ${train_set} ${valid_set} ${test_sets}; do
     #     ./local/update_json.sh ${dumpdir}/${name}/data.json ${nnet_dir}/xvectors_${name}/xvector.scp
     # done
 
@@ -1332,7 +1330,7 @@ if ! "${skip_train}"; then
             echo "${_xvector_train_dir}"
             echo "${_xvector_valid_dir}"
             _opts+="--train_data_path_and_name_and_type ${_xvector_train_dir}/xvector.scp,spembs,kaldi_ark "
-            _opts+="--valid_data_path_and_name_and_type ${_xvector_valid_dir}/xvector_train_clean_100_sp.scp,spembs,kaldi_ark "
+            _opts+="--valid_data_path_and_name_and_type ${_xvector_valid_dir}/xvector_dev_clean.scp,spembs,kaldi_ark "
         fi
 
 

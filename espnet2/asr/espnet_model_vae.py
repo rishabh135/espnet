@@ -593,7 +593,7 @@ class ESPnetASRModel(AbsESPnetModel):
             elif self.ctc_weight == 1.0:
                 loss = loss_ctc + reconstruction_loss
             else:
-                loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att + reconstruction_loss
+                loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att + reconstruction_loss + kld_loss
 
             # Collect Attn branch stats
             stats["loss_att"] = loss_att.detach() if loss_att is not None else None

@@ -1,5 +1,7 @@
 MAIN_ROOT=$PWD/../../..
 # KALDI_ROOT=$MAIN_ROOT/tools/kaldi
+# very important step, to run, must do sudo-g5k bash kaldi/extras/install_mkl.sh
+
 KALDI_ROOT=/srv/storage/talc@talc-data.nancy/multispeech/calcul/users/bsrivastava/VPC/voice-privacy-challenge/kaldi/
 
 export PATH=$PWD/utils/:$KALDI_ROOT/tools/openfst/bin:$PATH
