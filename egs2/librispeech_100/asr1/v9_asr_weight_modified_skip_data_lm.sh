@@ -55,10 +55,10 @@ adversarial_flag="True"
 
 # adv_liststr="asr_adv_asradv"
 adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
-resume_checkpoint=-1
+resume_checkpoint=80
 max_epoch=160
-batch_bins=52000000
-adv_weight=34.0
+batch_bins=55000000
+adv_weight=10.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
