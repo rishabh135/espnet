@@ -55,19 +55,19 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-adv_liststr="asr_adv_asradv"
-# adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
+# adv_liststr="asr_adv_asradv"
+adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 resume_checkpoint=-1
 max_epoch=160
-batch_bins=25000000
-adv_weight=34.0
+batch_bins=38000000
+adv_weight=30.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 
 
-project_name="vae_jan_24_modified_160"
-experiment_name="testing_vae"
+project_name="vae_jan_26_modified_160"
+experiment_name="first_iteration_working"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 
@@ -801,40 +801,41 @@ fi
 # Extract X-vector
 if "${use_xvector}"; then
     echo "stage 3: x-vector extraction"
+
     # Make MFCCs and compute the energy-based VAD for each dataset
     mfccdir=${data_dd}/mfccdir
     vaddir=${data_dd}/mfcc
     nnet_dir=${dumpdir}/nnet/
     
-    for name in ${train_set} ${valid_set} ${test_sets}; do
-        ${global_dir}/utils/copy_data_dir.sh ${data_dd}/${name} ${data_dd}/${name}_mfcc_16k
-        ${global_dir}/utils/data/resample_data_dir.sh 16000 ${data_dd}/${name}_mfcc_16k
-        ${global_dir}/steps/make_mfcc.sh  \
-            --write-utt2num-frames true \
-            --mfcc-config ${global_dir}/conf/mfcc.conf \
-            --nj ${nj} --cmd "$train_cmd" \
-            ${data_dd}/${name}_mfcc_16k ${expdir}/make_mfcc_16k ${mfccdir}
-        ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
-        ${global_dir}/steps/compute_vad_decision.sh --nj ${nj} --cmd "$train_cmd" \
-            ${data_dd}/${name}_mfcc_16k ${expdir}/make_vad ${vaddir}
-        ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
-    done
+    # for name in ${train_set} ${valid_set} ${test_sets}; do
+    #     ${global_dir}/utils/copy_data_dir.sh ${data_dd}/${name} ${data_dd}/${name}_mfcc_16k
+    #     ${global_dir}/utils/data/resample_data_dir.sh 16000 ${data_dd}/${name}_mfcc_16k
+    #     ${global_dir}/steps/make_mfcc.sh  \
+    #         --write-utt2num-frames true \
+    #         --mfcc-config ${global_dir}/conf/mfcc.conf \
+    #         --nj ${nj} --cmd "$train_cmd" \
+    #         ${data_dd}/${name}_mfcc_16k ${expdir}/make_mfcc_16k ${mfccdir}
+    #     ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
+    #     ${global_dir}/steps/compute_vad_decision.sh --nj ${nj} --cmd "$train_cmd" \
+    #         ${data_dd}/${name}_mfcc_16k ${expdir}/make_vad ${vaddir}
+    #     ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
+    # done
 
-    # Check pretrained model existence
+    # # Check pretrained model existence
     
-    if [ ! -e ${nnet_dir} ]; then
-        echo "X-vector model does not exist. Download pre-trained model."
-        wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
-        tar xvf ./0008_sitw_v2_1a.tar.gz
-        mv ./0008_sitw_v2_1a/exp/xvector_nnet_1a ${nnet_dir}
-        rm -rf 0008_sitw_v2_1a.tar.gz 0008_sitw_v2_1a
-    fi
-    # Extract x-vector
-    for name in ${train_set} ${valid_set} ${test_sets}; do
-        ${global_dir}/../../../tools/kaldi/egs/sre08/v1/sid/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 4G" --nj ${nj} \
-            ${nnet_dir} ${data_dd}/${name}_mfcc_16k \
-            ${nnet_dir}/xvectors_${name}
-    done
+    # if [ ! -e ${nnet_dir} ]; then
+    #     echo "X-vector model does not exist. Download pre-trained model."
+    #     wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
+    #     tar xvf ./0008_sitw_v2_1a.tar.gz
+    #     mv ./0008_sitw_v2_1a/exp/xvector_nnet_1a ${nnet_dir}
+    #     rm -rf 0008_sitw_v2_1a.tar.gz 0008_sitw_v2_1a
+    # fi
+    # # Extract x-vector
+    # for name in ${train_set} ${valid_set} ${test_sets}; do
+    #     ${global_dir}/../../../tools/kaldi/egs/sre08/v1/sid/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 4G" --nj ${nj} \
+    #         ${nnet_dir} ${data_dd}/${name}_mfcc_16k \
+    #         ${nnet_dir}/xvectors_${name}
+    # done
 
     # # Update json
     # for name in ${train_set} ${valid_set} ${test_sets}; do

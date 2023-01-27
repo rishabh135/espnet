@@ -230,6 +230,11 @@ class ESPnetASRModel(AbsESPnetModel):
                 if param.grad is not None:
                     param.grad.zero_()
             
+            for param in self.reconstruction_decoder.parameters():
+                param.requires_grad = False
+                if param.grad is not None:
+                    param.grad.zero_()
+            
             for param in self.criterion_att.parameters():
                 param.requires_grad = False
                 if param.grad is not None:
@@ -245,7 +250,8 @@ class ESPnetASRModel(AbsESPnetModel):
                 param.requires_grad = True
             for param in self.ctc.parameters():
                 param.requires_grad = True
-
+            for param in self.reconstruction_decoder.parameters():
+                param.requires_grad = True
             self.encoder_frozen_flag = False
     
     
@@ -589,9 +595,9 @@ class ESPnetASRModel(AbsESPnetModel):
 
             # 3. CTC-Att loss definition
             if self.ctc_weight == 0.0:
-                loss = loss_att + reconstruction_loss
+                loss = loss_att + reconstruction_loss + + kld_loss
             elif self.ctc_weight == 1.0:
-                loss = loss_ctc + reconstruction_loss
+                loss = loss_ctc + reconstruction_loss + + kld_loss
             else:
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att + reconstruction_loss + kld_loss
 

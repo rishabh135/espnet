@@ -807,7 +807,7 @@ class Trainer:
 
 
                 if( (iiter % 100) == 0):        
-                    logging.warning("\n >>>>>>>> MODE: {} adv_loss_weight {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {} recons_loss {} recons_kld_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach(), grad_norm, stats["recons_loss"].detach(), stats["recons_kld_loss"].detach()  ))
+                    logging.warning("\n >>>>>>>> MODE: {} adv_loss_weight {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {} recons_loss {} kld_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach(), grad_norm, stats["recons_loss"].detach(), stats["recons_kld_loss"].detach()  ))
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
     

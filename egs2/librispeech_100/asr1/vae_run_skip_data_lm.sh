@@ -6,7 +6,7 @@ set -u
 set -o pipefail
 
 train_set="train_clean_100"
-valid_set="dev"
+valid_set="dev_clean"
 test_sets="test_clean test_other dev_clean dev_other"
 
 asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
@@ -20,8 +20,7 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector_3/original_data
 
-
-project_name="vae_jan_24_modified_160"
+project_name="vae_jan_26_modified_160"
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 # asr_config=conf/train_asr.yaml
