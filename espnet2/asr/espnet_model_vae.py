@@ -595,9 +595,9 @@ class ESPnetASRModel(AbsESPnetModel):
 
             # 3. CTC-Att loss definition
             if self.ctc_weight == 0.0:
-                loss = loss_att + reconstruction_loss + + kld_loss
+                loss = loss_att + reconstruction_loss +  kld_loss
             elif self.ctc_weight == 1.0:
-                loss = loss_ctc + reconstruction_loss + + kld_loss
+                loss = loss_ctc + reconstruction_loss +  kld_loss
             else:
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att + reconstruction_loss + kld_loss
 

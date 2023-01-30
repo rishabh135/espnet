@@ -324,7 +324,7 @@ class SpeakerAdv(torch.nn.Module):
         #    layer_arr.extend([torch.nn.Linear(advunits, advunits),
         #                    torch.nn.ReLU(), torch.nn.Dropout(p=dropout_rate)])
         #self.advnet = torch.nn.Sequential(*layer_arr)
-        self.output = torch.nn.Linear(advunits, odim)
+        self.output = torch.nn.Linear(2*advunits, odim)
 
 
     def zero_state(self, hs_pad):
@@ -378,17 +378,18 @@ class SpeakerAdv(torch.nn.Module):
         h_0 = self.zero_state(hs_pad)
         c_0 = self.zero_state(hs_pad)
 
-        # logging.warning("Passing encoder output through advnet {} ".format(hs_pad.shape))
-        # logging.warning(" spkid inside adversarial {} ".format(y_adv))
 
 
+        # for better lstm
+        self.advnet.flatten_parameters()
+        out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
+        
 
-        # self.advnet.flatten_parameters()
-        # out_x, (h_0, c_0) = self.advnet(hs_pad, (h_0, c_0))
 
         # logging.warning(" ------>>> lstm hs_pad.shape {} h_0.shape {} c_0.shape {}  ".format(  hs_pad.shape, h_0.shape, c_0.shape) )
 
-        out_x = self.advnet(hs_pad)
+        #  for tudnn and xvector_tudnn
+        # out_x = self.advnet(hs_pad)
         # out_x = self.advnet2(out_x)
         # out_x = self.advnet3(out_x)
         # out_x = self.advnet4(out_x)
@@ -397,10 +398,7 @@ class SpeakerAdv(torch.nn.Module):
 
 
 
-        # logging.warning(" ------>>> lstm out_x {} , h_0 {} , c_0 {}, out_x.shape {} h_0.shape {} c_0.shape {}  ".format( type(out_x), type(h_0), type(c_0), out_x.shape, h_0.shape, c_0.shape) )
-
-        # logging.warning("advnet output size = %s", str(out_x.shape))
-        # logging.warning("adversarial target size = %s", str(y_adv.shape))
+  
 
         y_hat = self.output(out_x)
 

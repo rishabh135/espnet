@@ -66,8 +66,8 @@ adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 
 
-project_name="vae_jan_26_modified_160"
-experiment_name="first_iteration_working"
+project_name="vae_betterlstm_jan_27_modified_160"
+experiment_name="40_each_adv_weight_30"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 
