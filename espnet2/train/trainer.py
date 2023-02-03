@@ -667,6 +667,8 @@ class Trainer:
                         stats = retval["stats"]
                         weight = retval["weight"]
                         optim_idx = retval.get("optim_idx")
+                        reconstruction_loss = retval.get("reconstruction_loss", 0)
+                        kld_loss = retval.get("reconstruction_kld_loss", 0)
 
                         # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
                         if optim_idx is not None and not isinstance(optim_idx, int):
@@ -730,10 +732,13 @@ class Trainer:
 
             reporter.register(stats, weight)
 
+
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
 
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
+
+                        loss = 0 * loss + reconstruction_loss + kld_loss
                         loss /= accum_grad
                         scaler.scale(loss).backward()
                         # loss_adversarial = retval["loss_adversarial"]
@@ -748,9 +753,10 @@ class Trainer:
                         scaler.scale(loss_adversarial).backward()
                     
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
+
                         loss_adversarial = retval["loss_adversarial"]
                         # loss_adversarial.requires_grad = True
-                        loss = loss + options.adv_loss_weight * loss_adversarial
+                        loss =  0 * loss + reconstruction_loss + kld_loss + options.adv_loss_weight * loss_adversarial
                         loss /= accum_grad
                         scaler.scale(loss).backward()
                     
@@ -760,6 +766,8 @@ class Trainer:
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     else:
+                        loss =  0 * loss + reconstruction_loss + kld_loss
+                        
                         loss /= accum_grad
                         scaler.scale(loss).backward()
                         # scaler.scale(loss_adversarial).backward()

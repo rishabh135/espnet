@@ -47,6 +47,149 @@ else:
 
 
 
+# Plotting spectrogram
+# https://github.com/morganmcg1/wandb_spectrogram/blob/main/audio_spectrogram_widget_for_wandb.ipynb
+
+import numpy as np
+
+import holoviews as hv 
+import panel as pn
+from bokeh.resources import INLINE
+hv.extension("bokeh", logo=False)
+
+import torch
+import librosa
+import torchaudio
+import torchaudio.transforms as T
+
+from scipy.io import wavfile
+from scipy.signal import spectrogram
+
+import wandb
+     
+
+
+def generate_melspec(audio_data, sample_rate=48000, power=2.0, n_fft = 1024, win_length = None, hop_length = None, n_mels = 128):
+  if hop_length is None:
+     hop_length = n_fft//2
+
+  # convert to torch
+  audio_data = torch.tensor(audio_data, dtype=torch.float32)
+
+  mel_spectrogram = T.MelSpectrogram(
+      sample_rate=sample_rate,
+      n_fft=n_fft,
+      win_length=win_length,
+      hop_length=hop_length,
+      center=True,
+      pad_mode="reflect",
+      power=power,
+      norm="slaney",
+      onesided=True,
+      n_mels=n_mels,
+      mel_scale="htk",
+  )
+
+  melspec = mel_spectrogram(audio_data).numpy()
+  mel_db = np.flipud(librosa.power_to_db(melspec))
+  return mel_db
+
+
+def wandb_spectrogram(audio_path:str, audio_data=None, sample_rate=None, specs:str=['all_specs'], layout:str='row', height=170, width=400, channel=0, cmap='blues'):
+  '''
+    Takes a .wav file and returns a wandb.HTML object with spectrograms of the audio
+
+    audio_path: path to .wav file
+    audio_data: numpy array of audio data; overrides audio_path causing it to be ignored
+    sr: sample rate. If set to None then the audio files
+    specs : 
+      "all_specs", spetrograms only
+      "all", all plots
+      "melspec", melspectrogram only
+      "spec", spectrogram only
+      "waveform", waveform only, equivalent to wandb.Audio object
+    layout: how the spectrograms are laid out in wandb, either stacked or side-by-side
+      "row", widgets set side by side
+      "grid", widgets arranged across 2 rows
+    height: height of each spectrogram in wandb
+    width: height of each spectrogram in wandb
+    cmap: colormap string for Holoviews, see https://holoviews.org/user_guide/Colormaps.html
+  '''
+
+  if audio_data is None:
+    # Read data
+    sr, audio_data = wavfile.read(audio_path)
+    if sample_rate is None:
+        sample_rate = sr
+    duration = librosa.get_duration(filename=audio_path)
+  else:
+    duration = np.max(audio_data.shape)/sample_rate 
+                                
+  if len(audio_data.shape) > 1: # get one channel
+    if np.argmax(audio_data.shape)==0:
+        audio_data = audio_data[:,channel] 
+    else:
+        audio_data = audio_data[channel,:]
+        
+  if audio_data.dtype != np.int16:  # Panel Audio widget can't handle floats
+    audio_data =  np.clip( audio_data.cpu().numpy()*32768 , -32768, 32768).astype('int16')
+
+  # Audio widget
+  audio = pn.pane.Audio(audio_data, sample_rate=sample_rate, name='Audio', throttle=10)
+
+  # Add HTML components
+  line = hv.VLine(0).opts(color='red')
+  line2 = hv.VLine(0).opts(color='green')
+  line3 = hv.VLine(0).opts(color='white')
+
+  slider = pn.widgets.FloatSlider(end=duration, visible=False, step=0.001)
+  slider.jslink(audio, value='time', bidirectional=True)
+  slider.jslink(line, value='glyph.location')
+  slider.jslink(line2, value='glyph.location')
+  slider.jslink(line3, value='glyph.location')
+
+  # Spectogram plot
+  if ('spec' in specs) or ('all_specs' in specs) or ('all' in specs):
+    f, t, sxx = spectrogram(audio_data, sample_rate)
+    spec_gram_hv = hv.Image((t, f, np.log10(sxx)), ["Time (s)", "Frequency (hz)"]).opts(
+        width=width, height=height, labelled=[], axiswise=True, color_levels=512, cmap=cmap) * line
+  else: 
+    spec_gram_hv = None
+
+  # Melspectogram plot
+  if ('melspec' in specs) or ('all_specs' in specs) or ('all' in specs):
+    mel_db = generate_melspec(audio_data, sample_rate=sample_rate, power=2.0, n_fft = 1024, n_mels = 128)
+    melspec_gram_hv = hv.Image(mel_db, bounds=(0, 0, duration, mel_db.max()), kdims=["Time (s)", "Mel Freq"]).opts(
+        width=width, height=height, labelled=[], axiswise=True, color_levels=512, cmap=cmap) * line3
+  else:
+    melspec_gram_hv = None
+
+  # Waveform plot
+  if ('waveform' in specs) or ('all' in specs):
+    time = np.linspace(0, len(audio_data)/sample_rate, num=len(audio_data))
+    line_plot_hv = hv.Curve((time, audio_data), ["Time (s)", "amplitude"]).opts(
+        width=width, height=height, axiswise=True) * line2
+  else:
+    line_plot_hv = None
+
+
+  # Create HTML layout
+  html_file_name = "audio_spec.html"
+
+  if layout == 'grid': 
+    print('doing GRID')
+    combined = pn.GridBox(audio, spec_gram_hv, line_plot_hv, melspec_gram_hv, slider, ncols=2, nrows=2).save(html_file_name)
+  else: 
+    combined = pn.Row(audio, line_plot_hv, spec_gram_hv, melspec_gram_hv, slider).save(html_file_name)
+
+  # if layout == 'grid': 
+  #   combined = pn.GridBox(audio, spec_gram * line, None, melspec_gram * line3, slider, ncols=2, nrows=2).save(html_file_name)
+  # else: 
+  #   combined = pn.Row(audio, spec_gram * line, melspec_gram * line3, slider).save(html_file_name)
+
+  return wandb.Html(html_file_name)
+
+
 
 
 
@@ -213,6 +356,7 @@ class ESPnetASRModel(AbsESPnetModel):
     def print_flags(self,):
         logging.warning(" encoder frozen : {} adversarial_frozen : {}".format(self.encoder_frozen_flag, self.adversarial_frozen_flag))
 
+
     
     def freeze_encoder(self):
         if not self.encoder_frozen_flag:
@@ -235,6 +379,27 @@ class ESPnetASRModel(AbsESPnetModel):
                 if param.grad is not None:
                     param.grad.zero_()
             
+            # for param in self.parameters():
+            #     param.requires_grad = False
+            #     if param.grad is not None:
+            #         param.grad.zero_()
+            # self.fc_mu.requires_grad =False
+            # if self.fc_mu.grad is not None:
+            #         self.fc_mu.grad.zero_()
+
+            # self.fc_var.requires_grad =False
+            # if self.fc_var.grad is not None:
+            #         self.fc_var.grad.zero_()
+            
+            # self.fc_spemb.requires_grad =False
+            # if self.fc_spemb.grad is not None:
+            #         self.fc_spemb.grad.zero_()
+
+            # self.decoder_input_projection.requires_grad=False
+            # if self.decoder_input_projection.grad is not None:
+            #     self.decoder_input_projection.grad.zero_()
+
+            
             for param in self.criterion_att.parameters():
                 param.requires_grad = False
                 if param.grad is not None:
@@ -252,6 +417,15 @@ class ESPnetASRModel(AbsESPnetModel):
                 param.requires_grad = True
             for param in self.reconstruction_decoder.parameters():
                 param.requires_grad = True
+
+            # for param in self.parameters():
+            #     param.requires_grad = True
+
+            # self.fc_mu.requires_grad =True
+            # self.fc_var.requires_grad = True
+            # self.fc_spemb.requires_grad = True
+            # self.decoder_input_projection = True
+
             self.encoder_frozen_flag = False
     
     
@@ -595,9 +769,9 @@ class ESPnetASRModel(AbsESPnetModel):
 
             # 3. CTC-Att loss definition
             if self.ctc_weight == 0.0:
-                loss = loss_att + reconstruction_loss +  kld_loss
+                loss = loss_att 
             elif self.ctc_weight == 1.0:
-                loss = loss_ctc + reconstruction_loss +  kld_loss
+                loss = loss_ctc 
             else:
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att + reconstruction_loss + kld_loss
 
@@ -981,3 +1155,4 @@ class ESPnetASRModel(AbsESPnetModel):
             )
 
         return loss_transducer, cer_transducer, wer_transducer
+

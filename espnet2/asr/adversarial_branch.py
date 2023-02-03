@@ -282,7 +282,7 @@ class SpeakerAdv(torch.nn.Module):
     :param float dropout_rate: dropout rate (0.0 ~ 1.0)
     """
 
-    def __init__(self, odim, eprojs, advunits, advlayers, dropout_mid=0.2, dropout_inp=0.2, dropout_out=0.2):
+    def __init__(self, odim, eprojs, advunits, advlayers, dropout_mid=0.0, dropout_inp=0.0, dropout_out=0.0):
         super(SpeakerAdv, self).__init__()
         self.advunits = advunits
         self.advlayers = advlayers
@@ -302,8 +302,8 @@ class SpeakerAdv(torch.nn.Module):
         
         
 
-        self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout_mid=dropout_mid, dropout_inp=dropout_inp, dropout_out=dropout_out, bidirectional=True)
-        # self.advnet = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_rate, bidirectional=True)
+        # self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout_mid=dropout_mid, dropout_inp=dropout_inp, dropout_out=dropout_out, bidirectional=True)
+        self.advnet = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_mid, bidirectional=True)
         # self.advnet = DropoutLSTMModel( input_size=eprojs, hidden_size=advunits, n_layers=self.advlayers, dropoutw=dropout_rate, bidirectional=True)
        
         
