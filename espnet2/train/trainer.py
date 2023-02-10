@@ -185,7 +185,7 @@ class TrainerOptions:
 	save_every_epoch: int
 	resume_from_checkpoint: int
 	adv_loss_weight: float
-
+	beta_factor: float
 
 class Trainer:
 	"""Trainer having a optimizer.
@@ -826,9 +826,11 @@ class Trainer:
 			with reporter.measure_time("backward_time"):
 				if scaler is not None:
 
+					beta_loss = (reconstruction_loss + ((current_epoch+1)/100) * kld_loss)
+					stats["beta_loss"] = beta_loss
+					stats["ctc_att_loss"] = loss
 					if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
-
-						loss = 0 * loss + reconstruction_loss + kld_loss
+						loss = (1 - options.beta_factor) loss + options.beta_factor  *  beta_loss
 						loss /= accum_grad
 						scaler.scale(loss).backward()
 						# loss_adversarial = retval["loss_adversarial"]
@@ -846,7 +848,7 @@ class Trainer:
 
 						loss_adversarial = retval["loss_adversarial"]
 						# loss_adversarial.requires_grad = True
-						loss =  0 * loss + reconstruction_loss + kld_loss + options.adv_loss_weight * loss_adversarial
+						loss =  (1-options.beta_factor) * loss  +   options.beta_factor  *   beta_loss  +   options.adv_loss_weight * loss_adversarial
 						loss /= accum_grad
 						scaler.scale(loss).backward()
 					
@@ -856,8 +858,7 @@ class Trainer:
 						# loss_adversarial.requires_grad = True
 						scaler.scale(loss_adversarial).backward()
 					else:
-						loss =  0 * loss + reconstruction_loss + kld_loss
-						
+						loss = (1 - options.beta_factor) loss + options.beta_factor  * beta_loss
 						loss /= accum_grad
 						scaler.scale(loss).backward()
 						# scaler.scale(loss_adversarial).backward()

@@ -23,7 +23,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 # project_name="vae_without_vae_losses_feb_2_modified_160"
 
 
-project_name="vae_new_losses_feb_4_modified_160"
+project_name="vae_feb_10_beta_factor_160"
 
 
 ###################################################################################################################################################################################################

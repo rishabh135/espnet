@@ -64,11 +64,13 @@ adv_weight=30.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
-
+beta_factor=0.5
 
 # project_name="vae_without_vae_losses_feb_2_modified_160"
 
-project_name="vae_new_losses_feb_4_modified_160"
+
+project_name="vae_feb_10_beta_factor_160"
+
 
 experiment_name="40_each_adv_weight_30"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
@@ -1380,6 +1382,7 @@ if ! "${skip_train}"; then
                 --project_name "${project_name}" \
                 --resume_from_checkpoint "${resume_checkpoint}" \
                 --adv_loss_weight "${adv_weight}" \
+                --beta_factor "${beta_factor}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
                 --g2p "${g2p}" \
