@@ -265,7 +265,7 @@ class TransformerReconDecoder(BaseTransformerDecoder):
         vocab_size: int,
         encoder_output_size: int,
         attention_heads: int = 1,
-        linear_units: int = 128,
+        linear_units: int = 64,
         num_blocks: int = 1,
         dropout_rate: float = 0.1,
         positional_dropout_rate: float = 0.1,

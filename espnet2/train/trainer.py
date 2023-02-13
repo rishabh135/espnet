@@ -830,7 +830,7 @@ class Trainer:
 					stats["beta_loss"] = beta_loss
 					stats["ctc_att_loss"] = loss
 					if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
-						loss = (1 - options.beta_factor) loss + options.beta_factor  *  beta_loss
+						loss = (1 - options.beta_factor) * loss + options.beta_factor  *  beta_loss
 						loss /= accum_grad
 						scaler.scale(loss).backward()
 						# loss_adversarial = retval["loss_adversarial"]
@@ -858,7 +858,7 @@ class Trainer:
 						# loss_adversarial.requires_grad = True
 						scaler.scale(loss_adversarial).backward()
 					else:
-						loss = (1 - options.beta_factor) loss + options.beta_factor  * beta_loss
+						loss = (1 - options.beta_factor) * loss + options.beta_factor  * beta_loss
 						loss /= accum_grad
 						scaler.scale(loss).backward()
 						# scaler.scale(loss_adversarial).backward()

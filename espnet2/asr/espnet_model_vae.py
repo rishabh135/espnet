@@ -132,6 +132,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 		self.encoder_frozen_flag = False
 		self.adversarial_frozen_flag = False
+			self.reinit_adv_flag = False
 
 
 
@@ -409,7 +410,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 		# 1. Encoder
 		encoder_out, encoder_out_lens, feats, feats_lengths = self.encode(speech, speech_lengths)
-		logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
+		# logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
 
 
 
