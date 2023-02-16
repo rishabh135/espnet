@@ -298,7 +298,6 @@ class Trainer:
 			scaler = None
 
 		if trainer_options.resume :
-			
 			if(trainer_options.resume_from_checkpoint < 5):
 				loading_path = "{}/checkpoint.pth".format(output_dir)
 			else:
@@ -611,14 +610,11 @@ class Trainer:
 		use_wandb = options.use_wandb
 		distributed = distributed_option.distributed
 
-	   
 
 		# "ASRTask"
 		adv_mode = options.adversarial_list[current_epoch-1]
 		adv_flag = options.adv_flag
 		# 'espnet2.asr.espnet_model.ESPnetASRModel'
-		
-		
 		if(options.ngpu > 1):
 			adv_name = str(type(model.module).__name__)
 			# logging.warning(" ------->>>>>>>>>>> ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
@@ -631,10 +627,8 @@ class Trainer:
 		# logging.warning( " >>>> adv_name {} ".format(adv_name))
 		# logging.warning(" model_vars {} \n\n".format( vars(model)))
 		# logging.warning("******************************\n\n")
-		
 		# logging.warning(" cls_vars {} \n\n".format( vars(cls)))
 		# logging.warning("******************************\n\n")
-		
 		if log_interval is None:
 			try:
 				log_interval = max(len(iterator) // 20, 10)
@@ -715,22 +709,22 @@ class Trainer:
 			#     [ 3.9673e-04,  7.3242e-04,  1.2512e-03,  ...,  0.0000e+00,
 			#         0.0000e+00,  0.0000e+00],
 			#     [ 6.1035e-05,  6.1035e-05,  1.2207e-04,  ...,  0.0000e+00,
-			#         0.0000e+00,  0.0000e+00]]) 
+			#         0.0000e+00,  0.0000e+00]])
 			# speech_lengths  >> tensor([180218, 180218, 180218, 180218, 180218, 180218, 180218, 180178, 180178,
 			#     180178, 180178, 180178, 180178, 180160, 180160, 180160, 180146, 180145,
 			#     180145, 180145, 180145, 180145, 180145, 180145, 180145, 180145, 180145,
 			#     180145, 180145, 180145, 180145, 180089, 180089, 180089, 180089, 180080,
-			#     180080, 180080, 180080]) 
+			#     180080, 180080, 180080])
 			# text  >> tensor([[  11,   12,  425,  ...,  321,   -1,   -1],
 			#     [  10,   70,   26,  ...,   20,   89,   -1],
 			#     [   4,  497,   11,  ...,   -1,   -1,   -1],
 			#     ...,
 			#     [ 607,   86,    2,  ...,   -1,   -1,   -1],
 			#     [   2,  121, 4357,  ...,   -1,   -1,   -1],
-			#     [  13,   18,   66,  ...,   -1,   -1,   -1]]) 
+			#     [  13,   18,   66,  ...,   -1,   -1,   -1]])
 			# text_lengths  >> tensor([47, 48, 35, 34, 43, 42, 37, 37, 38, 39, 37, 36, 34, 40, 46, 34, 39, 41,
 			#     44, 47, 43, 38, 29, 49, 31, 39, 48, 45, 44, 33, 38, 27, 42, 31, 38, 38,
-			#     36, 38, 28]) 
+			#     36, 38, 28])
 
 
 			if distributed:
@@ -786,7 +780,6 @@ class Trainer:
 					#   b. tuple or list type
 					else:
 						loss, stats, weight = retval
-						
 						optim_idx = None
 
 
@@ -794,8 +787,6 @@ class Trainer:
 				###################################################################################
 				###################################################################################
 
-
-				
 
 
 				###################################################################################
@@ -805,7 +796,7 @@ class Trainer:
 				stats = {k: v for k, v in stats.items() if v is not None}
 				if ngpu > 1 or distributed:
 					# Apply weighted averaging for loss and stats
-					loss = (loss * weight.type(loss.dtype)).sum()                    
+					loss = (loss * weight.type(loss.dtype)).sum()
 
 					# if distributed, this method can also apply all_reduce()
 					stats, weight = recursive_average(stats, weight, distributed)
@@ -818,7 +809,6 @@ class Trainer:
 					loss *= torch.distributed.get_world_size()
 
 				# loss /= accum_grad
-				
 
 			reporter.register(stats, weight)
 
@@ -836,14 +826,11 @@ class Trainer:
 						# loss_adversarial = retval["loss_adversarial"]
 						# total_loss = loss
 						# loss = total_loss
-
-					
 					elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
 						loss_adversarial = retval["loss_adversarial"]
 						loss_adversarial /= accum_grad
 						# loss_adversarial.requires_grad = True
 						scaler.scale(loss_adversarial).backward()
-					
 					elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
 
 						loss_adversarial = retval["loss_adversarial"]
@@ -851,7 +838,6 @@ class Trainer:
 						loss =  (1-options.beta_factor) * loss  +   options.beta_factor  *   beta_loss  +   options.adv_loss_weight * loss_adversarial
 						loss /= accum_grad
 						scaler.scale(loss).backward()
-					
 					elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'reinit_adv'):
 						loss_adversarial = retval["loss_adversarial"]
 						loss_adversarial /= accum_grad
@@ -867,7 +853,6 @@ class Trainer:
 						# Backward passes under autocast are not recommended.
 						# Backward ops run in the same dtype autocast chose
 						# for corresponding forward ops.
-					
 				else:
 					loss /= accum_grad
 					loss.backward()
@@ -940,23 +925,19 @@ class Trainer:
 					logging.warning("\n >>>>>>>> MODE: {} adv_loss_weight {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {} recons_loss {} kld_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach(), grad_norm, stats["recons_loss"].detach(), stats["recons_kld_loss"].detach()  ))
 					if(adv_flag == True and adv_name == "ESPnetASRModel"):
 						logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
-	
 					if(iiter == 200):
 						# logging.warning(model)
-						if(options.ngpu > 1): 
-							
-							# logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
+						if(options.ngpu > 1):
+							# logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )
 							# logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.module.encoder.encoders[2].feed_forward.w_1.weight.grad, model.module.encoder.encoders[2].feed_forward.w_1.bias.grad   ) )
-							
 							if(adv_flag == True and adv_name == "ESPnetASRModel"):
 								logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.module.adversarial_branch.output.weight.grad, model.module.adversarial_branch.output.bias.grad   ) )
 
 						elif(options.ngpu == 1):
 
 							if(model.ctc.ctc_lo.weight.grad is not None):
-								logging.warning(" ctc weight grad {}   shape {}  ctc bias grad {}".format(  torch.count_nonzero(model.ctc.ctc_lo.weight.grad), model.ctc.ctc_lo.weight.grad.shape ,  torch.count_nonzero(model.ctc.ctc_lo.bias.grad)  ) )    
+								logging.warning(" ctc weight grad {}   shape {}  ctc bias grad {}".format(  torch.count_nonzero(model.ctc.ctc_lo.weight.grad), model.ctc.ctc_lo.weight.grad.shape ,  torch.count_nonzero(model.ctc.ctc_lo.bias.grad)  ) )
 								logging.warning(" encoder weight grad {}  shape {}  encoder bias grad {}".format(  torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad), model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape, torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   ) )
-								
 							if(adv_flag == True and adv_name == "ESPnetASRModel"):
 								if(model.adversarial_branch.output.weight.grad is not None):
 									logging.warning(" adversarial weight grad {} shape {}  adversarial bias grad {}".format( torch.count_nonzero(model.adversarial_branch.output.weight.grad), model.adversarial_branch.output.weight.grad.shape, torch.count_nonzero(model.adversarial_branch.output.bias.grad)   ) )
@@ -967,7 +948,6 @@ class Trainer:
 							# if(self.encoder_weight_layer is not None):
 							#     tmpx =  model.encoder.encoders[2].feed_forward.w_1.weight - self.encoder_weight_layer
 							#     tmpy =  model.ctc.ctc_lo.weight - self.ctc_weight_layer
-								
 							#     if(self.adversarial_weight_layer is not None):
 							#         tmpz = model.adversarial_branch.output.weight - self.adversarial_weight_layer
 							#         logging.warning(" adversarial {}   ".format(torch.count_nonzero(tmpz)))
@@ -977,8 +957,6 @@ class Trainer:
 							# self.ctc_weight_layer = model.ctc.ctc_lo.weight
 							# if(adv_mode == "adv" or adv_mode == "asradv"):
 							#     self.adversarial_weight_layer = model.adversarial_branch.output.weight
-						
-							
 
 
 
@@ -1022,7 +1000,6 @@ class Trainer:
 								scheduler.step()
 
 
-				
 				for iopt, optimizer in enumerate(optimizers):
 					if optim_idx is not None and iopt != optim_idx:
 						continue
@@ -1092,7 +1069,6 @@ class Trainer:
 			# logging.warning("**************   Batch ************")
 			# for keys,values in batch.items():
 			#     logging.warning(" {}  >> {} \n".format(keys, values))
-				
 			# logging.warning("**************************\n\n")
 
 

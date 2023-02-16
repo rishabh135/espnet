@@ -60,7 +60,7 @@ adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 resume_checkpoint=-1
 max_epoch=160
 batch_bins=52000000
-adv_weight=30.0
+adv_weight=10.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
@@ -70,6 +70,7 @@ beta_factor=0.5
 
 
 project_name="vae_feb_10_beta_factor_160"
+
 
 
 experiment_name="40_each_adv_weight_30"
@@ -123,8 +124,8 @@ bpe_nlsyms=         # non-linguistic symbols list, separated by a comma, for BPE
 bpe_char_cover=1.0  # character coverage when modeling BPE
 
 # Ngram model related
-use_ngram=true
-ngram_exp=dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/ngram_exp/ # Directory to dump features.
+use_ngram=false
+ngram_exp=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/ngram_exp
 ngram_num=3
 use_xvector=true
 xvector_tool=kaldi

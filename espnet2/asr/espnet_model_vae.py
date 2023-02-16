@@ -130,9 +130,10 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
+
 		self.encoder_frozen_flag = False
 		self.adversarial_frozen_flag = False
-			self.reinit_adv_flag = False
+		self.reinit_adv_flag = False
 
 
 
