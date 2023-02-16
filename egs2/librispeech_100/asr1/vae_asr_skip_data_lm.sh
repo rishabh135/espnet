@@ -43,8 +43,6 @@ gpu_inference=false  # Whether to perform gpu decoding.
 global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily to handle going in and out of directories especially for espenet2.bin.launch
 
 
-adversarial_flag="True"
-vae_flag="True"
 
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
@@ -55,6 +53,8 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
+adversarial_flag="True"
+vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 resume_checkpoint=-1
@@ -64,16 +64,15 @@ adv_weight=10.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
-beta_factor=0.5
+beta_factor=0.6
 
 # project_name="vae_without_vae_losses_feb_2_modified_160"
+project_name="vae_feb_16_beta_factor_0.6"
 
 
-project_name="vae_feb_10_beta_factor_160"
 
 
-
-experiment_name="40_each_adv_weight_30"
+experiment_name="40_each_adv_weight_10"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 

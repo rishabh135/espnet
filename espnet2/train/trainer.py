@@ -751,6 +751,7 @@ class Trainer:
 						stats = retval["stats"]
 						weight = retval["weight"]
 						optim_idx = retval.get("optim_idx")
+						loss_adversarial = retval.get( "loss_adversarial", 0 )
 						reconstruction_loss = retval.get("reconstruction_loss", 0)
 						kld_loss = retval.get("reconstruction_kld_loss", 0)
 
@@ -815,38 +816,37 @@ class Trainer:
 
 			with reporter.measure_time("backward_time"):
 				if scaler is not None:
-
+					import wandb
 					beta_loss = (reconstruction_loss + ((current_epoch+1)/100) * kld_loss)
-					stats["beta_loss"] = beta_loss
-					stats["ctc_att_loss"] = loss
+					stats["beta_loss"] = beta_loss.detach()
+					stats["ctc_att_loss"] = loss.detach()
+					wandb.log({ "beta_loss" : stats["beta_loss"] , "ctc_att_loss": stats["ctc_att_loss"] })
+
 					if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
-						loss = (1 - options.beta_factor) * loss + options.beta_factor  *  beta_loss
-						loss /= accum_grad
-						scaler.scale(loss).backward()
+						total_loss = (1 - options.beta_factor) * loss + options.beta_factor  *  beta_loss
+						total_loss /= accum_grad
+						scaler.scale(total_loss).backward()
 						# loss_adversarial = retval["loss_adversarial"]
 						# total_loss = loss
 						# loss = total_loss
 					elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
-						loss_adversarial = retval["loss_adversarial"]
 						loss_adversarial /= accum_grad
 						# loss_adversarial.requires_grad = True
 						scaler.scale(loss_adversarial).backward()
 					elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
 
-						loss_adversarial = retval["loss_adversarial"]
 						# loss_adversarial.requires_grad = True
-						loss =  (1-options.beta_factor) * loss  +   options.beta_factor  *   beta_loss  +   options.adv_loss_weight * loss_adversarial
-						loss /= accum_grad
-						scaler.scale(loss).backward()
+						total_loss =  (1-options.beta_factor) * loss + options.beta_factor * beta_loss + options.adv_loss_weight * loss_adversarial
+						total_loss /= accum_grad
+						scaler.scale(total_loss).backward()
 					elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'reinit_adv'):
-						loss_adversarial = retval["loss_adversarial"]
 						loss_adversarial /= accum_grad
 						# loss_adversarial.requires_grad = True
 						scaler.scale(loss_adversarial).backward()
 					else:
-						loss = (1 - options.beta_factor) * loss + options.beta_factor  * beta_loss
-						loss /= accum_grad
-						scaler.scale(loss).backward()
+						total_loss = (1 - options.beta_factor) * loss + options.beta_factor  * beta_loss
+						total_loss /= accum_grad
+						scaler.scale(total_loss).backward()
 						# scaler.scale(loss_adversarial).backward()
 						# Scales loss.  Calls backward() on scaled loss
 						# to create scaled gradients.
@@ -921,8 +921,8 @@ class Trainer:
 
 
 
-				if( (iiter % 100) == 0):
-					logging.warning("\n >>>>>>>> MODE: {} adv_loss_weight {} iiter {} adv_flag {}  >>>>   asr_loss {} grad_norm {} recons_loss {} kld_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, adv_flag,  stats["loss"].detach(), grad_norm, stats["recons_loss"].detach(), stats["recons_kld_loss"].detach()  ))
+				if( (iiter % 200) == 0):
+					logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {} grad_norm {} recons_loss {} kld_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach(), grad_norm, stats["recons_loss"].detach(), stats["recons_kld_loss"].detach()  ))
 					if(adv_flag == True and adv_name == "ESPnetASRModel"):
 						logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
 					if(iiter == 200):
