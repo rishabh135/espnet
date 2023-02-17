@@ -203,8 +203,7 @@ class BetterLSTM(torch.nn.LSTM):
 		seq, state = super().forward(inp, hx=hx )
 		out_x = self.output_drop(seq)
 		(h_0, c_0) = state
-		# out_x, (h_0, c_0)
-		# 
+		# out_x, (h_0, c_0) 
 		# logging.warning("  >>>>>> Better LSTM  out_x: {}  shape {} h_0 {} h_0.shape {} ".format( type(out_x), out_x.shape, type(h_0), h_0.shape ))
 		return out_x, (h_0, c_0)
 
@@ -245,7 +244,6 @@ def th_accuracy(pad_outputs, pad_targets, ignore_label):
 	:rtype: float
 	"""
 	# logging.warning(" pad_out_shape {} pad_targets_shape {}  ".format(pad_outputs.shape, pad_targets.shape))
-	
 	# pad_pred = pad_outputs.view(
 	#     pad_targets.size(0),
 	#     pad_targets.size(1),
@@ -304,9 +302,9 @@ class SpeakerAdv(torch.nn.Module):
 		self.advnet = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_mid, bidirectional=True)
 		# self.advnet = DropoutLSTMModel( input_size=eprojs, hidden_size=advunits, n_layers=self.advlayers, dropoutw=dropout_rate, bidirectional=True)
 		# logging.warning(" Created better lstm with dropout_w = {}  ".format(dropout_rate))
-		self.output = torch.nn.Linear(2*advunits, advunits)
-		self.lsoftmax_linear = LSoftmaxLinear(input_features=advunits, output_features=odim, margin=margin, device=device)
-		self.reset_parameters()
+		self.output = torch.nn.Linear(2*advunits, odim)
+		# self.lsoftmax_linear = LSoftmaxLinear(input_features=advunits, output_features=odim, margin=margin, device=device)
+		# self.reset_parameters()
 
 
 	def zero_state(self, hs_pad):
@@ -330,10 +328,6 @@ class SpeakerAdv(torch.nn.Module):
 
 	def reinit_adv(self,):
 		self.advnet.apply(self.weight_reset)
-		# for param in self.decoder.parameters():
-		#     param.requires_grad = False
-		# self.advnet.reset_parameters()
-		# self.set_dropout(model=self.advnet, drop_rate=0)
 		self.output.reset_parameters()
 		# self.output.apply(self.init_weights)
 
@@ -376,14 +370,10 @@ class SpeakerAdv(torch.nn.Module):
 		# out_x = self.advnet5(out_x)
 		# out_x = self.advnet6(out_x)
 
-
-
 		y_hat = self.output(out_x)
 
-		batch_size, avg_seq_len, advunits = y_hat.size()
-
 		# Create labels tensor by replicating speaker label
-		# batch_size, avg_seq_len, out_dim = y_hat.size()
+		batch_size, avg_seq_len, out_dim = y_hat.size()
 
 		labels = torch.zeros([batch_size, avg_seq_len], dtype=torch.float64)
 		for ix in range(batch_size):
@@ -394,37 +384,16 @@ class SpeakerAdv(torch.nn.Module):
 		h_0.detach_()
 		c_0.detach_()
 
-
-		labels = labels.contiguous().view(-1)
-		labels = to_cuda(self, labels.long())
-		logging.warning(" y_hat  {} labels {} ".format( y_hat.shape, labels.shape))
-		logit = self.lsoftmax_linear(input=y_hat, target=labels)
-
 		# Convert tensors to desired shape
 		y_hat = y_hat.view((-1, out_dim))
-		#labels = to_cuda(self, labels.float())
-		# logging.warning("adversarial output size = %s", str(y_hat.shape))
-		# logging.warning("artificial label size = %s", str(labels.shape))
+		labels = labels.contiguous().view(-1)
+		labels = to_cuda(self, labels.long())
+
 
 		loss = F.cross_entropy(y_hat, labels, size_average=True)
-		#loss = F.kl_div(y_hat, labels, size_average=True)
-		# logging.warning("Adversarial loss = %f", loss.item())
 		acc = th_accuracy(y_hat, labels, -1)
-		# logging.warning("Adversarial accuracy = %f", acc)
 
 		return loss, acc
-
-
-
-
-
-#-------------------- Adversarial Network ------------------------------------
-
-
-
-
-
-
 
 
 

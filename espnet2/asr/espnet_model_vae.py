@@ -479,6 +479,26 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
+		feats_plot = feats[0].detach().cpu().numpy()
+		recons_feats_plot = recons_feats[0].detach().cpu().numpy()
+		logging.warning(" feats shape {}  recons_shape {} ".format( feats_plot.shape, recons_feats_plot.shape ) )
+		html_file_name  = "./wandb_spectrogram.png"
+
+		plt.figure(figsize=(10, 5))
+		plt.subplot(2, 1, 1)
+		plt.title('Original feats db')
+		plot_spectrogram(plt, feats_plot.T, fs=16000, mode='db', frame_shift=240, bottom=False, labelbottom=False)
+
+		plt.subplot(2, 1, 2)
+		plt.title('Reconstructed feats db')
+		plot_spectrogram(plt, recons_feats_plot.T, fs=16000, mode='db', frame_shift=240,bottom=False, labelbottom=False)
+
+		plt.savefig( '{}'.format(html_file_name) )
+		# plt.clf()
+		wandb.log({f"spectrogram plot": wandb.Image(plt)})
+
+
+
 
 
 		intermediate_outs = None

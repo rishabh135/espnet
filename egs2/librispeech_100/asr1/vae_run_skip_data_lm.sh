@@ -23,7 +23,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 # project_name="vae_without_vae_losses_feb_2_modified_160"
 
 
-project_name="vae_lsoftmax_feb_16_beta_factor_0.6"
+project_name="vae_feb_17_beta_factor_0.6"
 
 
 
@@ -72,5 +72,4 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --valid_set "${valid_set}" \
     --test_sets "${test_sets}" \
     --lm_train_text "${data_dd}/${train_set}/text" \
-    --bpe_train_text "${data_dd}/${train_set}/text" "$@" 
-    
+    --bpe_train_text "${data_dd}/${train_set}/text" "$@"
