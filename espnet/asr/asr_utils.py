@@ -927,9 +927,10 @@ def plot_spectrogram(
         cmap (str): Colormap defined in matplotlib.
 
     """
-    spec = np.abs(spec)
+    # spec = np.abs(spec)
     if mode == "db":
-        x = 20 * np.log10(spec + np.finfo(spec.dtype).eps)
+        x = spec
+        # x = 20 * np.log10(spec + np.finfo(spec.dtype).eps)
     elif mode == "linear":
         x = spec
     else:
@@ -950,6 +951,7 @@ def plot_spectrogram(
         xlabel = "frame"
 
     extent = (0, xtop, 0, ytop)
+    logging.warning(" x shape asr_utils {} ".format(x[::-1].shape ) )
     plt.imshow(x[::-1], cmap=cmap, extent=extent)
 
     if labelbottom:
