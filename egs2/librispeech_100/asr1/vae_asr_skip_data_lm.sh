@@ -57,22 +57,22 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
-resume_checkpoint=120
+resume_checkpoint=-1
 max_epoch=160
-batch_bins=52000000
+batch_bins=50000000
 adv_weight=20.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
-beta_factor=0.6
+beta_factor=0.8
 
 # project_name="vae_without_vae_losses_feb_2_modified_160"
 # project_name="vae_lsoftmax_feb_16_beta_factor_0.6"
 
 
 
-project_name="vae_feb_16_beta_factor_0.6"
-experiment_name="40_each_adv_weight_10"
+project_name="vae_feb_21_test_recon_mode"
+experiment_name="40_each_adv_weight_20"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 

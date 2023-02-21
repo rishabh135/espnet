@@ -666,6 +666,13 @@ class Trainer:
                 model.unfreeze_encoder()
                 model.unfreeze_adversarial()
 
+
+        elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'recon'):
+            if (options.ngpu > 1):
+                model.module.recon_mode()
+            else:
+                model.recon_mode()
+
         elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'reinit_adv'):
             if options.ngpu > 1:
                 model.module.freeze_encoder()
@@ -843,6 +850,10 @@ class Trainer:
                         loss_adversarial /= accum_grad
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
+                    elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'recon'):
+                        total_loss = beta_loss
+                        # loss_adversarial.requires_grad = True
+                        scaler.scale(total_loss).backward()
                     else:
                         total_loss = (1 - options.beta_factor) * loss + options.beta_factor  * beta_loss
                         total_loss /= accum_grad
@@ -891,10 +902,12 @@ class Trainer:
 
                 # feat_plot = stats["feats"].detach().cpu().numpy()
                 # recons_feats_plot = stats["recons_feats"].detach().cpu().numpy()
+
                 # logging.warning(" feats shape {}  recons_shape {} ".format( feats_plot.shape, recons_feats_plot.shape ) )
                 # html_file_name  = "./wandb_spectrogram.png"
 
                 # plt.figure(figsize=(20, 10))
+
                 # plt.subplot(2, 1, 1)
                 # plt.title('Original feats')
                 # plot_spectrogram(plt, feat_plot.T, fs=16000, mode='linear', frame_shift=20, bottom=False, labelbottom=False)

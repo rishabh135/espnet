@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+
 from distutils import text_file
 import logging
 from contextlib import contextmanager
 from typing import Dict, List, Optional, Tuple, Union
-
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import torch
 from torch.nn import functional as F
 from packaging.version import parse as V
@@ -47,6 +49,20 @@ else:
 
 
 
+
+from python_speech_features import mfcc
+from python_speech_features import delta
+from python_speech_features import logfbank
+import scipy.io.wavfile as wav
+
+# (rate,sig) = wav.read("english.wav")
+# mfcc_feat = mfcc(sig,rate)
+# d_mfcc_feat = delta(mfcc_feat, 2)
+# fbank_feat = logfbank(sig,rate)
+
+# print(fbank_feat[1:3,:])
+
+
 import numpy as np
 
 import holoviews as hv
@@ -64,6 +80,39 @@ from scipy.signal import spectrogram
 
 import wandb
 import matplotlib.pyplot as plt
+
+
+
+
+def draw_mfcc(mfcc_feats, ax, fig, ylabel=True):
+	mfcc_data= np.swapaxes(mfcc_feats, 0 ,1)
+
+	#mfcc_x = [0.025]
+	mfcc_x = [0.0]
+	for i in range(1, mfcc_data.shape[1]):
+		mfcc_x.append(0.025+i*0.01)
+	mfcc_y = np.arange(0, 80)
+
+	cax = ax.pcolormesh(mfcc_x, mfcc_y, mfcc_data, cmap='afmhot')
+	#ax.set_ylim([0, spectrogram.ymax])
+
+	#mfcc_data= mfcc_feats
+	#cax = ax.imshow(mfcc_data, cmap='afmhot', origin='lower', interpolation='none')
+	#ax.set_aspect('auto')
+	ax.grid(False)
+	#ax.set_ylim([0, 13])
+	# if ylabel:
+	# 	ax.set_ylabel("Mel scale", size=5)
+	divider = make_axes_locatable(ax)
+	colorbar_axes = divider.append_axes("bottom", size="5%", pad=0.2)
+	cb = fig.colorbar(cax, ax=ax, orientation='horizontal', cax=colorbar_axes)
+	# cb.ax.tick_params(labelsize=5)
+
+	#ax.set_xlabel("Time [s]", size=AX_LABEL)
+	# ax.tick_params(axis='x', labelsize=2)
+	ax.tick_params(axis='y', labelsize=2)
+
+
 
 
 
@@ -255,7 +304,9 @@ class ESPnetASRModel(AbsESPnetModel):
 				param.grad = None
 				# if param.grad is not None:
 				#     param.grad.zero_()
-
+			for param in self.reconstruction_decoder.parameters():
+				param.requires_grad = False
+				param.grad = None
 			# for param in self.criterion_att.parameters():
 			#     param.requires_grad = False
 			#     if param.grad is not None:
@@ -263,6 +314,32 @@ class ESPnetASRModel(AbsESPnetModel):
 
 			self.encoder_frozen_flag = True
 		self.print_flags()
+
+
+
+
+
+	def recon_mode(self):
+		for param in self.decoder.parameters():
+			param.requires_grad = False
+			param.grad = None
+		for param in self.ctc.ctc_lo.parameters():
+			param.requires_grad = False
+			param.grad = None
+
+		for param in self.adversarial_branch.parameters():
+			param.requires_grad = False
+			param.grad = None
+
+
+
+		for param in self.encoder.parameters():
+			param.requires_grad = True
+		for param in self.reconstruction_decoder.parameters():
+			param.requires_grad = True
+		return
+
+
 
 	def unfreeze_encoder(self):
 		if self.encoder_frozen_flag:
@@ -272,7 +349,8 @@ class ESPnetASRModel(AbsESPnetModel):
 				param.requires_grad = True
 			for param in self.ctc.ctc_lo.parameters():
 				param.requires_grad = True
-
+			for param in self.reconstruction_decoder.parameters():
+				param.requires_grad = True
 			# for param in self.criterion_att.parameters():
 			#     param.requires_grad = True
 
@@ -479,23 +557,41 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-		feats_plot = feats[0].detach().cpu().numpy()
-		recons_feats_plot = recons_feats[0].detach().cpu().numpy()
-		logging.warning(" feats shape {}  recons_shape {} ".format( feats_plot.shape, recons_feats_plot.shape ) )
-		html_file_name  = "./wandb_spectrogram_feb_16_linear.png"
 
-		plt.figure(figsize=(5, 5))
-		plt.subplot(2, 1, 1)
-		plt.title('Original feats db')
-		plot_spectrogram(plt, feats_plot.T, fs=16000, mode='linear', frame_shift=160, bottom=False, labelbottom=False)
+		# html_file_name  = "./wandb_spectrogram_feb_21_multiplot.png"
 
-		plt.subplot(2, 1, 2)
-		plt.title('Reconstructed feats db')
-		plot_spectrogram(plt, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10,bottom=False, labelbottom=False)
+		# fig = plt.figure(figsize=(30, 5))
 
-		plt.savefig( '{}'.format(html_file_name) )
-		# plt.clf()
-		wandb.log({f"spectrogram plot": wandb.Image(plt)})
+
+
+		# with open('./wandb_saved_original_feats_3_dim_last_dim_80.npy', 'wb') as f:
+		# 	np.save(f, feats.detach().cpu().numpy())
+
+
+
+		# # ax_list = fig.axes
+
+		# for i in range (1, 3):
+		# 	feats_plot = feats[i].detach().cpu().numpy()
+		# 	recons_feats_plot = recons_feats[i].detach().cpu().numpy()
+		# 	logging.warning(" feats shape {}  recons_shape {} ".format( feats_plot.shape, recons_feats_plot.shape ) )
+		# 	ax = plt.subplot(2, 1, i)
+		# 	# plt.title('Original feats db')
+		# 	draw_mfcc(feats_plot, ax, fig)
+
+
+
+		# # plot_spectrogram(plt, feats_plot.T, fs=16000, mode='linear', frame_shift=160, bottom=False, labelbottom=False)
+		# # ax2 = plt.subplot(2, 1, 2)
+		# # plt.title('Reconstructed feats db')
+		# # draw_mfcc(recons_feats_plot, ax2, fig)
+		# # plot_spectrogram(plt, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10,bottom=False, labelbottom=False)
+
+
+
+		# plt.savefig( '{}'.format(html_file_name) )
+		# # plt.clf()
+		# wandb.log({f"spectrogram plot": wandb.Image(plt)})
 
 
 

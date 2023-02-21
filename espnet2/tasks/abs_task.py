@@ -586,7 +586,7 @@ class AbsTask(ABC):
 			default=True,
 			help="Enable wandb logging",
 		)
-		
+
 		group.add_argument(
 			"--wandb_id",
 			type=str,
@@ -863,19 +863,19 @@ class AbsTask(ABC):
 		group.add_argument('--adv_dropout_mid', default=0.2, type=float,help='adversarial Dropout rate mid')
 		group.add_argument('--adv_dropout_inp', default=0.2, type=float,help='adversarial Dropout rate inp')
 		group.add_argument('--adv_dropout_out', default=0.2, type=float,help='adversarial Dropout rate out')
-		
+
 
 		# group.add_argument('--adversarial_list', default= ["asr"] * 20 + ["adv"] * 20 + ["asradv"] * 30 , type=list,help='adversarial mode list')
-		
+
 		# 251 vs 585 ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10
 		group.add_argument('--odim_adv', default=251, type=int, help='Output of adversarial units used for labeling')
 
 		parser.add_argument('--train-json', type=str, default=None,help='Filename of train label data (json)')
 		parser.add_argument('--valid-json', type=str, default=None,help='Filename of validation label data (json)')
 
-		
+
 		# ["asr" , "asr", "adv", "adv", "asradv", "asradv"] * 10 + ["adv"] * 10 , type=list,help='adversarial mode list')
-		
+
 
 		cls.trainer.add_arguments(parser)
 		cls.add_task_arguments(parser)
@@ -893,7 +893,7 @@ class AbsTask(ABC):
 	#     args: argparse.Namespace,
 	#     model: torch.nn.Module,
 	# ) -> List[torch.optim.Optimizer]:
-		
+
 	#     adv_name = str(type(model).__name__)
 	#     logging.warning(" ----->>>>>>>> adv_flag {} asr_lr {} adv_lr {} adv_name {} \n\n".format(args.adv_flag, args.asr_lr, args.adv_lr, adv_name))
 
@@ -908,20 +908,20 @@ class AbsTask(ABC):
 
 
 	#     if ( args.adv_flag):
-	#         if(args.ngpu > 1):        
+	#         if(args.ngpu > 1):
 	#             param_grp = [
 	#                 {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
 	#                 {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
 	#                 {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
 	#                 {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
-	#             ]            
+	#             ]
 	#         else:
 	#             param_grp = [
 	#                 {'params': model.encoder.parameters(), 'lr': args.asr_lr},
 	#                 {'params': model.decoder.parameters(), 'lr': args.asr_lr},
 	#                 {'params': model.ctc.parameters(), 'lr': args.asr_lr},
-	#                 {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]       
-			
+	#                 {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
+
 	#         optimi = torch.optim.Adam((param_grp), betas=(0.9,0.999),weight_decay=0.00001)
 
 	#     else:
@@ -984,7 +984,7 @@ class AbsTask(ABC):
 
 		# This method is used only for --print_config
 		assert check_argument_types()
-		
+
 		parser = cls.get_parser()
 		args, _ = parser.parse_known_args()
 		config = vars(args)
@@ -1094,8 +1094,8 @@ class AbsTask(ABC):
 			args = parser.parse_args(cmd)
 			# adding parser args to wandb
 			if(args.use_wandb):
-				wandb.config = args 
- 
+				wandb.config = args
+
 
 		args.version = __version__
 		if args.pretrain_path is not None:
@@ -1170,11 +1170,11 @@ class AbsTask(ABC):
 		# Step -1  updated adversarial list
 
 		if(args.adv_flag and cls.__name__ == "ASRTask"):
-			
 
-			if (args.adv_liststr == "asr_adv_asradv" ):         
-				args.adversarial_list = ["asradv", "adv", "adv", "asradv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * 8 + ["asradv"] * 10
-				
+
+			if (args.adv_liststr == "asr_adv_asradv" ):
+				args.adversarial_list = ["recon", "adv", "adv", "asradv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * 8 + ["asradv"] * 10
+
 			else :
 				epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
 				logging.warning("->>> adv_liststr {} epoch_list {} ".format(args.adv_liststr, epoch_list))
@@ -1189,6 +1189,11 @@ class AbsTask(ABC):
 					args.adversarial_list = ["asr"] *  epoch_list[0] + ["adv"] * epoch_list[1] +  ["asradv"] * epoch_list[2]
 				elif(len(epoch_list) == 2):
 					args.adversarial_list = ["adv"] *  epoch_list[0] +  ["asradv"] * epoch_list[1]
+
+				elif(len(epoch_list) == 1):
+					args.adversarial_list = ["recon"] *  epoch_list[0]
+
+
 				else:
 					args.adversarial_list = ["adv"] *  epoch_list[0]
 
@@ -1251,7 +1256,7 @@ class AbsTask(ABC):
 		# display PYTHONPATH
 		logging.info('python path = ' + os.environ.get('PYTHONPATH', '(None)'))
 
-			
+
 		model = cls.build_model(args=args)
 
 
@@ -1421,14 +1426,14 @@ class AbsTask(ABC):
 					not distributed_option.distributed
 					or distributed_option.dist_rank == 0
 				):
-					
+
 					if args.project_name is None:
 						today = date.today()
 						d2 = today.strftime("%B_%d_")
 						project = "{}_".format(d2) + cls.__name__
 					else:
 						today = date.today()
-						d2 = today.strftime("%B_%d_") 
+						d2 = today.strftime("%B_%d_")
 						project =  args.project_name + cls.__name__
 
 					if args.wandb_name is None:
