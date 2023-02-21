@@ -183,7 +183,7 @@ class ESPnetASRModel(AbsESPnetModel):
 		self.encoder_frozen_flag = False
 		self.adversarial_frozen_flag = False
 		self.reinit_adv_flag = False
-
+		self.recon_mode_flag = False
 
 
 		self.final_encoder_dim = 128
@@ -320,23 +320,21 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 	def recon_mode(self):
-		for param in self.decoder.parameters():
-			param.requires_grad = False
-			param.grad = None
-		for param in self.ctc.ctc_lo.parameters():
-			param.requires_grad = False
-			param.grad = None
-
-		for param in self.adversarial_branch.parameters():
-			param.requires_grad = False
-			param.grad = None
-
-
-
-		for param in self.encoder.parameters():
-			param.requires_grad = True
-		for param in self.reconstruction_decoder.parameters():
-			param.requires_grad = True
+		if(self.recon_mode_flag == False):
+			for param in self.decoder.parameters():
+				param.requires_grad = False
+				param.grad = None
+			for param in self.ctc.ctc_lo.parameters():
+				param.requires_grad = False
+				param.grad = None
+			for param in self.adversarial_branch.parameters():
+				param.requires_grad = False
+				param.grad = None
+			for param in self.encoder.parameters():
+				param.requires_grad = True
+			for param in self.reconstruction_decoder.parameters():
+				param.requires_grad = True
+		self.recon_mode_flag = True
 		return
 
 
