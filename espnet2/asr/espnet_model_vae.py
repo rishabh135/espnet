@@ -334,7 +334,9 @@ class ESPnetASRModel(AbsESPnetModel):
 				param.requires_grad = True
 			for param in self.reconstruction_decoder.parameters():
 				param.requires_grad = True
-		self.recon_mode_flag = True
+
+			self.recon_mode_flag = True
+
 		return
 
 
