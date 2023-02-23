@@ -535,12 +535,13 @@ class ESPnetASRModel(AbsESPnetModel):
 		h_masks = encoder_out_lens
 		# ys_in [22, 128]
 		ys_in = spembs.unsqueeze(1).expand(-1, feats.shape[1],-1)
+		zero_spemb = torch.ones_like(ys_in)
 		#[22, 1422, 128]
 		y_masks = feats_lengths
 		# logging.warning(" >>>  hs.shape {}   h_masks.shape {}  ys_in {}  y_masks.shape {}  ".format(  hs.shape,  h_masks.shape, ys_in.shape, y_masks.shape ))
 
 
-		recons_feats, _ = self.reconstruction_decoder( hs, h_masks, ys_in, y_masks)
+		recons_feats, _ = self.reconstruction_decoder( hs, h_masks, zero_spemb, y_masks)
 
 		reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
 
@@ -549,12 +550,6 @@ class ESPnetASRModel(AbsESPnetModel):
 		################################################################################################################################################################################################
 		################################################################################################################################################################################################
 		################################################################################################################################################################################################
-
-
-
-
-
-
 
 
 
@@ -581,17 +576,26 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-		# # plot_spectrogram(plt, feats_plot.T, fs=16000, mode='linear', frame_shift=160, bottom=False, labelbottom=False)
-		# # ax2 = plt.subplot(2, 1, 2)
-		# # plt.title('Reconstructed feats db')
-		# # draw_mfcc(recons_feats_plot, ax2, fig)
-		# # plot_spectrogram(plt, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10,bottom=False, labelbottom=False)
 
+		fig = plt.figure(figsize=(30, 10))
+		html_file_name  = "./wandb_spectrogram_feb_23_recon.png"
+		feats_plot = feats[0].detach().cpu().numpy()
+		recons_feats_plot = recons_feats[0].detach().cpu().numpy()
 
+		plt.rcParams["figure.figsize"] = [7.50, 3.50]
+		plt.rcParams["figure.autolayout"] = True
 
-		# plt.savefig( '{}'.format(html_file_name) )
-		# # plt.clf()
-		# wandb.log({f"spectrogram plot": wandb.Image(plt)})
+		ax1 = plt.subplot(2, 1, 1)
+		plt.title('Original feats linear')
+		plot_spectrogram(plt, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+		ax2 = plt.subplot(2, 1, 2)
+		plt.title('Reconstructed feats linear')
+		plot_spectrogram(plt, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+
+		fig.subplots_adjust(wspace=0, hspace=0)
+		plt.savefig( '{}'.format(html_file_name) )
+		# plt.clf()
+		wandb.log({f"spectrogram plot": wandb.Image(plt)})
 
 
 

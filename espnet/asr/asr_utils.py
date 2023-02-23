@@ -951,7 +951,7 @@ def plot_spectrogram(
         xlabel = "frame"
 
     extent = (0, xtop, 0, ytop)
-    logging.warning(" x shape asr_utils {} ".format(x[::-1].shape ) )
+    # logging.warning(" x shape asr_utils {} ".format(x[::-1].shape ) )
     plt.imshow(x[::-1], cmap=cmap, extent=extent)
 
     if labelbottom:
