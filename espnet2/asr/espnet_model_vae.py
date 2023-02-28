@@ -5,7 +5,7 @@ import logging
 from contextlib import contextmanager
 from typing import Dict, List, Optional, Tuple, Union
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-import torch
+import torch, sys
 from torch.nn import functional as F
 from packaging.version import parse as V
 from typeguard import check_argument_types
@@ -559,8 +559,11 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-		# with open('./wandb_saved_original_feats_3_dim_last_dim_80.npy', 'wb') as f:
-		# 	np.save(f, feats.detach().cpu().numpy())
+		# with open('./wandb_24_feb_saved_original_feats_3_dim_last_dim_80.npy', 'wb') as f:
+		# 	tmpvar = feats.detach().cpu().numpy()
+		# 	logging.warning("tmpvar {} ".format(tmpvar.shape))
+		# 	np.save(f, tmpvar)
+		# 	sys.exit(0)
 
 
 
@@ -578,7 +581,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 		fig = plt.figure(figsize=(30, 10))
-		html_file_name  = "./wandb_spectrogram_feb_23_recon.png"
+		html_file_name  = "./wandb_spectrogram_feb_21_recon.png"
 		feats_plot = feats[0].detach().cpu().numpy()
 		recons_feats_plot = recons_feats[0].detach().cpu().numpy()
 
