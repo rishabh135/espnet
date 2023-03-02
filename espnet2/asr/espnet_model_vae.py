@@ -581,7 +581,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 		fig = plt.figure(figsize=(30, 10))
-		html_file_name  = "./wandb_spectrogram_feb_21_recon.png"
+		html_file_name  = "./wandb_new_spectrogram_feb_21_recon.png"
 		feats_plot = feats[0].detach().cpu().numpy()
 		recons_feats_plot = recons_feats[0].detach().cpu().numpy()
 

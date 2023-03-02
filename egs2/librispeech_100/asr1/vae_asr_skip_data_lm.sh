@@ -56,12 +56,12 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
-# adv_liststr="recon 100"
-adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
+adv_liststr="recon 100"
+# adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
 
-resume_checkpoint=-1
-max_epoch=160
+resume_checkpoint=90
+max_epoch=100
 batch_bins=48000000
 adv_weight=25.0
 adv_dropout_out=0.0
@@ -74,11 +74,11 @@ beta_factor=0.8
 
 
 
-# project_name="vae_feb_21_recon_100"
-project_name="vae_lsoftmax_feb_25_beta_factor_0.8_adv_weight_25"
+project_name="vae_feb_21_recon_100"
+# project_name="vae_lsoftmax_feb_28_beta_factor_0.8_adv_weight_25"
 
 
-
+# /vae_feb_21_recon_mode_100/beta_factor/
 
 experiment_name="beta_factor"
 
