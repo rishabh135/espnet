@@ -553,12 +553,9 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
+
 		# html_file_name  = "./wandb_spectrogram_feb_21_multiplot.png"
-
 		# fig = plt.figure(figsize=(30, 5))
-
-
-
 		# with open('./wandb_24_feb_saved_original_feats_3_dim_last_dim_80.npy', 'wb') as f:
 		# 	tmpvar = feats.detach().cpu().numpy()
 		# 	logging.warning("tmpvar {} ".format(tmpvar.shape))
@@ -579,6 +576,24 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
+		# fig = plt.figure(figsize=(30, 5))
+		# html_file_name  = "./wandb_3_new_spectrogram_march_2_recon_.png"
+		# feats_plot = feats[0].detach().cpu().numpy()
+		# recons_feats_plot = recons_feats[0].detach().cpu().numpy()
+
+		# # axs[0].set_title('Original feats linear', fontsize = 4)
+		# plot_spectrogram(plt, fig, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+
+		# # axs[1].set_title('Reconstructed feats linear',fontsize = 4)
+		# # plot_spectrogram(plt, fig, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+		# # fig.subplots_adjust(wspace=0, hspace=0)
+
+		# # fig.savefig( '{}'.format(html_file_name) )
+		# # plt.clf()
+		# wandb.log({f"spectrogram plot": wandb.Image(fig)})
+		# # axs[0].clear()
+		# # axs[1].clear()
+
 
 		fig = plt.figure(figsize=(30, 10))
 		html_file_name  = "./wandb_new_spectrogram_feb_21_recon.png"
@@ -596,10 +611,9 @@ class ESPnetASRModel(AbsESPnetModel):
 		plot_spectrogram(plt, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
 		fig.subplots_adjust(wspace=0, hspace=0)
-		plt.savefig( '{}'.format(html_file_name) )
+		# plt.savefig( '{}'.format(html_file_name) )
 		# plt.clf()
 		wandb.log({f"spectrogram plot": wandb.Image(plt)})
-
 
 
 
@@ -823,17 +837,17 @@ class ESPnetASRModel(AbsESPnetModel):
 			# 1. Extract feats
 			feats, feats_lengths = self._extract_feats(speech, speech_lengths)
 
-			# 2. Data augmentation
-			if self.specaug is not None and self.training:
-				feats, feats_lengths = self.specaug(feats, feats_lengths)
+			# # 2. Data augmentation
+			# if self.specaug is not None and self.training:
+			# 	feats, feats_lengths = self.specaug(feats, feats_lengths)
 
-			# 3. Normalization for feature: e.g. Global-CMVN, Utterance-CMVN
-			if self.normalize is not None:
-				feats, feats_lengths = self.normalize(feats, feats_lengths)
+			# # 3. Normalization for feature: e.g. Global-CMVN, Utterance-CMVN
+			# if self.normalize is not None:
+			# 	feats, feats_lengths = self.normalize(feats, feats_lengths)
 
 		# Pre-encoder, e.g. used for raw input data
-		if self.preencoder is not None:
-			feats, feats_lengths = self.preencoder(feats, feats_lengths)
+		# if self.preencoder is not None:
+		# 	feats, feats_lengths = self.preencoder(feats, feats_lengths)
 
 		# 4. Forward encoder
 		# feats: (Batch, Length, Dim)

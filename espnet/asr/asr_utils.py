@@ -955,11 +955,10 @@ def plot_spectrogram(
     plt.imshow(x[::-1], cmap=cmap, extent=extent)
 
     if labelbottom:
-        plt.xlabel("time [{}]".format(xlabel))
+        plt.xlabel ("time [{}]".format(xlabel))
     if labelleft:
         plt.ylabel("freq [{}]".format(ylabel))
     plt.colorbar().set_label("{}".format(mode))
-
     plt.tick_params(
         bottom=bottom,
         left=left,

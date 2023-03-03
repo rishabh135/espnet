@@ -55,7 +55,22 @@ except ImportError:
     fairscale = None
 
 
+import matplotlib as mpl
+import holoviews as hv
+import panel as pn
+from bokeh.resources import INLINE
+hv.extension("bokeh", logo=False)
 
+import torch
+import librosa
+import torchaudio
+import torchaudio.transforms as T
+
+from scipy.io import wavfile
+from scipy.signal import spectrogram
+
+import wandb
+import matplotlib.pyplot as plt
 
 
 
@@ -281,6 +296,10 @@ class Trainer:
 
         output_dir = Path(trainer_options.output_dir)
         reporter = Reporter()
+                
+		# plt.rcParams["figure.figsize"] = [7.50, 3.50]
+		# plt.rcParams["figure.autolayout"] = True
+
         if trainer_options.use_amp:
             if V(torch.__version__) < V("1.6.0"):
                 raise RuntimeError(
@@ -687,7 +706,14 @@ class Trainer:
         logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(current_flr), float(current_llr), param_group_length))
 
 
-
+        # fig = plt.figure()
+        # fig, ax = plt.subplots()
+        # fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(8, 4) , layout="tight")
+        
+        # cmap = mpl.cm.cool
+        # norm = mpl.colors.Normalize(vmin=5, vmax=10)
+        # fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), orientation='vertical' )
+        
         for iiter, (utt_id, batch) in enumerate(
             reporter.measure_iter_time(iterator, "iter_time"), 1
         ):

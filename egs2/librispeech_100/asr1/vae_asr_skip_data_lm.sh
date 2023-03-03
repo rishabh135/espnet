@@ -60,9 +60,9 @@ adv_liststr="recon 100"
 # adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
 
-resume_checkpoint=90
+resume_checkpoint=-1
 max_epoch=100
-batch_bins=48000000
+batch_bins=12000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -74,7 +74,11 @@ beta_factor=0.8
 
 
 
-project_name="vae_feb_21_recon_100"
+# project_name="vae_feb_21_recon_100"
+
+
+project_name="vae_march_3_att_plot"
+
 # project_name="vae_lsoftmax_feb_28_beta_factor_0.8_adv_weight_25"
 
 

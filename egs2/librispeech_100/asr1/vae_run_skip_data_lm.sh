@@ -15,16 +15,15 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 ###################################################################################################################################################################################################
 
 
-# project_name="june_15_freezing_encoder_asr_lmt_trigram_with_adv"
 
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
 
-# project_name="vae_without_vae_losses_feb_2_modified_160"
 
+project_name="vae_march_3_att_plot"
 
+# project_name="vae_feb_21_recon_100"
 
-project_name="vae_feb_21_recon_100"
 # project_name="vae_lsoftmax_feb_28_beta_factor_0.8_adv_weight_25"
 
 
