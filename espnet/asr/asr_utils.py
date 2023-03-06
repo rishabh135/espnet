@@ -12,6 +12,8 @@ import tempfile
 import numpy as np
 import torch
 
+import matplotlib.pyplot as plt
+
 # * -------------------- training iterator related -------------------- *
 
 
@@ -893,7 +895,7 @@ def add_results_to_json(js, nbest_hyps, char_list):
 
 
 def plot_spectrogram(
-    plt,
+    ax,
     spec,
     mode="db",
     fs=None,
@@ -929,8 +931,8 @@ def plot_spectrogram(
     """
     # spec = np.abs(spec)
     if mode == "db":
-        x = spec
-        # x = 20 * np.log10(spec + np.finfo(spec.dtype).eps)
+        # x = spec
+        x = 20 * np.log10(spec + np.finfo(spec.dtype).eps)
     elif mode == "linear":
         x = spec
     else:
@@ -952,13 +954,13 @@ def plot_spectrogram(
 
     extent = (0, xtop, 0, ytop)
     # logging.warning(" x shape asr_utils {} ".format(x[::-1].shape ) )
-    plt.imshow(x[::-1], cmap=cmap, extent=extent)
+    img = ax.imshow(x[::-1], cmap=cmap, extent=extent)
 
     if labelbottom:
-        plt.xlabel ("time [{}]".format(xlabel))
+        ax.set_xlabel ("time [{}]".format(xlabel))
     if labelleft:
-        plt.ylabel("freq [{}]".format(ylabel))
-    plt.colorbar().set_label("{}".format(mode))
+        ax.set_ylabel("freq [{}]".format(ylabel))
+    plt.colorbar(img, ax=ax).set_label("{}".format(mode))
     plt.tick_params(
         bottom=bottom,
         left=left,

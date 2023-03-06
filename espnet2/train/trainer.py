@@ -9,6 +9,9 @@ from dataclasses import is_dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
+
+
+from espnet.asr.asr_utils import plot_spectrogram
 import os, sys
 import humanfriendly
 import numpy as np
@@ -297,8 +300,8 @@ class Trainer:
         output_dir = Path(trainer_options.output_dir)
         reporter = Reporter()
                 
-		# plt.rcParams["figure.figsize"] = [7.50, 3.50]
-		# plt.rcParams["figure.autolayout"] = True
+        # plt.rcParams["figure.figsize"] = [7.50, 3.50]
+        # plt.rcParams["figure.autolayout"] = True
 
         if trainer_options.use_amp:
             if V(torch.__version__) < V("1.6.0"):
@@ -706,14 +709,13 @@ class Trainer:
         logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(current_flr), float(current_llr), param_group_length))
 
 
-        # fig = plt.figure()
-        # fig, ax = plt.subplots()
-        # fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(8, 4) , layout="tight")
-        
-        # cmap = mpl.cm.cool
-        # norm = mpl.colors.Normalize(vmin=5, vmax=10)
-        # fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), orientation='vertical' )
-        
+
+
+        fig = plt.figure()
+        plt.rcParams["figure.figsize"] = [6, 6]
+        plt.rcParams["figure.autolayout"] = True
+
+
         for iiter, (utt_id, batch) in enumerate(
             reporter.measure_iter_time(iterator, "iter_time"), 1
         ):
@@ -774,7 +776,7 @@ class Trainer:
 
             with autocast(scaler is not None):
                 with reporter.measure_time("forward_time"):
-                    retval = model(**batch)
+                    retval = model(iiter, **batch)
 
                     # Note(kamo):
                     # Supporting two patterns for the returned value from the model
@@ -787,7 +789,6 @@ class Trainer:
                         loss_adversarial = retval.get( "loss_adversarial", 0 )
                         reconstruction_loss = retval.get("reconstruction_loss", 0)
                         kld_loss = retval.get("reconstruction_kld_loss", 0)
-
                         # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
                         if optim_idx is not None and not isinstance(optim_idx, int):
                             if not isinstance(optim_idx, torch.Tensor):
@@ -926,25 +927,7 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-                # feat_plot = stats["feats"].detach().cpu().numpy()
-                # recons_feats_plot = stats["recons_feats"].detach().cpu().numpy()
 
-                # logging.warning(" feats shape {}  recons_shape {} ".format( feats_plot.shape, recons_feats_plot.shape ) )
-                # html_file_name  = "./wandb_spectrogram.png"
-
-                # plt.figure(figsize=(20, 10))
-
-                # plt.subplot(2, 1, 1)
-                # plt.title('Original feats')
-                # plot_spectrogram(plt, feat_plot.T, fs=16000, mode='linear', frame_shift=20, bottom=False, labelbottom=False)
-
-                # plt.subplot(2, 1, 2)
-                # plt.title('Reconstructed feats')
-                # plot_spectrogram(plt, recons_feats_plot.T, fs=16000, mode='db', frame_shift=20,bottom=False, labelbottom=False)
-
-                # plt.savefig( '{}'.format(html_file_name) )
-                # # plt.clf()
-                # wandb.log({f"spectrogram plot": wandb.Image(plt)})
 
 
 
@@ -963,6 +946,24 @@ class Trainer:
                 if( (iiter % 200) == 0):
                     logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {} grad_norm {} recons_loss {} kld_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach(), grad_norm, stats["recons_loss"].detach(), stats["recons_kld_loss"].detach() ))
                     # logging.warning( " beta_loss {}  ctc_att_loss {} ").format(stats["beta_loss"], stats["ctc_att_loss"])
+                    if(adv_mode == "recon"):
+                        feats_plot = retval["feats_plot"]
+                        recons_feats_plot = retval["recons_feats_plot"]
+
+
+
+                        ax1 = plt.subplot(2, 1, 1)
+                        plt.title('Original feats linear')
+                        plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+                        ax2 = plt.subplot(2, 1, 2)
+                        plt.title('Reconstructed feats linear')
+                        plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+                        fig.subplots_adjust(wspace=0.5, hspace=0)
+                        # plt.savefig( '{}'.format(html_file_name) )
+                        wandb.log({f"spectrogram plot": wandb.Image(plt)})
+                        plt.clf()
+
+
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
                     if(iiter == 200):

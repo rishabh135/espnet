@@ -452,6 +452,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 	def forward(
 		self,
+		iiter,
 		speech: torch.Tensor,
 		speech_lengths: torch.Tensor,
 		text: torch.Tensor,
@@ -554,25 +555,28 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-		# html_file_name  = "./wandb_spectrogram_feb_21_multiplot.png"
-		# fig = plt.figure(figsize=(30, 5))
-		# with open('./wandb_24_feb_saved_original_feats_3_dim_last_dim_80.npy', 'wb') as f:
-		# 	tmpvar = feats.detach().cpu().numpy()
-		# 	logging.warning("tmpvar {} ".format(tmpvar.shape))
-		# 	np.save(f, tmpvar)
-		# 	sys.exit(0)
 
+		# if(iiter%100 == 0):
+		# html_file_name  = "./wandb_resolved_spectrogram_recon_3_march_iiter_{}.png".format(iiter)
+		# fig = plt.figure(figsize=(30, 10))
+		# feats_plot = feats[0].detach().cpu().numpy()
+		# recons_feats_plot = recons_feats[0].detach().cpu().numpy()
 
+		# plt.rcParams["figure.figsize"] = [7.50, 3.50]
+		# plt.rcParams["figure.autolayout"] = True
 
-		# # ax_list = fig.axes
-
-		# for i in range (1, 3):
-		# 	feats_plot = feats[i].detach().cpu().numpy()
-		# 	recons_feats_plot = recons_feats[i].detach().cpu().numpy()
-		# 	logging.warning(" feats shape {}  recons_shape {} ".format( feats_plot.shape, recons_feats_plot.shape ) )
-		# 	ax = plt.subplot(2, 1, i)
-		# 	# plt.title('Original feats db')
-		# 	draw_mfcc(feats_plot, ax, fig)
+		# ax1 = plt.subplot(2, 1, 1)
+		# plt.title('Original feats linear')
+		# plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+		# ax2 = plt.subplot(2, 1, 2)
+		# plt.title('Reconstructed feats linear')
+		# plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+		# fig.subplots_adjust(wspace=0, hspace=0)
+		# # plt.savefig( '{}'.format(html_file_name) )
+		# # plt.clf()
+		# wandb.log({f"spectrogram plot": wandb.Image(plt)})
+		# ax1.cla()
+		# ax2.cla()
 
 
 
@@ -585,35 +589,18 @@ class ESPnetASRModel(AbsESPnetModel):
 		# plot_spectrogram(plt, fig, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
 		# # axs[1].set_title('Reconstructed feats linear',fontsize = 4)
-		# # plot_spectrogram(plt, fig, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-		# # fig.subplots_adjust(wspace=0, hspace=0)
+		# plot_spectrogram(plt, fig, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-		# # fig.savefig( '{}'.format(html_file_name) )
-		# # plt.clf()
-		# wandb.log({f"spectrogram plot": wandb.Image(fig)})
-		# # axs[0].clear()
-		# # axs[1].clear()
+		# fig.subplots_adjust(wspace=0, hspace=0)
 
-
-		fig = plt.figure(figsize=(30, 10))
-		html_file_name  = "./wandb_new_spectrogram_feb_21_recon.png"
-		feats_plot = feats[0].detach().cpu().numpy()
-		recons_feats_plot = recons_feats[0].detach().cpu().numpy()
-
-		plt.rcParams["figure.figsize"] = [7.50, 3.50]
-		plt.rcParams["figure.autolayout"] = True
-
-		ax1 = plt.subplot(2, 1, 1)
-		plt.title('Original feats linear')
-		plot_spectrogram(plt, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-		ax2 = plt.subplot(2, 1, 2)
-		plt.title('Reconstructed feats linear')
-		plot_spectrogram(plt, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-
-		fig.subplots_adjust(wspace=0, hspace=0)
-		# plt.savefig( '{}'.format(html_file_name) )
+		# fig.savefig( '{}'.format(html_file_name) )
 		# plt.clf()
-		wandb.log({f"spectrogram plot": wandb.Image(plt)})
+		# wandb.log({f"spectrogram plot": wandb.Image(fig)})
+		# axs[0].clear()
+		# axs[1].clear()
+
+
+
 
 
 
@@ -764,6 +751,10 @@ class ESPnetASRModel(AbsESPnetModel):
 		retval["weight"] = weight
 		retval["loss_ctc"] = loss_ctc
 		retval["loss_att"] = loss_att
+
+		retval["feats_plot"] = feats[0].detach().cpu().numpy()
+		retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
+
 
 		return retval
 
