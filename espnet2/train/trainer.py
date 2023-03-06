@@ -713,7 +713,7 @@ class Trainer:
 
         fig = plt.figure()
         plt.rcParams["figure.figsize"] = [6, 6]
-        plt.rcParams["figure.autolayout"] = True
+        # plt.rcParams["figure.autolayout"] = True
 
 
         for iiter, (utt_id, batch) in enumerate(
@@ -776,7 +776,7 @@ class Trainer:
 
             with autocast(scaler is not None):
                 with reporter.measure_time("forward_time"):
-                    retval = model(iiter, **batch)
+                    retval = model(**batch)
 
                     # Note(kamo):
                     # Supporting two patterns for the returned value from the model
@@ -956,10 +956,10 @@ class Trainer:
                         plt.title('Original feats linear')
                         plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
                         ax2 = plt.subplot(2, 1, 2)
-                        plt.title('Reconstructed feats linear')
+                        # plt.title('Reconstructed feats linear')
                         plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-                        fig.subplots_adjust(wspace=0.5, hspace=0)
-                        # plt.savefig( '{}'.format(html_file_name) )
+                        fig.subplots_adjust(hspace=0.5, bottom=0.15)
+                        # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
                         wandb.log({f"spectrogram plot": wandb.Image(plt)})
                         plt.clf()
 

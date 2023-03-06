@@ -452,7 +452,6 @@ class ESPnetASRModel(AbsESPnetModel):
 
 	def forward(
 		self,
-		iiter,
 		speech: torch.Tensor,
 		speech_lengths: torch.Tensor,
 		text: torch.Tensor,
