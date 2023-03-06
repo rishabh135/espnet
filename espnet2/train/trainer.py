@@ -711,8 +711,8 @@ class Trainer:
 
 
 
-        fig = plt.figure()
-        plt.rcParams["figure.figsize"] = [6, 6]
+        fig = plt.figure(figsize=(5,4), dpi=200 )
+        # plt.rcParams["figure.figsize"] = [6, 6]
         # plt.rcParams["figure.autolayout"] = True
 
 
@@ -949,6 +949,7 @@ class Trainer:
                     if(adv_mode == "recon"):
                         feats_plot = retval["feats_plot"]
                         recons_feats_plot = retval["recons_feats_plot"]
+                        aug_feats_plot = retval["aug_feats_plot"]
 
 
 
@@ -958,7 +959,7 @@ class Trainer:
                         ax2 = plt.subplot(2, 1, 2)
                         # plt.title('Reconstructed feats linear')
                         plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-                        fig.subplots_adjust(hspace=0.5, bottom=0.15)
+                        fig.subplots_adjust(hspace=0.25, bottom=0.05)
                         # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
                         wandb.log({f"spectrogram plot": wandb.Image(plt)})
                         plt.clf()

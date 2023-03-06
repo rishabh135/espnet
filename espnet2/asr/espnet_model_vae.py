@@ -488,7 +488,7 @@ class ESPnetASRModel(AbsESPnetModel):
 		# logging.warning(" speech {} specch_lengths {} text {} text_lengths{} ".format(speech.shape, speech_lengths.shape, text.shape, text_lengths.shape))
 
 		# 1. Encoder
-		encoder_out, encoder_out_lens, feats, feats_lengths = self.encode(speech, speech_lengths)
+		encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
 		# logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
 
 
@@ -753,6 +753,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 		retval["feats_plot"] = feats[0].detach().cpu().numpy()
 		retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
+		retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
 
 		return retval
@@ -827,15 +828,15 @@ class ESPnetASRModel(AbsESPnetModel):
 			# 1. Extract feats
 			feats, feats_lengths = self._extract_feats(speech, speech_lengths)
 
-			# # 2. Data augmentation
-			# if self.specaug is not None and self.training:
-			# 	feats, feats_lengths = self.specaug(feats, feats_lengths)
+			# 2. Data augmentation
+			if self.specaug is not None and self.training:
+				aug_feats, aug_feats_lengths = self.specaug(feats, feats_lengths)
 
-			# # 3. Normalization for feature: e.g. Global-CMVN, Utterance-CMVN
-			# if self.normalize is not None:
-			# 	feats, feats_lengths = self.normalize(feats, feats_lengths)
+			# 3. Normalization for feature: e.g. Global-CMVN, Utterance-CMVN
+			if self.normalize is not None:
+				aug_feats, aug_feats_lengths = self.normalize(aug_feats, aug_feats_lengths)
 
-		# Pre-encoder, e.g. used for raw input data
+		# # Pre-encoder, e.g. used for raw input data
 		# if self.preencoder is not None:
 		# 	feats, feats_lengths = self.preencoder(feats, feats_lengths)
 
@@ -843,9 +844,7 @@ class ESPnetASRModel(AbsESPnetModel):
 		# feats: (Batch, Length, Dim)
 		# -> encoder_out: (Batch, Length2, Dim2)
 		if self.encoder.interctc_use_conditioning:
-			encoder_out, encoder_out_lens, _ = self.encoder(
-				feats, feats_lengths, ctc=self.ctc
-			)
+			encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
 		else:
 			encoder_out, encoder_out_lens, _ = self.encoder(feats, feats_lengths)
 		intermediate_outs = None
@@ -855,9 +854,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 		# Post-encoder, e.g. NLU
 		if self.postencoder is not None:
-			encoder_out, encoder_out_lens = self.postencoder(
-				encoder_out, encoder_out_lens
-			)
+			encoder_out, encoder_out_lens = self.postencoder(encoder_out, encoder_out_lens)
 
 		assert encoder_out.size(0) == speech.size(0), (
 			encoder_out.size(),
@@ -871,7 +868,7 @@ class ESPnetASRModel(AbsESPnetModel):
 		if intermediate_outs is not None:
 			return (encoder_out, intermediate_outs), encoder_out_lens
 
-		return encoder_out, encoder_out_lens, feats, feats_lengths
+		return encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths
 
 	def _extract_feats(
 		self, speech: torch.Tensor, speech_lengths: torch.Tensor

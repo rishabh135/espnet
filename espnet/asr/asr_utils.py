@@ -954,7 +954,7 @@ def plot_spectrogram(
 
     extent = (0, xtop, 0, ytop)
     # logging.warning(" x shape asr_utils {} ".format(x[::-1].shape ) )
-    img = ax.imshow(x[::-1], cmap=cmap, extent=extent)
+    img = ax.imshow(x[::-1], cmap=cmap, extent=extent, interpolation='nearest', aspect='auto')
 
     if labelbottom:
         ax.set_xlabel ("time [{}]".format(xlabel))
