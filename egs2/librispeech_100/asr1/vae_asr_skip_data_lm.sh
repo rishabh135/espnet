@@ -62,7 +62,7 @@ adv_liststr="recon 100"
 
 resume_checkpoint=-1
 max_epoch=100
-batch_bins=12000000
+batch_bins=14000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -77,7 +77,7 @@ beta_factor=0.8
 # project_name="vae_feb_21_recon_100"
 
 
-project_name="vae_march_6_att_plot"
+project_name="vae_march_7_spec_plot"
 
 # project_name="vae_lsoftmax_feb_28_beta_factor_0.8_adv_weight_25"
 

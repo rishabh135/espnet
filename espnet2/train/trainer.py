@@ -943,23 +943,28 @@ class Trainer:
 
 
 
-                if( (iiter % 200) == 0):
+                if( (iiter % 100) == 0):
                     logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {} grad_norm {} recons_loss {} kld_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach(), grad_norm, stats["recons_loss"].detach(), stats["recons_kld_loss"].detach() ))
                     # logging.warning( " beta_loss {}  ctc_att_loss {} ").format(stats["beta_loss"], stats["ctc_att_loss"])
                     if(adv_mode == "recon"):
                         feats_plot = retval["feats_plot"]
                         recons_feats_plot = retval["recons_feats_plot"]
-                        aug_feats_plot = retval["aug_feats_plot"]
+                        # aug_feats_plot = retval["aug_feats_plot"]
 
 
 
                         ax1 = plt.subplot(2, 1, 1)
                         plt.title('Original feats linear')
                         plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+                        
                         ax2 = plt.subplot(2, 1, 2)
                         # plt.title('Reconstructed feats linear')
                         plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-                        fig.subplots_adjust(hspace=0.25, bottom=0.05)
+                        
+                        # ax3 = plt.subplot(3, 1, 3)
+                        # plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+                        fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
+                        fig.tight_layout()
                         # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
                         wandb.log({f"spectrogram plot": wandb.Image(plt)})
                         plt.clf()
