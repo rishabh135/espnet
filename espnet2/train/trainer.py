@@ -852,9 +852,11 @@ class Trainer:
                 if scaler is not None:
                     import wandb
                     beta_loss = (reconstruction_loss + ((current_epoch+1)/100) * kld_loss)
+                    stats["kld_loss"] = kld_loss.detach()
+                    stats["reconstruction_loss"] = reconstruction_loss.deatch()
                     stats["beta_loss"] = beta_loss.detach()
                     stats["ctc_att_loss"] = loss.detach()
-                    wandb.log({ "beta_loss" : stats["beta_loss"] , "ctc_att_loss": stats["ctc_att_loss"] })
+                    wandb.log({ "beta_loss" : stats["beta_loss"], "reconstruction_loss" : stats["reconstruction_loss"],  "KL_div_loss" : stats["kld_loss"],  "ctc_att_loss": stats["ctc_att_loss"] })
 
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
                         total_loss = (1 - options.beta_factor) * loss + options.beta_factor  *  beta_loss

@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Callable, Collection, Dict, Iterator, Tuple, Union
 
 import kaldiio
+import logging
 import numpy as np
 import soundfile
 import torch
@@ -179,8 +180,10 @@ class IterableESPnetDataset(IterableDataset):
                     keys.append(key)
                     values.append(value)
 
+                # logging.warning("keys {} ".format(list(keys)))
                 for k_idx, k in enumerate(keys):
-                    if k != keys[0]:
+                    if (k != keys[0]):
+                        logging.warning(" >>>>>>>>>>> mismatch k {} and  keys[0] {} ".format(k, keys[0] ))
                         raise RuntimeError(
                             f"Keys are mismatched. Text files (idx={k_idx}) is "
                             f"not sorted or not having same keys at L{linenum}"

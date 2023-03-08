@@ -35,6 +35,7 @@ def collect_stats(
     """
     assert check_argument_types()
 
+    # logging.warning(" train_iterable : {}  ".format(  list(train_iter)))
     npy_scp_writers = {}
     for itr, mode in zip([train_iter, valid_iter], ["train", "valid"]):
         if log_interval is None:
@@ -50,7 +51,6 @@ def collect_stats(
         with DatadirWriter(output_dir / mode) as datadir_writer:
             for iiter, (keys, batch) in enumerate(itr, 1):
                 batch = to_device(batch, "cuda" if ngpu > 0 else "cpu")
-
                 # 1. Write shape file
                 for name in batch:
                     if name.endswith("_lengths"):
@@ -119,4 +119,4 @@ def collect_stats(
                 "\n".join(filter(lambda x: not x.endswith("_lengths"), batch)) + "\n"
             )
         with (output_dir / mode / "stats_keys").open("w", encoding="utf-8") as f:
-            f.write("\n".join(sum_dict) + "\n")
+            f.write("\n".join(sum_dict) + "\n"

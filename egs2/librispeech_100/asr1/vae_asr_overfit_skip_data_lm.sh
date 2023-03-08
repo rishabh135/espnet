@@ -45,8 +45,8 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/dump
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_xvector_overfit/original_data
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_xvector_overfit/dump
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
@@ -62,7 +62,7 @@ adv_liststr="recon 100"
 
 resume_checkpoint=-1
 max_epoch=100
-batch_bins=17000000
+batch_bins=21000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -77,7 +77,8 @@ beta_factor=0.8
 # project_name="vae_feb_21_recon_100"
 
 
-project_name="vae_march_8_recon_decoder_updated"
+project_name="vae_overfit_march_9_recon_decoder_updated"
+
 
 # project_name="vae_lsoftmax_feb_28_beta_factor_0.8_adv_weight_25"
 
@@ -1840,4 +1841,3 @@ else
     log "Skip the uploading to HuggingFace stage"
 fi
 
-log "Successfully finished. [elapsed=${SECONDS}s]"
