@@ -10,9 +10,9 @@ set -o pipefail
 # test_sets="test_clean test_other dev_clean dev_other"
 
 
-train_set="dev_clean"
-valid_set="dev_clean"
-test_sets="test_clean test_other dev_clean dev_other"
+train_set="train_clean_100"
+valid_set="train_clean_100"
+test_sets="train_clean_100"
 
 asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
@@ -22,10 +22,8 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_xvector_overfit/original_data
-
-
-project_name="vae_overfit_march_9_recon_decoder_updated"
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/partial_data_xvector_speed/original_data
+project_name="vae_overfit_march_11_recon_decoder_updated"
 
 
 # project_name="vae_feb_21_recon_100"
@@ -57,9 +55,9 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ./vae_asr_overfit_skip_data_lm.sh \
-    --skip_data_prep false \
+    --skip_data_prep true \
     --skip_train false \
-    --skip_eval false \
+    --skip_eval true \
     --lang en \
     --ngpu 1 \
     --nj 64 \

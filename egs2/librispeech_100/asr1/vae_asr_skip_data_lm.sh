@@ -77,7 +77,9 @@ beta_factor=0.8
 # project_name="vae_feb_21_recon_100"
 
 
-project_name="vae_march_8_recon_decoder_updated"
+# project_name="vae_march_8_recon_decoder_updated"
+
+project_name="vae_march_10_larger_recon_decoder"
 
 # project_name="vae_lsoftmax_feb_28_beta_factor_0.8_adv_weight_25"
 

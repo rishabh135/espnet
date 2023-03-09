@@ -119,4 +119,4 @@ def collect_stats(
                 "\n".join(filter(lambda x: not x.endswith("_lengths"), batch)) + "\n"
             )
         with (output_dir / mode / "stats_keys").open("w", encoding="utf-8") as f:
-            f.write("\n".join(sum_dict) + "\n"
+            f.write("\n".join(sum_dict) + "\n")

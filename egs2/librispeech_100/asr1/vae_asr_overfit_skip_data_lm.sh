@@ -45,8 +45,11 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_xvector_overfit/original_data
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_xvector_overfit/dump
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/partial_data_xvector_speed/original_data
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/partial_data_xvector_speed/dump
+
+
+
 
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
@@ -77,7 +80,8 @@ beta_factor=0.8
 # project_name="vae_feb_21_recon_100"
 
 
-project_name="vae_overfit_march_9_recon_decoder_updated"
+project_name="vae_overfit_march_11_recon_decoder_updated"
+
 
 
 # project_name="vae_lsoftmax_feb_28_beta_factor_0.8_adv_weight_25"
@@ -138,9 +142,9 @@ bpe_char_cover=1.0  # character coverage when modeling BPE
 
 # Ngram model related
 use_ngram=false
-ngram_exp=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed/ngram_exp
+ngram_exp=
 ngram_num=3
-use_xvector=true
+use_xvector=
 xvector_tool=kaldi
 # xvector_model=
 
@@ -825,8 +829,8 @@ if "${use_xvector}"; then
     mfccdir=${data_dd}/mfccdir
     vaddir=${data_dd}/mfcc
     nnet_dir=${dumpdir}/nnet/
-    
-    # for name in ${train_set} ${valid_set} ${test_sets}; do
+
+    # for name in ${train_set} ${valid_set} ${test_sets} ; do
     #     ${global_dir}/utils/copy_data_dir.sh ${data_dd}/${name} ${data_dd}/${name}_mfcc_16k
     #     ${global_dir}/utils/data/resample_data_dir.sh 16000 ${data_dd}/${name}_mfcc_16k
     #     ${global_dir}/steps/make_mfcc.sh  \
@@ -841,7 +845,6 @@ if "${use_xvector}"; then
     # done
 
     # # Check pretrained model existence
-    
     # if [ ! -e ${nnet_dir} ]; then
     #     echo "X-vector model does not exist. Download pre-trained model."
     #     wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
@@ -856,10 +859,12 @@ if "${use_xvector}"; then
     #         ${nnet_dir}/xvectors_${name}
     # done
 
-    # # Update json
+    # Update json
     # for name in ${train_set} ${valid_set} ${test_sets}; do
     #     ./local/update_json.sh ${dumpdir}/${name}/data.json ${nnet_dir}/xvectors_${name}/xvector.scp
     # done
+
+
 
 
 
@@ -1350,7 +1355,7 @@ if ! "${skip_train}"; then
             echo "${_xvector_train_dir}"
             echo "${_xvector_valid_dir}"
             _opts+="--train_data_path_and_name_and_type ${_xvector_train_dir}/xvector.scp,spembs,kaldi_ark "
-            _opts+="--valid_data_path_and_name_and_type ${_xvector_valid_dir}/xvector_dev_clean.scp,spembs,kaldi_ark "
+            _opts+="--valid_data_path_and_name_and_type ${_xvector_valid_dir}/xvector.scp,spembs,kaldi_ark "
         fi
 
 

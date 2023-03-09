@@ -578,12 +578,12 @@ class Trainer:
                     logging.warning("The model files were removed: " + ", ".join(_removed))
 
             # 7. If any updating haven't happened, stops the training
-            if all_steps_are_invalid:
-                logging.warning(
-                    f"The gradients at all steps are invalid in this epoch. "
-                    f"Something seems wrong. This training was stopped at {iepoch}epoch"
-                )
-                break
+            # if all_steps_are_invalid:
+            #     logging.warning(
+            #         f"The gradients at all steps are invalid in this epoch. "
+            #         f"Something seems wrong. This training was stopped at {iepoch}epoch"
+            #     )
+            #     break
 
             # 8. Check early stopping
             if trainer_options.patience is not None:
@@ -728,7 +728,7 @@ class Trainer:
             #     logging.warning(" {}  >> {} \n".format(keys, values))
             # logging.warning("**************************\n\n")
 
-            # logging.warning(" len {} utt_id {} \n".format( len(utt_id), utt_id))
+            logging.warning(" len {} utt_id {} \n".format( len(utt_id), utt_id))
 
             # ['sp1.1-5703-47212-0024', 'sp1.1-5561-41615-0030', 'sp1.1-3723-171115-0030', 'sp1.1-3214-167607-0035', 'sp1.1-2817-142380-0037', 'sp1.1-2514-149482-0056', 'sp1.1-1624-142933-0016', 'sp0.9-78-369-0052', 'sp0.9-7067-76048-0024', 'sp0.9-5049-25947-0006', 'sp0.9-4481-17499-0016', 'sp0.9-3879-174923-0004', 'sp0.9-211-122442-0003', '441-128982-0006', '3857-182315-0042', '2764-36619-0037', 'sp1.1-1455-138263-0030', 'sp1.1-909-131045-0016', 'sp1.1-8975-270782-0084', 'sp1.1-8238-274553-0024', 'sp1.1-8051-118101-0022', 'sp1.1-7113-86041-0050', 'sp1.1-6081-42010-0021', 'sp1.1-5688-15787-0001', 'sp1.1-4267-287369-0019', 'sp1.1-403-128339-0046', 'sp1.1-332-128985-0040', 'sp1.1-332-128985-0038', 'sp1.1-3240-131232-0004', 'sp1.1-226-131533-0005', 'sp1.1-211-122442-0002', 'sp0.9-4853-27670-0017', 'sp0.9-481-123719-0021', 'sp0.9-445-123857-0021', 'sp0.9-4340-15220-0086', '911-130578-0007', '6836-61803-0037', '6385-34669-0018', '4267-287369-0008']
             # **************************
@@ -852,11 +852,9 @@ class Trainer:
                 if scaler is not None:
                     import wandb
                     beta_loss = (reconstruction_loss + ((current_epoch+1)/100) * kld_loss)
-                    stats["kld_loss"] = kld_loss.detach()
-                    stats["reconstruction_loss"] = reconstruction_loss.deatch()
                     stats["beta_loss"] = beta_loss.detach()
                     stats["ctc_att_loss"] = loss.detach()
-                    wandb.log({ "beta_loss" : stats["beta_loss"], "reconstruction_loss" : stats["reconstruction_loss"],  "KL_div_loss" : stats["kld_loss"],  "ctc_att_loss": stats["ctc_att_loss"] })
+                    wandb.log({ "beta_loss" : stats["beta_loss"], "ctc_att_loss": stats["ctc_att_loss"] })
 
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
                         total_loss = (1 - options.beta_factor) * loss + options.beta_factor  *  beta_loss
