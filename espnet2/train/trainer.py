@@ -728,7 +728,7 @@ class Trainer:
             #     logging.warning(" {}  >> {} \n".format(keys, values))
             # logging.warning("**************************\n\n")
 
-            logging.warning(" len {} utt_id {} \n".format( len(utt_id), utt_id))
+            # logging.warning(" len {} utt_id {} \n".format( len(utt_id), utt_id))
 
             # ['sp1.1-5703-47212-0024', 'sp1.1-5561-41615-0030', 'sp1.1-3723-171115-0030', 'sp1.1-3214-167607-0035', 'sp1.1-2817-142380-0037', 'sp1.1-2514-149482-0056', 'sp1.1-1624-142933-0016', 'sp0.9-78-369-0052', 'sp0.9-7067-76048-0024', 'sp0.9-5049-25947-0006', 'sp0.9-4481-17499-0016', 'sp0.9-3879-174923-0004', 'sp0.9-211-122442-0003', '441-128982-0006', '3857-182315-0042', '2764-36619-0037', 'sp1.1-1455-138263-0030', 'sp1.1-909-131045-0016', 'sp1.1-8975-270782-0084', 'sp1.1-8238-274553-0024', 'sp1.1-8051-118101-0022', 'sp1.1-7113-86041-0050', 'sp1.1-6081-42010-0021', 'sp1.1-5688-15787-0001', 'sp1.1-4267-287369-0019', 'sp1.1-403-128339-0046', 'sp1.1-332-128985-0040', 'sp1.1-332-128985-0038', 'sp1.1-3240-131232-0004', 'sp1.1-226-131533-0005', 'sp1.1-211-122442-0002', 'sp0.9-4853-27670-0017', 'sp0.9-481-123719-0021', 'sp0.9-445-123857-0021', 'sp0.9-4340-15220-0086', '911-130578-0007', '6836-61803-0037', '6385-34669-0018', '4267-287369-0008']
             # **************************
@@ -789,6 +789,7 @@ class Trainer:
                         loss_adversarial = retval.get( "loss_adversarial", 0 )
                         reconstruction_loss = retval.get("reconstruction_loss", 0)
                         kld_loss = retval.get("reconstruction_kld_loss", 0)
+                        beta_loss = retval["beta_loss"]
                         # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
                         if optim_idx is not None and not isinstance(optim_idx, int):
                             if not isinstance(optim_idx, torch.Tensor):
@@ -850,12 +851,6 @@ class Trainer:
 
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
-                    import wandb
-                    beta_loss = (reconstruction_loss + ((current_epoch+1)/100) * kld_loss)
-                    stats["beta_loss"] = beta_loss.detach()
-                    stats["ctc_att_loss"] = loss.detach()
-                    wandb.log({ "beta_loss" : stats["beta_loss"], "ctc_att_loss": stats["ctc_att_loss"] })
-
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
                         total_loss = (1 - options.beta_factor) * loss + options.beta_factor  *  beta_loss
                         total_loss /= accum_grad
@@ -878,9 +873,36 @@ class Trainer:
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'recon'):
-                        total_loss = beta_loss
+
+                        # total_loss = beta_loss
                         # loss_adversarial.requires_grad = True
-                        scaler.scale(total_loss).backward()
+                        # beta_loss = reconstruction_loss + kld_loss
+                        # logging.warning(" beta_loss {} ".format(beta_loss))
+                        # wandb.log({ "beta_loss" : stats["beta_loss"], "ctc_att_loss": stats["ctc_att_loss"] })
+                        scaler.scale(beta_loss).backward()
+
+
+                        if((iiter % 1) == 0):
+                            # logging.warning (" plotting working ")
+                            feats_plot = retval["feats_plot"]
+                            recons_feats_plot = retval["recons_feats_plot"]
+                            # aug_feats_plot = retval["aug_feats_plot"]
+
+                            ax1 = plt.subplot(2, 1, 1)
+                            plt.title('Original feats linear')
+                            plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)  
+                            ax2 = plt.subplot(2, 1, 2)
+                            # plt.title('Reconstructed feats linear')
+                            plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+                            # ax3 = plt.subplot(3, 1, 3)
+                            # plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+                            fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
+                            fig.tight_layout()
+                            # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+                            wandb.log({f"spectrogram plot": wandb.Image(plt)})
+                            plt.clf()
+
+
                     else:
                         total_loss = (1 - options.beta_factor) * loss + options.beta_factor  * beta_loss
                         total_loss /= accum_grad
@@ -943,33 +965,9 @@ class Trainer:
 
 
 
-                if( (iiter % 100) == 0):
+                if( (iiter % 1) == 0):
                     logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {} grad_norm {} recons_loss {} kld_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach(), grad_norm, stats["recons_loss"].detach(), stats["recons_kld_loss"].detach() ))
                     # logging.warning( " beta_loss {}  ctc_att_loss {} ").format(stats["beta_loss"], stats["ctc_att_loss"])
-                    if(adv_mode == "recon"):
-                        feats_plot = retval["feats_plot"]
-                        recons_feats_plot = retval["recons_feats_plot"]
-                        # aug_feats_plot = retval["aug_feats_plot"]
-
-
-
-                        ax1 = plt.subplot(2, 1, 1)
-                        plt.title('Original feats linear')
-                        plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-                        
-                        ax2 = plt.subplot(2, 1, 2)
-                        # plt.title('Reconstructed feats linear')
-                        plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-                        
-                        # ax3 = plt.subplot(3, 1, 3)
-                        # plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-                        fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
-                        fig.tight_layout()
-                        # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-                        wandb.log({f"spectrogram plot": wandb.Image(plt)})
-                        plt.clf()
-
-
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
                     if(iiter == 200):

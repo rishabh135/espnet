@@ -321,6 +321,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
     def recon_mode(self):
         if(self.recon_mode_flag == False):
+            logging.warning("  RECON MODE flag changing ")
             for param in self.decoder.parameters():
                 param.requires_grad = False
                 param.grad = None
@@ -540,8 +541,7 @@ class ESPnetASRModel(AbsESPnetModel):
             ys_in = spembs.unsqueeze(1).expand(-1, feats.shape[1],-1)
             ones_spemb = torch.ones_like(ys_in)
         else:
-            ys_in = torch.ones(feats.shape[0], feats.shape[1], 128).to(device='cuda') 
-        
+            ys_in = torch.ones(feats.shape[0], feats.shape[1], 128).to(device='cuda')
         #[22, 1422, 128]
         y_masks = feats_lengths
         # logging.warning(" >>>  hs.shape {}   h_masks.shape {}  ys_in {}  y_masks.shape {}  ".format(  hs.shape,  h_masks.shape, ys_in.shape, y_masks.shape ))
@@ -668,7 +668,13 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         retval["reconstruction_loss"] = reconstruction_loss
+        stats["reconstuction_loss"] = reconstruction_loss.detach()
         retval["reconstruction_kld_loss"] = kld_loss
+        stats["KLD_loss"] = kld_loss.detach()
+
+        retval["beta_loss"]= reconstruction_loss + kld_loss 
+        stats["sum_kl_recon_loss"] = kld_loss.detach() + reconstruction_loss.detach()
+
 
         # Intermediate CTC (optional)
         loss_interctc = 0.0

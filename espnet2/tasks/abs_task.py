@@ -858,7 +858,7 @@ class AbsTask(ABC):
 
 		group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
 		group.add_argument('--adv_lr', default=0.002, type=float,help='Learning rate for adv branch')
-		group.add_argument('--asr_lr', default=0.002, type=float,help='Learning rate for ASR encoder and decoder')
+		group.add_argument('--asr_lr', default=0.06, type=float,help='Learning rate for ASR encoder and decoder')
 		group.add_argument('--recon_mode', default=False, help='To use the vae mode for the reconstruction decoder')
 		group.add_argument('--adv_dropout_mid', default=0.2, type=float,help='adversarial Dropout rate mid')
 		group.add_argument('--adv_dropout_inp', default=0.2, type=float,help='adversarial Dropout rate inp')
