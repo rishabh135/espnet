@@ -770,6 +770,14 @@ class Trainer:
             #     36, 38, 28])
 
 
+            # logging.warning(" encoder weight  {}  ".format(  model.encoder.encoders[1].feed_forward.w_1.weight  ) )
+            # logging.warning(" reconstruction weight {}  ".format(  model.reconstruction_decoder.decoders[0].feed_forward.w_1.weight  ) )
+
+
+            # logging.warning(" encoder weight grad {}  ".format(  model.encoder.encoders[1].feed_forward.w_1.weight.grad  ) )
+            # logging.warning(" reconstruction weight grad {}  ".format(  model.reconstruction_decoder.decoders[0].feed_forward.w_1.weight.grad  ) )
+
+
             if distributed:
                 torch.distributed.all_reduce(iterator_stop, ReduceOp.SUM)
                 if iterator_stop > 0:
@@ -797,7 +805,7 @@ class Trainer:
                         loss_adversarial = retval.get( "loss_adversarial", 0 )
                         reconstruction_loss = retval.get("reconstruction_loss", 0)
                         kld_loss = retval.get("reconstruction_kld_loss", 0)
-                        beta_loss = retval["beta_loss"]
+                        # beta_loss = retval.get("beta_loss",0)
                         # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
                         if optim_idx is not None and not isinstance(optim_idx, int):
                             if not isinstance(optim_idx, torch.Tensor):
@@ -882,35 +890,12 @@ class Trainer:
                         scaler.scale(loss_adversarial).backward()
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'recon'):
 
-                        # total_loss = beta_loss
-                        # loss_adversarial.requires_grad = True
-                        # beta_loss = reconstruction_loss + kld_loss
-                        # logging.warning(" beta_loss {} ".format(beta_loss))
-                        # wandb.log({ "beta_loss" : stats["beta_loss"], "ctc_att_loss": stats["ctc_att_loss"] })
+                        beta_loss = reconstruction_loss + kld_loss
+                        # regularized beta_loss
+                        # beta_loss = (reconstruction_loss + ((current_epoch+1)/options.max_epoch) * kld_loss)
+                        beta_loss /= accum_grad
+                        wandb.log({ "beta_loss" : beta_loss.detach() } )
                         scaler.scale(beta_loss).backward()
-
-
-                        if((iiter % 1) == 0):
-                            logging.warning(" MODE: {}  iiter {} current_epoch {} beta_loss {}  asr_loss {} recons_loss {} kld_loss {}  ".format( adv_mode, iiter, current_epoch, beta_loss.detach(),  stats["loss"].detach(),  stats["recons_loss"], stats["recons_kld_loss"] ))
-                            # logging.warning (" plotting working ")
-                            feats_plot = retval["feats_plot"]
-                            recons_feats_plot = retval["recons_feats_plot"]
-                            # aug_feats_plot = retval["aug_feats_plot"]
-
-                            ax1 = plt.subplot(2, 1, 1)
-                            plt.title('Original feats linear')
-                            plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)  
-                            ax2 = plt.subplot(2, 1, 2)
-                            # plt.title('Reconstructed feats linear')
-                            plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-                            # ax3 = plt.subplot(3, 1, 3)
-                            # plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-                            fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
-                            fig.tight_layout()
-                            # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-                            wandb.log({f"spectrogram plot": wandb.Image(plt)})
-                            plt.clf()
-
 
                     else:
                         total_loss = (1 - options.beta_factor) * loss + options.beta_factor  * beta_loss
@@ -923,6 +908,11 @@ class Trainer:
                         # Backward ops run in the same dtype autocast chose
                         # for corresponding forward ops.
                 else:
+                    if (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'recon'):
+                        beta_loss = (reconstruction_loss + ((current_epoch+1)/options.max_epoch) * kld_loss)
+                        beta_loss /= accum_grad
+                        # logging.warning("beta_loss {} ".format(beta_loss))
+                        beta_loss.backward()
                     loss /= accum_grad
                     loss.backward()
 
@@ -958,24 +948,31 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
+                if((iiter % 2) == 0):
+                    # logging.warning (" plotting working ")
+                    feats_plot = retval["feats_plot"]
+                    recons_feats_plot = retval["recons_feats_plot"]
+                    # aug_feats_plot = retval["aug_feats_plot"]
+
+                    ax1 = plt.subplot(2, 1, 1)
+                    plt.title('Original feats linear')
+                    plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+                    ax2 = plt.subplot(2, 1, 2)
+                    # plt.title('Reconstructed feats linear')
+                    plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+                    # ax3 = plt.subplot(3, 1, 3)
+                    # plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+                    fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
+                    plt.tight_layout()
+                    # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+                    wandb.log({f"spectrogram plot": wandb.Image(plt)})
+                    plt.clf()
 
 
 
 
-                # if output_dir is not None:
-                # 	p = output_dir / id_ / f"{k}.{reporter.get_epoch()}ep.png"
-                # 	p.parent.mkdir(parents=True, exist_ok=True)
-                # 	fig.savefig(p)
-
-                # if summary_writer is not None:
-                # 	summary_writer.add_figure(
-                # 		f"{k}_{id_}", fig, reporter.get_epoch()
-                # 	)
-
-
-
-                if( (iiter % 1) == 0):
-                    logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {} grad_norm {} recons_loss {} kld_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach(), grad_norm, stats["recons_loss"].detach(), stats["recons_kld_loss"].detach() ))
+                if( (iiter % 100) == 0):
+                    logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {} grad_norm {} ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach(), grad_norm ))
                     # logging.warning( " beta_loss {}  ctc_att_loss {} ").format(stats["beta_loss"], stats["ctc_att_loss"])
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
@@ -1011,6 +1008,7 @@ class Trainer:
                             # self.ctc_weight_layer = model.ctc.ctc_lo.weight
                             # if(adv_mode == "adv" or adv_mode == "asradv"):
                             #     self.adversarial_weight_layer = model.adversarial_branch.output.weight
+
 
 
 

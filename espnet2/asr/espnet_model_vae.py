@@ -629,11 +629,12 @@ class ESPnetASRModel(AbsESPnetModel):
 
         retval["reconstruction_loss"] = reconstruction_loss
         stats["reconstuction_loss"] = reconstruction_loss.detach()
+
         retval["reconstruction_kld_loss"] = kld_loss
         stats["KLD_loss"] = kld_loss.detach()
 
-        retval["beta_loss"]= sum_recon_kl_loss
-        stats["sum_kl_recon_loss"] = sum_recon_kl_loss.detach()
+        # retval["beta_loss"]= sum_recon_kl_loss
+        # stats["sum_kl_recon_loss"] = sum_recon_kl_loss.detach()
 
 
         # Intermediate CTC (optional)
@@ -708,14 +709,11 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # Collect total loss stats
         stats["loss"] = loss.detach()
-        stats["recons_loss"] = reconstruction_loss.detach()
-        stats["recons_kld_loss"] = kld_loss.detach()
+        # stats["recons_loss"] = reconstruction_loss.detach()
+        # stats["recons_kld_loss"] = kld_loss.detach()
 
 
-        # stats["feats"] = feats
-        # stats["recons_feats"] = recons_feats
-
-           # force_gatherable: to-device and to-tensor if scalar for DataParallel
+        # force_gatherable: to-device and to-tensor if scalar for DataParallel
         loss, stats, weight = force_gatherable((loss, stats, batch_size), loss.device)
         retval["loss"] = loss
         retval["stats"] = stats
