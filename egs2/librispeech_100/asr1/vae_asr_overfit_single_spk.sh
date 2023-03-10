@@ -81,7 +81,7 @@ beta_factor=0.8
 # project_name="vae_lsoftmax_feb_28_beta_factor_0.8_adv_weight_25"
 
 
-project_name="vae_overfit_single_speaker_march_11_increase_lr"
+project_name="vae_overfit_single_speaker_march_12_new"
 experiment_name="beta_factor"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.

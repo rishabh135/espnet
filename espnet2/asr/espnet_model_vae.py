@@ -15,6 +15,8 @@ from espnet.nets.pytorch_backend.transformer.mask import subsequent_mask
 
 from espnet.asr.asr_utils import plot_spectrogram
 
+
+from torch.nn import CrossEntropyLoss, MSELoss, BCEWithLogitsLoss
 from espnet2.asr.ctc import CTC
 from espnet2.asr.decoder.abs_decoder import AbsDecoder
 from espnet2.asr.encoder.abs_encoder import AbsEncoder
@@ -196,6 +198,7 @@ class ESPnetASRModel(AbsESPnetModel):
         self.decoder_input_projection = torch.nn.Linear(self.latent_dim, 64)
 
 
+        self.recon_loss_fct = torch.nn.MSELoss(reduction="sum")
 
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
@@ -551,6 +554,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
         reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
 
+        sum_recon_kl_loss =  reconstruction_loss + kld_loss
+
 
         # logging.warning(" recons_feats shape {} ".format(recons_feats.shape))
         ################################################################################################################################################################################################
@@ -558,51 +563,6 @@ class ESPnetASRModel(AbsESPnetModel):
         ################################################################################################################################################################################################
 
 
-
-
-
-        # if(iiter%100 == 0):
-        # html_file_name  = "./wandb_resolved_spectrogram_recon_3_march_iiter_{}.png".format(iiter)
-        # fig = plt.figure(figsize=(30, 10))
-        # feats_plot = feats[0].detach().cpu().numpy()
-        # recons_feats_plot = recons_feats[0].detach().cpu().numpy()
-
-        # plt.rcParams["figure.figsize"] = [7.50, 3.50]
-        # plt.rcParams["figure.autolayout"] = True
-
-        # ax1 = plt.subplot(2, 1, 1)
-        # plt.title('Original feats linear')
-        # plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-        # ax2 = plt.subplot(2, 1, 2)
-        # plt.title('Reconstructed feats linear')
-        # plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-        # fig.subplots_adjust(wspace=0, hspace=0)
-        # # plt.savefig( '{}'.format(html_file_name) )
-        # # plt.clf()
-        # wandb.log({f"spectrogram plot": wandb.Image(plt)})
-        # ax1.cla()
-        # ax2.cla()
-
-
-
-        # fig = plt.figure(figsize=(30, 5))
-        # html_file_name  = "./wandb_3_new_spectrogram_march_2_recon_.png"
-        # feats_plot = feats[0].detach().cpu().numpy()
-        # recons_feats_plot = recons_feats[0].detach().cpu().numpy()
-
-        # # axs[0].set_title('Original feats linear', fontsize = 4)
-        # plot_spectrogram(plt, fig, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-
-        # # axs[1].set_title('Reconstructed feats linear',fontsize = 4)
-        # plot_spectrogram(plt, fig, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-
-        # fig.subplots_adjust(wspace=0, hspace=0)
-
-        # fig.savefig( '{}'.format(html_file_name) )
-        # plt.clf()
-        # wandb.log({f"spectrogram plot": wandb.Image(fig)})
-        # axs[0].clear()
-        # axs[1].clear()
 
 
 
@@ -672,8 +632,8 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["reconstruction_kld_loss"] = kld_loss
         stats["KLD_loss"] = kld_loss.detach()
 
-        retval["beta_loss"]= reconstruction_loss + kld_loss 
-        stats["sum_kl_recon_loss"] = kld_loss.detach() + reconstruction_loss.detach()
+        retval["beta_loss"]= sum_recon_kl_loss
+        stats["sum_kl_recon_loss"] = sum_recon_kl_loss.detach()
 
 
         # Intermediate CTC (optional)
@@ -788,6 +748,8 @@ class ESPnetASRModel(AbsESPnetModel):
         # log_var = args[3]
         # kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
 
+        # recons_loss =  self.recon_loss_fct(recon_decoder_output, ground_truths)
+        # kld_loss =  torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
         recons_loss = F.mse_loss(recon_decoder_output, ground_truths)
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
         # loss = recons_loss + kld_weight * kld_loss

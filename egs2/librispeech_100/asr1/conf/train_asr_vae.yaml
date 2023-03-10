@@ -56,9 +56,9 @@ frontend_conf:
     hop_length: 160
 
 seed: 2022
-log_interval: 100   
-num_att_plot: 0     
-num_workers: 8      
+log_interval: 100
+num_att_plot: 0
+num_workers: 8
 sort_in_batch: descending       # how to sort data in making batch
 sort_batch: descending          # how to sort created batches
 batch_type: numel
@@ -73,17 +73,17 @@ best_model_criterion:
     - max
 keep_nbest_models: 3
 
-use_amp: true      
-cudnn_deterministic: true  
-cudnn_benchmark: false      
-unused_parameters: true 
+use_amp: true
+cudnn_deterministic: true
+cudnn_benchmark: false
+unused_parameters: true
 optim: adam
 optim_conf:
-    lr: 0.002
+    lr: 0.2
     weight_decay: 0.000001
 scheduler: warmuplr
 scheduler_conf:
-    warmup_steps: 10
+    warmup_steps: 1
 
 specaug: specaug
 specaug_conf:

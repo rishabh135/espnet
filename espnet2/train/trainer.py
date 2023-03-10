@@ -41,7 +41,7 @@ from espnet2.utils.build_dataclass import build_dataclass
 
 if torch.distributed.is_available():
     from torch.distributed import ReduceOp
-
+from torchinfo import summary
 if V(torch.__version__) >= V("1.6.0"):
     from torch.cuda.amp import GradScaler, autocast
 else:
@@ -633,6 +633,14 @@ class Trainer:
         distributed = distributed_option.distributed
 
 
+
+
+        # for name, param in model.named_parameters():
+        #     if (param.requires_grad):
+        #         logging.warning(" name {}  ".format(name))
+        # summary(model, input_size=(batch_size, 1, 28, 28))
+
+
         # "ASRTask"
         adv_mode = options.adversarial_list[current_epoch-1]
         adv_flag = options.adv_flag
@@ -883,6 +891,7 @@ class Trainer:
 
 
                         if((iiter % 1) == 0):
+                            logging.warning(" MODE: {}  iiter {} current_epoch {} beta_loss {}  asr_loss {} recons_loss {} kld_loss {}  ".format( adv_mode, iiter, current_epoch, beta_loss.detach(),  stats["loss"].detach(),  stats["recons_loss"], stats["recons_kld_loss"] ))
                             # logging.warning (" plotting working ")
                             feats_plot = retval["feats_plot"]
                             recons_feats_plot = retval["recons_feats_plot"]
