@@ -490,30 +490,12 @@ class ESPnetASRModel(AbsESPnetModel):
         if(spembs is not None):
             spembs = self.fc_spemb(spembs)
 
-        # logging.warning(" speech {} specch_lengths {} text {} text_lengths{} ".format(speech.shape, speech_lengths.shape, text.shape, text_lengths.shape))
 
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
         # logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
 
-
-
-
-        # html_file_name  = "./wandb_spectrogram.html"
-        # line = hv.VLine(0).opts(color='red')
-        # mel_db = feats[0,:,:]
-        # melspec_gram_hv = hv.Image(mel_db, bounds=(0, 0, feats.shape[1], mel_db.max()), kdims=["Time (s)", "Mel Freq"]).opts(width=width, height=height, labelled=[], axiswise=True, color_levels=512, cmap=cmap) * line
-
-        # logging.warning('doing GRID important for plotting spectrogram')
-        # combined = pn.GridBox(melspec_gram_hv, ncols=1, nrows=1).save(html_file_name)
-
-
-        # logging.warning(" >>>>>  spembs.shape {}  encoder_out {}  encoder_out_lens {}  feats {} feats_lengths {} feats_lengths[0] {}  ".format(spembs.shape, encoder_out.shape, encoder_out_lens.shape, feats.shape, feats_lengths.shape, feats_lengths[0].int()))
-        # ys = feats
-        # olens = feats_lengths
-        # logging.warning(" >>>>>>>   encoder_out.shape {}  encoder_out_lens shape {}".format(encoder_out.shape , encoder_out_lens.shape ))
-
-
+        # 1.2 latent dist split
         mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         # Split the result into mu and var components
         # of the latent Gaussian distribution
@@ -521,8 +503,6 @@ class ESPnetASRModel(AbsESPnetModel):
         log_var = self.fc_var(mu_log_var_combined)
         z = self.reparameterize(mu, log_var)
         bayesian_latent = self.decoder_input_projection(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)
-
-
         # logging.warning(" >>> decoder_input {}  mu {}  log_var {}  z {} ".format( decoder_input.shape, mu.shape, log_var.shape, z.shape  ))
 
 
@@ -538,22 +518,27 @@ class ESPnetASRModel(AbsESPnetModel):
 
         hs = bayesian_latent
         h_masks = encoder_out_lens
-        # ys_in [22, 128]
         # logging.warning(" feats shape {} and feats val {} ".format(feats.shape, feats[0]))
+
+
+
+
+        # ys_in [22, 128]- > [22, 1422, 128]
         if(spembs is not None):
             ys_in = spembs.unsqueeze(1).expand(-1, feats.shape[1],-1)
             ones_spemb = torch.ones_like(ys_in)
         else:
             ys_in = torch.ones(feats.shape[0], feats.shape[1], 128).to(device='cuda')
-        #[22, 1422, 128]
         y_masks = feats_lengths
+
         # logging.warning(" >>>  hs.shape {}   h_masks.shape {}  ys_in {}  y_masks.shape {}  ".format(  hs.shape,  h_masks.shape, ys_in.shape, y_masks.shape ))
 
 
+
+
+
         recons_feats, _ = self.reconstruction_decoder( hs, h_masks, ys_in, y_masks)
-
         reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
-
         sum_recon_kl_loss =  reconstruction_loss + kld_loss
 
 
@@ -746,8 +731,6 @@ class ESPnetASRModel(AbsESPnetModel):
         # log_var = args[3]
         # kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
 
-        # recons_loss =  self.recon_loss_fct(recon_decoder_output, ground_truths)
-        # kld_loss =  torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
         recons_loss = F.mse_loss(recon_decoder_output, ground_truths)
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
         # loss = recons_loss + kld_weight * kld_loss

@@ -544,7 +544,7 @@ class AbsTask(ABC):
 			help="Enable resuming if checkpoint is existing",
 		)
 
-		group.add_argument('--save_every_epoch', default=5, type=int, help='Number of epochs which will be saved ')
+		group.add_argument('--save_every_epoch', default=20, type=int, help='Number of epochs which will be saved ')
 
 		group.add_argument('--resume_from_checkpoint', default=180, type=int, help='Number of epochs which will be saved ')
 
@@ -857,8 +857,8 @@ class AbsTask(ABC):
 
 
 		group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
-		group.add_argument('--adv_lr', default=0.2, type=float,help='Learning rate for adv branch')
-		group.add_argument('--asr_lr', default=0.2, type=float,help='Learning rate for ASR encoder and decoder')
+		group.add_argument('--adv_lr', default=0.002, type=float,help='Learning rate for adv branch')
+		group.add_argument('--asr_lr', default=0.002, type=float,help='Learning rate for ASR encoder and decoder')
 		group.add_argument('--recon_mode', default=False, help='To use the vae mode for the reconstruction decoder')
 		group.add_argument('--adv_dropout_mid', default=0.2, type=float,help='adversarial Dropout rate mid')
 		group.add_argument('--adv_dropout_inp', default=0.2, type=float,help='adversarial Dropout rate inp')

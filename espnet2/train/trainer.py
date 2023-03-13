@@ -879,8 +879,9 @@ class Trainer:
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
-
                         # loss_adversarial.requires_grad = True
+                        decay = ((current_epoch+1)/options.max_epoch)
+                        beta_loss = reconstruction_loss + (decay * kld_loss)
                         total_loss =  (1-options.beta_factor) * loss + options.beta_factor * beta_loss + options.adv_loss_weight * loss_adversarial
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
@@ -889,10 +890,10 @@ class Trainer:
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'recon'):
-
                         beta_loss = reconstruction_loss + kld_loss
-                        # regularized beta_loss
-                        # beta_loss = (reconstruction_loss + ((current_epoch+1)/options.max_epoch) * kld_loss)
+                        # regularized beta_loss=kl_loss*decay + recon_loss
+                        decay = ((current_epoch+1)/options.max_epoch)
+                        # beta_loss = reconstruction_loss + (decay * kld_loss)
                         beta_loss /= accum_grad
                         wandb.log({ "beta_loss" : beta_loss.detach() } )
                         scaler.scale(beta_loss).backward()

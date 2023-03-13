@@ -65,15 +65,16 @@ adv_liststr="recon 600"
 
 resume_checkpoint=-1
 max_epoch=600
-batch_bins=18000000
+batch_bins=24000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 beta_factor=0.8
+save_every_epoch=20
 
+project_name="vae_overfit_single_speaker_sum_beta_loss_mar_13"
 
-project_name="vae_overfit_single_speaker_regular_var_loss_lr_0.002"
 experiment_name="beta_factor"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
@@ -1385,6 +1386,7 @@ if ! "${skip_train}"; then
                 --project_name "${project_name}" \
                 --resume_from_checkpoint "${resume_checkpoint}" \
                 --adv_loss_weight "${adv_weight}" \
+                --save_every_epoch "${save_every_epoch}" \
                 --beta_factor "${beta_factor}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
