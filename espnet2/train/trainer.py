@@ -204,7 +204,7 @@ class TrainerOptions:
     save_every_epoch: int
     resume_from_checkpoint: int
     adv_loss_weight: float
-    beta_factor: float
+    vae_weight_factor: float
 
 class Trainer:
     """Trainer having a optimizer.
@@ -228,6 +228,8 @@ class Trainer:
     ...         optimizers[1].step()
 
     """
+
+    beta_kl_factor = 0.1
 
     def __init__(self):
         raise RuntimeError("This class can't be instantiated.")
@@ -410,6 +412,13 @@ class Trainer:
             set_all_random_seed(trainer_options.seed + iepoch)
 
             reporter.set_epoch(iepoch)
+
+            # logging.warning(" current epochj {}" .format(iepoch))
+            # if ((iepoch % trainer_options.vae_annealing_cycle) == 0):
+            #     cls.beta_kl_factor = 0.1
+            #     logging.warning('KL annealing restarted')
+
+
             # 1. Train and validation for one-epoch
             with reporter.observe("train") as sub_reporter:
                 all_steps_are_invalid = cls.train_one_epoch(
@@ -719,29 +728,29 @@ class Trainer:
         current_llr = optimizers[0].param_groups[-1]['lr']
         logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(current_flr), float(current_llr), param_group_length))
 
-        tmp = float((current_epoch-1)% options.vae_annealing_cycle)/options.vae_annealing_cycle
-        new_lr = args.lr *0.5*(1+np.cos(tmp*np.pi))
+        tmp = float((current_epoch)% options.vae_annealing_cycle)/options.vae_annealing_cycle
+        new_lr = current_flr *0.5*(1+np.cos(tmp * np.pi))
         for param_group in optimizers[0].param_groups:
             param_group['lr'] = new_lr
 
-        if ((curent_epoch-1) % options.vae_annealing_cycle) == 0:
-            args. = 0.1
-            logger.warning('KL annealing restarted')
 
-        wandb.log( {"" : new_lr })
 
+        wandb.log( {"new_lr_for_kl_annealing" : new_lr })
 
 
         fig = plt.figure(figsize=(5,4), dpi=200 )
         # plt.rcParams["figure.figsize"] = [6, 6]
         # plt.rcParams["figure.autolayout"] = True
 
+        if ((current_epoch-1) % options.vae_annealing_cycle) == 0:
+            cls.beta_kl_factor = 0.1
+            logging.warning(' current epoch {}/{} KL annealing restarted {}'.format(current_epoch, options.vae_annealing_cycle, cls.beta_kl_factor))
 
-        for iiter, (utt_id, batch) in enumerate(
-            reporter.measure_iter_time(iterator, "iter_time"), 1
-        ):
+
+        for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
             assert isinstance(batch, dict), type(batch)
-
+            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 5 * len(utt_id)))
+            logging.warning(" cls.beta_kl_factor {} new_lr {} ".format(cls.beta_kl_factor, new_lr))
             # logging.warning(" prinitng iiter {} ")
             # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
             # logging.warning("**************   Batch ************")
@@ -818,7 +827,7 @@ class Trainer:
                         loss_adversarial = retval.get( "loss_adversarial", 0 )
                         reconstruction_loss = retval.get("reconstruction_loss", 0)
                         kld_loss = retval.get("reconstruction_kld_loss", 0)
-                        # beta_loss = retval.get("beta_loss",0)
+                        # vae_loss = retval.get("vae_loss",0)
                         # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
                         if optim_idx is not None and not isinstance(optim_idx, int):
                             if not isinstance(optim_idx, torch.Tensor):
@@ -881,7 +890,7 @@ class Trainer:
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
-                        total_loss = (1 - options.beta_factor) * loss + options.beta_factor  *  beta_loss
+                        total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  *  vae_loss
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
                         # loss_adversarial = retval["loss_adversarial"]
@@ -894,8 +903,8 @@ class Trainer:
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
                         # loss_adversarial.requires_grad = True
                         decay = ((current_epoch+1)/options.max_epoch)
-                        beta_loss = reconstruction_loss + (decay * kld_loss)
-                        total_loss =  (1-options.beta_factor) * loss + options.beta_factor * beta_loss + options.adv_loss_weight * loss_adversarial
+                        vae_loss = reconstruction_loss + (decay * kld_loss)
+                        total_loss =  (1-options.vae_weight_factor) * loss + options.vae_weight_factor * vae_loss + options.adv_loss_weight * loss_adversarial
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'reinit_adv'):
@@ -903,16 +912,16 @@ class Trainer:
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'recon'):
-                        beta_loss = reconstruction_loss + kld_loss
-                        # regularized beta_loss=kl_loss*decay + recon_loss
-                        decay = ((current_epoch+1)/options.max_epoch)
-                        # beta_loss = reconstruction_loss + (decay * kld_loss)
-                        beta_loss /= accum_grad
-                        wandb.log({ "beta_loss" : beta_loss.detach() } )
-                        scaler.scale(beta_loss).backward()
+                        # vae_loss = reconstruction_loss + kld_loss
+                        # regularized vae_loss=kl_loss*decay + recon_loss
+                        decay = cls.beta_kl_factor
+                        vae_loss = reconstruction_loss + (decay * kld_loss)
+                        vae_loss /= accum_grad
+                        wandb.log({ "vae_loss" : vae_loss.detach() } )
+                        scaler.scale(vae_loss).backward()
 
                     else:
-                        total_loss = (1 - options.beta_factor) * loss + options.beta_factor  * beta_loss
+                        total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  * vae_loss
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
                         # scaler.scale(loss_adversarial).backward()
@@ -923,10 +932,10 @@ class Trainer:
                         # for corresponding forward ops.
                 else:
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'recon'):
-                        beta_loss = (reconstruction_loss + ((current_epoch+1)/options.max_epoch) * kld_loss)
-                        beta_loss /= accum_grad
-                        # logging.warning("beta_loss {} ".format(beta_loss))
-                        beta_loss.backward()
+                        vae_loss = (reconstruction_loss + ((current_epoch+1)/options.max_epoch) * kld_loss)
+                        vae_loss /= accum_grad
+                        # logging.warning("vae_loss {} ".format(vae_loss))
+                        vae_loss.backward()
                     loss /= accum_grad
                     loss.backward()
 
@@ -987,7 +996,7 @@ class Trainer:
 
                 if( (iiter % 100) == 0):
                     logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {} grad_norm {} ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach(), grad_norm ))
-                    # logging.warning( " beta_loss {}  ctc_att_loss {} ").format(stats["beta_loss"], stats["ctc_att_loss"])
+                    # logging.warning( " vae_loss {}  ctc_att_loss {} ").format(stats["vae_loss"], stats["ctc_att_loss"])
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
                         logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
                     if(iiter == 200):

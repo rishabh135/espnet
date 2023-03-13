@@ -423,9 +423,9 @@ class ESPnetASRModel(AbsESPnetModel):
           # for data-parallel
         text = text[:, : text_lengths.max()]
         if(spembs is not None):
-            logging.warning("before_projection spembs {} ".format(spembs.shape))
+            # logging.warning("before_projection spembs {} ".format(spembs.shape))
             spembs = self.fc_spemb(spembs)
-            logging.warning("after_projection spembs {} ".format(spembs.shape))
+            # logging.warning("after_projection spembs {} ".format(spembs.shape))
 
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
@@ -439,7 +439,7 @@ class ESPnetASRModel(AbsESPnetModel):
         log_var = self.fc_var(mu_log_var_combined)
         z = self.reparameterize(mu, log_var)
         bayesian_latent = self.decoder_input_projection(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)
-        logging.warning(" >>> bayesian_latent.shape {}  mu {}  log_var {}  z {} ".format( bayesian_latent.shape, mu.shape, log_var.shape, z.shape  ))
+        # logging.warning(" >>> bayesian_latent.shape {}  mu {}  log_var {}  z {} ".format( bayesian_latent.shape, mu.shape, log_var.shape, z.shape  ))
 
 
 
@@ -550,7 +550,7 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["reconstruction_kld_loss"] = kld_loss
         stats["KLD_loss"] = kld_loss.detach()
 
-        # retval["beta_loss"]= sum_recon_kl_loss
+        # retval["vae_loss"]= sum_recon_kl_loss
         # stats["sum_kl_recon_loss"] = sum_recon_kl_loss.detach()
 
 
