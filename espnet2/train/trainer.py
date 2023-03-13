@@ -188,6 +188,7 @@ class TrainerOptions:
     use_wandb: bool
     output_dir: Union[Path, str]
     max_epoch: int
+    vae_annealing_cycle: int
     seed: int
     sharded_ddp: bool
     patience: Optional[int]
@@ -635,6 +636,8 @@ class Trainer:
 
 
 
+
+
         # for name, param in model.named_parameters():
         #     if (param.requires_grad):
         #         logging.warning(" name {}  ".format(name))
@@ -716,6 +719,16 @@ class Trainer:
         current_llr = optimizers[0].param_groups[-1]['lr']
         logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(current_flr), float(current_llr), param_group_length))
 
+        tmp = float((current_epoch-1)% options.vae_annealing_cycle)/options.vae_annealing_cycle
+        new_lr = args.lr *0.5*(1+np.cos(tmp*np.pi))
+        for param_group in optimizers[0].param_groups:
+            param_group['lr'] = new_lr
+
+        if ((curent_epoch-1) % options.vae_annealing_cycle) == 0:
+            args. = 0.1
+            logger.warning('KL annealing restarted')
+
+        wandb.log( {"" : new_lr })
 
 
 

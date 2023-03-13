@@ -68,6 +68,7 @@ adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 beta_factor=0.8
+save_every_epoch=20
 
 # project_name="vae_without_vae_losses_feb_2_modified_160"
 # project_name="vae_lsoftmax_feb_16_beta_factor_0.6"
@@ -1209,6 +1210,7 @@ if ! "${skip_train}"; then
                 --max_epoch "${max_epoch}" \
                 --batch_bins "${batch_bins}" \
                 --adv_liststr "${adv_liststr}" \
+                --save_every_epoch "${save_every_epoch}" \
                 --bpemodel "${bpemodel}" \
                 --token_type "${token_type}" \
                 --token_list "${token_list}" \
