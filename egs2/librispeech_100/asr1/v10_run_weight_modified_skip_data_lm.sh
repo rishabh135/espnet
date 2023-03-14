@@ -5,14 +5,9 @@ set -e
 set -u
 set -o pipefail
 
-# train_set="train_clean_100"
-# valid_set="dev_clean"
-# test_sets="test_clean test_other dev_clean dev_other"
-
-
 train_set="train_clean_100"
-valid_set="train_clean_100"
-test_sets="train_clean_100"
+valid_set="dev_clean"
+test_sets="test_clean test_other dev_clean dev_other"
 
 asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
@@ -22,13 +17,34 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/partial_data_xvector_speed/original_data
-project_name="vae_overfit_single_speaker_cyclic_annealing_mar_13"
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
+
+
+# project_name="vae_march_8_recon_decoder_updated"
+
+
+project_name="asradv_vae_march_13_all_speakers_annealed"
+
+
+# project_name="vae_feb_21_recon_100"
+
+# project_name="vae_lsoftmax_feb_28_beta_factor_0.8_adv_weight_25"
 
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
+# asr_config=conf/train_asr.yaml
+# inference_config=conf/decode_asr.yaml
 
+# srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}
+# experiment_n=asr_lmt_trigram_wo_adv
+# experiment_n=pyt_adversarial_june_7 # name of the experiment, just change it to create differnet folders
+# experiment_n=pyt_adversarial_june_7 # name of the experiment, just change it to create differnet folders
+
+
+# data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${experiment_n}/data # determines all the files creating folder as in the data folder
+
+# data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
 
 
 asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae.yaml
@@ -38,17 +54,18 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
-./vae_asr_overfit_single_spk.sh \
+./v10_asr_weight_modified_skip_data_lm.sh \
     --skip_data_prep true \
     --skip_train false \
-    --skip_eval true \
+    --skip_eval false \
     --lang en \
     --ngpu 1 \
-    --nj 64 \
+    --nj 32 \
     --use_xvector true \
     --inference_nj 32 \
     --nbpe 5000 \
     --max_wav_duration 30 \
+    --speed_perturb_factors "0.9 1.0 1.1" \
     --audio_format "flac.ark" \
     --feats_type raw \
     --use_lm false \

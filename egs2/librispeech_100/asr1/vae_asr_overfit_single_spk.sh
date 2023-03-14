@@ -74,7 +74,8 @@ vae_weight_factor=0.8
 save_every_epoch=20
 vae_annealing_cycle=5
 
-project_name="vae_overfit_single_speaker_sum_mar_13"
+project_name="vae_overfit_single_speaker_cyclic_annealing_mar_13"
+
 
 experiment_name="annealing_cycle"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.

@@ -890,19 +890,18 @@ class Trainer:
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
+                        decay = cls.beta_kl_factor
+                        vae_loss = reconstruction_loss + (decay * kld_loss)
                         total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  *  vae_loss
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
-                        # loss_adversarial = retval["loss_adversarial"]
-                        # total_loss = loss
-                        # loss = total_loss
                     elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
                         loss_adversarial /= accum_grad
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
                         # loss_adversarial.requires_grad = True
-                        decay = ((current_epoch+1)/options.max_epoch)
+                        decay = cls.beta_kl_factor
                         vae_loss = reconstruction_loss + (decay * kld_loss)
                         total_loss =  (1-options.vae_weight_factor) * loss + options.vae_weight_factor * vae_loss + options.adv_loss_weight * loss_adversarial
                         total_loss /= accum_grad
@@ -921,7 +920,8 @@ class Trainer:
                         scaler.scale(vae_loss).backward()
 
                     else:
-                        total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  * vae_loss
+                        vae_loss = reconstruction_loss + (decay * kld_loss)
+                        total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  *  vae_loss
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
                         # scaler.scale(loss_adversarial).backward()
@@ -971,7 +971,7 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-                if((iiter % 2) == 0):
+                if((iiter % 200) == 0):
                     # logging.warning (" plotting working ")
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
@@ -994,7 +994,7 @@ class Trainer:
 
 
 
-                if( (iiter % 100) == 0):
+                if( (iiter % 200) == 0):
                     logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {} grad_norm {} ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach(), grad_norm ))
                     # logging.warning( " vae_loss {}  ctc_att_loss {} ").format(stats["vae_loss"], stats["ctc_att_loss"])
                     if(adv_flag == True and adv_name == "ESPnetASRModel"):
