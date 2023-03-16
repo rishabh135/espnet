@@ -26,7 +26,7 @@ stage=1              # Processes starts from the specified stage.
 stop_stage=10000     # Processes is stopped at the specified stage.
 skip_data_prep=false # Skip data preparation stages.
 skip_train=false     # Skip training stages.
-skip_eval=false      # Skip decoding and evaluation stages.
+skip_eval=true      # Skip decoding and evaluation stages.
 skip_upload=true     # Skip packing and uploading stages.
 skip_upload_hf=true  # Skip uploading to hugging face stages.
 ngpu=1               # The number of gpus ("0" uses cpu, otherwise use gpu).
@@ -75,12 +75,10 @@ vae_annealing_cycle=10
 
 
 
-
-
-project_name="asradv_vae_march_13_all_speakers_annealed"
-
-
+project_name="vae_march_14_asradv_all_speakers_annealed"
 experiment_name="vae_weight_cycle_annealed"
+
+
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 

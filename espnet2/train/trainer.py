@@ -728,14 +728,14 @@ class Trainer:
         current_llr = optimizers[0].param_groups[-1]['lr']
         logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(current_flr), float(current_llr), param_group_length))
 
-        tmp = float((current_epoch)% options.vae_annealing_cycle)/options.vae_annealing_cycle
-        new_lr = current_flr *0.5*(1+np.cos(tmp * np.pi))
-        for param_group in optimizers[0].param_groups:
-            param_group['lr'] = new_lr
+        # tmp = float((current_epoch)% options.vae_annealing_cycle)/options.vae_annealing_cycle
+        # new_lr = current_flr *0.5*(1+np.cos(tmp * np.pi))
+        # for param_group in optimizers[0].param_groups:
+        #     param_group['lr'] = new_lr
 
 
 
-        wandb.log( {"new_lr_for_kl_annealing" : new_lr })
+        # wandb.log( {"new_lr_for_kl_annealing" : new_lr })
 
 
         fig = plt.figure(figsize=(5,4), dpi=200 )
@@ -749,8 +749,8 @@ class Trainer:
 
         for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
             assert isinstance(batch, dict), type(batch)
-            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 5 * len(utt_id)))
-            logging.warning(" cls.beta_kl_factor {} new_lr {} ".format(cls.beta_kl_factor, new_lr))
+            # cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 5 * len(utt_id)))
+            # logging.warning(" cls.beta_kl_factor {} new_lr {} ".format(cls.beta_kl_factor, new_lr))
             # logging.warning(" prinitng iiter {} ")
             # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
             # logging.warning("**************   Batch ************")
