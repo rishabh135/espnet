@@ -358,9 +358,7 @@ class ASRTask(AbsTask):
 
         group.add_argument('--adv_flag', default=False, type=bool, help='flag for whether to perform speaker adversarial training or not')
         group.add_argument('--adv_liststr', default= "asr 20 adv 20 asradv 30", type=str, help='adv_liststr string')
-        
         group.add_argument('--vae_flag', default=False , type=bool, help='flag for whether to use speaker')
-        
 
 
         group = parser.add_argument_group(description="Preprocess related")
@@ -626,7 +624,6 @@ class ASRTask(AbsTask):
             odim=vocab_size, encoder_output_size=encoder_output_size, **args.ctc_conf
         )
 
-        
 
         ################################################################################################################
         ################################################################################################################
@@ -655,7 +652,7 @@ class ASRTask(AbsTask):
 
         # feats_val = 80
         reconstruction_decoder_class = decoder_choices.get_class("recon")
-        reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=128)
+        reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=args.latent_dim)
         
         # reconstruction_decoder = reconstruction_decoder_class(vocab_size, embed_pad=0)
 
@@ -671,16 +668,14 @@ class ASRTask(AbsTask):
         #         positional_dropout_rate=0.1,
         #         self_attention_dropout_rate=0.1,
         #         src_attention_dropout_rate=0.1)
-
-            
+ 
         # reconstruction_decoder = ReconDecoder(args.eprojs, feats_val)
 
         ################################################################################################################
         ################################################################################################################
 
 
-        
-        
+
         if(args.adv_flag):
             # cls.adv_flag = args.adv_flag
             adversarial_branch = SpeakerAdv(args.odim_adv, args.eprojs, args.adv_units, args.adv_layers, dropout_mid=args.adv_dropout_mid, dropout_inp= args.adv_dropout_inp, dropout_out=args.adv_dropout_out)
@@ -695,12 +690,11 @@ class ASRTask(AbsTask):
             model_class = model_choices.get_class(args.model)
         except AttributeError:
             model_class = model_choices.get_class("espnet")
-        
-        
         # here is where the main model class is both defined so we will need to add items to it to access model items
         model = model_class(
             adv_flag=args.adv_flag,
             grlalpha=args.grlalpha,
+            latent_dim=args.latent_dim,
             # adversarial_list=args.adversarial_list,
             reconstruction_decoder=reconstruction_decoder,
             vocab_size=vocab_size,

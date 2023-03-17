@@ -127,6 +127,7 @@ class ESPnetASRModel(AbsESPnetModel):
         self,
         adv_flag,
         grlalpha,
+        latent_dim,
         # adversarial_list: list,
         reconstruction_decoder: Optional,
         vocab_size: int,
@@ -187,8 +188,10 @@ class ESPnetASRModel(AbsESPnetModel):
         self.recon_mode_flag = False
 
 
+        # encoder_out_size fixed unless you change the encoder params()
         self.final_encoder_dim = 128
-        self.latent_dim = 128
+        self.latent_dim = latent_dim
+        # self.spk_embed_dim is present determined on how we calculated the xvector, dont change it
         self.spk_embed_dim = 512
 
         self.fc_mu = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
@@ -432,14 +435,15 @@ class ESPnetASRModel(AbsESPnetModel):
         # logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
 
         # 1.2 latent dist split
-        mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.latent_dim), start_dim=1)
+        mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         # Split the result into mu and var components
         # of the latent Gaussian distribution
         mu = self.fc_mu(mu_log_var_combined)
         log_var = self.fc_var(mu_log_var_combined)
         z = self.reparameterize(mu, log_var)
+        # logging.warning(" feats {} combined {}  mu {}  log_var {}  z {} ".format( feats.shape, mu_log_var_combined.shape,  mu.shape, log_var.shape, z.shape  ))
         bayesian_latent = self.decoder_input_projection(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)
-        # logging.warning(" >>> bayesian_latent.shape {}  mu {}  log_var {}  z {} ".format( bayesian_latent.shape, mu.shape, log_var.shape, z.shape  ))
+        # logging.warning(" >>> bayesian_latent.shape {}  ".format( bayesian_latent.shape  ))
 
 
 

@@ -864,6 +864,8 @@ class AbsTask(ABC):
 
 
         group.add_argument('--recon_mode', default=False, help='To use the vae mode for the reconstruction decoder')
+        group.add_argument('--plot_iiter', default=200, type=int, help='plotting graph every plot_iiter')
+        group.add_argument('--latent_dim', default=256, type=int, help='dimension for recon_mode mu and logvar linear projections')
         group.add_argument('--adv_dropout_mid', default=0.2, type=float,help='adversarial Dropout rate mid')
         group.add_argument('--adv_dropout_inp', default=0.2, type=float,help='adversarial Dropout rate inp')
         group.add_argument('--adv_dropout_out', default=0.2, type=float,help='adversarial Dropout rate out')
@@ -1210,7 +1212,7 @@ class AbsTask(ABC):
             args.adversarial_list =[ "asr"] * args.max_epoch
 
 
-        logging.warning(" >>  Adversarial_list {} \n".format(args.adversarial_list))
+        # logging.warning(" >>  Adversarial_list {} \n".format(args.adversarial_list))
         # 0. Init distributed process
         distributed_option = build_dataclass(DistributedOption, args)
         # Setting distributed_option.dist_rank, etc.

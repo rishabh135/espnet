@@ -205,6 +205,7 @@ class TrainerOptions:
     resume_from_checkpoint: int
     adv_loss_weight: float
     vae_weight_factor: float
+    plot_iiter: int
 
 class Trainer:
     """Trainer having a optimizer.
@@ -915,7 +916,7 @@ class Trainer:
                         # regularized vae_loss=kl_loss*decay + recon_loss
                         decay = cls.beta_kl_factor
                         vae_loss = reconstruction_loss + (decay * kld_loss)
-                        vae_loss /= accum_grad
+                        # vae_loss /= accum_grad
                         wandb.log({ "vae_loss" : vae_loss.detach() } )
                         scaler.scale(vae_loss).backward()
 
@@ -971,12 +972,13 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-                if((iiter % 200) == 0):
-                    # logging.warning (" plotting working ")
+                if((iiter % options.plot_iiter) == 0):
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
                     # aug_feats_plot = retval["aug_feats_plot"]
 
+
+                    # logging.warning (" plotting working {}  {} \n".format(feats_plot.shape, recons_feats_plot.shape))
                     ax1 = plt.subplot(2, 1, 1)
                     plt.title('Original feats linear')
                     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
