@@ -9,7 +9,11 @@ from dataclasses import is_dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
-
+from sklearn.manifold import TSNE
+from sklearn.datasets import load_iris
+from numpy import reshape
+import seaborn as sns
+import pandas as pd
 
 from espnet.asr.asr_utils import plot_spectrogram
 import os, sys
@@ -76,6 +80,59 @@ import wandb
 import matplotlib.pyplot as plt
 
 
+
+
+
+# from sklearn.manifold import TSNE
+# from mpl_toolkits.mplot3d import Axes3D
+# # %matplotlib qt
+# # from IPython import display
+# import matplotlib.cm as cmx
+# import matplotlib.colors as colors
+
+def get_cmap(N):
+    '''Returns a function that maps each index in 0, 1, ... N-1 to a distinct 
+    RGB color.'''
+    color_norm  = colors.Normalize(vmin=0, vmax=N-1)
+    scalar_map = cmx.ScalarMappable(norm=color_norm, cmap='hsv') 
+    def map_index_to_rgb_color(index):
+        return scalar_map.to_rgba(index)
+    return map_index_to_rgb_color
+
+def plot_latent_space(x_batch, y_batch, iteration=None, dim=2):
+    
+    model = TSNE(n_components=dim, random_state=0, perplexity=50, learning_rate=500, n_iter=200)
+    z_mu = model.fit_transform(mu.eval(feed_dict={X: x_batch}))
+    n_classes = len(list(set(np.argmax(y_batch, 1))))
+    cmap = get_cmap(n_classes)
+    fig = plt.figure(2, figsize=(8,8))
+    
+    if dim is 3:
+        for i in list(set(np.argmax(y_batch, 1))):
+            bx = fig.add_subplot(111, projection='3d')
+
+            index = np.where(np.argmax(y_batch, 1) == i)
+            xs = z_mu[index, 0]
+            ys = z_mu[index, 1:]
+            zs = z_mu[index, 2]
+            bx.scatter(xs, ys, zs,c=cmap(i), label=str(i))
+    else:
+        for i in list(set(np.argmax(y_batch, 1))):
+            bx = fig.add_subplot(111)
+            index = np.where(np.argmax(y_batch, 1) == i)
+            xs = z_mu[index, 0]
+            ys = z_mu[index, 1]
+            bx.scatter(xs, ys, c=cmap(i), label=str(i))
+
+    bx.set_xlabel('X Label')
+    bx.set_ylabel('Y Label')
+    bx.legend()
+    bx.set_title('Truth')
+    if iteration is None:
+        plt.savefig('latent_space.png')
+    else:
+        plt.savefig('latent_space' + str(iteration) + '.png')
+    plt.show()
 
 
 
@@ -738,7 +795,11 @@ class Trainer:
 
 
 
-        fig = plt.figure(figsize=(5,4), dpi=200 )
+        fig = plt.figure(figsize=(10,8), dpi=200 )
+        from sklearn.decomposition import PCA
+
+        pca = PCA(n_components=10)
+        # tsne = TSNE(n_components=2, verbose=1, random_state=123)
         # plt.rcParams["figure.figsize"] = [6, 6]
         # plt.rcParams["figure.autolayout"] = True
 
@@ -749,7 +810,7 @@ class Trainer:
 
         for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
             assert isinstance(batch, dict), type(batch)
-            # cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 5 * len(utt_id)))
+            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 5 * len(utt_id)))
             # logging.warning(" cls.beta_kl_factor {} new_lr {} ".format(cls.beta_kl_factor, new_lr))
             # logging.warning(" prinitng iiter {} ")
             # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
@@ -758,7 +819,9 @@ class Trainer:
             #     logging.warning(" {}  >> {} \n".format(keys, values))
             # logging.warning("**************************\n\n")
 
-            logging.warning(" len_utt_id {} utt_id {} \n".format( len(utt_id), utt_id))
+            # logging.warning(" len_utt_id {} utt_id {} \n".format( len(utt_id), utt_id))
+
+
 
             # ['sp1.1-5703-47212-0024', 'sp1.1-5561-41615-0030', 'sp1.1-3723-171115-0030', 'sp1.1-3214-167607-0035', 'sp1.1-2817-142380-0037', 'sp1.1-2514-149482-0056', 'sp1.1-1624-142933-0016', 'sp0.9-78-369-0052', 'sp0.9-7067-76048-0024', 'sp0.9-5049-25947-0006', 'sp0.9-4481-17499-0016', 'sp0.9-3879-174923-0004', 'sp0.9-211-122442-0003', '441-128982-0006', '3857-182315-0042', '2764-36619-0037', 'sp1.1-1455-138263-0030', 'sp1.1-909-131045-0016', 'sp1.1-8975-270782-0084', 'sp1.1-8238-274553-0024', 'sp1.1-8051-118101-0022', 'sp1.1-7113-86041-0050', 'sp1.1-6081-42010-0021', 'sp1.1-5688-15787-0001', 'sp1.1-4267-287369-0019', 'sp1.1-403-128339-0046', 'sp1.1-332-128985-0040', 'sp1.1-332-128985-0038', 'sp1.1-3240-131232-0004', 'sp1.1-226-131533-0005', 'sp1.1-211-122442-0002', 'sp0.9-4853-27670-0017', 'sp0.9-481-123719-0021', 'sp0.9-445-123857-0021', 'sp0.9-4340-15220-0086', '911-130578-0007', '6836-61803-0037', '6385-34669-0018', '4267-287369-0008']
             # **************************
@@ -979,21 +1042,37 @@ class Trainer:
                 if((iiter % options.plot_iiter) == 0):
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
+                    mu_logvar_combined = retval["mu_logvar_combined"]
+
+
+                    logging.warning("recons {}  mu_logvar {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
+                    # logging.warning(">>>>>>>>>> recons_feats {} ".format(recons_feats_plot ))
+                    # logging.warning(" >>>>>>> mu_logavar {} ".format(mu_logvar_combined))
+                    # tsne_out = tsne.fit_transform(mu_logvar_combined)
+                    pca_out = pca.fit_transform(mu_logvar_combined)
+
+                    # wandb.log({f"scatte plot": wandb.Image(sns)})
                     # aug_feats_plot = retval["aug_feats_plot"]
 
-
+                    html_file_name = "./with_tsne_latent_20_march.png"
                     # logging.warning (" plotting working {}  {} \n".format(feats_plot.shape, recons_feats_plot.shape))
-                    ax1 = plt.subplot(2, 1, 1)
+                    ax1 = plt.subplot(3, 1, 1)
                     plt.title('Original feats linear')
                     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-                    ax2 = plt.subplot(2, 1, 2)
+                    
+                    ax2 = plt.subplot(3, 1, 2)
                     # plt.title('Reconstructed feats linear')
                     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-                    # ax3 = plt.subplot(3, 1, 3)
+                    
+                    
+                    ax3 = plt.subplot(3, 1, 3)
+                    sns.scatterplot(ax=ax3, palette=sns.color_palette("hls", 3), data=pca_out).set(title="Latent mu_logvar T-SNE projection")
+                    
+                    
                     # plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
                     fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
                     plt.tight_layout()
-                    # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+                    plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
                     wandb.log({f"spectrogram plot": wandb.Image(plt)})
                     plt.clf()
 

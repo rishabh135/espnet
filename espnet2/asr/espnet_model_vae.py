@@ -436,6 +436,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # 1.2 latent dist split
         mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
+        
         # Split the result into mu and var components
         # of the latent Gaussian distribution
         mu = self.fc_mu(mu_log_var_combined)
@@ -644,6 +645,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
         retval["feats_plot"] = feats[0].detach().cpu().numpy()
         retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
+        retval["mu_logvar_combined"] = mu_log_var_combined.detach().cpu().numpy()
+        
         # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
 

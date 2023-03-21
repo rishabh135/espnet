@@ -72,14 +72,14 @@ adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
 save_every_epoch=50
-vae_annealing_cycle=10
+vae_annealing_cycle=50
 plot_iiter=1
 latent_dim=512
 accum_grad=1
 
 
-project_name="vae_10_utt_overfit_mar_18_warmup"
-experiment_name="single_speaker_cyclic_annealing_latent_dim_512_600_epoch"
+project_name="vae_overfit_tsne"
+experiment_name="single_speaker_cyclic_annealing_latent_dim_512_epoch_600"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 

@@ -83,7 +83,7 @@ optim_conf:
     weight_decay: 0.000001
 scheduler: warmuplr
 scheduler_conf:
-    warmup_steps: 150
+    warmup_steps: 1500
 
 specaug: specaug
 specaug_conf:
