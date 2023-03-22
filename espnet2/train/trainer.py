@@ -91,22 +91,22 @@ import matplotlib.pyplot as plt
 # import matplotlib.colors as colors
 
 def get_cmap(N):
-    '''Returns a function that maps each index in 0, 1, ... N-1 to a distinct 
+    '''Returns a function that maps each index in 0, 1, ... N-1 to a distinct
     RGB color.'''
     color_norm  = colors.Normalize(vmin=0, vmax=N-1)
-    scalar_map = cmx.ScalarMappable(norm=color_norm, cmap='hsv') 
+    scalar_map = cmx.ScalarMappable(norm=color_norm, cmap='hsv')
     def map_index_to_rgb_color(index):
         return scalar_map.to_rgba(index)
     return map_index_to_rgb_color
 
 def plot_latent_space(x_batch, y_batch, iteration=None, dim=2):
-    
+
     model = TSNE(n_components=dim, random_state=0, perplexity=50, learning_rate=500, n_iter=200)
     z_mu = model.fit_transform(mu.eval(feed_dict={X: x_batch}))
     n_classes = len(list(set(np.argmax(y_batch, 1))))
     cmap = get_cmap(n_classes)
     fig = plt.figure(2, figsize=(8,8))
-    
+
     if dim is 3:
         for i in list(set(np.argmax(y_batch, 1))):
             bx = fig.add_subplot(111, projection='3d')
@@ -360,7 +360,7 @@ class Trainer:
 
         output_dir = Path(trainer_options.output_dir)
         reporter = Reporter()
-                
+
         # plt.rcParams["figure.figsize"] = [7.50, 3.50]
         # plt.rcParams["figure.autolayout"] = True
 
@@ -717,7 +717,7 @@ class Trainer:
         # 'espnet2.asr.espnet_model.ESPnetASRModel'
         if(options.ngpu > 1):
             adv_name = str(type(model.module).__name__)
-            # logging.warning(" ------->>>>>>>>>>> ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )    
+            # logging.warning(" ------->>>>>>>>>>> ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )
         else:
             adv_name = str(type(model).__name__)
 
@@ -798,10 +798,15 @@ class Trainer:
         fig = plt.figure(figsize=(10,8), dpi=200 )
         from sklearn.decomposition import PCA
 
-        pca = PCA(n_components=10)
-        # tsne = TSNE(n_components=2, verbose=1, random_state=123)
+        # pca = PCA(n_components=10)
+        tsne = TSNE(n_components=2, perplexity=25, n_iter=5000, verbose=1, random_state=123)
         # plt.rcParams["figure.figsize"] = [6, 6]
         # plt.rcParams["figure.autolayout"] = True
+
+        from sklearn.cluster import KMeans
+        kmeans = KMeans(n_clusters=10)
+
+
 
         if ((current_epoch-1) % options.vae_annealing_cycle) == 0:
             cls.beta_kl_factor = 0.1
@@ -1045,11 +1050,11 @@ class Trainer:
                     mu_logvar_combined = retval["mu_logvar_combined"]
 
 
-                    logging.warning("recons {}  mu_logvar {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
+                    logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
                     # logging.warning(">>>>>>>>>> recons_feats {} ".format(recons_feats_plot ))
-                    # logging.warning(" >>>>>>> mu_logavar {} ".format(mu_logvar_combined))
+                    # logging.warning(" >>>>>>> mu_logvar_combined {} ".format(mu_logvar_combined))
                     # tsne_out = tsne.fit_transform(mu_logvar_combined)
-                    pca_out = pca.fit_transform(mu_logvar_combined)
+                    # pca_out = pca.fit_transform(mu_logvar_combined)
 
                     # wandb.log({f"scatte plot": wandb.Image(sns)})
                     # aug_feats_plot = retval["aug_feats_plot"]
@@ -1059,16 +1064,22 @@ class Trainer:
                     ax1 = plt.subplot(3, 1, 1)
                     plt.title('Original feats linear')
                     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-                    
+
                     ax2 = plt.subplot(3, 1, 2)
                     # plt.title('Reconstructed feats linear')
                     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-                    
-                    
+
+
                     ax3 = plt.subplot(3, 1, 3)
-                    sns.scatterplot(ax=ax3, palette=sns.color_palette("hls", 3), data=pca_out).set(title="Latent mu_logvar T-SNE projection")
-                    
-                    
+                    kmeans_out = kmeans.fit(mu_logvar_combined)
+                    # cmap='tab10'
+                    ax3.scatter(mu_logvar_combined[:, 0], mu_logvar_combined[:, 1], c=kmeans_out, s=50, cmap='tab10')
+                    centers = kmeans.cluster_centers_
+                    ax3.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
+
+                    # sns.scatterplot(ax=ax3, palette=sns.color_palette("hls", 10), data=tsne_out).set(title="Latent mu_logvar_combined T-SNE projection")
+                    # ax3.scatter(z[:, 0], z[:, 1], c=y, cmap='tab10')
+
                     # plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
                     fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
                     plt.tight_layout()

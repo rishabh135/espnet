@@ -435,14 +435,14 @@ class ESPnetASRModel(AbsESPnetModel):
         # logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
 
         # 1.2 latent dist split
-        mu_log_var_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
+        mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         
         # Split the result into mu and var components
         # of the latent Gaussian distribution
-        mu = self.fc_mu(mu_log_var_combined)
-        log_var = self.fc_var(mu_log_var_combined)
+        mu = self.fc_mu(mu_logvar_combined)
+        log_var = self.fc_var(mu_logvar_combined)
         z = self.reparameterize(mu, log_var)
-        # logging.warning(" feats {} combined {}  mu {}  log_var {}  z {} ".format( feats.shape, mu_log_var_combined.shape,  mu.shape, log_var.shape, z.shape  ))
+        # logging.warning(" feats {} combined {}  mu {}  log_var {}  z {} ".format( feats.shape, mu_logvar_combined.shape,  mu.shape, log_var.shape, z.shape  ))
         bayesian_latent = self.decoder_input_projection(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)
         # logging.warning(" >>> bayesian_latent.shape {}  ".format( bayesian_latent.shape  ))
 
@@ -645,7 +645,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
         retval["feats_plot"] = feats[0].detach().cpu().numpy()
         retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
-        retval["mu_logvar_combined"] = mu_log_var_combined.detach().cpu().numpy()
+        retval["mu_logvar_combined"] = mu_logvar_combined.detach().cpu().numpy()
         
         # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
