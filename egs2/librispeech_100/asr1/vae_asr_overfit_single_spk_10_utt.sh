@@ -78,7 +78,7 @@ latent_dim=512
 accum_grad=1
 
 
-project_name="vae_overfit_tsne"
+project_name="vae_overfit_tsne_new"
 experiment_name="single_speaker_cyclic_annealing_latent_dim_512_epoch_600"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 

@@ -23,8 +23,8 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 # project_name="vae_march_8_recon_decoder_updated"
 
 
-project_name="vae_march_14_asradv_all_speakers_annealed"
 
+project_name="v10_march_22_asradv_all_speakers_annealed"
 
 # project_name="vae_feb_21_recon_100"
 

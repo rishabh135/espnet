@@ -14,6 +14,8 @@ from sklearn.datasets import load_iris
 from numpy import reshape
 import seaborn as sns
 import pandas as pd
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 
 from espnet.asr.asr_utils import plot_spectrogram
 import os, sys
@@ -796,14 +798,9 @@ class Trainer:
 
 
         fig = plt.figure(figsize=(10,8), dpi=200 )
-        from sklearn.decomposition import PCA
 
         # pca = PCA(n_components=10)
-        tsne = TSNE(n_components=2, perplexity=25, n_iter=5000, verbose=1, random_state=123)
-        # plt.rcParams["figure.figsize"] = [6, 6]
-        # plt.rcParams["figure.autolayout"] = True
-
-        from sklearn.cluster import KMeans
+        # tsne = TSNE(n_components=2, perplexity=25, n_iter=5000, verbose=1, random_state=123)
         kmeans = KMeans(n_clusters=10)
 
 
@@ -1048,7 +1045,7 @@ class Trainer:
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
                     mu_logvar_combined = retval["mu_logvar_combined"]
-
+                    html_file_name = "./with_tsne_3d_latent_23_march.png"
 
                     logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
                     # logging.warning(">>>>>>>>>> recons_feats {} ".format(recons_feats_plot ))
@@ -1059,8 +1056,8 @@ class Trainer:
                     # wandb.log({f"scatte plot": wandb.Image(sns)})
                     # aug_feats_plot = retval["aug_feats_plot"]
 
-                    html_file_name = "./with_tsne_latent_20_march.png"
                     # logging.warning (" plotting working {}  {} \n".format(feats_plot.shape, recons_feats_plot.shape))
+
                     ax1 = plt.subplot(3, 1, 1)
                     plt.title('Original feats linear')
                     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
@@ -1070,17 +1067,43 @@ class Trainer:
                     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
 
 
+
+
+                    # ax3 = plt.subplot(3, 1, 3, projection='3d')
+                    # r = 1
+                    # pi = np.pi
+                    # cos = np.cos
+                    # sin = np.sin
+                    # phi, theta = np.mgrid[0.0:pi:100j, 0.0:2.0*pi:100j]
+                    # x = r*sin(phi)*cos(theta)
+                    # y = r*sin(phi)*sin(theta)
+                    # z = r*cos(phi)
+                    # ax3.plot_surface(x, y, z,  rstride=1, cstride=1, color='w', alpha=0.3, linewidth=0)
+                    # kmeans.fit(mu_logvar_combined)
+                    # y_kmeans = kmeans.predict(mu_logvar_combined)
+                    # centers = kmeans.cluster_centers_
+                    # ax3out = ax3.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
+                    # ax3.set_aspect("equal")
+
+
+
+
+
+
+
                     ax3 = plt.subplot(3, 1, 3)
-                    kmeans_out = kmeans.fit(mu_logvar_combined)
-                    # cmap='tab10'
-                    ax3.scatter(mu_logvar_combined[:, 0], mu_logvar_combined[:, 1], c=kmeans_out, s=50, cmap='tab10')
+                    kmeans.fit(mu_logvar_combined)
+                    y_kmeans = kmeans.predict(mu_logvar_combined)
+                    ax3.scatter(mu_logvar_combined[:, 0], mu_logvar_combined[:, 1], c=y_kmeans, s=50, cmap='tab10')
                     centers = kmeans.cluster_centers_
-                    ax3.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
+                    ax3out = ax3.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
+                    fig.colorbar(ax3out, ax=ax3)
+
+
 
                     # sns.scatterplot(ax=ax3, palette=sns.color_palette("hls", 10), data=tsne_out).set(title="Latent mu_logvar_combined T-SNE projection")
                     # ax3.scatter(z[:, 0], z[:, 1], c=y, cmap='tab10')
 
-                    # plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
                     fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
                     plt.tight_layout()
                     plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
