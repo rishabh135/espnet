@@ -65,7 +65,7 @@ adv_liststr="recon 600"
 
 resume_checkpoint=-1
 max_epoch=600
-batch_bins=21000000
+batch_bins=19000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -78,7 +78,7 @@ latent_dim=512
 accum_grad=1
 
 
-project_name="vae_overfit_tsne_new"
+project_name="vae_overfit_vanilla_decoder"
 experiment_name="single_speaker_cyclic_annealing_latent_dim_512_epoch_600"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 

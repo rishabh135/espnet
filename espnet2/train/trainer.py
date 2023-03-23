@@ -1090,7 +1090,6 @@ class Trainer:
 
 
 
-
                     ax3 = plt.subplot(3, 1, 3)
                     kmeans.fit(mu_logvar_combined)
                     y_kmeans = kmeans.predict(mu_logvar_combined)

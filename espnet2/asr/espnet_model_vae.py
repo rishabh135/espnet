@@ -468,14 +468,15 @@ class ESPnetASRModel(AbsESPnetModel):
             ys_in = torch.ones(feats.shape[0], feats.shape[1], 128).to(device='cuda')
 
 
-        # logging.warning(" >>>  hs.shape {}   h_masks.shape {}  ys_in {}  y_masks.shape {}  ".format(  hs.shape,  h_masks.shape, ys_in.shape, y_masks.shape ))
+        logging.warning(" >>>  feats.shape {}  y_masks {}  hs.shape {}   h_masks.shape {}  ys_in {}  y_masks.shape {}  ".format(feats.shape, y_masks[0],  hs.shape,  h_masks.shape, ys_in.shape, y_masks.shape ))
 
 
 
 
-
-        recons_feats, _ = self.reconstruction_decoder( hs, h_masks, ys_in, y_masks)
+        recons_feats= self.reconstruction_decoder(hs, y_masks )
+        # recons_feats, _ = self.reconstruction_decoder( hs, h_masks, ys_in, y_masks)
         reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
+
         # sum_recon_kl_loss =  reconstruction_loss + kld_loss
 
 

@@ -135,42 +135,67 @@ class VanillaVAEDecoder(torch.nn.Module):
                                       kernel_size= 3, padding= 1),
                             torch.nn.Tanh())
 
-    def forward(self, inp: torch.Tensor, **kwargs) -> torch.Tensor:
-        result = self.decoder(inp)
-        result = self.final_layer(inp)
+    def forward(self, hs: torch.Tensor, ys_in: torch.Tensor, **kwargs) -> torch.Tensor:
+
+        logging.warning("hs.shape {} ".format(hs.shape))
+        result = self.decoder(hs)
+        result = self.final_layer(result)
+        logging.warning("result.shape {} ".format(result.shape))
         return result
 
 
 
 
 
-# class ReconDecoder(torch.nn.Module):
-#     def __init__(self, eprojs, local_z_size):
-#         super(ReconDecoder, self).__init__()
+class ReconDecoder(torch.nn.Module):
+    def __init__(self, eprojs, local_z_size):
+        super(ReconDecoder, self).__init__()
 
-#         self.fc = torch.nn.Sequential(
-#             custom_nn.Transpose((1,2)),
-#             torch.nn.Conv1d(eprojs, local_z_size, kernel_size = 1, stride = 1),
-#             torch.nn.Tanh(),
-#             torch.nn.BatchNorm1d(local_z_size),
+        self.fc = torch.nn.Sequential(
+            custom_nn.Transpose((1,2)),
+            torch.nn.Conv1d(eprojs, local_z_size, kernel_size = 1, stride = 1),
+            torch.nn.Tanh(),
+            torch.nn.BatchNorm1d(local_z_size),
 
-#             torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
-#             torch.nn.Tanh(),
-#             torch.nn.BatchNorm1d(local_z_size),
+        )
 
-#             torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
-#             torch.nn.Tanh(),
-#             torch.nn.BatchNorm1d(local_z_size),
+        self.fc2 =   torch.nn.Sequential(
+            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
+            torch.nn.Tanh(),
+            torch.nn.BatchNorm1d(local_z_size),
 
-#             torch.nn.Conv1d(local_z_size, local_z_size, kernel_size=1, stride=1),
-#             torch.nn.Sigmoid(),
-#             custom_nn.Transpose((1,2)),
-#         )
+            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
+            torch.nn.Tanh(),
+            torch.nn.BatchNorm1d(local_z_size),
+            )
 
-#     def forward(self, input):        
-#         out = self.fc(input)
+        self.fc3 = torch.nn.Sequential(
+            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size=1, stride=1),
+            torch.nn.Sigmoid(),
+            custom_nn.Transpose((1,2))
+        )
 
-#         return out
+
+        self.fc_final = torch.nn.Sequential(
+            torch.nn.Conv1d(398,1595, kernel_size=1, stride=1),
+            torch.nn.Sigmoid(),
+            # custom_nn.Transpose((1,2))
+        )
+
+
+        # self.fc_final = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_mid, bidirectional=True)
+
+    def forward(self, hs, ys_in):
+        logging.warning("hs.shape {} ".format(hs.shape))
+        out = self.fc(hs)
+        logging.warning("out.shape {} ".format(out.shape))
+        out = self.fc2(out)
+        logging.warning("out.shape {} ".format(out.shape))
+        out = self.fc3(out)
+        logging.warning("out.shape {} ".format(out.shape))
+        out = self.fc_final(out)
+        logging.warning("out.shape {} ".format(out.shape))
+        return out
 
 
 
@@ -505,11 +530,11 @@ class ASRTask(AbsTask):
     ) -> Tuple[str, ...]:
 
         # logging.warning("\n\n >>>> Inside optional data names \n\n")
-        if not inference: 
-            retval = ( "spkid", "speech", "text" ) 
-        else: 
-            # Inference mode 
-            retval = ("speech", "text" ) 
+        if not inference:
+            retval = ( "spkid", "speech", "text" )
+        else:
+            # Inference mode
+            retval = ("speech", "text" )
 
 
         retval = ()
@@ -533,7 +558,7 @@ class ASRTask(AbsTask):
             raise RuntimeError("token_list must be str or list")
         vocab_size = len(token_list)
         logging.info(f"Vocabulary size: {vocab_size }")
-        
+
         # 1. frontend
         if args.input_size is None:
             # Extract features in the model
@@ -628,7 +653,7 @@ class ASRTask(AbsTask):
         ################################################################################################################
         ################################################################################################################
         # TO DO rishabh create reconstruction decoder branch and link it with the encoder
-                # reconstruction_decoder = ReconDecoder(
+        # reconstruction_decoder = ReconDecoder(
         #     odim=odim,  # odim is needed when no prenet is used
         #     attention_dim=adim,
         #     attention_heads=aheads,
@@ -650,14 +675,23 @@ class ASRTask(AbsTask):
         # self.prob_out = torch.nn.Linear(adim, reduction_factor)
 
 
-        # feats_val = 80
-        reconstruction_decoder_class = decoder_choices.get_class("recon")
-        reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=args.latent_dim)
-        
+
+        # reconstruction_decoder_class = decoder_choices.get_class("recon")
+        # reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=args.latent_dim)
+
+
+
+
+        hidden_dims = [512, 512, 80]
+        reconstruction_decoder = ReconDecoder(eprojs=512, local_z_size=80)
+
+
+
+
+
+
         # reconstruction_decoder = reconstruction_decoder_class(vocab_size, embed_pad=0)
-
         # recon_decoder_conf={"embed_size": 8, "attention_heads": 2, "linear_units": 1024, "num_blocks": 3, "dropout_rate": 0.1, "positional_dropout_rate": 0.1, "self_attention_dropout_rate": 0.1, "src_attention_dropout_rate": 0.1}
-
         # reconstruction_decoder = reconstruction_decoder_class(
         #         vocab_size=80,
         #         encoder_output_size=128,
@@ -668,7 +702,8 @@ class ASRTask(AbsTask):
         #         positional_dropout_rate=0.1,
         #         self_attention_dropout_rate=0.1,
         #         src_attention_dropout_rate=0.1)
- 
+
+
         # reconstruction_decoder = ReconDecoder(args.eprojs, feats_val)
 
         ################################################################################################################
