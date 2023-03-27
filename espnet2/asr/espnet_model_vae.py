@@ -463,7 +463,7 @@ class ESPnetASRModel(AbsESPnetModel):
         y_masks = feats_lengths
         if(spembs is not None):
             ys_in = spembs.unsqueeze(1).expand(-1, feats.shape[1],-1)
-            ones_spemb = torch.ones_like(ys_in)
+            zeros_spemb = torch.zeros_like(ys_in)
         else:
             ys_in = torch.ones(feats.shape[0], feats.shape[1], 128).to(device='cuda')
 
@@ -473,8 +473,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-        recons_feats= self.reconstruction_decoder(hs, y_masks )
-        # recons_feats, _ = self.reconstruction_decoder( hs, h_masks, ys_in, y_masks)
+        # recons_feats= self.reconstruction_decoder(hs, y_masks )
+        recons_feats, _ = self.reconstruction_decoder( hs, h_masks, zeros_spemb, y_masks)
         reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
 
         # sum_recon_kl_loss =  reconstruction_loss + kld_loss

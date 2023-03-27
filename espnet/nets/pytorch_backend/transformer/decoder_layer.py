@@ -8,7 +8,7 @@
 
 import torch
 from torch import nn
-
+import logging
 from espnet.nets.pytorch_backend.transformer.layer_norm import LayerNorm
 
 
@@ -82,6 +82,7 @@ class DecoderLayer(nn.Module):
         if self.normalize_before:
             tgt = self.norm1(tgt)
 
+        logging.warning(" Iniside espnet1  tgt {} ".format(tgt.shape))
         if cache is None:
             tgt_q = tgt
             tgt_q_mask = tgt_mask

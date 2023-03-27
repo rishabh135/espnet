@@ -799,8 +799,8 @@ class Trainer:
 
         fig = plt.figure(figsize=(10,8), dpi=200 )
 
-        # pca = PCA(n_components=10)
-        # tsne = TSNE(n_components=2, perplexity=25, n_iter=5000, verbose=1, random_state=123)
+        pca = PCA(n_components=10)
+        tsne = TSNE(n_components=2, perplexity=25, verbose=1, random_state=123)
         kmeans = KMeans(n_clusters=10)
 
 
@@ -1045,7 +1045,7 @@ class Trainer:
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
                     mu_logvar_combined = retval["mu_logvar_combined"]
-                    html_file_name = "./with_tsne_3d_latent_23_march.png"
+                    html_file_name = "./with_pca_24_march.png"
 
                     logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
                     # logging.warning(">>>>>>>>>> recons_feats {} ".format(recons_feats_plot ))
@@ -1091,12 +1091,29 @@ class Trainer:
 
 
                     ax3 = plt.subplot(3, 1, 3)
+
+                    # pca_out = pca.fit_transform(mu_logvar_combined)
+            
+                    # tsne_out = tsne.fit_transform(mu_logvar_combined)
+                    # logging.warning(" tsne_out shape {} ".format(tsne_out.shape))
+                    
+                    # colors = 'r', 'g', 'b', 'c', 'm', 'y', 'k', 'w', 'orange', 'purple'
+                    # target_ids = range(10)
+                    # for i, c in zip(target_ids, colors):
+                    #     ax3.scatter(tsne_out[y == i, 0], tsne_out[y == i, 1], c=c, label= str(i))
+                    # sns.scatterplot(ax=ax3, palette=sns.color_palette("hls", 10), data=tsne_out).set(title="Latent mu_logvar_combined T-SNE projection")
+                    
+                    # ax3.scatter(pca_out[:,0], pca_out[:,1])
+                    
                     kmeans.fit(mu_logvar_combined)
                     y_kmeans = kmeans.predict(mu_logvar_combined)
-                    ax3.scatter(mu_logvar_combined[:, 0], mu_logvar_combined[:, 1], c=y_kmeans, s=50, cmap='tab10')
+                    ax3outt = ax3.scatter(mu_logvar_combined[:, 0], mu_logvar_combined[:, 1], c=y_kmeans, s=50, cmap='tab10')
                     centers = kmeans.cluster_centers_
                     ax3out = ax3.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
-                    fig.colorbar(ax3out, ax=ax3)
+                    
+
+
+                    fig.colorbar(ax3outt, ax=ax3)
 
 
 

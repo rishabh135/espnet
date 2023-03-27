@@ -151,50 +151,85 @@ class ReconDecoder(torch.nn.Module):
     def __init__(self, eprojs, local_z_size):
         super(ReconDecoder, self).__init__()
 
-        self.fc = torch.nn.Sequential(
+
+
+        self.fc1 =  torch.nn.Sequential(
+            torch.nn.Linear(eprojs, local_z_size/2),
+            torch.nn.ReLU(),
+            torch.nn.Linear(local_z_size/2, local_z_size),
+            torch.nn.ReLU(),
             custom_nn.Transpose((1,2)),
-            torch.nn.Conv1d(eprojs, local_z_size, kernel_size = 1, stride = 1),
-            torch.nn.Tanh(),
-            torch.nn.BatchNorm1d(local_z_size),
-
-        )
-
-        self.fc2 =   torch.nn.Sequential(
-            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
-            torch.nn.Tanh(),
-            torch.nn.BatchNorm1d(local_z_size),
-
-            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
-            torch.nn.Tanh(),
-            torch.nn.BatchNorm1d(local_z_size),
-            )
-
-        self.fc3 = torch.nn.Sequential(
-            torch.nn.Conv1d(local_z_size, local_z_size, kernel_size=1, stride=1),
-            torch.nn.Sigmoid(),
+            torch.nn.Linear(398, local_z_size),
+            torch.nn.ReLU(),
+            torch.nn.Linear(local_z_size, local_z_size),
+            torch.nn.ReLU(),
+            torch.nn.Linear(local_z_size, local_z_size),
+            torch.nn.ReLU(),
+            torch.nn.Linear(local_z_size, local_z_size),
+            torch.nn.ReLU(),
+            torch.nn.Linear(local_z_size, 1595),
+            torch.nn.ReLU(),
             custom_nn.Transpose((1,2))
         )
 
 
-        self.fc_final = torch.nn.Sequential(
-            torch.nn.Conv1d(398,1595, kernel_size=1, stride=1),
-            torch.nn.Sigmoid(),
-            # custom_nn.Transpose((1,2))
-        )
+
+
+
+
+
+
+
+
+        # self.fc = torch.nn.Sequential(
+        #     custom_nn.Transpose((1,2)),
+        #     torch.nn.Conv1d(eprojs, local_z_size, kernel_size = 1, stride = 1),
+        #     torch.nn.Tanh(),
+        #     torch.nn.BatchNorm1d(local_z_size),
+
+        # )
+
+        # self.fc2 =   torch.nn.Sequential(
+        #     torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
+        #     torch.nn.Tanh(),
+        #     torch.nn.BatchNorm1d(local_z_size),
+
+        #     torch.nn.Conv1d(local_z_size, local_z_size, kernel_size = 1, stride = 1),
+        #     torch.nn.Tanh(),
+        #     torch.nn.BatchNorm1d(local_z_size),
+        #     )
+
+        # self.fc3 = torch.nn.Sequential(
+        #     torch.nn.Conv1d(local_z_size, local_z_size, kernel_size=1, stride=1),
+        #     torch.nn.Sigmoid(),
+        # )
+
+
+        # self.fc_final = torch.nn.Sequential(
+        #     custom_nn.Transpose((1,2)),
+        #     torch.nn.Conv1d(398,1595, kernel_size=1, stride=1),
+        #     torch.nn.Sigmoid(),
+        #     # custom_nn.Transpose((1,2))
+        # )
+
+
+
+
+
 
 
         # self.fc_final = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_mid, bidirectional=True)
 
     def forward(self, hs, ys_in):
         logging.warning("hs.shape {} ".format(hs.shape))
-        out = self.fc(hs)
+        out = self.fc1(hs)
         logging.warning("out.shape {} ".format(out.shape))
-        out = self.fc2(out)
-        logging.warning("out.shape {} ".format(out.shape))
-        out = self.fc3(out)
-        logging.warning("out.shape {} ".format(out.shape))
-        out = self.fc_final(out)
-        logging.warning("out.shape {} ".format(out.shape))
+        # out = self.fc2(out)
+        # logging.warning("out.shape {} ".format(out.shape))
+        # out = self.fc3(out)
+        # logging.warning("before_transpose_out.shape {} ".format(out.shape))
+        # out = self.fc_final(out)
+        # logging.warning("final_out.shape {} ".format(out.shape))
         return out
 
 
@@ -669,21 +704,21 @@ class ASRTask(AbsTask):
         #     normalize_before=decoder_normalize_before,
         #     concat_after=decoder_concat_after,
         # )
-
         # define final projection
         # self.feat_out = torch.nn.Linear(adim, odim * reduction_factor)
         # self.prob_out = torch.nn.Linear(adim, reduction_factor)
 
 
 
-        # reconstruction_decoder_class = decoder_choices.get_class("recon")
-        # reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=args.latent_dim)
+
+
+        # reconstruction_decoder = ReconDecoder(eprojs=512, local_z_size=80)
 
 
 
 
-        hidden_dims = [512, 512, 80]
-        reconstruction_decoder = ReconDecoder(eprojs=512, local_z_size=80)
+        reconstruction_decoder_class = decoder_choices.get_class("recon")
+        reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=args.latent_dim, normalize_before=False)
 
 
 

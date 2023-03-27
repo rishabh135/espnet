@@ -73,7 +73,7 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
         input_layer: str = "embed",
         use_output_layer: bool = True,
         pos_enc_class=PositionalEncoding,
-        normalize_before: bool = True,
+        normalize_before: bool = False,
     ):
         assert check_argument_types()
         super().__init__()
@@ -130,13 +130,18 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
                 if use_output_layer is True,
             olens: (batch, )
         """
-        tgt = ys_in_pad 
+
+        logging.warning(" tgt.shape {} ".format(ys_in_pad.shape))
+        tgt = ys_in_pad
         # tgt_mask: (B, 1, L)
         tgt_mask = (~make_pad_mask(ys_in_lens)[:, None, :]).to(tgt.device)
+        logging.warning(" tgt_mask.shape {} ".format(tgt_mask.shape))
         # m: (1, L, L)
         m = subsequent_mask(tgt_mask.size(-1), device=tgt_mask.device).unsqueeze(0)
         # tgt_mask: (B, L, L)
         tgt_mask = tgt_mask & m
+        logging.warning(" tgt_mask after subsequent.shape {} ".format(tgt_mask.shape))
+        
 
         memory = hs_pad
         memory_mask = (~make_pad_mask(hlens, maxlen=memory.size(1)))[:, None, :].to(
@@ -157,11 +162,18 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
         
         # logging.warning(" justbefore tgt_shape {} tgt type {} ".format(tgt.shape, type(tgt)))
         # x = self.embed(tgt.to(torch.int16) )
-        x = tgt
 
-        x, tgt_mask, memory, memory_mask = self.decoders(
-            x, tgt_mask, memory, memory_mask
-        )
+        # x = self.embed( torch.tensor(tgt).to(memory.device).long()  )
+
+        x = tgt
+        logging.warning("Inside reconstruction decoder")
+        logging.warning("recons_feats before decoding {} ".format(x.shape))
+
+
+        x, tgt_mask, memory, memory_mask = self.decoders(x, tgt_mask, memory, memory_mask)
+
+
+        logging.warning("recons_feats after decoding {} ".format(x.shape))
         if self.normalize_before:
             x = self.after_norm(x)
         if self.output_layer is not None:
@@ -195,6 +207,7 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
             y.shape` is (batch, maxlen_out, token)
         """
         x = self.embed(tgt)
+        logging.warning(" inside each step x   {} ".format(x.shape))
         if cache is None:
             cache = [None] * len(self.decoders)
         new_cache = []
@@ -274,7 +287,7 @@ class TransformerReconDecoder(BaseTransformerDecoder):
         input_layer: str = "embed",
         use_output_layer: bool = True,
         pos_enc_class=PositionalEncoding,
-        normalize_before: bool = True,
+        normalize_before: bool = False,
         concat_after: bool = False,
         layer_drop_rate: float = 0.0,
     ):
