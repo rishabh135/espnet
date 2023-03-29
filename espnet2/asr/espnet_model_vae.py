@@ -462,19 +462,25 @@ class ESPnetASRModel(AbsESPnetModel):
         # ys_in [22, 128]- > [22, 1422, 128]
         y_masks = feats_lengths
         if(spembs is not None):
-            ys_in = spembs.unsqueeze(1).expand(-1, feats.shape[1],-1)
-            zeros_spemb = torch.zeros_like(ys_in)
+            ys_in = spembs
+            # ys_in = spembs.unsqueeze(2).expand(-1, encoder_out_lens.shape[1],-1)
+            zeros_spembs = torch.zeros_like(ys_in)
         else:
             ys_in = torch.ones(feats.shape[0], feats.shape[1], 128).to(device='cuda')
 
 
-        logging.warning(" >>>  feats.shape {}  y_masks {}  hs.shape {}   h_masks.shape {}  ys_in {}  y_masks.shape {}  ".format(feats.shape, y_masks[0],  hs.shape,  h_masks.shape, ys_in.shape, y_masks.shape ))
+        logging.warning(" >>> bayesian_latent {}   bayesian_latent length {} bayesian_latent length val {}  speaker_embedding {}  speaker_embedding len {}  spk embedding len val {}".format( bayesian_latent.shape,  encoder_out_lens.shape, encoder_out_lens[0], spembs.shape, feats_lengths.shape, feats_lengths[0] ))
 
 
 
 
         # recons_feats= self.reconstruction_decoder(hs, y_masks )
-        recons_feats, _ = self.reconstruction_decoder( hs, h_masks, zeros_spemb, y_masks)
+        # hs_pad= zeros_spembs
+        # hlens= y_masks,
+        # ys_in_pad= bayesian_latent ,
+        # ys_in_lens= encoder_out_lens,
+        recons_feats, _ = self.reconstruction_decoder( hs_pad= bayesian_latent , hlens=encoder_out_lens, ys_in_pad= zeros_spembs, ys_in_lens=feats_lengths)
+        logging.warning(" original_feats {}  recons_feats {} ".format(feats.shape, recons_feats.shape))
         reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
 
         # sum_recon_kl_loss =  reconstruction_loss + kld_loss

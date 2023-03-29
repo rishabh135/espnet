@@ -78,7 +78,7 @@ latent_dim=512
 accum_grad=2
 
 
-project_name="vae_overfit_mar_17_latent_dim_512"
+project_name="vae_overfit_mar_28_latent_dim_512"
 
 
 experiment_name="single_speaker_cyclic_annealing"

@@ -154,9 +154,9 @@ class ReconDecoder(torch.nn.Module):
 
 
         self.fc1 =  torch.nn.Sequential(
-            torch.nn.Linear(eprojs, local_z_size/2),
+            torch.nn.Linear(eprojs, local_z_size),
             torch.nn.ReLU(),
-            torch.nn.Linear(local_z_size/2, local_z_size),
+            torch.nn.Linear(local_z_size, local_z_size),
             torch.nn.ReLU(),
             custom_nn.Transpose((1,2)),
             torch.nn.Linear(398, local_z_size),
@@ -718,7 +718,7 @@ class ASRTask(AbsTask):
 
 
         reconstruction_decoder_class = decoder_choices.get_class("recon")
-        reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=args.latent_dim, normalize_before=False)
+        reconstruction_decoder = reconstruction_decoder_class(vocab_size=args.latent_dim, encoder_output_size=80, input_layer="linear", normalize_before=False)
 
 
 

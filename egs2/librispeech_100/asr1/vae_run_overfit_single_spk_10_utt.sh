@@ -25,7 +25,8 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/partial_data_xvector_speed/original_data
 
 
-project_name="vae_overfit_March_24_recon_decoder"
+
+project_name="vae_overfit_mar28_transformer_decoder_10_utt"
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 

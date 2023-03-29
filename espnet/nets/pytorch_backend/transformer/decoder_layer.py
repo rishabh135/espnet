@@ -64,6 +64,7 @@ class DecoderLayer(nn.Module):
         """Compute decoded features.
 
         Args:
+            tgt: bayesian latent
             tgt (torch.Tensor): Input tensor (#batch, maxlen_out, size).
             tgt_mask (torch.Tensor): Mask for input tensor (#batch, maxlen_out).
             memory (torch.Tensor): Encoded memory, float32 (#batch, maxlen_in, size).
@@ -81,8 +82,6 @@ class DecoderLayer(nn.Module):
         residual = tgt
         if self.normalize_before:
             tgt = self.norm1(tgt)
-
-        logging.warning(" Iniside espnet1  tgt {} ".format(tgt.shape))
         if cache is None:
             tgt_q = tgt
             tgt_q_mask = tgt_mask
