@@ -40,8 +40,6 @@ def to_cuda(m, x):
     return x.to(device)
 
 
-
-
 class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
     """Base class of Transfomer decoder module.
 
@@ -73,20 +71,17 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
         input_layer: str = "embed",
         use_output_layer: bool = True,
         pos_enc_class=PositionalEncoding,
-        normalize_before: bool = False,
+        normalize_before: bool = True,
     ):
         assert check_argument_types()
         super().__init__()
         attention_dim = encoder_output_size
-        logging.warning(" >>>> vocab_size {} type(vocab_size) {} attention_dim {} type_att_dim {}  ".format( vocab_size, type(vocab_size), attention_dim, type(attention_dim) )) 
+
         if input_layer == "embed":
-            self.embed = torch.nn.Embedding(vocab_size, attention_dim)
-            
-            # torch.nn.Sequential(
-            #     torch.nn.Embedding(vocab_size, attention_dim),
-            #     pos_enc_class(attention_dim, positional_dropout_rate),
-            # )
-            
+            self.embed = torch.nn.Sequential(
+                torch.nn.Embedding(vocab_size, attention_dim),
+                pos_enc_class(attention_dim, positional_dropout_rate),
+            )
         elif input_layer == "linear":
             self.embed = torch.nn.Sequential(
                 torch.nn.Linear(vocab_size, attention_dim),
@@ -116,8 +111,8 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
         ys_in_pad: torch.Tensor,
         ys_in_lens: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-
         """Forward decoder.
+
         Args:
             hs_pad: encoded memory, float32  (batch, maxlen_in, feat)
             hlens: (batch)
@@ -128,24 +123,19 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
             ys_in_lens: (batch)
         Returns:
             (tuple): tuple containing:
+
             x: decoded token score before softmax (batch, maxlen_out, token)
                 if use_output_layer is True,
             olens: (batch, )
         """
-
-
-        logging.warning(" >>>>> TGT (batch, maxlen_out) ys_in_pad {} ".format(ys_in_pad.shape) )
-
         tgt = ys_in_pad
         # tgt_mask: (B, 1, L)
         tgt_mask = (~make_pad_mask(ys_in_lens)[:, None, :]).to(tgt.device)
-        logging.warning(" B,1,L  tgt_mask shape {} ".format(tgt_mask.shape) )
         # m: (1, L, L)
         m = subsequent_mask(tgt_mask.size(-1), device=tgt_mask.device).unsqueeze(0)
-        logging.warning(" 1,L,L  m {} ".format(m.shape) )
         # tgt_mask: (B, L, L)
         tgt_mask = tgt_mask & m
-        logging.warning(" B,L,L tgt_mask shape {}  >>>>".format(tgt_mask.shape) )
+
         memory = hs_pad
         memory_mask = (~make_pad_mask(hlens, maxlen=memory.size(1)))[:, None, :].to(
             memory.device
@@ -169,6 +159,7 @@ class BaseTransformerDecoder(AbsDecoder, BatchScorerInterface):
         olens = tgt_mask.sum(1)
         return x, olens
 
+        
     def forward_one_step(
         self,
         tgt: torch.Tensor,
@@ -285,8 +276,6 @@ class TransformerReconDecoder(BaseTransformerDecoder):
             pos_enc_class=pos_enc_class,
             normalize_before=normalize_before,
         )
-        
-
         attention_dim = encoder_output_size
         self.decoders = repeat(
             num_blocks,
@@ -303,8 +292,8 @@ class TransformerReconDecoder(BaseTransformerDecoder):
                 normalize_before,
                 concat_after,
             ),
+            layer_drop_rate,
         )
-
 
 class LightweightConvolutionTransformerDecoder(BaseTransformerDecoder):
     def __init__(

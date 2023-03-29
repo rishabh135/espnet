@@ -1,1 +1,1 @@
-from espnet2.tts.transformer.transformer import Transformer  # NOQA
+from espnet2.tts.transformer.transformer import TransformerTTS  # NOQA

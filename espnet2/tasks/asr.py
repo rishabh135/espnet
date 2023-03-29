@@ -25,6 +25,7 @@ from espnet2.asr.decoder.Disentangled_sequentual_autoencoder_yatindandi import D
 from espnet2.asr.encoder.abs_encoder import AbsEncoder
 from espnet2.asr.adversarial_branch import SpeakerAdv
 
+from espnet2.tts.transformer import TransformerTTS as ReconTransformer
 
 
 
@@ -717,11 +718,11 @@ class ASRTask(AbsTask):
 
 
 
-        reconstruction_decoder_class = decoder_choices.get_class("recon")
-        reconstruction_decoder = reconstruction_decoder_class(vocab_size=args.latent_dim, encoder_output_size=80, input_layer="linear", normalize_before=False)
+        # reconstruction_decoder_class = decoder_choices.get_class("recon")
+        # reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=args.latent_dim, input_layer="linear", normalize_before=False)
 
 
-
+        reconstruction_decoder = ReconTransformer(idim = args.latent_dim, odim = 80, adim=args.latent_dim )
 
 
 
