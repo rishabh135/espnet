@@ -57,7 +57,7 @@ class TransformerTTS(AbsTTS):
         dprenet_units: int = 256,
         elayers: int = 6,
         eunits: int = 1024,
-        adim: int = 28,
+        adim: int = 512,
         aheads: int = 4,
         dlayers: int = 6,
         dunits: int = 1024,

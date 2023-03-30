@@ -721,8 +721,8 @@ class ASRTask(AbsTask):
         # reconstruction_decoder_class = decoder_choices.get_class("recon")
         # reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=args.latent_dim, input_layer="linear", normalize_before=False)
 
-
-        reconstruction_decoder = ReconTransformer(idim = args.latent_dim, odim = 80, adim=args.latent_dim )
+        #  adim=args.latent_dim
+        reconstruction_decoder = ReconTransformer(idim = args.latent_dim, odim = 80, adim = args.latent_dim )
 
 
 

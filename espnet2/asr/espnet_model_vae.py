@@ -433,7 +433,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
         # logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
-
+        original_feats = feats
         # 1.2 latent dist split
         mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         
@@ -480,6 +480,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # ys_in_lens= encoder_out_lens,
         
 
+        
 
         logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}   feats_length {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {}".format( text.shape, text_lengths.shape, bayesian_latent.shape,  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0] ))
         recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths)
@@ -659,8 +660,8 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["loss_ctc"] = loss_ctc
         retval["loss_att"] = loss_att
 
-        retval["feats_plot"] = feats[-1].detach().cpu().numpy()
-        retval["recons_feats_plot"] = recons_feats[-1].detach().cpu().numpy()
+        retval["feats_plot"] = original_feats[0].detach().cpu().numpy()
+        retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
         retval["mu_logvar_combined"] = mu_logvar_combined.detach().cpu().numpy()
         
         # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()

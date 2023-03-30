@@ -74,11 +74,12 @@ vae_weight_factor=0.8
 save_every_epoch=50
 vae_annealing_cycle=25
 plot_iiter=1
-latent_dim=28
+latent_dim=512
 accum_grad=1
 
 
-project_name="vae_overfit_mar29_tts_transformer_latent_dim_28"
+project_name="vae_overfit_mar30_tts_transformer_latent_dim_512"
+
 experiment_name="latent_dim_28"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 

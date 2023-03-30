@@ -1124,7 +1124,7 @@ class Trainer:
                     plt.tight_layout()
                     plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
                     wandb.log({f"spectrogram plot": wandb.Image(plt)})
-                    plt.clf()
+                    fig.clf()
 
 
 
