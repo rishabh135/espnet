@@ -45,6 +45,10 @@ from espnet2.train.distributed_utils import DistributedOption
 from espnet2.train.reporter import Reporter, SubReporter
 from espnet2.utils.build_dataclass import build_dataclass
 
+import pyworld as pw
+import torchaudio
+
+
 if torch.distributed.is_available():
     from torch.distributed import ReduceOp
 from torchinfo import summary
@@ -799,9 +803,9 @@ class Trainer:
 
         fig = plt.figure(figsize=(10,8), dpi=200 )
 
-        pca = PCA(n_components=10)
-        tsne = TSNE(n_components=2, perplexity=25, verbose=1, random_state=123)
-        kmeans = KMeans(n_clusters=10)
+        # pca = PCA(n_components=10)
+        # tsne = TSNE(n_components=2, perplexity=25, verbose=1, random_state=123)
+        # kmeans = KMeans(n_clusters=10)
 
 
 
@@ -876,6 +880,9 @@ class Trainer:
             if no_forward_run:
                 all_steps_are_invalid = False
                 continue
+
+            # for key, value in batch.items() :
+            #     logging.warning(" key  {} ".format(key ) )
 
             with autocast(scaler is not None):
                 with reporter.measure_time("forward_time"):
@@ -1045,80 +1052,40 @@ class Trainer:
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
                     mu_logvar_combined = retval["mu_logvar_combined"]
-                    html_file_name = "./with_pca_24_march.png"
+                    feats_lengths = retval["feats_lengths"]
+                    html_file_name = "./with_working_audio_30_march.png"
 
                     logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
-                    # logging.warning(">>>>>>>>>> recons_feats {} ".format(recons_feats_plot ))
-                    # logging.warning(" >>>>>>> mu_logvar_combined {} ".format(mu_logvar_combined))
-                    # tsne_out = tsne.fit_transform(mu_logvar_combined)
-                    # pca_out = pca.fit_transform(mu_logvar_combined)
-
-                    # wandb.log({f"scatte plot": wandb.Image(sns)})
-                    # aug_feats_plot = retval["aug_feats_plot"]
-
-                    # logging.warning (" plotting working {}  {} \n".format(feats_plot.shape, recons_feats_plot.shape))
-
                     ax1 = plt.subplot(3, 1, 1)
-                    plt.title('Original feats linear')
+                    ax1.set_title('Original feats linear')
                     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
                     ax2 = plt.subplot(3, 1, 2)
-                    # plt.title('Reconstructed feats linear')
+                    ax2.set_title('Reconstructed feats linear')
                     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-
-
-
-
-                    # ax3 = plt.subplot(3, 1, 3, projection='3d')
-                    # r = 1
-                    # pi = np.pi
-                    # cos = np.cos
-                    # sin = np.sin
-                    # phi, theta = np.mgrid[0.0:pi:100j, 0.0:2.0*pi:100j]
-                    # x = r*sin(phi)*cos(theta)
-                    # y = r*sin(phi)*sin(theta)
-                    # z = r*cos(phi)
-                    # ax3.plot_surface(x, y, z,  rstride=1, cstride=1, color='w', alpha=0.3, linewidth=0)
-                    # kmeans.fit(mu_logvar_combined)
-                    # y_kmeans = kmeans.predict(mu_logvar_combined)
-                    # centers = kmeans.cluster_centers_
-                    # ax3out = ax3.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
-                    # ax3.set_aspect("equal")
-
-
-
-
 
 
                     ax3 = plt.subplot(3, 1, 3)
 
-                    # pca_out = pca.fit_transform(mu_logvar_combined)
-            
-                    # tsne_out = tsne.fit_transform(mu_logvar_combined)
-                    # logging.warning(" tsne_out shape {} ".format(tsne_out.shape))
-                    
-                    # colors = 'r', 'g', 'b', 'c', 'm', 'y', 'k', 'w', 'orange', 'purple'
-                    # target_ids = range(10)
-                    # for i, c in zip(target_ids, colors):
-                    #     ax3.scatter(tsne_out[y == i, 0], tsne_out[y == i, 1], c=c, label= str(i))
-                    # sns.scatterplot(ax=ax3, palette=sns.color_palette("hls", 10), data=tsne_out).set(title="Latent mu_logvar_combined T-SNE projection")
-                    
-                    # ax3.scatter(pca_out[:,0], pca_out[:,1])
-                    
-                    kmeans.fit(mu_logvar_combined)
-                    y_kmeans = kmeans.predict(mu_logvar_combined)
-                    ax3outt = ax3.scatter(mu_logvar_combined[:, 0], mu_logvar_combined[:, 1], c=y_kmeans, s=50, cmap='tab10')
-                    centers = kmeans.cluster_centers_
-                    ax3out = ax3.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
-                    
+                    bundle = torchaudio.pipelines.TACOTRON2_WAVERNN_PHONE_LJSPEECH
+                    # processor = bundle.get_text_processor()
+                    # tacotron2 = bundle.get_tacotron2().to("cuda")
+                    vocoder = bundle.get_vocoder().to("cuda")
 
+                    with torch.inference_mode():
+                        # processed, lengths = processor( batch["text"][0] )
+                        # processed = processed.to("cuda")
+                        # lengths = lengths.to("cuda")
+                        # spec, spec_lengths, _ = tacotron2.infer(processed, lengths)
+                        # logging.warning(" >> just before vocoder  spec {} feats_lengths {} ".format(recons_feats_plot.shape, feats_lengths ))
+                        spec = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+                        spec_lengths = torch.Tensor(feats_lengths).to("cuda")
+                        waveforms, lengths = vocoder(spec, spec_lengths)
 
-                    fig.colorbar(ax3outt, ax=ax3)
+                    ax3.plot(waveforms[0].cpu().detach())
+                    wandb.log({"recon_utt": wandb.Audio(waveforms, caption="reconstructed_utt", sample_rate=16)})
+                    # IPython.display.Audio(waveforms[0:1].cpu(), rate=vocoder.sample_rate)
 
-
-
-                    # sns.scatterplot(ax=ax3, palette=sns.color_palette("hls", 10), data=tsne_out).set(title="Latent mu_logvar_combined T-SNE projection")
-                    # ax3.scatter(z[:, 0], z[:, 1], c=y, cmap='tab10')
 
                     fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
                     plt.tight_layout()
@@ -1166,6 +1133,8 @@ class Trainer:
                             # self.ctc_weight_layer = model.ctc.ctc_lo.weight
                             # if(adv_mode == "adv" or adv_mode == "asradv"):
                             #     self.adversarial_weight_layer = model.adversarial_branch.output.weight
+
+
 
 
 
@@ -1274,13 +1243,6 @@ class Trainer:
                 if iterator_stop > 0:
                     break
 
-            # logging.warning(" prinitng iiter {} ")
-            # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
-            # logging.warning("**************   Batch ************")
-            # for keys,values in batch.items():
-            #     logging.warning(" {}  >> {} \n".format(keys, values))
-            # logging.warning("**************************\n\n")
-
 
             batch["utt_id"] = utt_id
 
@@ -1299,6 +1261,59 @@ class Trainer:
                     _, stats, weight, __ = retval
                 else:
                     _, stats, weight = retval
+
+
+
+
+            # feats_plot = retval["feats_plot"]
+            # recons_feats_plot = retval["recons_feats_plot"]
+            # mu_logvar_combined = retval["mu_logvar_combined"]
+            # feats_lengths = retval["feats_lengths"] 
+            # html_file_name = "./with_working_audio_30_march.png"
+
+            # logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
+            # ax1 = plt.subplot(3, 1, 1)
+            # plt.title('Original feats linear')
+            # plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+
+            # ax2 = plt.subplot(3, 1, 2)
+            # # plt.title('Reconstructed feats linear')
+            # plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+
+
+            # ax3 = plt.subplot(3, 1, 3)
+
+            # bundle = torchaudio.pipelines.TACOTRON2_WAVERNN_PHONE_LJSPEECH
+            # # processor = bundle.get_text_processor()
+            # # tacotron2 = bundle.get_tacotron2().to("cuda")
+            # vocoder = bundle.get_vocoder()
+            # vocoder= to_device(vocoder, "cuda" if ngpu > 0 else "cpu")
+
+            # with torch.inference_mode():
+            #     # processed, lengths = processor( batch["text"][0] )
+            #     # processed = processed.to("cuda")
+            #     # lengths = lengths.to("cuda")
+            #     # spec, spec_lengths, _ = tacotron2.infer(processed, lengths)
+            #     # logging.warning(" >> just before vocoder  spec {} feats_lengths {} ".format(recons_feats_plot.shape, feats_lengths ))
+            #     spec = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+            #     spec_lengths = torch.Tensor(feats_lengths).to("cuda")
+            #     waveforms, lengths = vocoder(spec, spec.lengths)
+
+
+            # ax3.plot(waveforms[0].cpu().detach())
+            # wandb.log({"recon_utt": wandb.Audio(waveforms, caption="reconstructed_utt", sample_rate=16)})
+            # # IPython.display.Audio(waveforms[0:1].cpu(), rate=vocoder.sample_rate)
+
+
+            # fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
+            # plt.tight_layout()
+            # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+            # wandb.log({f"spectrogram plot": wandb.Image(plt)})
+            # fig.clf()
+
+
+
+
 
             if ngpu > 1 or distributed:
                 # Apply weighted averaging for stats.
