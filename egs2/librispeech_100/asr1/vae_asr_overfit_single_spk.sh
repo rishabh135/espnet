@@ -65,7 +65,7 @@ adv_liststr="recon 600"
 
 resume_checkpoint=-1
 max_epoch=600
-batch_bins=18000000
+batch_bins=32000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0

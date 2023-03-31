@@ -17,6 +17,8 @@ import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 
+from speechbrain.pretrained import HIFIGAN
+
 from espnet.asr.asr_utils import plot_spectrogram
 import os, sys
 import humanfriendly
@@ -1072,17 +1074,34 @@ class Trainer:
                     ax2.set_title('Reconstructed feats linear')
                     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
 
+                    fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
+                    plt.tight_layout()
+                    plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+                    wandb.log({f"spectrogram plot": wandb.Image(plt)})
+                    fig.clf()
+
+
+                    # if( (current_epoch % 2 == 0) and (iiter == options.plot_iiter )):
+                    #     with torch.inference_mode():
+                    #         recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+                    #         orig_specs = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+                    #         hifi_gan = HIFIGAN.from_hparams(source="speechbrain/tts-hifigan-libritts-16kHz", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/hifigan/", run_opts={"device":"cuda"})
+                    #         # Running Vocoder (spectrogram-to-waveform)
+                    #         recons_waveforms = hifi_gan.decode_batch(recons_specs)
+                    #         orig_waveforms = hifi_gan.decode_batch(orig_specs)
+                    #         # logging.warning("recons_waveforms {} ".format(recons_waveforms.shape))
+                    #     wandb.log({"HIFIGAN Vocoder": wandb.Audio(recons_waveforms[0,0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
+                    #     wandb.log({"HIFIGAN Vocoder": wandb.Audio(orig_waveforms[0,0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
 
 
 
                     # if( (current_epoch % 2 == 0) and (iiter == options.plot_iiter )):
                     #     # ax3 = plt.subplot(3, 1, 3)
-                    #     bundle = torchaudio.pipelines.TACOTRON2_WAVERNN_PHONE_LJSPEECH
+                    #     bundle = torchaudio.pipelines.TACOTRON2_GRIFFINLIM_CHAR_LJSPEECH
                     #     # processor = bundle.get_text_processor()
                     #     # tacotron2 = bundle.get_tacotron2().to("cuda")
                     #     vocoder = bundle.get_vocoder().to("cuda")
-
-                    #     with torch.inference_mode():
+                    #       with torch.inference_mode():
                     #         # processed, lengths = processor( batch["text"][0] )
                     #         # processed = processed.to("cuda")
                     #         # lengths = lengths.to("cuda")
@@ -1095,20 +1114,8 @@ class Trainer:
                     #         orig_waveforms, lengths = vocoder(orig_spec, spec_lengths)
                     #     wandb.log({"Utt Vocoder": wandb.Audio(recons_waveforms[0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
                     #     wandb.log({"Utt Vocoder": wandb.Audio(orig_waveforms[0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
-                        
-                        
-
 
                     # IPython.display.Audio(waveforms[0:1].cpu(), rate=vocoder.sample_rate)
-
-
-                    fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
-                    plt.tight_layout()
-                    plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-                    wandb.log({f"spectrogram plot": wandb.Image(plt)})            
-                    fig.clf()
-
-
 
 
                 if( (iiter % 200) == 0):

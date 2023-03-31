@@ -32,6 +32,26 @@ from espnet.nets.pytorch_backend.transformer.mask import subsequent_mask
 
 import logging
 
+
+
+# idim: int,
+# odim: int,
+# embed_dim: int = 512,
+# eprenet_conv_layers: int = 3,
+# eprenet_conv_chans: int = 256,
+# eprenet_conv_filts: int = 5,
+# dprenet_layers: int = 2,
+# dprenet_units: int = 256,
+# elayers: int = 6,
+# eunits: int = 1024,
+# adim: int = 512,
+# aheads: int = 4,
+# dlayers: int = 6,
+# dunits: int = 1024,
+# postnet_layers: int = 5,
+# postnet_chans: int = 256,
+# postnet_filts: int = 5,
+
 class TransformerTTS(AbsTTS):
     """Transformer-TTS module.
 
@@ -58,10 +78,10 @@ class TransformerTTS(AbsTTS):
         elayers: int = 6,
         eunits: int = 1024,
         adim: int = 512,
-        aheads: int = 4,
-        dlayers: int = 6,
-        dunits: int = 1024,
-        postnet_layers: int = 5,
+        aheads: int = 2,
+        dlayers: int = 3,
+        dunits: int = 256,
+        postnet_layers: int = 2,
         postnet_chans: int = 256,
         postnet_filts: int = 5,
         positionwise_layer_type: str = "conv1d",

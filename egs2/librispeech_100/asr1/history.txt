@@ -1,0 +1,502 @@
+    2  tmux attach -t nesp
+    3  tmux attach -t nesp
+    4  tmux attach -t nesp
+    5  tmux attach -t nesp
+    6  tmux attach -t nesp
+    7  tmux attach -t nesp3
+    8  tmux attach -t nesp
+    9  tmux attach -t nesp
+   10  tmux attach -t nesp
+   11  clear
+   12  tmux attach -t nesp
+   13  tmux attach -t nesp
+   14  tmux attach -t nesp
+   15  tmux attach -t nesp
+   16  tmux attach -t nesp
+   17  tmux attach -t nesp
+   18  tmux attach -t nesp
+   19  tmux attach -t nesp3
+   20  tmux attach -t nesp3
+   21  tmux attach -t nesp
+   22  tmux attach -t nesp
+   23  tmux attach -t nesp
+   24  tmux attach -t nesp
+   25  tmux attach -t nesp3
+   26  tmux attach -t nesp
+   27  tmux attach -t nesp
+   28  tmux attach -t nesp
+   29  tmux attach -t nesp
+   30  tmux attach -t nesp
+   31  tmux attach -t nesp3
+   32  tmux attach -t nesp
+   33  tmux attach -t nesp
+   34  tmux attach -t nesp
+   35  tmux attach -t nesp3
+   36  tmux attach -t nesp
+   37  tmux attach -t nesp3
+   38  tmux attach -t nesp
+   39  tmux attach -t nesp
+   40  tmux attach -t nesp
+   41  tmux attach -t nesp
+   42  tmux attach -t nesp
+   43  tmux attach -t nesp
+   44  tmux attach -t nesp
+   45  tmux attach -t nesp
+   46  tmux attach -t nesp
+   47  tmux attach -t nesp
+   48  tmux attach -t nesp
+   49  tmux attach -t nesp
+   50  tmux attach -t nesp
+   51  tmux attach -t nesp
+   52  tmux attach -t nesp
+   53  tmux attach -t nesp
+   54  tmux attach -t nesp
+   55  tmux attach -t nesp
+   56  tmux attach -t nesp
+   57  tmux attach -t nesp
+   58  tmux attach -t nesp
+   59  tmux attach -t nesp
+   60  tmux attach -t nesp
+   61  tmux attach -t nesp
+   62  tmux attach -t nesp
+   63  tmux attach -t nesp
+   64  tmux attach -t nesp
+   65  tmux attach -t nesp
+   66  tmux attach -t nesp
+   67  tmux attach -t nesp
+   68  tmux attach -t nesp
+   69  tmux attach -t nesp
+   70  tmux attach -t nesp
+   71  tmux attach -t nesp
+   72  tmux attach -t nesp
+   73  tmux attach -t nesp
+   74  oarsub -C
+   75  nvidia-smi -l 2
+   76  wf
+   77  source ~/.bashrc
+   78  conda activate pyt
+   79  wf
+   80  clear
+   81  cd ../../../
+   82  git add espnet2/*
+   83  git add espnet/*
+   84  git add egs2/TEMPLATE/asr1/*
+   85  git add egs2/librispeech_100/asr1/*
+   86  git commit -m "working tts_transformer decoder only with adim=args.latent_dim"
+   87  git push -u origin vae
+   88  clear
+   89  wf
+   90  nvidia-smi -l 2
+   91  oar stat
+   92  oar stat -u
+   93  oarstat -u
+   94  oarsub -C
+   95  source ~/.bashrc
+   96  conda activate pyt
+   97  wf
+   98  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+   99  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  100  clear
+  101  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  102  clear
+  103  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  104  clear
+  105  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  106  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  107  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  108  clear
+  109  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  110  clear
+  111  clear
+  112  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  113  clear
+  114  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  115  clear
+  116  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  117  clear
+  118  clear
+  119  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  120  clear
+  121  clear
+  122  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  123  clear
+  124  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  125  clear
+  126  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  127  clear
+  128  clear
+  129  clear
+  130  CUDA_VIISBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  131  oarsub -C
+  132  source ~/.bashrc
+  133  conda activate pyt
+  134  wf
+  135  clear
+  136  clear
+  137  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  138  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  139  clear
+  140  clear
+  141  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  142  clear
+  143  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  144  tmux ls
+  145  tmux attach -t nesp
+  146  tmux new -s "espnet6"
+  147  tmux attach -t nesp
+  148  pkill tmux
+  149  sudo-g5k pkill tmux
+  150  tmux kill-server
+  151  tmux new -s "espnet6"
+  152  source ~/.bashrc
+  153  conda activate pyt
+  154  wef
+  155  wf
+  156  clear
+  157  clear
+  158  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  159  clear
+  160  clear
+  161  source ~/.bashrc
+  162  conda activate pyt
+  163  wf
+  164  sudo-g5k apt install flac sox --yes
+  165  clear
+  166  cd ../../../
+  167  git add espnet2/*
+  168  git add espnet/*
+  169  git add egs2/TEMPLATE/asr1/*
+  170  git add egs2/librispeech_100/asr1/*
+  171  git commit -m "restarting recon decoder"
+  172  git push -u origin vae
+  173  clear
+  174  wf
+  175  clear
+  176  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  177  clear
+  178  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  179  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_March_27_recon_decoder/single_speaker_cyclic_annealing_latent_dim_512_epoch_600/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  180  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_March_27_recon_decoder/single_speaker_cyclic_annealing_latent_dim_512_epoch_600/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  181  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  182  clear
+  183  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  184  clear
+  185  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  186  clear
+  187  clear
+  188  clear
+  189  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  190  clear
+  191  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar28_transformer_decoder_10_utt/single_speaker_10_utt_600_epochs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  192  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar28_transformer_decoder_10_utt/single_speaker_10_utt_600_epochs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  193  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar28_transformer_decoder_10_utt/single_speaker_10_utt_600_epochs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  194  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar28_transformer_decoder_10_utt/single_speaker_10_utt_600_epochs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  195  clear
+  196  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar28_transformer_decoder_10_utt/single_speaker_10_utt_600_epochs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  197  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar28_transformer_decoder_10_utt/single_speaker_10_utt_600_epochs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  198  clear
+  199  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar28_transformer_decoder_10_utt/single_speaker_10_utt_600_epochs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  200  clear
+  201  clear
+  202  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  203  clear
+  204  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  205  clear
+  206  clear
+  207  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  208  clear
+  209  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  210  clear
+  211  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  212  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  213  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  214  clear
+  215  clear
+  216  clear
+  217  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  218  clear
+  219  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  220  clear
+  221  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  222  clear
+  223  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  224  clear
+  225  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  226  clear
+  227  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  228  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  229  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  230  clear
+  231  cd ../../../
+  232  git add espnet2/*
+  233  git add espnet/*
+  234  git add egs2/TEMPLATE/asr1/*
+  235  git add egs2/librispeech_100/asr1/*
+  236  git commit -m "tried remapping recon decoder args, but doesnt work, still facing issues with embedding layer, stashing commits"
+  237  git push -u origin vae
+  238  clear
+  239  wf
+  240  CUDA_VISIBLE_DEVICES=0 bash 
+  241  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  242  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  243  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  244  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  245  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  246  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar29_tts_transformer_10_utt/latent_dim_28/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/train.log
+  247  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  248  clear
+  249  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar29_tts_transformer_10_utt/latent_dim_28/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/train.log
+  250  clear
+  251  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  252  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  253  clear
+  254  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  255  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  256  clear
+  257  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  258  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  259  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  260  CUDA_VISIBLE_DEVICES=0 CUDA_LAUNCH_BOOKING=1  bash ./vae_run_overfit_single_spk_10_utt.sh 
+  261  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  262  clear
+  263  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  264  clear
+  265  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  266  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  267  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  268  source ~/.bahsrc
+  269  conda activate pyt
+  270  wf
+  271  clear
+  272  source ~/.bashrc
+  273  conda activate pyt
+  274  wf
+  275  clear
+  276  top
+  277  pill -15 -u rgupta bash
+  278  pkill -15 -u rgupta bash
+  279  top -u
+  280  top -u rgupta
+  281  tmux new -s espnet4
+  282  tmux ls
+  283  tmux ls
+  284  killall -9 tmux
+  285  top -u rgupta
+  286  nvidia-smi -l 2
+  287  oarsub -C
+  288  nvidia-smi -l 2
+  289  clear
+  290  oarsub -C
+  291  source ~/.bashrc
+  292  conda activate pyt
+  293  wf
+  294  clear
+  295  ls
+  296  nvidia-smi -l 2
+  297  grd list
+  298  oarsub -C
+  299  source ~/.bashrc
+  300  conda activate pyt
+  301  clear
+  302  wf
+  303  clear
+  304  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  305  clear
+  306  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  307  clear
+  308  clear
+  309  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  310  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  311  tmux attach -t espnet
+  312  cd dev/espnet/
+  313  git add espnet2/*
+  314  git add espnet/*
+  315  git add egs2/TEMPLATE/asr1/*
+  316  git add egs2/librispeech_100/asr1/*
+  317  git commit -m "MVP working for overfiiting with latent_dim 512 for transformer based TTS"
+  318  git push -u origin vae
+  319  clear
+  320  oarsub -C
+  321  source ~/.bashrc
+  322  conda activate pyt
+  323  wf
+  324  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.
+  325  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk
+  326  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  327  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  328  clear
+  329  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  330  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  331  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  332  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  333  nvidia-smi -l 1
+  334  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  335  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  336  oarsub -C
+  337  nvidia-smi -l 2
+  338  cd dev/espnet/
+  339  git add espnet2/*
+  340  git add espnet/*
+  341  git add egs2/TEMPLATE/asr1/*
+  342  git add egs2/librispeech_100/asr1/*
+  343  git commit -m "added vocoder from torchaudio for logging audio takes a huge amount of time"
+  344  git push -u origin vae
+  345  nvidia-smi -l 2
+  346  ls
+  347  vim oarapi.subscript.urb9O 
+  348  rm -rf oarapi.subscript.*
+  349  vim OAR.rguptanancy.3863809.std
+  350  rm -rf OAR.rguptan*
+  351  ls
+  352  vim OAR.rg4.3771156.std
+  353  rm -rf OAR.*
+  354  ls
+  355  ls
+  356  clear
+  357  ls
+  358  vim pyt_environment.yml 
+  359  cd public/
+  360  ls
+  361  vim README.txt 
+  362  clear
+  363  cd ../
+  364  tmux ls
+  365  ls -alhs
+  366  vim .tmux.conf 
+  367  cp .tmux.conf ./tmux_conf.conf
+  368  ls
+  369  tmux kill-server
+  370  oarsub -C
+  371  source ~/.bashrc
+  372  conda activate pyt
+  373  wf
+  374  clear
+  375  clear
+  376  clear
+  377  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_skip_data_lm.sh 
+  378  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_skip_data_lm.sh 
+  379  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_skip_data_lm.sh 
+  380  clear
+  381  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_skip_data_lm.sh 
+  382  oarsub -C
+  383  source ~/.bashrc
+  384  conda activate pyt
+  385  wf
+  386  nvidia-smi -l 2
+  387  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  388  pip install deep-phonemizer
+  389  clear
+  390  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  391  clear
+  392  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  393  clear
+  394  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar30_tts_transformer_latent_dim_512/latent_dim_512_with_spembs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  395  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_overfit_mar30_tts_transformer_latent_dim_512/latent_dim_512_with_spembs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  396  clear
+  397  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  398  clear
+  399  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  400  clear
+  401  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  402  clear
+  403  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  404  clear
+  405  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  406  clear
+  407  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  408  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  409  clear
+  410  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  411  clear
+  412  clear
+  413  clear
+  414  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  415  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  416  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  417  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  418  oarsub -C
+  419  source ~/.bashrc
+  420  conda activate pyt
+  421  wf
+  422  clear
+  423  CUDA_VISIBLE_DEVICES=0 bash ./vae_run_overfit_single_spk_10_utt.sh 
+  424  oarsub -C
+  425  source ~/.bashrc
+  426  conda activate pyt
+  427  wf
+  428  clear
+  429  nvidia-smi
+  430  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_skip_data_lm.sh 
+  431  oarsub -C
+  432  pkill python
+  433  top -u rgupta
+  434  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_skip_data_lm.sh oarsub -C
+  435  oarsub -C
+  436  nvidia-smi -l 2
+  437  clear
+  438  oarsub -C
+  439  CUDA_VISIBLE_DEVICES=1 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_april_1_all_spk_transformer_latent_dim_512/latent_dim_512_with_spembs_asradv_160/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  440  nvidia-smi -l 2
+  441  nvidia-smi -l 2
+  442  CUDA_VISIBLE_DEVICES=0 bash 
+  443  oarsub -C
+  444  CUDA_VISIBLE_DEVICES=1 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_10_utt_tts_transformer_latent_dim_512/latent_dim_512_with_spembs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh 
+  445  source ~/.bashrc
+  446  conda activate pyt
+  447  wf
+  448  CUDA_VISIBLE_DEVICES=1 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_10_utt_tts_transformer_latent_dim_512/latent_dim_512_with_spembs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh 
+  449  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_april_1_all_spk_transformer_latent_dim_512/latent_dim_512_with_spembs_asradv_160/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  450  clear
+  451  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_april_1_all_spk_transformer_latent_dim_512/latent_dim_512_with_spembs_asradv_160/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  452  clear
+  453  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_april_1_all_spk_transformer_latent_dim_512/latent_dim_512_with_spembs_asradv_160/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  454  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  455  CUDA_VISIBLE_DEVICES=1 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_april_1_all_spk_transformer_latent_dim_512/latent_dim_512_with_spembs_asradv_160/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  456  tmux new -s espp
+  457  source ~/.bashrc
+  458  conda activate pyt
+  459  clear
+  460  wf
+  461  clear
+  462  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  463  clear
+  464  ls
+  465  clear
+  466  cd ../../../
+  467  git add espnet2/*
+  468  git add espnet/*
+  469  git add egs2/TEMPLATE/asr1/*
+  470  git add egs2/librispeech_100/asr1/*
+  471  git commit -m "modified TrasnformerTTS to reduce memory, supports logging audio using pretrained vocoder as well"
+  472  git push -u origin vae
+  473  clear
+  474  clear
+  475  wf
+  476  nvidia-smi -l 2
+  477  CUDA_VISIBLE_DEVICES=1 bash ./vae_run_overfit_single_spk.sh 
+  478  clear
+  479  pkill -u rgupta
+  480  source ~/.bashrc
+  481  conda activate pyt
+  482  nvidia-smi -l 2
+  483  clear
+  484  wf
+  485  clear
+  486  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_10_utt_tts_transformer_latent_dim_512/latent_dim_512_with_spembs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  487  clear
+  488  clear
+  489  CUDA_VISIBLE_DEVICES=0 bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/vae_10_utt_tts_transformer_latent_dim_512/latent_dim_512_with_spembs/exp/asr_conformer_lr2e-3_warmup15k_amp_nondeterministic/run.sh
+  490  clear
+  491  clear
+  492  nvidia-smi -l 2
+  493  htop -u rgupta
+  494  oarsub -C
+  495  oarsub -C
+  496  tmux
+  497  oarsub -C
+  498  pkill -u rgupta
+  499  tmux new -s espp2
+  500  htop -u rgupta
+  501  source ~/.bashrc
+  502  wf
+  503  history >> history.txt
