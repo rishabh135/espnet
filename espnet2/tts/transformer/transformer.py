@@ -419,27 +419,7 @@ class TransformerTTS(AbsTTS):
 
         """
 
-        logging.warning(" >>> IT text {} feats {} ".format(text.shape, feats.shape ))
-
-        # text = text[:, : text_lengths.max()]  # for data-parallel
-        # feats = feats[:, : feats_lengths.max()]  # for data-parallel
-        # batch_size = text.size(0)
-
-        # # Add eos at the last of sequence
-        # xs = F.pad(text, [0, 1], "constant", self.padding_idx)
-        # for i, l in enumerate(text_lengths):
-        #     xs[i, l] = self.eos
-        # ilens = text_lengths + 1
-
-        # ys = feats
-        # olens = feats_lengths
-
-        # # make labels for stop prediction
-        # labels = make_pad_mask(olens - 1).to(ys.device, ys.dtype)
-        # labels = F.pad(labels, [0, 1], "constant", 1.0)
-
-
-        # logging.warning(" >>> xs {} ilens {} ys {} olens {} labels {}  ".format(xs.shape, ilens.shape, ys.shape, olens.shape, labels.shape ))
+        # logging.warning(" >>> IT text {} feats {} ".format(text.shape, feats.shape ))
 
 
         # calculate transformer outputs
@@ -450,7 +430,7 @@ class TransformerTTS(AbsTTS):
             olens=feats_lengths
         )
 
-        logging.warning(" >>> after_outs {} before_outs {} logits {}  ".format(after_outs.shape, before_outs.shape, logits.shape ))
+        # logging.warning(" >>> after_outs {} before_outs {} logits {}  ".format(after_outs.shape, before_outs.shape, logits.shape ))
 
         return after_outs
 
@@ -623,7 +603,7 @@ class TransformerTTS(AbsTTS):
         # forward decoder
         y_masks = self._target_mask(olens_in)
 
-        logging.warning("ys_in shape {} y_masks {} hs {} h_masks {}".format(ys_in.shape, y_masks.shape, hs.shape, h_masks.shape))
+        # logging.warning("ys_in shape {} y_masks {} hs {} h_masks {}".format(ys_in.shape, y_masks.shape, hs.shape, h_masks.shape))
 
         zs, _ = self.decoder(ys_in, y_masks, hs, h_masks)
         # (B, T_feats//r, odim * r) -> (B, T_feats//r * r, odim)

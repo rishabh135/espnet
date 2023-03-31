@@ -1,3 +1,5 @@
+
+
 #!/usr/bin/env bash
 # Set bash to 'debug' mode, it will exit on :
 # -e 'error', -u 'undefined variable', -o ... 'error in pipeline', -x 'print commands',
@@ -48,6 +50,8 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
 dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/dump
 
+
+
 # dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/dump # Directory to dump features.
 # expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to save experiments.
 
@@ -56,31 +60,30 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
-adv_liststr="recon 100"
-# adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
+# adv_liststr="recon 100"
+adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
+
 
 resume_checkpoint=-1
-max_epoch=100
-batch_bins=18000000
+max_epoch=160
+batch_bins=24000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
-save_every_epoch=20
+save_every_epoch=10
 vae_annealing_cycle=5
-
-# project_name="vae_without_vae_losses_feb_2_modified_160"
-# project_name="vae_lsoftmax_feb_16_beta_factor_0.6"
-
-
+plot_iiter=200
+latent_dim=512
+accum_grad=64
 
 
+project_name="vae_april_1_all_spk_transformer_latent_dim_512"
 
-project_name="vae_march_13_all_speakers_annealed"
 
-experiment_name="vae_weight_cycle_annealed"
 
+experiment_name="latent_dim_512_with_spembs_asradv_160"
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 
@@ -819,8 +822,8 @@ if "${use_xvector}"; then
     mfccdir=${data_dd}/mfccdir
     vaddir=${data_dd}/mfcc
     nnet_dir=${dumpdir}/nnet/
-    
-    # for name in ${train_set} ${valid_set} ${test_sets}; do
+
+    # for name in ${train_set} ${valid_set} ${test_sets} ; do
     #     ${global_dir}/utils/copy_data_dir.sh ${data_dd}/${name} ${data_dd}/${name}_mfcc_16k
     #     ${global_dir}/utils/data/resample_data_dir.sh 16000 ${data_dd}/${name}_mfcc_16k
     #     ${global_dir}/steps/make_mfcc.sh  \
@@ -835,7 +838,6 @@ if "${use_xvector}"; then
     # done
 
     # # Check pretrained model existence
-    
     # if [ ! -e ${nnet_dir} ]; then
     #     echo "X-vector model does not exist. Download pre-trained model."
     #     wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
@@ -850,10 +852,12 @@ if "${use_xvector}"; then
     #         ${nnet_dir}/xvectors_${name}
     # done
 
-    # # Update json
+    # Update json
     # for name in ${train_set} ${valid_set} ${test_sets}; do
     #     ./local/update_json.sh ${dumpdir}/${name}/data.json ${nnet_dir}/xvectors_${name}/xvector.scp
     # done
+
+
 
 
 
@@ -1344,7 +1348,7 @@ if ! "${skip_train}"; then
             echo "${_xvector_train_dir}"
             echo "${_xvector_valid_dir}"
             _opts+="--train_data_path_and_name_and_type ${_xvector_train_dir}/xvector.scp,spembs,kaldi_ark "
-            _opts+="--valid_data_path_and_name_and_type ${_xvector_valid_dir}/xvector_dev_clean.scp,spembs,kaldi_ark "
+            _opts+="--valid_data_path_and_name_and_type ${_xvector_valid_dir}/xvector.scp,spembs,kaldi_ark "
         fi
 
 
@@ -1382,8 +1386,6 @@ if ! "${skip_train}"; then
                 --adv_liststr "${adv_liststr}" \
                 --adv_flag "${adversarial_flag}" \
                 --vae_flag "${vae_flag}" \
-                --save_every_epoch "${save_every_epoch}" \
-                --vae_annealing_cycle "${vae_annealing_cycle}" \
                 --adv_dropout_out "${adv_dropout_out}" \
                 --adv_dropout_inp "${adv_dropout_inp}" \
                 --adv_dropout_mid "${adv_dropout_mid}" \
@@ -1392,6 +1394,11 @@ if ! "${skip_train}"; then
                 --project_name "${project_name}" \
                 --resume_from_checkpoint "${resume_checkpoint}" \
                 --adv_loss_weight "${adv_weight}" \
+                --plot_iiter "${plot_iiter}" \
+                --accum_grad "${accum_grad}" \
+                --latent_dim "${latent_dim}" \
+                --save_every_epoch "${save_every_epoch}" \
+                --vae_annealing_cycle "${vae_annealing_cycle}" \
                 --vae_weight_factor "${vae_weight_factor}" \
                 --non_linguistic_symbols "${nlsyms_txt}" \
                 --cleaner "${cleaner}" \
@@ -1837,4 +1844,3 @@ else
     log "Skip the uploading to HuggingFace stage"
 fi
 
-log "Successfully finished. [elapsed=${SECONDS}s]"

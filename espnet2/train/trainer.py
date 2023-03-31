@@ -651,7 +651,7 @@ class Trainer:
                 if len(_removed) != 0:
                     logging.warning("The model files were removed: " + ", ".join(_removed))
 
-            # 7. If any updating haven't happened, stops the training
+            # # 7. If any updating haven't happened, stops the training
             # if all_steps_are_invalid:
             #     logging.warning(
             #         f"The gradients at all steps are invalid in this epoch. "
@@ -964,6 +964,11 @@ class Trainer:
                     if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
                         decay = cls.beta_kl_factor
                         vae_loss = reconstruction_loss + (decay * kld_loss)
+
+
+                        wandb.log({ "beta_kl_factor" : decay } )
+                        wandb.log({ "vae_loss" : vae_loss.detach() } )
+
                         total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  *  vae_loss
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
@@ -975,6 +980,9 @@ class Trainer:
                         # loss_adversarial.requires_grad = True
                         decay = cls.beta_kl_factor
                         vae_loss = reconstruction_loss + (decay * kld_loss)
+
+                        wandb.log({ "beta_kl_factor" : decay } )
+                        wandb.log({ "vae_loss" : vae_loss.detach() } )
                         total_loss =  (1-options.vae_weight_factor) * loss + options.vae_weight_factor * vae_loss + options.adv_loss_weight * loss_adversarial
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
@@ -1048,49 +1056,56 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-                if((iiter % options.plot_iiter) == 0):
+                if(iiter % options.plot_iiter  == 0):
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
                     mu_logvar_combined = retval["mu_logvar_combined"]
                     feats_lengths = retval["feats_lengths"]
                     html_file_name = "./with_working_audio_30_march.png"
 
-                    logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
-                    ax1 = plt.subplot(3, 1, 1)
+                    # logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
+                    ax1 = plt.subplot(2, 1, 1)
                     ax1.set_title('Original feats linear')
                     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                    ax2 = plt.subplot(3, 1, 2)
+                    ax2 = plt.subplot(2, 1, 2)
                     ax2.set_title('Reconstructed feats linear')
                     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
 
 
-                    ax3 = plt.subplot(3, 1, 3)
 
-                    bundle = torchaudio.pipelines.TACOTRON2_WAVERNN_PHONE_LJSPEECH
-                    # processor = bundle.get_text_processor()
-                    # tacotron2 = bundle.get_tacotron2().to("cuda")
-                    vocoder = bundle.get_vocoder().to("cuda")
 
-                    with torch.inference_mode():
-                        # processed, lengths = processor( batch["text"][0] )
-                        # processed = processed.to("cuda")
-                        # lengths = lengths.to("cuda")
-                        # spec, spec_lengths, _ = tacotron2.infer(processed, lengths)
-                        # logging.warning(" >> just before vocoder  spec {} feats_lengths {} ".format(recons_feats_plot.shape, feats_lengths ))
-                        spec = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
-                        spec_lengths = torch.Tensor(feats_lengths).to("cuda")
-                        waveforms, lengths = vocoder(spec, spec_lengths)
+                    # if( (current_epoch % 2 == 0) and (iiter == options.plot_iiter )):
+                    #     # ax3 = plt.subplot(3, 1, 3)
+                    #     bundle = torchaudio.pipelines.TACOTRON2_WAVERNN_PHONE_LJSPEECH
+                    #     # processor = bundle.get_text_processor()
+                    #     # tacotron2 = bundle.get_tacotron2().to("cuda")
+                    #     vocoder = bundle.get_vocoder().to("cuda")
 
-                    ax3.plot(waveforms[0].cpu().detach())
-                    wandb.log({"recon_utt": wandb.Audio(waveforms, caption="reconstructed_utt", sample_rate=16)})
+                    #     with torch.inference_mode():
+                    #         # processed, lengths = processor( batch["text"][0] )
+                    #         # processed = processed.to("cuda")
+                    #         # lengths = lengths.to("cuda")
+                    #         # spec, spec_lengths, _ = tacotron2.infer(processed, lengths)
+                    #         # logging.warning(" >> just before vocoder  spec {} feats_lengths {} ".format(recons_feats_plot.shape, feats_lengths ))
+                    #         recons_spec = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+                    #         orig_spec = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+                    #         spec_lengths = torch.Tensor(feats_lengths).to("cuda")
+                    #         recons_waveforms, lengths = vocoder(recons_spec, spec_lengths)
+                    #         orig_waveforms, lengths = vocoder(orig_spec, spec_lengths)
+                    #     wandb.log({"Utt Vocoder": wandb.Audio(recons_waveforms[0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
+                    #     wandb.log({"Utt Vocoder": wandb.Audio(orig_waveforms[0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
+                        
+                        
+
+
                     # IPython.display.Audio(waveforms[0:1].cpu(), rate=vocoder.sample_rate)
 
 
                     fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
                     plt.tight_layout()
                     plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-                    wandb.log({f"spectrogram plot": wandb.Image(plt)})
+                    wandb.log({f"spectrogram plot": wandb.Image(plt)})            
                     fig.clf()
 
 
@@ -1098,49 +1113,9 @@ class Trainer:
 
                 if( (iiter % 200) == 0):
                     logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {} grad_norm {} ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach(), grad_norm ))
-                    # logging.warning( " vae_loss {}  ctc_att_loss {} ").format(stats["vae_loss"], stats["ctc_att_loss"])
-                    if(adv_flag == True and adv_name == "ESPnetASRModel"):
-                        logging.warning(" adversarial_loss : {}   accuracy_adversarial {} \n".format( stats["loss_adversarial"].detach(), stats["accuracy_adversarial"] ))
-                    if(iiter == 200):
-                        # logging.warning(model)
-                        if(options.ngpu > 1):
-                            # logging.warning(" ctc weight grad {}  \n ctc bias grad {}".format(  model.module.ctc.ctc_lo.weight.grad,  model.module.ctc.ctc_lo.bias.grad  ) )
-                            # logging.warning(" encoder weight grad {}  \n encoder bias grad {}".format(  model.module.encoder.encoders[2].feed_forward.w_1.weight.grad, model.module.encoder.encoders[2].feed_forward.w_1.bias.grad   ) )
-                            if(adv_flag == True and adv_name == "ESPnetASRModel"):
-                                logging.warning(" adversarial weight grad {}  \n adversarial bias grad {}".format( model.module.adversarial_branch.output.weight.grad, model.module.adversarial_branch.output.bias.grad   ) )
-
-                        elif(options.ngpu == 1):
-
-                            if(model.ctc.ctc_lo.weight.grad is not None):
-                                logging.warning(" ctc weight grad {}   shape {}  ctc bias grad {}".format(  torch.count_nonzero(model.ctc.ctc_lo.weight.grad), model.ctc.ctc_lo.weight.grad.shape ,  torch.count_nonzero(model.ctc.ctc_lo.bias.grad)  ) )
-                                logging.warning(" encoder weight grad {}  shape {}  encoder bias grad {}".format(  torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad), model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape, torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   ) )
-                            if(adv_flag == True and adv_name == "ESPnetASRModel"):
-                                if(model.adversarial_branch.output.weight.grad is not None):
-                                    logging.warning(" adversarial weight grad {} shape {}  adversarial bias grad {}".format( torch.count_nonzero(model.adversarial_branch.output.weight.grad), model.adversarial_branch.output.weight.grad.shape, torch.count_nonzero(model.adversarial_branch.output.bias.grad)   ) )
-
-                        logging.warning("******************************")
-
-
-                            # if(self.encoder_weight_layer is not None):
-                            #     tmpx =  model.encoder.encoders[2].feed_forward.w_1.weight - self.encoder_weight_layer
-                            #     tmpy =  model.ctc.ctc_lo.weight - self.ctc_weight_layer
-                            #     if(self.adversarial_weight_layer is not None):
-                            #         tmpz = model.adversarial_branch.output.weight - self.adversarial_weight_layer
-                            #         logging.warning(" adversarial {}   ".format(torch.count_nonzero(tmpz)))
-                            #     logging.warning(" encoder : {} ctc {}  ".format(torch.count_nonzero(tmpx), torch.count_nonzero(tmpy)))
-
-                            # self.encoder_weight_layer = model.encoder.encoders[2].feed_forward.w_1.weight
-                            # self.ctc_weight_layer = model.ctc.ctc_lo.weight
-                            # if(adv_mode == "adv" or adv_mode == "asradv"):
-                            #     self.adversarial_weight_layer = model.adversarial_branch.output.weight
 
 
 
-
-
-
-                # logging.info("\n ***** Grad norm : {} and loss :{} \n".format(grad_norm, loss))
-                # print("/*** train/trainer.py grad norm {} and loss {} \n".format(grad_norm, loss))
                 if not torch.isfinite(grad_norm):
                     logging.warning(
                         f"The grad norm is {grad_norm}. Skipping updating the model."
@@ -1261,58 +1236,6 @@ class Trainer:
                     _, stats, weight, __ = retval
                 else:
                     _, stats, weight = retval
-
-
-
-
-            # feats_plot = retval["feats_plot"]
-            # recons_feats_plot = retval["recons_feats_plot"]
-            # mu_logvar_combined = retval["mu_logvar_combined"]
-            # feats_lengths = retval["feats_lengths"] 
-            # html_file_name = "./with_working_audio_30_march.png"
-
-            # logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
-            # ax1 = plt.subplot(3, 1, 1)
-            # plt.title('Original feats linear')
-            # plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-
-            # ax2 = plt.subplot(3, 1, 2)
-            # # plt.title('Reconstructed feats linear')
-            # plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
-
-
-            # ax3 = plt.subplot(3, 1, 3)
-
-            # bundle = torchaudio.pipelines.TACOTRON2_WAVERNN_PHONE_LJSPEECH
-            # # processor = bundle.get_text_processor()
-            # # tacotron2 = bundle.get_tacotron2().to("cuda")
-            # vocoder = bundle.get_vocoder()
-            # vocoder= to_device(vocoder, "cuda" if ngpu > 0 else "cpu")
-
-            # with torch.inference_mode():
-            #     # processed, lengths = processor( batch["text"][0] )
-            #     # processed = processed.to("cuda")
-            #     # lengths = lengths.to("cuda")
-            #     # spec, spec_lengths, _ = tacotron2.infer(processed, lengths)
-            #     # logging.warning(" >> just before vocoder  spec {} feats_lengths {} ".format(recons_feats_plot.shape, feats_lengths ))
-            #     spec = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
-            #     spec_lengths = torch.Tensor(feats_lengths).to("cuda")
-            #     waveforms, lengths = vocoder(spec, spec.lengths)
-
-
-            # ax3.plot(waveforms[0].cpu().detach())
-            # wandb.log({"recon_utt": wandb.Audio(waveforms, caption="reconstructed_utt", sample_rate=16)})
-            # # IPython.display.Audio(waveforms[0:1].cpu(), rate=vocoder.sample_rate)
-
-
-            # fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
-            # plt.tight_layout()
-            # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-            # wandb.log({f"spectrogram plot": wandb.Image(plt)})
-            # fig.clf()
-
-
-
 
 
             if ngpu > 1 or distributed:

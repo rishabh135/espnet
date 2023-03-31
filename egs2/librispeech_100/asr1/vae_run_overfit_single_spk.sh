@@ -24,10 +24,7 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/partial_data_xvector_speed/original_data
 
-
-
-project_name="vae_single_spk_mar30_tts_transformer_latent_dim_512"
-
+project_name="vae_one_spk_march_31_latent_dim_512"
 
 
 
