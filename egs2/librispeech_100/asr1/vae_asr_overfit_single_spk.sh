@@ -59,13 +59,13 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
-adv_liststr="recon 600"
+adv_liststr="recon 900"
 # adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
 
 resume_checkpoint=-1
-max_epoch=600
-batch_bins=32000000
+max_epoch=900
+batch_bins=42000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -74,12 +74,14 @@ vae_weight_factor=0.8
 save_every_epoch=50
 vae_annealing_cycle=25
 plot_iiter=2
-latent_dim=512
+latent_dim=28
 accum_grad=2
 
 
-project_name="vae_one_spk_march_31_latent_dim_512"
-experiment_name="latent_dim_512_with_spembs"
+project_name="vae_one_spk_april_3_latent_dim_128"
+
+
+experiment_name="latent_dim_28_with_spembs"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 

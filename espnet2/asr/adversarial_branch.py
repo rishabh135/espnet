@@ -23,6 +23,10 @@ from espnet2.asr.lsoftmax import LSoftmaxLinear
 # from speechbrain.nnet.normalization import BatchNorm1d
 
 
+from loss_functions import AngularPenaltySMLoss
+
+
+
 ##############################################################################################################################################################
 ##############################################################################################################################################################
 
@@ -390,11 +394,23 @@ class SpeakerAdv(torch.nn.Module):
 		labels = to_cuda(self, labels.long())
 
 
+		# logging.warning(" y_hat.shape {} labels.shape {} ".format(y_hat.shape, labels.shape))
+
+		# in_features = 512
+		# out_features =  10 # Number of classes
+
+		# criterion = AngularPenaltySMLoss(in_features, out_features, loss_type='arcface') # loss_type in ['arcface', 'sphereface', 'cosface']
+		# # Forward method works similarly to nn.CrossEntropyLoss
+		# # x of shape (batch_size, in_features), labels of shape (batch_size,)
+		# # labels should indicate class of each sample, and should be an int, l satisying 0 <= l < out_dim
+		# loss = criterion(y_hat, labels)
+
+
+
 		loss = F.cross_entropy(y_hat, labels, size_average=True)
 		acc = th_accuracy(y_hat, labels, -1)
 
 		return loss, acc
-
 
 
 

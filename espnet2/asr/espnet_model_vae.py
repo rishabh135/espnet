@@ -432,10 +432,13 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
-        # logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
+        # logging.warning(">> speech {} speech_lengths  {} speech_lengths {}  ".format( speech.shape, speech_lengths.shape, speech_lengths[0]))
         original_feats = feats
         # 1.2 latent dist split
+        # logging.warning(">>> encoder_out shape {}   ".format(encoder_out.shape))
+        # mu_logvar_combined = encoder_out
         mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
+
         
         # Split the result into mu and var components
         # of the latent Gaussian distribution
