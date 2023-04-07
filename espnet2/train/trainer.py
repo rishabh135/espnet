@@ -1081,17 +1081,17 @@ class Trainer:
                     fig.clf()
 
 
-                    # if( (current_epoch % 2 == 0) and (iiter == options.plot_iiter )):
-                    #     with torch.inference_mode():
-                    #         recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
-                    #         orig_specs = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
-                    #         hifi_gan = HIFIGAN.from_hparams(source="speechbrain/tts-hifigan-libritts-16kHz", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/hifigan/", run_opts={"device":"cuda"})
-                    #         # Running Vocoder (spectrogram-to-waveform)
-                    #         recons_waveforms = hifi_gan.decode_batch(recons_specs)
-                    #         orig_waveforms = hifi_gan.decode_batch(orig_specs)
-                    #         # logging.warning("recons_waveforms {} ".format(recons_waveforms.shape))
-                    #     wandb.log({"HIFIGAN Vocoder": wandb.Audio(recons_waveforms[0,0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
-                    #     wandb.log({"HIFIGAN Vocoder": wandb.Audio(orig_waveforms[0,0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
+                    if( (current_epoch % 2 == 0) and (iiter == options.plot_iiter )):
+                        with torch.inference_mode():
+                            recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+                            orig_specs = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+                            hifi_gan = HIFIGAN.from_hparams(source="speechbrain/tts-hifigan-libritts-16kHz", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/hifigan/", run_opts={"device":"cuda"})
+                            # Running Vocoder (spectrogram-to-waveform)
+                            recons_waveforms = hifi_gan.decode_batch(recons_specs)
+                            orig_waveforms = hifi_gan.decode_batch(orig_specs)
+                            # logging.warning("recons_waveforms {} ".format(recons_waveforms.shape))
+                        wandb.log({"HIFIGAN reconstructed_utt": wandb.Audio(recons_waveforms[0,0].detach().cpu().numpy() , caption="recon_utt", sample_rate=16000)})
+                        wandb.log({"HIFIGAN Original": wandb.Audio(orig_waveforms[0,0].detach().cpu().numpy() , caption="original_utt", sample_rate=16000)})
 
 
 

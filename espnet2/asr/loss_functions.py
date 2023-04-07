@@ -10,8 +10,8 @@ class AngularPenaltySMLoss(nn.Module):
         Angular Penalty Softmax Loss
 
         Three 'loss_types' available: ['arcface', 'sphereface', 'cosface']
-        These losses are described in the following papers:
-
+        These losses are described in the following papers: 
+        
         ArcFace: https://arxiv.org/abs/1801.07698
         SphereFace: https://arxiv.org/abs/1704.08063
         CosFace/Ad Margin: https://arxiv.org/abs/1801.05599
@@ -42,7 +42,7 @@ class AngularPenaltySMLoss(nn.Module):
         assert len(x) == len(labels)
         assert torch.min(labels) >= 0
         assert torch.max(labels) < self.out_features
-
+        
         for W in self.fc.parameters():
             W = F.normalize(W, p=2, dim=1)
 
