@@ -8,13 +8,12 @@
 
 import torch
 from torch import nn
-import logging
+
 from espnet.nets.pytorch_backend.transformer.layer_norm import LayerNorm
 
 
 class DecoderLayer(nn.Module):
     """Single decoder layer module.
-
     Args:
         size (int): Input dimension.
         self_attn (torch.nn.Module): Self-attention module instance.
@@ -30,8 +29,6 @@ class DecoderLayer(nn.Module):
             if True, additional linear will be applied.
             i.e. x -> x + linear(concat(x, att(x)))
             if False, no additional linear will be applied. i.e. x -> x + att(x)
-
-
     """
 
     def __init__(
@@ -62,26 +59,23 @@ class DecoderLayer(nn.Module):
 
     def forward(self, tgt, tgt_mask, memory, memory_mask, cache=None):
         """Compute decoded features.
-
         Args:
-            tgt: bayesian latent
             tgt (torch.Tensor): Input tensor (#batch, maxlen_out, size).
             tgt_mask (torch.Tensor): Mask for input tensor (#batch, maxlen_out).
             memory (torch.Tensor): Encoded memory, float32 (#batch, maxlen_in, size).
             memory_mask (torch.Tensor): Encoded memory mask (#batch, maxlen_in).
             cache (List[torch.Tensor]): List of cached tensors.
                 Each tensor shape should be (#batch, maxlen_out - 1, size).
-
         Returns:
             torch.Tensor: Output tensor(#batch, maxlen_out, size).
             torch.Tensor: Mask for output tensor (#batch, maxlen_out).
             torch.Tensor: Encoded memory (#batch, maxlen_in, size).
             torch.Tensor: Encoded memory mask (#batch, maxlen_in).
-
         """
         residual = tgt
         if self.normalize_before:
             tgt = self.norm1(tgt)
+
         if cache is None:
             tgt_q = tgt
             tgt_q_mask = tgt_mask
@@ -132,3 +126,5 @@ class DecoderLayer(nn.Module):
             x = torch.cat([cache, x], dim=1)
 
         return x, tgt_mask, memory, memory_mask
+
+

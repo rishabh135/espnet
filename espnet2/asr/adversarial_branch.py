@@ -23,7 +23,7 @@ from espnet2.asr.lsoftmax import LSoftmaxLinear
 # from speechbrain.nnet.normalization import BatchNorm1d
 
 
-from loss_functions import AngularPenaltySMLoss
+from espnet2.asr.loss_functions import AngularPenaltySMLoss
 
 
 
