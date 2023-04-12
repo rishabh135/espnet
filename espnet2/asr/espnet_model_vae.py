@@ -50,6 +50,16 @@ else:
 
 
 
+# def grad(func, input, **kwargs):
+#     """
+#     Parameters:
+#         func->loss
+#     """
+#     input.requires_grad = True
+#     loss = func(input)
+#     loss.backward()
+#     input.requires_grad = False
+#     return 
 
 
 from python_speech_features import mfcc

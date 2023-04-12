@@ -30,8 +30,29 @@ from espnet.nets.pytorch_backend.transformer.embedding import (
 from espnet.nets.pytorch_backend.transformer.encoder import Encoder
 from espnet.nets.pytorch_backend.transformer.mask import subsequent_mask
 
+import logging
 
-class Transformer(AbsTTS):
+
+
+# idim: int,
+# odim: int,
+# embed_dim: int = 512,
+# eprenet_conv_layers: int = 3,
+# eprenet_conv_chans: int = 256,
+# eprenet_conv_filts: int = 5,
+# dprenet_layers: int = 2,
+# dprenet_units: int = 256,
+# elayers: int = 6,
+# eunits: int = 1024,
+# adim: int = 512,
+# aheads: int = 4,
+# dlayers: int = 6,
+# dunits: int = 1024,
+# postnet_layers: int = 5,
+# postnet_chans: int = 256,
+# postnet_filts: int = 5,
+
+class TransformerTTS(AbsTTS):
     """Transformer-TTS module.
 
     This is a module of text-to-speech Transformer described in `Neural Speech Synthesis
@@ -57,10 +78,10 @@ class Transformer(AbsTTS):
         elayers: int = 6,
         eunits: int = 1024,
         adim: int = 512,
-        aheads: int = 4,
-        dlayers: int = 6,
-        dunits: int = 1024,
-        postnet_layers: int = 5,
+        aheads: int = 2,
+        dlayers: int = 3,
+        dunits: int = 256,
+        postnet_layers: int = 2,
         postnet_chans: int = 256,
         postnet_filts: int = 5,
         positionwise_layer_type: str = "conv1d",
@@ -397,14 +418,14 @@ class Transformer(AbsTTS):
         spembs: Optional[torch.Tensor] = None,
         sids: Optional[torch.Tensor] = None,
         lids: Optional[torch.Tensor] = None,
-        joint_training: bool = False,
+        joint_training: bool = True,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """Calculate forward propagation.
 
         Args:
             text (LongTensor): Batch of padded character ids (B, Tmax).
             text_lengths (LongTensor): Batch of lengths of each input batch (B,).
-            feats (Tensor): Batch of padded target features (B, Lmax, odim).  /bayesian latent
+            feats (Tensor): Batch of padded target features (B, Lmax, odim).
             feats_lengths (LongTensor): Batch of the lengths of each target (B,).
             spembs (Optional[Tensor]): Batch of speaker embeddings (B, spk_embed_dim).
             sids (Optional[Tensor]): Batch of speaker IDs (B, 1).
@@ -417,155 +438,159 @@ class Transformer(AbsTTS):
             Tensor: Weight value if not joint training else model outputs.
 
         """
-        text = text[:, : text_lengths.max()]  # for data-parallel
-        feats = feats[:, : feats_lengths.max()]  # for data-parallel
-        batch_size = text.size(0)
 
-        # Add eos at the last of sequence
-        xs = F.pad(text, [0, 1], "constant", self.padding_idx)
-        for i, l in enumerate(text_lengths):
-            xs[i, l] = self.eos
-        ilens = text_lengths + 1
+        # logging.warning(" >>> IT text {} feats {} ".format(text.shape, feats.shape ))
 
-        ys = feats
-        olens = feats_lengths
-
-        # make labels for stop prediction
-        labels = make_pad_mask(olens - 1).to(ys.device, ys.dtype)
-        labels = F.pad(labels, [0, 1], "constant", 1.0)
 
         # calculate transformer outputs
         after_outs, before_outs, logits = self._forward(
-            xs=xs,
-            ilens=ilens,
-            ys=ys,
-            olens=olens,
-            spembs=spembs,
-            sids=sids,
-            lids=lids,
+            xs=text,
+            ilens=text_lengths,
+            ys=feats,
+            olens=feats_lengths
         )
+
+        # logging.warning(" >>> after_outs {} before_outs {} logits {}  ".format(after_outs.shape, before_outs.shape, logits.shape ))
+
+        return after_outs
 
         # modifiy mod part of groundtruth
-        olens_in = olens
-        if self.reduction_factor > 1:
-            assert olens.ge(
-                self.reduction_factor
-            ).all(), "Output length must be greater than or equal to reduction factor."
-            olens_in = olens.new([olen // self.reduction_factor for olen in olens])
-            olens = olens.new([olen - olen % self.reduction_factor for olen in olens])
-            max_olen = max(olens)
-            ys = ys[:, :max_olen]
-            labels = labels[:, :max_olen]
-            labels = torch.scatter(
-                labels, 1, (olens - 1).unsqueeze(1), 1.0
-            )  # see #3388
+        # ys=feats
+        # olens = feats_lengths
+        
+        # # make labels for stop prediction
+        # labels = make_pad_mask(olens - 1).to(ys.device, ys.dtype)
+        # labels = F.pad(labels, [0, 1], "constant", 1.0)
+        
 
-        # calculate loss values
-        l1_loss, l2_loss, bce_loss = self.criterion(
-            after_outs, before_outs, logits, ys, labels, olens
-        )
-        if self.loss_type == "L1":
-            loss = l1_loss + bce_loss
-        elif self.loss_type == "L2":
-            loss = l2_loss + bce_loss
-        elif self.loss_type == "L1+L2":
-            loss = l1_loss + l2_loss + bce_loss
-        else:
-            raise ValueError("unknown --loss-type " + self.loss_type)
+        # olens_in = olens
+        # if self.reduction_factor > 1:
+        #     assert olens.ge(
+        #         self.reduction_factor
+        #     ).all(), "Output length must be greater than or equal to reduction factor."
+        #     olens_in = olens.new([olen // self.reduction_factor for olen in olens])
+        #     olens = olens.new([olen - olen % self.reduction_factor for olen in olens])
+        #     max_olen = max(olens)
+        #     ys = ys[:, :max_olen]
+        #     labels = labels[:, :max_olen]
+        #     labels = torch.scatter(
+        #         labels, 1, (olens - 1).unsqueeze(1), 1.0
+        #     )  # see #3388
 
-        stats = dict(
-            l1_loss=l1_loss.item(),
-            l2_loss=l2_loss.item(),
-            bce_loss=bce_loss.item(),
-        )
+        # # calculate loss values
+        # l1_loss, l2_loss, bce_loss = self.criterion(
+        #     after_outs, before_outs, logits, ys, labels, olens
+        # )
+        # if self.loss_type == "L1":
+        #     loss = l1_loss + bce_loss
+        # elif self.loss_type == "L2":
+        #     loss = l2_loss + bce_loss
+        # elif self.loss_type == "L1+L2":
+        #     loss = l1_loss + l2_loss + bce_loss
+        # else:
+        #     raise ValueError("unknown --loss-type " + self.loss_type)
 
-        # calculate guided attention loss
-        if self.use_guided_attn_loss:
-            # calculate for encoder
-            if "encoder" in self.modules_applied_guided_attn:
-                att_ws = []
-                for idx, layer_idx in enumerate(
-                    reversed(range(len(self.encoder.encoders)))
-                ):
-                    att_ws += [
-                        self.encoder.encoders[layer_idx].self_attn.attn[
-                            :, : self.num_heads_applied_guided_attn
-                        ]
-                    ]
-                    if idx + 1 == self.num_layers_applied_guided_attn:
-                        break
-                att_ws = torch.cat(att_ws, dim=1)  # (B, H*L, T_text, T_text)
-                enc_attn_loss = self.attn_criterion(att_ws, ilens, ilens)
-                loss = loss + enc_attn_loss
-                stats.update(enc_attn_loss=enc_attn_loss.item())
-            # calculate for decoder
-            if "decoder" in self.modules_applied_guided_attn:
-                att_ws = []
-                for idx, layer_idx in enumerate(
-                    reversed(range(len(self.decoder.decoders)))
-                ):
-                    att_ws += [
-                        self.decoder.decoders[layer_idx].self_attn.attn[
-                            :, : self.num_heads_applied_guided_attn
-                        ]
-                    ]
-                    if idx + 1 == self.num_layers_applied_guided_attn:
-                        break
-                att_ws = torch.cat(att_ws, dim=1)  # (B, H*L, T_feats, T_feats)
-                dec_attn_loss = self.attn_criterion(att_ws, olens_in, olens_in)
-                loss = loss + dec_attn_loss
-                stats.update(dec_attn_loss=dec_attn_loss.item())
-            # calculate for encoder-decoder
-            if "encoder-decoder" in self.modules_applied_guided_attn:
-                att_ws = []
-                for idx, layer_idx in enumerate(
-                    reversed(range(len(self.decoder.decoders)))
-                ):
-                    att_ws += [
-                        self.decoder.decoders[layer_idx].src_attn.attn[
-                            :, : self.num_heads_applied_guided_attn
-                        ]
-                    ]
-                    if idx + 1 == self.num_layers_applied_guided_attn:
-                        break
-                att_ws = torch.cat(att_ws, dim=1)  # (B, H*L, T_feats, T_text)
-                enc_dec_attn_loss = self.attn_criterion(att_ws, ilens, olens_in)
-                loss = loss + enc_dec_attn_loss
-                stats.update(enc_dec_attn_loss=enc_dec_attn_loss.item())
+        # stats = dict(
+        #     l1_loss=l1_loss.item(),
+        #     l2_loss=l2_loss.item(),
+        #     bce_loss=bce_loss.item(),
+        # )
 
-        # report extra information
-        if self.use_scaled_pos_enc:
-            stats.update(
-                encoder_alpha=self.encoder.embed[-1].alpha.data.item(),
-                decoder_alpha=self.decoder.embed[-1].alpha.data.item(),
-            )
+        # # calculate guided attention loss
+        # if self.use_guided_attn_loss:
+        #     # calculate for encoder
+        #     if "encoder" in self.modules_applied_guided_attn:
+        #         att_ws = []
+        #         for idx, layer_idx in enumerate(
+        #             reversed(range(len(self.encoder.encoders)))
+        #         ):
+        #             att_ws += [
+        #                 self.encoder.encoders[layer_idx].self_attn.attn[
+        #                     :, : self.num_heads_applied_guided_attn
+        #                 ]
+        #             ]
+        #             if idx + 1 == self.num_layers_applied_guided_attn:
+        #                 break
+        #         att_ws = torch.cat(att_ws, dim=1)  # (B, H*L, T_text, T_text)
+        #         enc_attn_loss = self.attn_criterion(att_ws, ilens, ilens)
+        #         loss = loss + enc_attn_loss
+        #         stats.update(enc_attn_loss=enc_attn_loss.item())
+        #     # calculate for decoder
+        #     if "decoder" in self.modules_applied_guided_attn:
+        #         att_ws = []
+        #         for idx, layer_idx in enumerate(
+        #             reversed(range(len(self.decoder.decoders)))
+        #         ):
+        #             att_ws += [
+        #                 self.decoder.decoders[layer_idx].self_attn.attn[
+        #                     :, : self.num_heads_applied_guided_attn
+        #                 ]
+        #             ]
+        #             if idx + 1 == self.num_layers_applied_guided_attn:
+        #                 break
+        #         att_ws = torch.cat(att_ws, dim=1)  # (B, H*L, T_feats, T_feats)
+        #         dec_attn_loss = self.attn_criterion(att_ws, olens_in, olens_in)
+        #         loss = loss + dec_attn_loss
+        #         stats.update(dec_attn_loss=dec_attn_loss.item())
+        #     # calculate for encoder-decoder
+        #     if "encoder-decoder" in self.modules_applied_guided_attn:
+        #         att_ws = []
+        #         for idx, layer_idx in enumerate(
+        #             reversed(range(len(self.decoder.decoders)))
+        #         ):
+        #             att_ws += [
+        #                 self.decoder.decoders[layer_idx].src_attn.attn[
+        #                     :, : self.num_heads_applied_guided_attn
+        #                 ]
+        #             ]
+        #             if idx + 1 == self.num_layers_applied_guided_attn:
+        #                 break
+        #         att_ws = torch.cat(att_ws, dim=1)  # (B, H*L, T_feats, T_text)
+        #         enc_dec_attn_loss = self.attn_criterion(att_ws, ilens, olens_in)
+        #         loss = loss + enc_dec_attn_loss
+        #         stats.update(enc_dec_attn_loss=enc_dec_attn_loss.item())
 
-        if not joint_training:
-            stats.update(loss=loss.item())
-            loss, stats, weight = force_gatherable(
-                (loss, stats, batch_size), loss.device
-            )
-            return loss, stats, weight
-        else:
-            return loss, stats, after_outs
+        # # report extra information
+        # if self.use_scaled_pos_enc:
+        #     stats.update(
+        #         encoder_alpha=self.encoder.embed[-1].alpha.data.item(),
+        #         decoder_alpha=self.decoder.embed[-1].alpha.data.item(),
+        #     )
+
+        # if not joint_training:
+        #     stats.update(loss=loss.item())
+        #     loss, stats, weight = force_gatherable(
+        #         (loss, stats, batch_size), loss.device
+        #     )
+        #     return loss, stats, after_outs
+        # else:
+        #     return loss, stats, after_outs
 
     def _forward(
         self,
-        xs: torch.Tensor,
+        xs: torch.Tensor, 
         ilens: torch.Tensor,
         ys: torch.Tensor,
         olens: torch.Tensor,
-        spembs: torch.Tensor,
-        sids: torch.Tensor,
-        lids: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         # forward encoder
+
+        # x_masks = self._source_mask(ilens)
+
+        h_masks = self._source_mask(ilens)
+        hs = xs
         
         
-        x_masks = self._source_mask(ilens)
-        hs, h_masks = self.encoder(xs, x_masks)
+        # logging.warning(" >>> xs {} x_masks {}  ".format(xs.shape, x_masks.shape ))
 
 
+        # hs, h_masks = self.encoder(xs, x_masks)
+
+        # hs ---- bayesian_latent  h_masks encoder_out_lens
+        # logging.warning(" >>> hs {} h_masks {} x_masks {}  ".format(hs.shape, h_masks.shape, x_masks.shape ))
+
+
+        
         # integrate with GST
         if self.use_gst:
             style_embs = self.gst(ys)
@@ -583,6 +608,7 @@ class Transformer(AbsTTS):
         if self.spk_embed_dim is not None:
             hs = self._integrate_with_spk_embed(hs, spembs)
 
+
         # thin out frames for reduction factor
         # (B, T_feats, odim) ->  (B, T_feats//r, odim)
         if self.reduction_factor > 1:
@@ -596,6 +622,9 @@ class Transformer(AbsTTS):
 
         # forward decoder
         y_masks = self._target_mask(olens_in)
+
+        # logging.warning("ys_in shape {} y_masks {} hs {} h_masks {}".format(ys_in.shape, y_masks.shape, hs.shape, h_masks.shape))
+
         zs, _ = self.decoder(ys_in, y_masks, hs, h_masks)
         # (B, T_feats//r, odim * r) -> (B, T_feats//r * r, odim)
         before_outs = self.feat_out(zs).view(zs.size(0), -1, self.odim)
@@ -628,9 +657,9 @@ class Transformer(AbsTTS):
 
         Args:
             text (LongTensor): Input sequence of characters (T_text,).
-            feats (Optional[Tensor]): Feature sequence to extract style embedding   bayesian latent
+            feats (Optional[Tensor]): Feature sequence to extract style embedding
                 (T_feats', idim).
-            spembs (Optional[Tensor]): Speaker embedding (spk_embed_dim,).   
+            spembs (Optional[Tensor]): Speaker embedding (spk_embed_dim,).
             sids (Optional[Tensor]): Speaker ID (1,).
             lids (Optional[Tensor]): Language ID (1,).
             threshold (float): Threshold in inference.
