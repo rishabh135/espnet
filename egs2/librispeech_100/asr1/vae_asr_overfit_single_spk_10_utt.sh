@@ -63,22 +63,23 @@ adv_liststr="recon 600"
 # adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
 
-resume_checkpoint=550
+resume_checkpoint=-1
 max_epoch=600
-batch_bins=52000000
+batch_bins=12000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
-save_every_epoch=50
+save_every_epoch=100
 vae_annealing_cycle=25
 plot_iiter=1
 latent_dim=28
 accum_grad=1
 
 
-project_name="vae_10_utt_april_5_tts_transformer_latent_dim_28"
+project_name="vae_10_utt_april_12_tts_transformer_latent_dim_28"
+
 
 experiment_name="latent_dim_28_with_spembs"
 
