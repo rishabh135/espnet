@@ -83,7 +83,7 @@ from scipy.signal import spectrogram
 import wandb
 import matplotlib.pyplot as plt
 
-
+from torchinfo import summary
 
 
 def draw_mfcc(mfcc_feats, ax, fig, ylabel=True):
@@ -174,6 +174,8 @@ class ESPnetASRModel(AbsESPnetModel):
         self.preencoder = preencoder
         self.postencoder = postencoder
         self.encoder = encoder
+        # model_stats = summary(self.encoder , [(10, 1595, 80), (10)], verbose=1)
+        # logging.warning(" >> model::: {} ".format( str(model_stats)) )
 
         self.reconstruction_decoder = reconstruction_decoder
         self.adversarial_branch = adversarial_branch
@@ -432,11 +434,11 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
-        # logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
+        logging.warning(" encoder_out {} encoder_out_lens {} speech {} speech_lengths {} feats shape {}  ".format( encoder_out.shape, encoder_out_lens.shape, speech.shape, speech_lengths.shape, feats.shape))
+
         original_feats = feats
         # 1.2 latent dist split
         mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
-        
         # Split the result into mu and var components
         # of the latent Gaussian distribution
         mu = self.fc_mu(mu_logvar_combined)
@@ -762,6 +764,10 @@ class ESPnetASRModel(AbsESPnetModel):
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
             encoder_out, encoder_out_lens, _ = self.encoder(feats, feats_lengths)
+            out_sum = summary(self.encoder, input_data=[feats, feats_lengths], depth=5, verbose = 1)
+            logging.warning(" out_sum {} ".format(out_sum))
+
+            
         intermediate_outs = None
         if isinstance(encoder_out, tuple):
             intermediate_outs = encoder_out[1]

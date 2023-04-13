@@ -78,7 +78,8 @@ latent_dim=28
 accum_grad=1
 
 
-project_name="vae_10_utt_april_12_tts_transformer_latent_dim_28"
+
+project_name="vae_10_utt_april_13_tts_transformer_latent_dim_28"
 
 
 experiment_name="latent_dim_28_with_spembs"
