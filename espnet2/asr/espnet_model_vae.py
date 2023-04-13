@@ -174,8 +174,6 @@ class ESPnetASRModel(AbsESPnetModel):
         self.preencoder = preencoder
         self.postencoder = postencoder
         self.encoder = encoder
-        # model_stats = summary(self.encoder , [(10, 1595, 80), (10)], verbose=1)
-        # logging.warning(" >> model::: {} ".format( str(model_stats)) )
 
         self.reconstruction_decoder = reconstruction_decoder
         self.adversarial_branch = adversarial_branch
@@ -486,8 +484,9 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}   feats_length {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {}".format( text.shape, text_lengths.shape, bayesian_latent.shape,  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0] ))
         recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
-        # spembs: Optional[torch.Tensor] = None,
-
+        out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], depth=2, verbose = 0)
+        logging.warning(" >>> reconstruction_decoder_summary: {} ".format(out_sum))
+        
         
         # recons_feats, _ = self.reconstruction_decoder( hs_pad= bayesian_latent , hlens=encoder_out_lens, ys_in_pad= zeros_spembs, ys_in_lens=feats_lengths)
         
@@ -764,10 +763,10 @@ class ESPnetASRModel(AbsESPnetModel):
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
             encoder_out, encoder_out_lens, _ = self.encoder(feats, feats_lengths)
-            out_sum = summary(self.encoder, input_data=[feats, feats_lengths], depth=5, verbose = 1)
+            out_sum = summary(self.encoder, input_data=[feats, feats_lengths], depth=2, verbose = 0)
             logging.warning(" out_sum {} ".format(out_sum))
 
-            
+
         intermediate_outs = None
         if isinstance(encoder_out, tuple):
             intermediate_outs = encoder_out[1]
