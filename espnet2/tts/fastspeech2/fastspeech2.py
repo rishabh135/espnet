@@ -485,12 +485,12 @@ class FastSpeech2(AbsTTS):
         text_lengths: torch.Tensor,
         feats: torch.Tensor,
         feats_lengths: torch.Tensor,
-        durations: torch.Tensor,
-        durations_lengths: torch.Tensor,
-        pitch: torch.Tensor,
-        pitch_lengths: torch.Tensor,
-        energy: torch.Tensor,
-        energy_lengths: torch.Tensor,
+        # durations: torch.Tensor,
+        # durations_lengths: torch.Tensor,
+        # pitch: torch.Tensor,
+        # pitch_lengths: torch.Tensor,
+        # energy: torch.Tensor,
+        # energy_lengths: torch.Tensor,
         spembs: Optional[torch.Tensor] = None,
         sids: Optional[torch.Tensor] = None,
         lids: Optional[torch.Tensor] = None,
@@ -522,19 +522,22 @@ class FastSpeech2(AbsTTS):
         """
         text = text[:, : text_lengths.max()]  # for data-parallel
         feats = feats[:, : feats_lengths.max()]  # for data-parallel
-        durations = durations[:, : durations_lengths.max()]  # for data-parallel
-        pitch = pitch[:, : pitch_lengths.max()]  # for data-parallel
-        energy = energy[:, : energy_lengths.max()]  # for data-parallel
+        # durations = durations[:, : durations_lengths.max()]  # for data-parallel
+        # pitch = pitch[:, : pitch_lengths.max()]  # for data-parallel
+        # energy = energy[:, : energy_lengths.max()]  # for data-parallel
 
         batch_size = text.size(0)
 
         # Add eos at the last of sequence
-        xs = F.pad(text, [0, 1], "constant", self.padding_idx)
-        for i, l in enumerate(text_lengths):
-            xs[i, l] = self.eos
+        xs = F.pad(text, [0, 0, 0, 1], "constant", self.padding_idx)
+        logging.warning(" xs {} text_lengths {}  ".format(xs.shape, text_lengths.shape))
+        for i,l in enumerate(text_lengths):
+            logging.warning(" i {} l {} ".format(i , l ))
+            xs[i, l, ] = self.eos
         ilens = text_lengths + 1
 
-        ys, ds, ps, es = feats, durations, pitch, energy
+        ys = feats
+        # ys, ds, ps, es = feats, durations, pitch, energy
         olens = feats_lengths
 
         # forward propagation
@@ -543,66 +546,66 @@ class FastSpeech2(AbsTTS):
             ilens,
             ys,
             olens,
-            ds,
-            ps,
-            es,
+            # ds,
+            # ps,
+            # es,
             spembs=spembs,
             sids=sids,
             lids=lids,
             is_inference=False,
         )
 
-        # modify mod part of groundtruth
-        if self.reduction_factor > 1:
-            olens = olens.new([olen - olen % self.reduction_factor for olen in olens])
-            max_olen = max(olens)
-            ys = ys[:, :max_olen]
+        # # modify mod part of groundtruth
+        # if self.reduction_factor > 1:
+        #     olens = olens.new([olen - olen % self.reduction_factor for olen in olens])
+        #     max_olen = max(olens)
+        #     ys = ys[:, :max_olen]
 
-        # calculate loss
-        if self.postnet is None:
-            after_outs = None
+        # # calculate loss
+        # if self.postnet is None:
+        #     after_outs = None
 
-        # calculate loss
-        l1_loss, duration_loss, pitch_loss, energy_loss = self.criterion(
-            after_outs=after_outs,
-            before_outs=before_outs,
-            d_outs=d_outs,
-            p_outs=p_outs,
-            e_outs=e_outs,
-            ys=ys,
-            ds=ds,
-            ps=ps,
-            es=es,
-            ilens=ilens,
-            olens=olens,
-        )
-        loss = l1_loss + duration_loss + pitch_loss + energy_loss
+        # # calculate loss
+        # l1_loss, duration_loss, pitch_loss, energy_loss = self.criterion(
+        #     after_outs=after_outs,
+        #     before_outs=before_outs,
+        #     d_outs=d_outs,
+        #     p_outs=p_outs,
+        #     e_outs=e_outs,
+        #     ys=ys,
+        #     ds=ds,
+        #     ps=ps,
+        #     es=es,
+        #     ilens=ilens,
+        #     olens=olens,
+        # )
+        # loss = l1_loss + duration_loss + pitch_loss + energy_loss
 
-        stats = dict(
-            l1_loss=l1_loss.item(),
-            duration_loss=duration_loss.item(),
-            pitch_loss=pitch_loss.item(),
-            energy_loss=energy_loss.item(),
-        )
+        # stats = dict(
+        #     l1_loss=l1_loss.item(),
+        #     duration_loss=duration_loss.item(),
+        #     pitch_loss=pitch_loss.item(),
+        #     energy_loss=energy_loss.item(),
+        # )
 
-        # report extra information
-        if self.encoder_type == "transformer" and self.use_scaled_pos_enc:
-            stats.update(
-                encoder_alpha=self.encoder.embed[-1].alpha.data.item(),
-            )
-        if self.decoder_type == "transformer" and self.use_scaled_pos_enc:
-            stats.update(
-                decoder_alpha=self.decoder.embed[-1].alpha.data.item(),
-            )
+        # # report extra information
+        # if self.encoder_type == "transformer" and self.use_scaled_pos_enc:
+        #     stats.update(
+        #         encoder_alpha=self.encoder.embed[-1].alpha.data.item(),
+        #     )
+        # if self.decoder_type == "transformer" and self.use_scaled_pos_enc:
+        #     stats.update(
+        #         decoder_alpha=self.decoder.embed[-1].alpha.data.item(),
+        #     )
 
-        if not joint_training:
-            stats.update(loss=loss.item())
-            loss, stats, weight = force_gatherable(
-                (loss, stats, batch_size), loss.device
-            )
-            return loss, stats, weight
-        else:
-            return loss, stats, after_outs if after_outs is not None else before_outs
+        # if not joint_training:
+        #     stats.update(loss=loss.item())
+        #     loss, stats, weight = force_gatherable(
+        #         (loss, stats, batch_size), loss.device
+        #     )
+        #     return loss, stats, weight
+        # else:
+        #     return loss, stats, after_outs if after_outs is not None else before_outs
 
     def _forward(
         self,
@@ -621,7 +624,8 @@ class FastSpeech2(AbsTTS):
     ) -> Sequence[torch.Tensor]:
         # forward encoder
         x_masks = self._source_mask(ilens)
-        hs, _ = self.encoder(xs, x_masks)  # (B, T_text, adim)
+        hs = xs
+        # hs, _ = self.encoder(xs, x_masks)  # (B, T_text, adim)
 
         # integrate with GST
         if self.use_gst:
@@ -652,20 +656,20 @@ class FastSpeech2(AbsTTS):
         else:
             e_outs = self.energy_predictor(hs, d_masks.unsqueeze(-1))
 
-        if is_inference:
-            d_outs = self.duration_predictor.inference(hs, d_masks)  # (B, T_text)
-            # use prediction in inference
-            p_embs = self.pitch_embed(p_outs.transpose(1, 2)).transpose(1, 2)
-            e_embs = self.energy_embed(e_outs.transpose(1, 2)).transpose(1, 2)
-            hs = hs + e_embs + p_embs
-            hs = self.length_regulator(hs, d_outs, alpha)  # (B, T_feats, adim)
-        else:
-            d_outs = self.duration_predictor(hs, d_masks)
-            # use groundtruth in training
-            p_embs = self.pitch_embed(ps.transpose(1, 2)).transpose(1, 2)
-            e_embs = self.energy_embed(es.transpose(1, 2)).transpose(1, 2)
-            hs = hs + e_embs + p_embs
-            hs = self.length_regulator(hs, ds)  # (B, T_feats, adim)
+        # if is_inference:
+        #     d_outs = self.duration_predictor.inference(hs, d_masks)  # (B, T_text)
+        #     # use prediction in inference
+        #     p_embs = self.pitch_embed(p_outs.transpose(1, 2)).transpose(1, 2)
+        #     e_embs = self.energy_embed(e_outs.transpose(1, 2)).transpose(1, 2)
+        #     hs = hs + e_embs + p_embs
+        #     hs = self.length_regulator(hs, d_outs, alpha)  # (B, T_feats, adim)
+        # else:
+        #     d_outs = self.duration_predictor(hs, d_masks)
+        #     # use groundtruth in training
+        #     p_embs = self.pitch_embed(ps.transpose(1, 2)).transpose(1, 2)
+        #     e_embs = self.energy_embed(es.transpose(1, 2)).transpose(1, 2)
+        #     hs = hs + e_embs + p_embs
+        #     hs = self.length_regulator(hs, ds)  # (B, T_feats, adim)
 
         # forward decoder
         if olens is not None and not is_inference:

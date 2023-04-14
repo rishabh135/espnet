@@ -174,8 +174,6 @@ class ESPnetASRModel(AbsESPnetModel):
         self.preencoder = preencoder
         self.postencoder = postencoder
         self.encoder = encoder
-        # model_stats = summary(self.encoder , [(10, 1595, 80), (10)], verbose=1)
-        # logging.warning(" >> model::: {} ".format( str(model_stats)) )
 
         self.reconstruction_decoder = reconstruction_decoder
         self.adversarial_branch = adversarial_branch
@@ -191,7 +189,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         # encoder_out_size fixed unless you change the encoder params()
-        self.final_encoder_dim = 128
+        self.final_encoder_dim = 256
         self.latent_dim = latent_dim
         # self.spk_embed_dim is present determined on how we calculated the xvector, dont change it
         self.spk_embed_dim = 512
@@ -441,12 +439,15 @@ class ESPnetASRModel(AbsESPnetModel):
         mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         # Split the result into mu and var components
         # of the latent Gaussian distribution
-        mu = self.fc_mu(mu_logvar_combined)
-        log_var = self.fc_var(mu_logvar_combined)
+        mu = self.fc_mu(encoder_out)
+        log_var = self.fc_var(encoder_out)
         z = self.reparameterize(mu, log_var)
-        # logging.warning(" feats {} combined {}  mu {}  log_var {}  z {} ".format( feats.shape, mu_logvar_combined.shape,  mu.shape, log_var.shape, z.shape  ))
-        bayesian_latent = self.decoder_input_projection(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)
-        # logging.warning(" >>> bayesian_latent.shape {}  ".format( bayesian_latent.shape  ))
+        logging.warning(" feats {} combined {}  mu {}  log_var {}  z {} ".format( feats.shape, mu_logvar_combined.shape,  mu.shape, log_var.shape, z.shape  ))
+        bayesian_latent = z
+        # bayesian_latent = self.decoder_input_projection(z)
+        logging.warning(" >>> bayesian_latent before unsqueeze {}  ".format( bayesian_latent.shape ))
+        # bayesian_latent = bayesian_latent.repeat( -1, feats_lengths.shape[0], 80)
+        # logging.warning(" >>> bayesian_latent after unsqueeze {} ".format( bayesian_latent.shape ))
 
 
 
@@ -484,10 +485,17 @@ class ESPnetASRModel(AbsESPnetModel):
 
         
 
-        # logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}   feats_length {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {}".format( text.shape, text_lengths.shape, bayesian_latent.shape,  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0] ))
-        recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
-        # spembs: Optional[torch.Tensor] = None,
-
+        logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}  encoder_out_lens {}  encoder_out_lens_val {}  feats {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {},  encoder_out {} ".format( text.shape, text_lengths.shape, bayesian_latent.shape, encoder_out_lens.shape, encoder_out_lens[0],  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0], encoder_out.shape ))
+        
+        
+        recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats= feats, feats_lengths=feats_lengths, spembs = spembs )
+        
+        
+        
+        logging.warning(" >>> recons_feats {}   feats {}   ".format( recons_feats.shape,  feats.shape))
+        out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], verbose = 1)
+        logging.warning(" >>> reconstruction_decoder_summary: {} ".format(out_sum))
+        
         
         # recons_feats, _ = self.reconstruction_decoder( hs_pad= bayesian_latent , hlens=encoder_out_lens, ys_in_pad= zeros_spembs, ys_in_lens=feats_lengths)
         
@@ -764,10 +772,10 @@ class ESPnetASRModel(AbsESPnetModel):
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
             encoder_out, encoder_out_lens, _ = self.encoder(feats, feats_lengths)
-            out_sum = summary(self.encoder, input_data=[feats, feats_lengths], depth=5, verbose = 1)
-            logging.warning(" out_sum {} ".format(out_sum))
+            # out_sum = summary(self.encoder, input_data=[feats, feats_lengths], verbose = 1)
+            # logging.warning(" out_sum {} ".format(out_sum))
 
-            
+
         intermediate_outs = None
         if isinstance(encoder_out, tuple):
             intermediate_outs = encoder_out[1]
@@ -876,7 +884,13 @@ class ESPnetASRModel(AbsESPnetModel):
         # 1. Forward decoder
         decoder_out, _ = self.decoder(
             encoder_out, encoder_out_lens, ys_in_pad, ys_in_lens
-        )  # [batch, seqlen, dim]
+        )
+        out_sum = summary(self.decoder, input_data=[encoder_out, encoder_out_lens, ys_in_pad, ys_in_lens], verbose = 1)
+        logging.warning(" >>> main_attention_decoder_summary: {} ".format(out_sum))
+        loggging.warning(">>> input : encoder_out {} ys_in_pad {} |||||  decoder_out {} ".format(encoder_out.shape, ys_in_pad.shape, decoder_out.shape ))
+
+        logging.warning
+        # [batch, seqlen, dim]
         batch_size = decoder_out.size(0)
         decoder_num_class = decoder_out.size(2)
         # nll: negative log-likelihood
@@ -952,6 +966,11 @@ class ESPnetASRModel(AbsESPnetModel):
         decoder_out, _ = self.decoder(
             encoder_out, encoder_out_lens, ys_in_pad, ys_in_lens
         )
+        out_sum = summary(self.decoder, input_data=[encoder_out, encoder_out_lens, ys_in_pad, ys_in_lens], verbose = 1)
+        logging.warning(" >>> main_attention_decoder_summary: {} ".format(out_sum))
+        loggging.warning(">>> input : encoder_out {} ys_in_pad {} |||||  decoder_out {} ".format(encoder_out.shape, ys_in_pad.shape, decoder_out.shape ))
+
+
 
         # 2. Compute attention loss
         loss_att = self.criterion_att(decoder_out, ys_out_pad)

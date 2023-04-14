@@ -25,7 +25,6 @@ from espnet2.asr.decoder.Disentangled_sequentual_autoencoder_yatindandi import D
 from espnet2.asr.encoder.abs_encoder import AbsEncoder
 from espnet2.asr.adversarial_branch import SpeakerAdv
 
-from espnet2.tts.transformer import TransformerTTS as ReconTransformer
 
 
 
@@ -85,8 +84,14 @@ from espnet2.utils.nested_dict_action import NestedDictAction
 from espnet2.utils.types import float_or_none, int_or_none, str2bool, str_or_none
 
 
+
+from espnet2.tts.transformer import TransformerTTS as ReconTransformer
+
+
 # from espnet2.asr.espnet_model import ESPnetASRModel
 from espnet2.asr.espnet_model_vae import ESPnetASRModel
+
+from espnet2.tts.fastspeech2.fastspeech2 import FastSpeech2
 
 
 import espnet2.tasks.recon_modules as custom_nn
@@ -722,7 +727,10 @@ class ASRTask(AbsTask):
         # reconstruction_decoder = reconstruction_decoder_class(vocab_size=80, encoder_output_size=args.latent_dim, input_layer="linear", normalize_before=False)
 
 
-        reconstruction_decoder = ReconTransformer(idim = args.latent_dim, odim = 80, adim=args.latent_dim )
+        # reconstruction_decoder = ReconTransformer(idim = args.latent_dim, odim = 80, adim=args.latent_dim )
+
+        reconstruction_decoder =  FastSpeech2(idim = args.latent_dim, odim = 80, adim=args.latent_dim )
+
 
 
 

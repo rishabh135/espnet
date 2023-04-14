@@ -99,7 +99,7 @@ class Encoder(torch.nn.Module):
         dropout_rate=0.1,
         positional_dropout_rate=0.1,
         attention_dropout_rate=0.0,
-        input_layer="conv2d",
+        input_layer="linear",
         pos_enc_class=PositionalEncoding,
         normalize_before=True,
         concat_after=False,
@@ -320,7 +320,7 @@ class Encoder(torch.nn.Module):
         ):
             xs, masks = self.embed(xs, masks)
         else:
-            xs = self.embed(xs)
+            xs = self.embed(xs.long())
 
         if self.intermediate_layers is None:
             xs, masks = self.encoders(xs, masks)
