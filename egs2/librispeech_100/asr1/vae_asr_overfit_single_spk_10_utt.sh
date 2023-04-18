@@ -74,11 +74,13 @@ vae_weight_factor=0.8
 save_every_epoch=100
 vae_annealing_cycle=25
 plot_iiter=1
-latent_dim=28
+latent_dim=80
 accum_grad=1
 
 
-project_name="vae_10_utt_april_12_tts_transformer_latent_dim_28"
+
+project_name="vae_10_utt_summary_april_14_3d"
+
 
 
 experiment_name="latent_dim_28_with_spembs"

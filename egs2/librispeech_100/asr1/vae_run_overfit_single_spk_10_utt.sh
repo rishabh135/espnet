@@ -27,7 +27,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_10_utt_april_12_tts_transformer_latent_dim_28"
+project_name="vae_10_utt_summary_april_14_3d"
 
 
 
