@@ -98,6 +98,7 @@ class DecoderLayer(nn.Module):
             )
             x = residual + self.concat_linear1(tgt_concat)
         else:
+            logging.warning("residual {}  tgt_q {} tgt {} tgt_q_maks {} ".format(residual.shape, tgt_q.shape, tgt.shape, ))
             x = residual + self.dropout(self.self_attn(tgt_q, tgt, tgt, tgt_q_mask))
         if not self.normalize_before:
             x = self.norm1(x)

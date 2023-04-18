@@ -192,7 +192,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         # encoder_out_size fixed unless you change the encoder params()
-        self.final_encoder_dim = 128
+        self.final_encoder_dim = 256
         self.latent_dim = latent_dim
         # self.spk_embed_dim is present determined on how we calculated the xvector, dont change it
         self.spk_embed_dim = 512
@@ -438,16 +438,17 @@ class ESPnetASRModel(AbsESPnetModel):
         # logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
         original_feats = feats
         # 1.2 latent dist split
-        mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
+        # mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         
         # Split the result into mu and var components
         # of the latent Gaussian distribution
-        mu = self.fc_mu(mu_logvar_combined)
-        log_var = self.fc_var(mu_logvar_combined)
+        mu = self.fc_mu(encoder_out)
+        log_var = self.fc_var(encoder_out)
         z = self.reparameterize(mu, log_var)
         # logging.warning(" feats {} combined {}  mu {}  log_var {}  z {} ".format( feats.shape, mu_logvar_combined.shape,  mu.shape, log_var.shape, z.shape  ))
-        bayesian_latent = self.decoder_input_projection(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)
-        # logging.warning(" >>> bayesian_latent.shape {}  ".format( bayesian_latent.shape  ))
+        bayesian_latent = z
+        # bayesian_latent = self.decoder_input_projection(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)
+        logging.warning(" >>> bayesian_latent.shape {}  ".format( bayesian_latent.shape  ))
 
 
 
@@ -485,8 +486,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
         
 
-        # logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}   feats_length {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {}".format( text.shape, text_lengths.shape, bayesian_latent.shape,  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0] ))
-        recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
+        logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}   feats {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {}".format( text.shape, text_lengths.shape, bayesian_latent.shape,  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0] ))
+        recons_feats = self.reconstruction_decoder( text=text, text_lengths=text_lengths, feats=bayesian_latent, feats_lengths=feats_lengths, spembs = spembs )
         
 
 
