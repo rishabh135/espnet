@@ -487,14 +487,15 @@ class ESPnetASRModel(AbsESPnetModel):
 
         logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}  encoder_out_lens {}  encoder_out_lens_val {}  feats {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {},  encoder_out {} ".format( text.shape, text_lengths.shape, bayesian_latent.shape, encoder_out_lens.shape, encoder_out_lens[0],  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0], encoder_out.shape ))
         
-        
+        out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], verbose = 1)
+        logging.warning(" >>> reconstruction_decoder_summary: {} ".format(out_sum))        
         recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats= feats, feats_lengths=feats_lengths, spembs = spembs )
         
         
         
         logging.warning(" >>> recons_feats {}   feats {}   ".format( recons_feats.shape,  feats.shape))
-        out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], verbose = 1)
-        logging.warning(" >>> reconstruction_decoder_summary: {} ".format(out_sum))
+        # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], verbose = 1)
+        # logging.warning(" >>> reconstruction_decoder_summary: {} ".format(out_sum))
         
         
         # recons_feats, _ = self.reconstruction_decoder( hs_pad= bayesian_latent , hlens=encoder_out_lens, ys_in_pad= zeros_spembs, ys_in_lens=feats_lengths)

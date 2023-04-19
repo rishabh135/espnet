@@ -30,7 +30,8 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_older_recon_april_18_latent_dim_28"
+
+project_name="vae_fastspeech2_april_19_latent_dim_28"
 
 
 

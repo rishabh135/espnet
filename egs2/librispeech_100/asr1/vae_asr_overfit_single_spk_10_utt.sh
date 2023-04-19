@@ -79,7 +79,7 @@ accum_grad=1
 
 
 
-project_name="vae_older_recon_april_18_latent_dim_28"
+project_name="vae_fastspeech2_april_19_latent_dim_28"
 
 
 
