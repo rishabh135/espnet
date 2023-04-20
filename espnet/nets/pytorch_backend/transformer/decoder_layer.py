@@ -14,6 +14,7 @@ from espnet.nets.pytorch_backend.transformer.layer_norm import LayerNorm
 
 class DecoderLayer(nn.Module):
     """Single decoder layer module.
+
     Args:
         size (int): Input dimension.
         self_attn (torch.nn.Module): Self-attention module instance.
@@ -29,6 +30,8 @@ class DecoderLayer(nn.Module):
             if True, additional linear will be applied.
             i.e. x -> x + linear(concat(x, att(x)))
             if False, no additional linear will be applied. i.e. x -> x + att(x)
+
+
     """
 
     def __init__(
@@ -59,6 +62,7 @@ class DecoderLayer(nn.Module):
 
     def forward(self, tgt, tgt_mask, memory, memory_mask, cache=None):
         """Compute decoded features.
+
         Args:
             tgt (torch.Tensor): Input tensor (#batch, maxlen_out, size).
             tgt_mask (torch.Tensor): Mask for input tensor (#batch, maxlen_out).
@@ -66,11 +70,13 @@ class DecoderLayer(nn.Module):
             memory_mask (torch.Tensor): Encoded memory mask (#batch, maxlen_in).
             cache (List[torch.Tensor]): List of cached tensors.
                 Each tensor shape should be (#batch, maxlen_out - 1, size).
+
         Returns:
             torch.Tensor: Output tensor(#batch, maxlen_out, size).
             torch.Tensor: Mask for output tensor (#batch, maxlen_out).
             torch.Tensor: Encoded memory (#batch, maxlen_in, size).
             torch.Tensor: Encoded memory mask (#batch, maxlen_in).
+
         """
         residual = tgt
         if self.normalize_before:
@@ -98,7 +104,6 @@ class DecoderLayer(nn.Module):
             )
             x = residual + self.concat_linear1(tgt_concat)
         else:
-            logging.warning("residual {}  tgt_q {} tgt {} tgt_q_maks {} ".format(residual.shape, tgt_q.shape, tgt.shape, ))
             x = residual + self.dropout(self.self_attn(tgt_q, tgt, tgt, tgt_q_mask))
         if not self.normalize_before:
             x = self.norm1(x)
@@ -127,5 +132,3 @@ class DecoderLayer(nn.Module):
             x = torch.cat([cache, x], dim=1)
 
         return x, tgt_mask, memory, memory_mask
-
-

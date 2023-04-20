@@ -79,7 +79,7 @@ accum_grad=1
 
 
 
-project_name="vae_10_utt_summary_april_18_3d"
+project_name="vae_10_utt_april_20_v2_conformer"
 
 
 

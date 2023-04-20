@@ -435,7 +435,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
-        # logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
+        logging.warning(" speech lengths {} feats shape {}  encoder_out_lens {} feats_lengths {}  ".format( speech.shape, feats.shape, encoder_out_lens , feats_lengths  ))
         original_feats = feats
         # 1.2 latent dist split
         # mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
@@ -464,13 +464,13 @@ class ESPnetASRModel(AbsESPnetModel):
         hs = bayesian_latent
         h_masks = encoder_out_lens
         # ys_in [22, 128]- > [22, 1422, 128]
-        y_masks = feats_lengths
-        if(spembs is not None):
-            ys_in = spembs
-            ys_in = spembs.unsqueeze(1).expand(-1, feats.shape[1],-1)
-            zeros_spembs = torch.zeros_like(ys_in)
-        else:
-            ys_in = torch.ones(feats.shape[0], feats.shape[1], 128).to(device='cuda')
+        # y_masks = feats_lengths
+        # if(spembs is not None):
+        #     ys_in = spembs
+        #     ys_in = spembs.unsqueeze(1).expand(-1, feats.shape[1],-1)
+        #     zeros_spembs = torch.zeros_like(ys_in)
+        # else:
+        #     ys_in = torch.ones(feats.shape[0], feats.shape[1], 128).to(device='cuda')
 
 
 
@@ -487,15 +487,15 @@ class ESPnetASRModel(AbsESPnetModel):
         
 
         logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}   feats {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {}".format( text.shape, text_lengths.shape, bayesian_latent.shape,  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0] ))
-        recons_feats = self.reconstruction_decoder( text=text, text_lengths=text_lengths, feats=bayesian_latent, feats_lengths=feats_lengths, spembs = spembs )
+        recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
         
 
 
 
 
 
-        out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
-        logging.warning("\n\n >>> reconstruction_decoder_summary: {} \n\n".format(out_sum))
+        # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
+        # logging.warning("\n\n >>> reconstruction_decoder_summary: {} \n\n".format(out_sum))
         
         # spembs: Optional[torch.Tensor] = None,
 
@@ -509,7 +509,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # sum_recon_kl_loss =  reconstruction_loss + kld_loss
 
 
-        # logging.warning(" recons_feats shape {} ".format(recons_feats.shape))
+        logging.warning(" recons_feats shape {} ".format(recons_feats.shape))
         ################################################################################################################################################################################################
         ################################################################################################################################################################################################
         ################################################################################################################################################################################################
@@ -676,7 +676,7 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["feats_plot"] = original_feats[0].detach().cpu().numpy()
         retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
         retval["feats_lengths"] = feats_lengths[0].detach().cpu().numpy()
-        retval["mu_logvar_combined"] = mu_logvar_combined.detach().cpu().numpy()
+        # retval["mu_logvar_combined"] = mu_logvar_combined.detach().cpu().numpy()
         
         # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
@@ -775,8 +775,8 @@ class ESPnetASRModel(AbsESPnetModel):
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
             encoder_out, encoder_out_lens, _ = self.encoder(feats, feats_lengths)
-            out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
-            logging.warning(" out_sum {} ".format(out_sum))
+            # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
+            # logging.warning(" out_sum {} ".format(out_sum))
         intermediate_outs = None
         if isinstance(encoder_out, tuple):
             intermediate_outs = encoder_out[1]
