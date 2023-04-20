@@ -25,8 +25,10 @@ def to_reported_value(v: Num, weight: Num = None) -> "ReportedValue":
     assert check_argument_types()
     if isinstance(v, (torch.Tensor, np.ndarray)):
         if np.prod(v.shape) != 1:
-            raise ValueError(f"v must be 0 or 1 dimension: {len(v.shape)}")
-        v = v.item()
+            logging.warning(" v {}  np.prod(v.shape) {}    item_v {}".format(v.shape, np.prod(v.shape),  v[0].item() ))
+            # raise ValueError(f"v must be 0 or 1 dimension: {len(v.shape)}")
+        else:
+            v = v.item()
 
     if isinstance(weight, (torch.Tensor, np.ndarray)):
         if np.prod(weight.shape) != 1:

@@ -88,7 +88,6 @@ from espnet2.utils.types import float_or_none, int_or_none, str2bool, str_or_non
 # from espnet2.asr.espnet_model import ESPnetASRModel
 from espnet2.asr.espnet_model_vae import ESPnetASRModel
 
-from espnet2.tts.fastspeech2 import FastSpeech2
 
 import espnet2.tasks.recon_modules as custom_nn
 # torch.backends.cudnn.benchmark = True
@@ -725,7 +724,10 @@ class ASRTask(AbsTask):
 
         reconstruction_decoder = ReconTransformer(idim = args.latent_dim, odim = 80, adim=args.latent_dim )
 
+<<<<<<< HEAD
         # reconstruction_decoder = FastSpeech2(idim = args.latent_dim, odim = 80 )
+=======
+>>>>>>> parent of 2342ffdfd (going to aprilvae)
 
 
         # reconstruction_decoder = reconstruction_decoder_class(vocab_size, embed_pad=0)

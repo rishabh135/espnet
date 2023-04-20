@@ -577,24 +577,9 @@ class TransformerTTS(AbsTTS):
 
         # x_masks = self._source_mask(ilens)
 
-        hs = xs
         h_masks = self._source_mask(ilens)
-       
-        
-        
-        logging.warning(" >>> hs {} h_masks {}  ".format(hs.shape, h_masks.shape ))
-
-
-        logging.warning(" ilens {} ys {} olens {}  ".format(ilens, ys.shape, olens ))
-
-
-        # hs, h_masks = self.encoder(xs, x_masks)
-
-        # hs ---- bayesian_latent  h_masks encoder_out_lens
-        # logging.warning(" >>> hs {} h_masks {} x_masks {}  ".format(hs.shape, h_masks.shape, x_masks.shape ))
-
-
-        
+        hs = xs
+    
         # integrate with GST
         if self.use_gst:
             style_embs = self.gst(ys)
@@ -621,15 +606,11 @@ class TransformerTTS(AbsTTS):
         else:
             ys_in, olens_in = ys, olens
 
-
         # add first zero frame and remove last frame for auto-regressive
         ys_in = self._add_first_frame_and_remove_last_frame(ys_in)
 
         # forward decoder
         y_masks = self._target_mask(olens_in)
-
-
-        logging.warning("  ys_in {} y_masks {} hs {} h_masks {}  ".format(ys_in.shape, y_masks.shape, hs.shape, h_masks.shape ))
 
         # logging.warning("ys_in shape {} y_masks {} hs {} h_masks {}".format(ys_in.shape, y_masks.shape, hs.shape, h_masks.shape))
 

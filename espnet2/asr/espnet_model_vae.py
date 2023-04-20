@@ -54,7 +54,6 @@ else:
 
 
 
-
 from python_speech_features import mfcc
 from python_speech_features import delta
 from python_speech_features import logfbank
@@ -435,19 +434,18 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
-        logging.warning(" speech lengths {} feats shape {}  encoder_out_lens {} feats_lengths {}  ".format( speech.shape, feats.shape, encoder_out_lens , feats_lengths  ))
+        # logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
         original_feats = feats
         # 1.2 latent dist split
-        # mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
-        
+        mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         # Split the result into mu and var components
         # of the latent Gaussian distribution
         mu = self.fc_mu(encoder_out)
         log_var = self.fc_var(encoder_out)
         z = self.reparameterize(mu, log_var)
         # logging.warning(" feats {} combined {}  mu {}  log_var {}  z {} ".format( feats.shape, mu_logvar_combined.shape,  mu.shape, log_var.shape, z.shape  ))
-        bayesian_latent = z
         # bayesian_latent = self.decoder_input_projection(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)
+        bayesian_latent = z
         logging.warning(" >>> bayesian_latent.shape {}  ".format( bayesian_latent.shape  ))
 
 
@@ -463,7 +461,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
         hs = bayesian_latent
         h_masks = encoder_out_lens
-        # ys_in [22, 128]- > [22, 1422, 128]
+        # # ys_in [22, 128]- > [22, 1422, 128]
         # y_masks = feats_lengths
         # if(spembs is not None):
         #     ys_in = spembs
@@ -477,20 +475,11 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-        # recons_feats= self.reconstruction_decoder(hs, y_masks )
-        # hs_pad= zeros_spembs
-        # hlens= y_masks,
-        # ys_in_pad= bayesian_latent ,
-        # ys_in_lens= encoder_out_lens,
-        
 
-        
 
-        logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}   feats {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {}".format( text.shape, text_lengths.shape, bayesian_latent.shape,  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0] ))
+        # logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}   feats_length {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {}".format( text.shape, text_lengths.shape, bayesian_latent.shape,  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0] ))
         recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
-        
-
-
+        # spembs: Optional[torch.Tensor] = None,
 
 
 
@@ -503,13 +492,13 @@ class ESPnetASRModel(AbsESPnetModel):
         # recons_feats, _ = self.reconstruction_decoder( hs_pad= bayesian_latent , hlens=encoder_out_lens, ys_in_pad= zeros_spembs, ys_in_lens=feats_lengths)
         
         
-        # logging.warning(" original_feats {}  recons_feats {} ".format(feats.shape, recons_feats.shape))
-        reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
+        logging.warning(" original_feats {}  recons_feats {} ".format(feats.shape, recons_feats.shape))
+        reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, original_feats, mu, log_var)
 
         # sum_recon_kl_loss =  reconstruction_loss + kld_loss
 
 
-        logging.warning(" recons_feats shape {} ".format(recons_feats.shape))
+        # logging.warning(" recons_feats shape {} ".format(recons_feats.shape))
         ################################################################################################################################################################################################
         ################################################################################################################################################################################################
         ################################################################################################################################################################################################
