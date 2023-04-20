@@ -481,26 +481,30 @@ class ESPnetASRModel(AbsESPnetModel):
         # hlens= y_masks,
         # ys_in_pad= bayesian_latent ,
         # ys_in_lens= encoder_out_lens,
-        
 
-        
 
-        logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}  encoder_out_lens {}  encoder_out_lens_val {}  feats {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {},  encoder_out {} ".format( text.shape, text_lengths.shape, bayesian_latent.shape, encoder_out_lens.shape, encoder_out_lens[0],  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0], encoder_out.shape ))
-        
-        out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], verbose = 1)
-        logging.warning(" >>> reconstruction_decoder_summary: {} ".format(out_sum))        
-        recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats= feats, feats_lengths=feats_lengths, spembs = spembs )
-        
-        
-        
+        # bayesian_latent = torch.permute(bayesian_latent, (0,2,1))
+
+        logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}  encoder_out_lens {}  encoder_out_lens_val {}  feats {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {},  encoder_out {} ".format( text.shape, text_lengths.shape, bayesian_latent.shape, encoder_out_lens.shape, encoder_out_lens[0],  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths, encoder_out.shape ))
+
+        out_sum = summary(self.reconstruction_decoder, input_data=[text, text_lengths, bayesian_latent, feats_lengths, spembs], verbose = 1)
+        logging.warning(" >>> reconstruction_decoder_summary: {} ".format(out_sum))
+
+
+        recons_feats = self.reconstruction_decoder( text=text, text_length=text_lengths, feats=bayesian_latent, feats_lengths= feats_lengths, spembs = spembs )
+
+
+
+
+
         logging.warning(" >>> recons_feats {}   feats {}   ".format( recons_feats.shape,  feats.shape))
         # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], verbose = 1)
         # logging.warning(" >>> reconstruction_decoder_summary: {} ".format(out_sum))
-        
-        
+
+
         # recons_feats, _ = self.reconstruction_decoder( hs_pad= bayesian_latent , hlens=encoder_out_lens, ys_in_pad= zeros_spembs, ys_in_lens=feats_lengths)
-        
-        
+
+
         # logging.warning(" original_feats {}  recons_feats {} ".format(feats.shape, recons_feats.shape))
         reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
 
@@ -675,7 +679,7 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
         retval["feats_lengths"] = feats_lengths[0].detach().cpu().numpy()
         retval["mu_logvar_combined"] = mu_logvar_combined.detach().cpu().numpy()
-        
+
         # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
 
