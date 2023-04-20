@@ -724,11 +724,7 @@ class ASRTask(AbsTask):
 
         reconstruction_decoder = ReconTransformer(idim = args.latent_dim, odim = 80, adim=args.latent_dim )
 
-<<<<<<< HEAD
         # reconstruction_decoder = FastSpeech2(idim = args.latent_dim, odim = 80 )
-=======
->>>>>>> parent of 2342ffdfd (going to aprilvae)
-
 
         # reconstruction_decoder = reconstruction_decoder_class(vocab_size, embed_pad=0)
         # recon_decoder_conf={"embed_size": 8, "attention_heads": 2, "linear_units": 1024, "num_blocks": 3, "dropout_rate": 0.1, "positional_dropout_rate": 0.1, "self_attention_dropout_rate": 0.1, "src_attention_dropout_rate": 0.1}

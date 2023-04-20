@@ -27,13 +27,8 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-<<<<<<< HEAD
 
 project_name="vae_10_utt_april_20_v2_conformer"
-
-=======
-project_name="vae_10_utt_summary_april_14_3d"
->>>>>>> parent of 2342ffdfd (going to aprilvae)
 
 
 
