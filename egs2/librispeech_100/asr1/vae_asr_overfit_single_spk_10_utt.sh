@@ -71,13 +71,13 @@ adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
-save_every_epoch=50
+save_every_epoch=100
 vae_annealing_cycle=25
 plot_iiter=1
 latent_dim=80
 accum_grad=1
 
-project_name="vae_v2_workingvae_april_21"
+project_name="vae_v2_workingvae_april_21_bet_kl_factor_3"
 
 experiment_name="latent_dim_80_with_spembs"
 

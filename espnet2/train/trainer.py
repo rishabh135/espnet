@@ -89,149 +89,76 @@ import matplotlib.pyplot as plt
 
 
 
+####################################################################################################################################################################################################
+####################################################################################################################################################################################################
+####################################################################################################################################################################################################
+#  Taken from https://github.com/haofuml/cyclical_annealing/blob/master/plot/plot_schedules.ipynb
+
+def frange_cycle_linear(start, stop, n_epoch, n_cycle=4, ratio=0.5):
+    L = np.ones(n_epoch)
+    period = n_epoch/n_cycle
+    step = (stop-start)/(period*ratio) # linear schedule
+
+    for c in range(n_cycle):
+
+        v , i = start , 0
+        while v <= stop and (int(i+c*period) < n_epoch):
+            L[int(i+c*period)] = v
+            v += step
+            i += 1
+    return L
 
 
-# from sklearn.manifold import TSNE
-# from mpl_toolkits.mplot3d import Axes3D
-# # %matplotlib qt
-# # from IPython import display
-# import matplotlib.cm as cmx
-# import matplotlib.colors as colors
+def frange_cycle_sigmoid(start, stop, n_epoch, n_cycle=4, ratio=0.5):
+    L = np.ones(n_epoch)
+    period = n_epoch/n_cycle
+    step = (stop-start)/(period*ratio) # step is in [0,1]
 
-def get_cmap(N):
-    '''Returns a function that maps each index in 0, 1, ... N-1 to a distinct
-    RGB color.'''
-    color_norm  = colors.Normalize(vmin=0, vmax=N-1)
-    scalar_map = cmx.ScalarMappable(norm=color_norm, cmap='hsv')
-    def map_index_to_rgb_color(index):
-        return scalar_map.to_rgba(index)
-    return map_index_to_rgb_color
+    # transform into [-6, 6] for plots: v*12.-6.
 
-def plot_latent_space(x_batch, y_batch, iteration=None, dim=2):
+    for c in range(n_cycle):
 
-    model = TSNE(n_components=dim, random_state=0, perplexity=50, learning_rate=500, n_iter=200)
-    z_mu = model.fit_transform(mu.eval(feed_dict={X: x_batch}))
-    n_classes = len(list(set(np.argmax(y_batch, 1))))
-    cmap = get_cmap(n_classes)
-    fig = plt.figure(2, figsize=(8,8))
-
-    if dim is 3:
-        for i in list(set(np.argmax(y_batch, 1))):
-            bx = fig.add_subplot(111, projection='3d')
-
-            index = np.where(np.argmax(y_batch, 1) == i)
-            xs = z_mu[index, 0]
-            ys = z_mu[index, 1:]
-            zs = z_mu[index, 2]
-            bx.scatter(xs, ys, zs,c=cmap(i), label=str(i))
-    else:
-        for i in list(set(np.argmax(y_batch, 1))):
-            bx = fig.add_subplot(111)
-            index = np.where(np.argmax(y_batch, 1) == i)
-            xs = z_mu[index, 0]
-            ys = z_mu[index, 1]
-            bx.scatter(xs, ys, c=cmap(i), label=str(i))
-
-    bx.set_xlabel('X Label')
-    bx.set_ylabel('Y Label')
-    bx.legend()
-    bx.set_title('Truth')
-    if iteration is None:
-        plt.savefig('latent_space.png')
-    else:
-        plt.savefig('latent_space' + str(iteration) + '.png')
-    plt.show()
+        v , i = start , 0
+        while v <= stop:
+            L[int(i+c*period)] = 1.0/(1.0+ np.exp(- (v*12.-6.)))
+            v += step
+            i += 1
+    return L
 
 
+#  function  = 1 − cos(a), where a scans from 0 to pi/2
 
-# def generate_melspec(audio_data, sample_rate=48000, power=2.0, n_fft = 1024, win_length = None, hop_length = None, n_mels = 80):
-# 	if hop_length is None:
-# 		hop_length = n_fft//2
+def frange_cycle_cosine(start, stop, n_epoch, n_cycle=4, ratio=0.5):
+    L = np.ones(n_epoch)
+    period = n_epoch/n_cycle
+    step = (stop-start)/(period*ratio) # step is in [0,1]
 
-# 	# convert to torch
-# 	audio_data = torch.tensor(audio_data, dtype=torch.float32)
-# 	mel_spectrogram = T.MelSpectrogram(
-# 		sample_rate=sample_rate,
-# 		n_fft=n_fft,
-# 		win_length=win_length,
-# 		hop_length=hop_length,
-# 		center=True,
-# 		pad_mode="reflect",
-# 		power=power,
-# 		norm="slaney",
-# 		onesided=True,
-# 		n_mels=n_mels,
-# 		mel_scale="htk",
-# 	)
+    # transform into [0, pi] for plots:
 
-# 	melspec = mel_spectrogram(audio_data).numpy()
-# 	mel_db = np.flipud(librosa.power_to_db(melspec))
-# 	return mel_db
+    for c in range(n_cycle):
 
+        v , i = start , 0
+        while v <= stop:
+            L[int(i+c*period)] = 0.5-.5*math.cos(v*math.pi)
+            v += step
+            i += 1
+    return L
 
+def frange(start, stop, step, n_epoch):
+    L = np.ones(n_epoch)
+    v , i = start , 0
+    while v <= stop:
+        L[i] = v
+        v += step
+        i += 1
+    return L
 
-# def wandb_spectrogram(audio_path:str, audio_data=None, sample_rate=None, specs:str=['all_specs'], layout:str='row', height=170, width=400, channel=0, cmap='blues'):
-#     if audio_data.dtype != np.int16:  # Panel Audio widget can't handle floats
-# 		audio_data =  np.clip( audio_data.cpu().numpy()*32768 , -32768, 32768).astype('int16')
+# beta_np_cyc = frange_cycle_linear(0.0, 1.0, n_epoch, 4)
 
-# 	# Audio widget
-# 	audio = pn.pane.Audio(audio_data, sample_rate=sample_rate, name='Audio', throttle=10)
-
-# 	# Add HTML components
-# 	line = hv.VLine(0).opts(color='red')
-# 	line2 = hv.VLine(0).opts(color='green')
-# 	line3 = hv.VLine(0).opts(color='white')
-
-# 	slider = pn.widgets.FloatSlider(end=duration, visible=False, step=0.001)
-# 	slider.jslink(audio, value='time', bidirectional=True)
-# 	slider.jslink(line, value='glyph.location')
-# 	slider.jslink(line2, value='glyph.location')
-#  	slider.jslink(line3, value='glyph.location')
-
-# 	# Spectogram plot
-# 	if ('spec' in specs) or ('all_specs' in specs) or ('all' in specs):
-# 		f, t, sxx = spectrogram(audio_data, sample_rate)
-# 		spec_gram_hv = hv.Image((t, f, np.log10(sxx)), ["Time (s)", "Frequency (hz)"]).opts(width=width, height=height, labelled=[], axiswise=True, color_levels=512, cmap=cmap) * line
-# 	else:
-# 		spec_gram_hv = None
-
-# 	# Melspectogram plot
-# 	if ('melspec' in specs) or ('all_specs' in specs) or ('all' in specs):
-# 		# mel_db = generate_melspec(audio_data, sample_rate=sample_rate, power=2.0, n_fft = 1024, n_mels = 128)
-# 		melspec_gram_hv = hv.Image(mel_db, bounds=(0, 0, duration, mel_db.max()), kdims=["Time (s)", "Mel Freq"]).opts(width=width, height=height, labelled=[], axiswise=True, color_levels=512, cmap=cmap) * line3
-# 	else:
-# 		melspec_gram_hv = None
-
-
-# 	# Waveform plot
-# 	# if ('waveform' in specs) or ('all' in specs):
-# 	# 	time = np.linspace(0, len(audio_data)/sample_rate, num=len(audio_data))
-# 	# 	line_plot_hv = hv.Curve((time, audio_data), ["Time (s)", "amplitude"]).opts(width=width, height=height, axiswise=True) * line2
-# 	# else:
-# 	# 	line_plot_hv = None
-
-
-# 	# Create HTML layout
-# 	html_file_name = "audio_spec.html"
-
-
-
-# 	if layout == 'grid':
-# 		logging.warning('doing GRID')
-# 		combined = pn.GridBox(audio, spec_gram_hv, line_plot_hv, melspec_gram_hv, slider, ncols=2, nrows=2).save(html_file_name)
-# 	else:
-# 		combined = pn.Row(audio, line_plot_hv, spec_gram_hv, melspec_gram_hv, slider).save(html_file_name)
-
-# 	# if layout == 'grid':
-# 	#   combined = pn.GridBox(audio, spec_gram * line, None, melspec_gram * line3, slider, ncols=2, nrows=2).save(html_file_name)
-# 	# else:
-# 	#   combined = pn.Row(audio, spec_gram * line, melspec_gram * line3, slider).save(html_file_name)
-
-# 	return wandb.Html(html_file_name)
-
-
-
-
+####################################################################################################################################################################################################
+####################################################################################################################################################################################################
+####################################################################################################################################################################################################
+####################################################################################################################################################################################################
 
 
 
@@ -716,7 +643,7 @@ class Trainer:
         # for name, param in model.named_parameters():
         #     if (param.requires_grad):
         #         logging.warning(" name {}  ".format(name))
-        # summary(model, input_size=(batch_size, 1, 28, 28))
+
 
 
         # "ASRTask"
@@ -813,13 +740,14 @@ class Trainer:
 
         if ((current_epoch-1) % options.vae_annealing_cycle) == 0:
             cls.beta_kl_factor = 0.1
-            logging.warning(' current epoch {}/{} KL annealing restarted {}'.format(current_epoch, options.vae_annealing_cycle, cls.beta_kl_factor))
+            # logging.warning(' current epoch {}/{} KL annealing restarted {}'.format(current_epoch, options.vae_annealing_cycle, cls.beta_kl_factor))
 
 
         for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
             assert isinstance(batch, dict), type(batch)
-            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 5 * len(utt_id)))
-            logging.warning(" cls.beta_kl_factor {} ".format(cls.beta_kl_factor))
+            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 10 * len(utt_id)))
+            
+            logging.warning(" cls.beta_kl_factor {} len(utt_id) {}  ".format(cls.beta_kl_factor, len(utt_id) ))
             # logging.warning(" prinitng iiter {} ")
             # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
             # logging.warning("**************   Batch ************")
@@ -1018,29 +946,31 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-                if(iiter % options.plot_iiter  == 0):
-                    feats_plot = retval["feats_plot"]
-                    recons_feats_plot = retval["recons_feats_plot"]
-                    feats_lengths = retval["feats_lengths"]
-                    html_file_name = "./with_working_audio_april_21.png"
+                # if(iiter % options.plot_iiter  == 0):
+                #     feats_plot = retval["feats_plot"]
+                #     recons_feats_plot = retval["recons_feats_plot"]
+                #     html_file_name = "./with_working_audio_april_21.png"
 
-                    # logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
-                    ax1 = plt.subplot(2, 1, 1)
-                    ax1.set_title('Original feats linear')
-                    plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+                #     # logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
+                #     ax1 = plt.subplot(2, 1, 1)
+                #     ax1.set_title('Original feats linear')
+                #     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                    ax2 = plt.subplot(2, 1, 2)
-                    ax2.set_title('Reconstructed feats linear')
-                    plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+                #     ax2 = plt.subplot(2, 1, 2)
+                #     ax2.set_title('Reconstructed feats linear')
+                #     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
 
-                    fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
-                    plt.tight_layout()
-                    plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-                    wandb.log({f"spectrogram plot": wandb.Image(plt)})
-                    fig.clf()
+                #     fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
+                #     plt.tight_layout()
+                #     plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+                #     wandb.log({f"spectrogram plot": wandb.Image(plt)})
+                #     fig.clf()
 
 
-                    # if( (current_epoch % 2 == 0) and (iiter == options.plot_iiter )):
+
+
+
+                    # if( (current_epoch % 10 == 0) and (iiter == options.plot_iiter )):
                     #     with torch.inference_mode():
                     #         recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
                     #         orig_specs = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
@@ -1049,30 +979,8 @@ class Trainer:
                     #         recons_waveforms = hifi_gan.decode_batch(recons_specs)
                     #         orig_waveforms = hifi_gan.decode_batch(orig_specs)
                     #         # logging.warning("recons_waveforms {} ".format(recons_waveforms.shape))
-                    #     wandb.log({"HIFIGAN Vocoder": wandb.Audio(recons_waveforms[0,0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
-                    #     wandb.log({"HIFIGAN Vocoder": wandb.Audio(orig_waveforms[0,0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
-
-
-
-                    # if( (current_epoch % 2 == 0) and (iiter == options.plot_iiter )):
-                    #     # ax3 = plt.subplot(3, 1, 3)
-                    #     bundle = torchaudio.pipelines.TACOTRON2_GRIFFINLIM_CHAR_LJSPEECH
-                    #     # processor = bundle.get_text_processor()
-                    #     # tacotron2 = bundle.get_tacotron2().to("cuda")
-                    #     vocoder = bundle.get_vocoder().to("cuda")
-                    #       with torch.inference_mode():
-                    #         # processed, lengths = processor( batch["text"][0] )
-                    #         # processed = processed.to("cuda")
-                    #         # lengths = lengths.to("cuda")
-                    #         # spec, spec_lengths, _ = tacotron2.infer(processed, lengths)
-                    #         # logging.warning(" >> just before vocoder  spec {} feats_lengths {} ".format(recons_feats_plot.shape, feats_lengths ))
-                    #         recons_spec = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
-                    #         orig_spec = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
-                    #         spec_lengths = torch.Tensor(feats_lengths).to("cuda")
-                    #         recons_waveforms, lengths = vocoder(recons_spec, spec_lengths)
-                    #         orig_waveforms, lengths = vocoder(orig_spec, spec_lengths)
-                    #     wandb.log({"Utt Vocoder": wandb.Audio(recons_waveforms[0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
-                    #     wandb.log({"Utt Vocoder": wandb.Audio(orig_waveforms[0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
+                    #     wandb.log({"Reconstructed_waveform": wandb.Audio(recons_waveforms[0,0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
+                    #     wandb.log({"Originatl_utt ": wandb.Audio(orig_waveforms[0,0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
 
                     # IPython.display.Audio(waveforms[0:1].cpu(), rate=vocoder.sample_rate)
 

@@ -424,8 +424,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
-        original_feats = feats
-        
+        logging.warning(" encoder_out {} feats {} ".format( encoder_out.shape, feats.shape))
+        # original_feats = feats
         # Split the result into mu and var components
         # of the latent Gaussian distribution
         mu = self.fc_mu(encoder_out)
@@ -441,19 +441,19 @@ class ESPnetASRModel(AbsESPnetModel):
         # https://github.com/espnet/espnet/blob/695c9954e20800875b22d985e9c0b0a70e8e2082/espnet2/tts/transformer/transformer.py
 
 
-        if(spembs is not None):
-            zeros_spembs = torch.zeros_like(spembs)
+        # if(spembs is not None):
+        #     zeros_spembs = torch.zeros_like(spembs)
 
 
         recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
         # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
         # logging.warning(" reconstruction_decoder_summary: {} \n".format(out_sum))
         reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
-
+        # logging.warning(" recons_feats shape {} ".format(recons_feats.shape))
         # sum_recon_kl_loss =  reconstruction_loss + kld_loss
 
 
-        # logging.warning(" recons_feats shape {} ".format(recons_feats.shape))
+        # logging.warning(" count how different feats are {} ".format( torch.nonzero(original_feats-feats) ))
         ################################################################################################################################################################################################
         ################################################################################################################################################################################################
         ################################################################################################################################################################################################
@@ -611,9 +611,8 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["loss_ctc"] = loss_ctc
         retval["loss_att"] = loss_att
 
-        retval["feats_plot"] = original_feats[0].detach().cpu().numpy()
-        retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
-        retval["feats_lengths"] = feats_lengths[0].detach().cpu().numpy()
+        # retval["feats_plot"] = original_feats[0].detach().cpu().numpy()
+        # retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
         
         # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
@@ -700,10 +699,14 @@ class ESPnetASRModel(AbsESPnetModel):
             # if self.normalize is not None:
             #     aug_feats, aug_feats_lengths = self.normalize(aug_feats, aug_feats_lengths)
 
+
+
         # Pre-encoder, e.g. used for raw input data generally deactive
         # if self.preencoder is not None:
         #     logging.warning(" preencoder active \n\n")
         #     feats, feats_lengths = self.preencoder(feats, feats_lengths)
+
+
 
         # 4. Forward encoder
         # feats: (Batch, Length, Dim)

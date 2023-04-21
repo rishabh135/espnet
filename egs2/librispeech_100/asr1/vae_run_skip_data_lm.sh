@@ -23,8 +23,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_april_1_all_spk_transformer_latent_dim_512"
-
+project_name="vae_v2_workingvae_april_21_all_speakers"
 
 
 

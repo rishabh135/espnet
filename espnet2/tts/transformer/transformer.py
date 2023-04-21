@@ -459,6 +459,7 @@ class TransformerTTS(AbsTTS):
         )
 
         return after_outs
+        
         # modifiy mod part of groundtruth
         # olens_in = olens
         # if self.reduction_factor > 1:
