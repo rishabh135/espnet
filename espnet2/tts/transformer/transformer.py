@@ -442,17 +442,61 @@ class TransformerTTS(AbsTTS):
         # logging.warning(" >>> IT text {} feats {} ".format(text.shape, feats.shape ))
 
 
+        text = text[:, : text_lengths.max()]  # for data-parallel
+        feats = feats[:, : feats_lengths.max()]  # for data-parallel
+        batch_size = text.size(0)
+
+        # Add eos at the last of sequence
+        xs = F.pad(text, [0, 0, 0, 1], "constant", self.padding_idx)
+        # logging.warning("xs shape {} ".format( xs.shape))
+        for i, l in enumerate(text_lengths):
+            # logging.warning("i {}  l {} ".format(i, l))
+            xs[i, l, :] = self.eos
+        ilens = text_lengths + 1
+
+        ys = feats
+        olens = feats_lengths
+
+        # make labels for stop prediction
+        labels = make_pad_mask(olens - 1).to(ys.device, ys.dtype)
+        labels = F.pad(labels, [0, 1], "constant", 1.0)
+
+        # logging.warning("labels {} ".format(labels.shape))
+        # logging.warning(" xs {} ilens {} ys {} olens {} spembs {} ".format(xs.shape, ilens.shape, ys.shape, olens.shape, spembs.shape))
         # calculate transformer outputs
+        
+        
         after_outs, before_outs, logits = self._forward(
-            xs=text,
-            ilens=text_lengths,
-            ys=feats,
-            olens=feats_lengths
+            xs=xs,
+            ilens=ilens,
+            ys=ys,
+            olens=olens,
+            spembs=spembs,
+            sids=sids,
+            lids=lids,
         )
 
-        # logging.warning(" >>> after_outs {} before_outs {} logits {}  ".format(after_outs.shape, before_outs.shape, logits.shape ))
-
         return after_outs
+        # modifiy mod part of groundtruth
+        # olens_in = olens
+        # if self.reduction_factor > 1:
+        #     assert olens.ge(
+        #         self.reduction_factor
+        #     ).all(), "Output length must be greater than or equal to reduction factor."
+            
+        #     olens_in = olens.new([olen // self.reduction_factor for olen in olens])
+        #     olens = olens.new([olen - olen % self.reduction_factor for olen in olens])
+        #     max_olen = max(olens)
+        #     ys = ys[:, :max_olen]
+        #     labels = labels[:, :max_olen]
+        #     labels = torch.scatter(
+        #         labels, 1, (olens - 1).unsqueeze(1), 1.0
+        #     )  # see #3388
+
+       
+
+
+
 
         # modifiy mod part of groundtruth
         # ys=feats
@@ -568,28 +612,19 @@ class TransformerTTS(AbsTTS):
 
     def _forward(
         self,
-        xs: torch.Tensor, 
+        xs: torch.Tensor,
         ilens: torch.Tensor,
         ys: torch.Tensor,
         olens: torch.Tensor,
+        spembs: torch.Tensor,
+        sids: torch.Tensor,
+        lids: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         # forward encoder
-
         # x_masks = self._source_mask(ilens)
-
-        h_masks = self._source_mask(ilens)
-        hs = xs
-        
-        
-        # logging.warning(" >>> xs {} x_masks {}  ".format(xs.shape, x_masks.shape ))
-
-
         # hs, h_masks = self.encoder(xs, x_masks)
-
-        # hs ---- bayesian_latent  h_masks encoder_out_lens
-        # logging.warning(" >>> hs {} h_masks {} x_masks {}  ".format(hs.shape, h_masks.shape, x_masks.shape ))
-
-
+        hs = xs
+        h_masks = self._source_mask(ilens)
         
         # integrate with GST
         if self.use_gst:
@@ -617,13 +652,16 @@ class TransformerTTS(AbsTTS):
         else:
             ys_in, olens_in = ys, olens
 
+
+
+
         # add first zero frame and remove last frame for auto-regressive
         ys_in = self._add_first_frame_and_remove_last_frame(ys_in)
 
         # forward decoder
         y_masks = self._target_mask(olens_in)
 
-        # logging.warning("ys_in shape {} y_masks {} hs {} h_masks {}".format(ys_in.shape, y_masks.shape, hs.shape, h_masks.shape))
+        # logging.warning(">> ys_in  {} y_masks {} hs {} h_masks {}".format(ys_in.shape, y_masks.shape, hs.shape, h_masks.shape))
 
         zs, _ = self.decoder(ys_in, y_masks, hs, h_masks)
         # (B, T_feats//r, odim * r) -> (B, T_feats//r * r, odim)

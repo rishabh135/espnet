@@ -50,7 +50,7 @@ else:
 
 
 
-
+from torchinfo import summary
 
 from python_speech_features import mfcc
 from python_speech_features import delta
@@ -189,7 +189,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         # encoder_out_size fixed unless you change the encoder params()
-        self.final_encoder_dim = 128
+        self.final_encoder_dim = 256
         self.latent_dim = latent_dim
         # self.spk_embed_dim is present determined on how we calculated the xvector, dont change it
         self.spk_embed_dim = 512
@@ -198,8 +198,6 @@ class ESPnetASRModel(AbsESPnetModel):
         self.fc_var = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
         self.fc_spemb = torch.nn.Linear(self.spk_embed_dim , self.latent_dim)
         self.decoder_input_projection = torch.nn.Linear(self.latent_dim, self.latent_dim//2 )
-
-
 
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
@@ -435,15 +433,16 @@ class ESPnetASRModel(AbsESPnetModel):
         # logging.warning(" speech lengths {} feats shape {}  ".format( speech.shape, feats.shape))
         original_feats = feats
         # 1.2 latent dist split
-        mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
+        # mu_logvar_combined = torch.flatten(encoder_out.view(-1, self.final_encoder_dim), start_dim=1)
         
         # Split the result into mu and var components
         # of the latent Gaussian distribution
-        mu = self.fc_mu(mu_logvar_combined)
-        log_var = self.fc_var(mu_logvar_combined)
+        mu = self.fc_mu(encoder_out)
+        log_var = self.fc_var(encoder_out)
         z = self.reparameterize(mu, log_var)
         # logging.warning(" feats {} combined {}  mu {}  log_var {}  z {} ".format( feats.shape, mu_logvar_combined.shape,  mu.shape, log_var.shape, z.shape  ))
-        bayesian_latent = self.decoder_input_projection(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)
+        bayesian_latent = z
+        # bayesian_latent = self.decoder_input_projection(z).unsqueeze(-1).view( encoder_out.shape[0], encoder_out.shape[1], -1)
         # logging.warning(" >>> bayesian_latent.shape {}  ".format( bayesian_latent.shape  ))
 
 
@@ -457,16 +456,16 @@ class ESPnetASRModel(AbsESPnetModel):
         # for reconstruction decoder ys-> x_vectors hs->encoder_outputs(mu and logvar)
 
 
-        hs = bayesian_latent
-        h_masks = encoder_out_lens
-        # ys_in [22, 128]- > [22, 1422, 128]
-        y_masks = feats_lengths
-        if(spembs is not None):
-            ys_in = spembs
-            ys_in = spembs.unsqueeze(1).expand(-1, feats.shape[1],-1)
-            zeros_spembs = torch.zeros_like(ys_in)
-        else:
-            ys_in = torch.ones(feats.shape[0], feats.shape[1], 128).to(device='cuda')
+        # hs = bayesian_latent
+        # h_masks = encoder_out_lens
+        # # ys_in [22, 128]- > [22, 1422, 128]
+        # y_masks = feats_lengths
+        # if(spembs is not None):
+        #     ys_in = spembs
+        #     ys_in = spembs.unsqueeze(1).expand(-1, feats.shape[1],-1)
+        #     zeros_spembs = torch.zeros_like(ys_in)
+        # else:
+        #     ys_in = torch.ones(feats.shape[0], feats.shape[1], 128).to(device='cuda')
 
 
 
@@ -480,17 +479,16 @@ class ESPnetASRModel(AbsESPnetModel):
         # ys_in_lens= encoder_out_lens,
         
 
-        
-
-        # logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}   feats_length {}  speaker_embedding {}  feats_lengths {}  feats_lengths val {}".format( text.shape, text_lengths.shape, bayesian_latent.shape,  feats.shape, spembs.shape, feats_lengths.shape, feats_lengths[0] ))
+        # logging.warning(" >>> text {} text_lengths {}  bayesian_latent {}   feats {}   feats_lengths {}  feats_lengths_val {}   encoder_out_lens_val {}".format( text.shape, text_lengths.shape, bayesian_latent.shape,  feats.shape,  feats_lengths.shape, feats_lengths, encoder_out_lens ))
         recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
-        # spembs: Optional[torch.Tensor] = None,
-
-        
-        # recons_feats, _ = self.reconstruction_decoder( hs_pad= bayesian_latent , hlens=encoder_out_lens, ys_in_pad= zeros_spembs, ys_in_lens=feats_lengths)
-        
-        
         # logging.warning(" original_feats {}  recons_feats {} ".format(feats.shape, recons_feats.shape))
+
+
+
+        # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
+        # logging.warning("\n\n >>> reconstruction_decoder_summary: {} \n\n".format(out_sum))
+        
+        
         reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
 
         # sum_recon_kl_loss =  reconstruction_loss + kld_loss
@@ -663,7 +661,7 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["feats_plot"] = original_feats[0].detach().cpu().numpy()
         retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
         retval["feats_lengths"] = feats_lengths[0].detach().cpu().numpy()
-        retval["mu_logvar_combined"] = mu_logvar_combined.detach().cpu().numpy()
+        # retval["mu_logvar_combined"] = mu_logvar_combined.detach().cpu().numpy()
         
         # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
@@ -689,7 +687,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
 
         recons_loss = F.mse_loss(recon_decoder_output, ground_truths)
-        kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
+        kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1))
         # loss = recons_loss + kld_weight * kld_loss
         return recons_loss, kld_loss
 
@@ -762,6 +760,8 @@ class ESPnetASRModel(AbsESPnetModel):
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
             encoder_out, encoder_out_lens, _ = self.encoder(feats, feats_lengths)
+            # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
+            # logging.warning(" out_sum {} ".format(out_sum))
         intermediate_outs = None
         if isinstance(encoder_out, tuple):
             intermediate_outs = encoder_out[1]

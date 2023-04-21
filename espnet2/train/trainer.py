@@ -1061,7 +1061,6 @@ class Trainer:
                 if(iiter % options.plot_iiter  == 0):
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
-                    mu_logvar_combined = retval["mu_logvar_combined"]
                     feats_lengths = retval["feats_lengths"]
                     html_file_name = "./with_working_audio_30_march.png"
 

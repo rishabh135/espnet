@@ -24,7 +24,8 @@ _reserved = {"time", "total_count"}
 def to_reported_value(v: Num, weight: Num = None) -> "ReportedValue":
     assert check_argument_types()
     if isinstance(v, (torch.Tensor, np.ndarray)):
-        if np.prod(v.shape) != 1:
+        if (np.prod(v.shape) != 1):
+            # logging.warning(" v.shape {} {} ".format(v.shape , type(v) ))
             raise ValueError(f"v must be 0 or 1 dimension: {len(v.shape)}")
         v = v.item()
 
@@ -170,6 +171,7 @@ class SubReporter:
                 raise RuntimeError(f"{key2} is registered twice.")
             if v is None:
                 v = np.nan
+            # logging.warning(" key2 {} , v {}".format(key2, v))
             r = to_reported_value(v, weight)
 
             if key2 not in self.stats:

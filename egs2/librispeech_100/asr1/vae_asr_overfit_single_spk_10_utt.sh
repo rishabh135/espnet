@@ -63,7 +63,7 @@ adv_liststr="recon 600"
 # adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
 
-resume_checkpoint=550
+resume_checkpoint=-1
 max_epoch=600
 batch_bins=52000000
 adv_weight=25.0
@@ -74,12 +74,12 @@ vae_weight_factor=0.8
 save_every_epoch=50
 vae_annealing_cycle=25
 plot_iiter=1
-latent_dim=512
+latent_dim=80
 accum_grad=1
 
 
-project_name="vae_10_utt_tts_transformer_latent_dim_512"
-experiment_name="latent_dim_512_with_spembs"
+project_name="vae_v2_workingvae_april_21"
+experiment_name="latent_dim_80_with_spembs"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
