@@ -96,55 +96,6 @@ from pprint import pprint
 
 
 
-class VanillaVAEDecoder(torch.nn.Module):
-    def __init__(self, hidden_dims: List = None, **kwargs) -> None:
-        super(VanillaVAEDecoder, self).__init__()
-
-        # Build Decoder
-        modules = []
-        if(hidden_dims is None):
-            hidden_dims = [32, 64, 128, 256]
-        hidden_dims.reverse()
-
-        for i in range(len(hidden_dims) - 1):
-            modules.append(
-                torch.nn.Sequential(
-                    torch.nn.ConvTranspose2d(hidden_dims[i],
-                                       hidden_dims[i + 1],
-                                       kernel_size=3,
-                                       stride = 2,
-                                       padding=1,
-                                       output_padding=1),
-                    torch.nn.BatchNorm2d(hidden_dims[i + 1]),
-                    torch.nn.LeakyReLU())
-            )
-
-
-
-        self.decoder = torch.nn.Sequential(*modules)
-
-        self.final_layer = torch.nn.Sequential(
-                            torch.nn.ConvTranspose2d(hidden_dims[-1],
-                                               hidden_dims[-1],
-                                               kernel_size=3,
-                                               stride=2,
-                                               padding=1,
-                                               output_padding=1),
-                            torch.nn.BatchNorm2d(hidden_dims[-1]),
-                            torch.nn.LeakyReLU(),
-                            torch.nn.Conv2d(hidden_dims[-1], out_channels= 3,
-                                      kernel_size= 3, padding= 1),
-                            torch.nn.Tanh())
-
-    def forward(self, hs: torch.Tensor, ys_in: torch.Tensor, **kwargs) -> torch.Tensor:
-
-        logging.warning("hs.shape {} ".format(hs.shape))
-        result = self.decoder(hs)
-        result = self.final_layer(result)
-        logging.warning("result.shape {} ".format(result.shape))
-        return result
-
-
 
 
 
@@ -618,15 +569,7 @@ class ASRTask(AbsTask):
         #     normalize_before=decoder_normalize_before,
         #     concat_after=decoder_concat_after,
         # )
-        # define final projection
-        # self.feat_out = torch.nn.Linear(adim, odim * reduction_factor)
-        # self.prob_out = torch.nn.Linear(adim, reduction_factor)
 
-
-
-
-
-        # reconstruction_decoder = ReconDecoder(eprojs=512, local_z_size=80)
 
 
 
@@ -667,7 +610,6 @@ class ASRTask(AbsTask):
             adversarial_branch = None
 
 
-        # logging.info("\n******* Inside ASR.py *********\n")
 
         # 7. Build model
         try:
@@ -679,7 +621,6 @@ class ASRTask(AbsTask):
             adv_flag=args.adv_flag,
             grlalpha=args.grlalpha,
             latent_dim=args.latent_dim,
-            # adversarial_list=args.adversarial_list,
             reconstruction_decoder=reconstruction_decoder,
             vocab_size=vocab_size,
             frontend=frontend,

@@ -819,7 +819,7 @@ class Trainer:
         for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
             assert isinstance(batch, dict), type(batch)
             cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 5 * len(utt_id)))
-            # logging.warning(" cls.beta_kl_factor {} new_lr {} ".format(cls.beta_kl_factor, new_lr))
+            logging.warning(" cls.beta_kl_factor {} ".format(cls.beta_kl_factor))
             # logging.warning(" prinitng iiter {} ")
             # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
             # logging.warning("**************   Batch ************")
@@ -829,46 +829,6 @@ class Trainer:
 
             # logging.warning(" len_utt_id {} utt_id {} \n".format( len(utt_id), utt_id))
 
-
-
-            # ['sp1.1-5703-47212-0024', 'sp1.1-5561-41615-0030', 'sp1.1-3723-171115-0030', 'sp1.1-3214-167607-0035', 'sp1.1-2817-142380-0037', 'sp1.1-2514-149482-0056', 'sp1.1-1624-142933-0016', 'sp0.9-78-369-0052', 'sp0.9-7067-76048-0024', 'sp0.9-5049-25947-0006', 'sp0.9-4481-17499-0016', 'sp0.9-3879-174923-0004', 'sp0.9-211-122442-0003', '441-128982-0006', '3857-182315-0042', '2764-36619-0037', 'sp1.1-1455-138263-0030', 'sp1.1-909-131045-0016', 'sp1.1-8975-270782-0084', 'sp1.1-8238-274553-0024', 'sp1.1-8051-118101-0022', 'sp1.1-7113-86041-0050', 'sp1.1-6081-42010-0021', 'sp1.1-5688-15787-0001', 'sp1.1-4267-287369-0019', 'sp1.1-403-128339-0046', 'sp1.1-332-128985-0040', 'sp1.1-332-128985-0038', 'sp1.1-3240-131232-0004', 'sp1.1-226-131533-0005', 'sp1.1-211-122442-0002', 'sp0.9-4853-27670-0017', 'sp0.9-481-123719-0021', 'sp0.9-445-123857-0021', 'sp0.9-4340-15220-0086', '911-130578-0007', '6836-61803-0037', '6385-34669-0018', '4267-287369-0008']
-            # **************************
-            # speech  >> tensor([[-1.3733e-03, -7.9346e-04,  3.3569e-04,  ..., -1.1292e-03,
-            #         -1.6174e-03, -2.2278e-03],
-            #     [ 1.6174e-03,  2.9297e-03,  2.1973e-03,  ..., -3.3569e-04,
-            #         -4.5776e-04, -7.0190e-04],
-            #     [-1.2207e-04,  6.1035e-04,  1.1902e-03,  ..., -4.5776e-03,
-            #         -4.7913e-03, -2.5635e-03],
-            #     ...,
-            #     [-3.9673e-04, -3.6621e-04, -3.0518e-04,  ...,  0.0000e+00,
-            #         0.0000e+00,  0.0000e+00],
-            #     [ 3.9673e-04,  7.3242e-04,  1.2512e-03,  ...,  0.0000e+00,
-            #         0.0000e+00,  0.0000e+00],
-            #     [ 6.1035e-05,  6.1035e-05,  1.2207e-04,  ...,  0.0000e+00,
-            #         0.0000e+00,  0.0000e+00]])
-            # speech_lengths  >> tensor([180218, 180218, 180218, 180218, 180218, 180218, 180218, 180178, 180178,
-            #     180178, 180178, 180178, 180178, 180160, 180160, 180160, 180146, 180145,
-            #     180145, 180145, 180145, 180145, 180145, 180145, 180145, 180145, 180145,
-            #     180145, 180145, 180145, 180145, 180089, 180089, 180089, 180089, 180080,
-            #     180080, 180080, 180080])
-            # text  >> tensor([[  11,   12,  425,  ...,  321,   -1,   -1],
-            #     [  10,   70,   26,  ...,   20,   89,   -1],
-            #     [   4,  497,   11,  ...,   -1,   -1,   -1],
-            #     ...,
-            #     [ 607,   86,    2,  ...,   -1,   -1,   -1],
-            #     [   2,  121, 4357,  ...,   -1,   -1,   -1],
-            #     [  13,   18,   66,  ...,   -1,   -1,   -1]])
-            # text_lengths  >> tensor([47, 48, 35, 34, 43, 42, 37, 37, 38, 39, 37, 36, 34, 40, 46, 34, 39, 41,
-            #     44, 47, 43, 38, 29, 49, 31, 39, 48, 45, 44, 33, 38, 27, 42, 31, 38, 38,
-            #     36, 38, 28])
-
-
-            # logging.warning(" encoder weight  {}  ".format(  model.encoder.encoders[1].feed_forward.w_1.weight  ) )
-            # logging.warning(" reconstruction weight {}  ".format(  model.reconstruction_decoder.decoders[0].feed_forward.w_1.weight  ) )
-
-
-            # logging.warning(" encoder weight grad {}  ".format(  model.encoder.encoders[1].feed_forward.w_1.weight.grad  ) )
-            # logging.warning(" reconstruction weight grad {}  ".format(  model.reconstruction_decoder.decoders[0].feed_forward.w_1.weight.grad  ) )
 
 
             if distributed:
@@ -1062,7 +1022,7 @@ class Trainer:
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
                     feats_lengths = retval["feats_lengths"]
-                    html_file_name = "./with_working_audio_30_march.png"
+                    html_file_name = "./with_working_audio_april_21.png"
 
                     # logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
                     ax1 = plt.subplot(2, 1, 1)

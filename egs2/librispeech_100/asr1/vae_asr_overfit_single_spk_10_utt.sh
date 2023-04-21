@@ -77,8 +77,8 @@ plot_iiter=1
 latent_dim=80
 accum_grad=1
 
-
 project_name="vae_v2_workingvae_april_21"
+
 experiment_name="latent_dim_80_with_spembs"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.

@@ -34,23 +34,6 @@ import logging
 
 
 
-# idim: int,
-# odim: int,
-# embed_dim: int = 512,
-# eprenet_conv_layers: int = 3,
-# eprenet_conv_chans: int = 256,
-# eprenet_conv_filts: int = 5,
-# dprenet_layers: int = 2,
-# dprenet_units: int = 256,
-# elayers: int = 6,
-# eunits: int = 1024,
-# adim: int = 512,
-# aheads: int = 4,
-# dlayers: int = 6,
-# dunits: int = 1024,
-# postnet_layers: int = 5,
-# postnet_chans: int = 256,
-# postnet_filts: int = 5,
 
 class TransformerTTS(AbsTTS):
     """Transformer-TTS module.
@@ -446,7 +429,7 @@ class TransformerTTS(AbsTTS):
         feats = feats[:, : feats_lengths.max()]  # for data-parallel
         batch_size = text.size(0)
 
-        # Add eos at the last of sequence
+        # Add eos at the last of sequence for 3d input, correct the padding dimensions
         xs = F.pad(text, [0, 0, 0, 1], "constant", self.padding_idx)
         # logging.warning("xs shape {} ".format( xs.shape))
         for i, l in enumerate(text_lengths):
@@ -464,8 +447,7 @@ class TransformerTTS(AbsTTS):
         # logging.warning("labels {} ".format(labels.shape))
         # logging.warning(" xs {} ilens {} ys {} olens {} spembs {} ".format(xs.shape, ilens.shape, ys.shape, olens.shape, spembs.shape))
         # calculate transformer outputs
-        
-        
+
         after_outs, before_outs, logits = self._forward(
             xs=xs,
             ilens=ilens,
@@ -483,7 +465,6 @@ class TransformerTTS(AbsTTS):
         #     assert olens.ge(
         #         self.reduction_factor
         #     ).all(), "Output length must be greater than or equal to reduction factor."
-            
         #     olens_in = olens.new([olen // self.reduction_factor for olen in olens])
         #     olens = olens.new([olen - olen % self.reduction_factor for olen in olens])
         #     max_olen = max(olens)
@@ -493,19 +474,12 @@ class TransformerTTS(AbsTTS):
         #         labels, 1, (olens - 1).unsqueeze(1), 1.0
         #     )  # see #3388
 
-       
-
-
-
-
         # modifiy mod part of groundtruth
         # ys=feats
         # olens = feats_lengths
-        
         # # make labels for stop prediction
         # labels = make_pad_mask(olens - 1).to(ys.device, ys.dtype)
         # labels = F.pad(labels, [0, 1], "constant", 1.0)
-        
 
         # olens_in = olens
         # if self.reduction_factor > 1:
