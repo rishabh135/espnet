@@ -424,7 +424,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # 1. Encoder
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
-        logging.warning(" encoder_out {} feats {} ".format( encoder_out.shape, feats.shape))
+        # logging.warning(" encoder_out {} feats {} ".format( encoder_out.shape, feats.shape))
         # original_feats = feats
         # Split the result into mu and var components
         # of the latent Gaussian distribution
@@ -613,7 +613,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # retval["feats_plot"] = original_feats[0].detach().cpu().numpy()
         # retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
-        
+
         # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
 

@@ -223,6 +223,7 @@ class Trainer:
     """
 
     beta_kl_factor = 0.1
+    minibatch_counter = 0
 
     def __init__(self):
         raise RuntimeError("This class can't be instantiated.")
@@ -738,16 +739,20 @@ class Trainer:
 
 
 
-        if ((current_epoch-1) % options.vae_annealing_cycle) == 0:
-            cls.beta_kl_factor = 0.1
             # logging.warning(' current epoch {}/{} KL annealing restarted {}'.format(current_epoch, options.vae_annealing_cycle, cls.beta_kl_factor))
 
 
         for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
             assert isinstance(batch, dict), type(batch)
-            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 10 * len(utt_id)))
             
-            logging.warning(" cls.beta_kl_factor {} len(utt_id) {}  ".format(cls.beta_kl_factor, len(utt_id) ))
+            cls.minibatch_counter += 1
+            if ((cls.minibatch_counter % options.vae_annealing_cycle) == 0):
+                cls.beta_kl_factor = 0.1
+
+            # cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 20 * len(utt_id)))
+            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/(  options.vae_annealing_cycle ))
+            
+            # logging.warning(" cls.beta_kl_factor {} len(utt_id) {}  ".format(cls.beta_kl_factor, len(utt_id) ))
             # logging.warning(" prinitng iiter {} ")
             # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
             # logging.warning("**************   Batch ************")
@@ -946,25 +951,25 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-                # if(iiter % options.plot_iiter  == 0):
-                #     feats_plot = retval["feats_plot"]
-                #     recons_feats_plot = retval["recons_feats_plot"]
-                #     html_file_name = "./with_working_audio_april_21.png"
+                if(iiter % options.plot_iiter  == 0):
+                    feats_plot = retval["feats_plot"]
+                    recons_feats_plot = retval["recons_feats_plot"]
+                    html_file_name = "./with_working_audio_april_21.png"
 
-                #     # logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
-                #     ax1 = plt.subplot(2, 1, 1)
-                #     ax1.set_title('Original feats linear')
-                #     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+                    # logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
+                    ax1 = plt.subplot(2, 1, 1)
+                    ax1.set_title('Original feats linear')
+                    plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                #     ax2 = plt.subplot(2, 1, 2)
-                #     ax2.set_title('Reconstructed feats linear')
-                #     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+                    ax2 = plt.subplot(2, 1, 2)
+                    ax2.set_title('Reconstructed feats linear')
+                    plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
 
-                #     fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
-                #     plt.tight_layout()
-                #     plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-                #     wandb.log({f"spectrogram plot": wandb.Image(plt)})
-                #     fig.clf()
+                    fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
+                    plt.tight_layout()
+                    plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+                    wandb.log({f"spectrogram plot": wandb.Image(plt)})
+                    fig.clf()
 
 
 

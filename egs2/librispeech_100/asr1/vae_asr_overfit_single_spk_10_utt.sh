@@ -77,7 +77,7 @@ plot_iiter=1
 latent_dim=80
 accum_grad=1
 
-project_name="vae_v2_workingvae_april_21_bet_kl_factor_3"
+project_name="vae_v2_workingvae_10_utterance_april_22"
 
 experiment_name="latent_dim_80_with_spembs"
 

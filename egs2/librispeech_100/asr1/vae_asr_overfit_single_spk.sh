@@ -73,12 +73,12 @@ adv_dropout_inp=0.0
 vae_weight_factor=0.8
 save_every_epoch=50
 vae_annealing_cycle=25
-plot_iiter=1
+plot_iiter=2
 latent_dim=80
-accum_grad=1
+accum_grad=4
 
 
-project_name="vae_v2_workingvae_april_21_one_speaker"
+project_name="vae_v2_workingvae_april_22_one_speaker"
 experiment_name="latent_dim_80_with_spembs"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
