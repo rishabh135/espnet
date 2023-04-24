@@ -63,7 +63,6 @@ vae_flag="True"
 adv_liststr="recon 100"
 # adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
-
 resume_checkpoint=-1
 max_epoch=100
 batch_bins=24000000
@@ -72,18 +71,23 @@ adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
-save_every_epoch=50
-vae_annealing_cycle=1
-plot_iiter=200
-latent_dim=64
+save_every_epoch=100
+vae_annealing_cycle=50
+plot_iiter=800
+latent_dim=80
 accum_grad=128
 
 
-project_name="vae_v2_workingvae_all_speakers_april_21"
+
+project_name="vae_v2_workingvae_all_speakers_april_23"
+experiment_name="latent_dim_80_with_spembs_recon_100"
+
+expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 
 
-experiment_name="latent_dim_64_with_spembs_recon_100"
+
+
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 

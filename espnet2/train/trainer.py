@@ -266,7 +266,7 @@ class Trainer:
             else:
                 scaler.load_state_dict(states["scaler"])
 
-        logging.info(f"The training was resumed using {checkpoint}")
+        logging.warning(f"The training was resumed using {checkpoint} with gpus: {ngpu} ")
 
     @classmethod
     def run(
@@ -464,7 +464,7 @@ class Trainer:
 
             if not distributed_option.distributed or distributed_option.dist_rank == 0:
                 # 3. Report the results
-                logging.info(reporter.log_message())
+                logging.warning(reporter.log_message())
                 if trainer_options.use_matplotlib:
                     reporter.matplotlib_plot(output_dir / "images")
                 if train_summary_writer is not None:
@@ -597,9 +597,7 @@ class Trainer:
                     break
 
         else:
-            logging.info(
-                f"The training was finished at {trainer_options.max_epoch} epochs "
-            )
+            logging.warning(f"The training was finished at {trainer_options.max_epoch} epochs ")
 
         # Generated n-best averaged model
         if not distributed_option.distributed or distributed_option.dist_rank == 0:
@@ -750,7 +748,7 @@ class Trainer:
                 cls.beta_kl_factor = 0.1
 
             # cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 20 * len(utt_id)))
-            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/(  options.vae_annealing_cycle ))
+            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/(  (options.vae_annealing_cycle-4)  ))
             
             # logging.warning(" cls.beta_kl_factor {} len(utt_id) {}  ".format(cls.beta_kl_factor, len(utt_id) ))
             # logging.warning(" prinitng iiter {} ")
