@@ -854,7 +854,7 @@ class Trainer:
 
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
-                    if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
+                    if (adv_flag == True  and adv_mode == 'asr'):
                         decay = cls.beta_kl_factor
                         vae_loss = reconstruction_loss + (decay * kld_loss)
 
@@ -865,11 +865,11 @@ class Trainer:
                         total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  *  vae_loss
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
-                    elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'adv'):
+                    elif (adv_flag == True and  adv_mode == 'adv'):
                         loss_adversarial /= accum_grad
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
-                    elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
+                    elif(adv_flag == True  and adv_mode == 'asradv'):
                         # loss_adversarial.requires_grad = True
                         decay = cls.beta_kl_factor
                         vae_loss = reconstruction_loss + (decay * kld_loss)
@@ -879,11 +879,11 @@ class Trainer:
                         total_loss =  (1-options.vae_weight_factor) * loss + options.vae_weight_factor * vae_loss + options.adv_loss_weight * loss_adversarial
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
-                    elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'reinit_adv'):
+                    elif (adv_flag == True  and  adv_mode == 'reinit_adv'):
                         loss_adversarial /= accum_grad
                         # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
-                    elif (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'recon'):
+                    elif (adv_flag == True  and  adv_mode == 'recon'):
                         # vae_loss = reconstruction_loss + kld_loss
                         # regularized vae_loss=kl_loss*decay + recon_loss
                         decay = cls.beta_kl_factor
@@ -905,7 +905,7 @@ class Trainer:
                         # Backward ops run in the same dtype autocast chose
                         # for corresponding forward ops.
                 else:
-                    if (adv_flag == True and adv_name == "ESPnetASRModel" and  adv_mode == 'recon'):
+                    if (adv_flag == True and  adv_mode == 'recon'):
                         decay = cls.beta_kl_factor
                         vae_loss = reconstruction_loss + (decay * kld_loss)
                         # vae_loss /= accum_grad
@@ -949,31 +949,27 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-                if(iiter % options.plot_iiter  == 0):
-                    feats_plot = retval["feats_plot"]
-                    recons_feats_plot = retval["recons_feats_plot"]
-                    html_file_name = "./with_working_audio_april_21.png"
+                # if(iiter % options.plot_iiter  == 0):
+                #     feats_plot = retval["feats_plot"]
+                #     recons_feats_plot = retval["recons_feats_plot"]
+                #     html_file_name = "./with_working_audio_april_21.png"
 
-                    # logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
-                    ax1 = plt.subplot(2, 1, 1)
-                    ax1.set_title('Original feats linear')
-                    plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+                #     # logging.warning("recons {}  mu_logvar_combined {} ".format(recons_feats_plot.shape, mu_logvar_combined.shape))
+                #     ax1 = plt.subplot(2, 1, 1)
+                #     ax1.set_title('Original feats linear')
+                #     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                    ax2 = plt.subplot(2, 1, 2)
-                    ax2.set_title('Reconstructed feats linear')
-                    plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+                #     ax2 = plt.subplot(2, 1, 2)
+                #     ax2.set_title('Reconstructed feats linear')
+                #     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
 
-                    fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
-                    plt.tight_layout()
-                    plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-                    wandb.log({f"spectrogram plot": wandb.Image(plt)})
-                    fig.clf()
+                #     fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
+                #     plt.tight_layout()
+                #     plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+                #     wandb.log({f"spectrogram plot": wandb.Image(plt)})
+                #     fig.clf()
 
-
-
-
-
-                    # if( (current_epoch % 10 == 0) and (iiter == options.plot_iiter )):
+                    # if( (current_epoch % 2 == 0) and (iiter == options.plot_iiter )):
                     #     with torch.inference_mode():
                     #         recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
                     #         orig_specs = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
