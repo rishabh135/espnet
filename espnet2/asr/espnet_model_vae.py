@@ -279,7 +279,37 @@ class ESPnetASRModel(AbsESPnetModel):
             self.reinit_adv_flag = True
 
     def print_flags(self,):
-        logging.warning(" encoder frozen : {} adversarial_frozen : {}".format(self.encoder_frozen_flag, self.adversarial_frozen_flag))
+        logging.warning(" encoder frozen : {} adversarial_frozen : {} self.recon_frozen {} ".format(self.encoder_frozen_flag, self.adversarial_frozen_flag, self.recon_mode_flag ))
+
+
+
+
+    def recon_mode(self):
+        if(self.recon_mode_flag == False):
+            logging.warning("  RECON MODE flag changing ")
+            for param in self.decoder.parameters():
+                param.requires_grad = False
+                param.grad = None
+            for param in self.ctc.ctc_lo.parameters():
+                param.requires_grad = False
+                param.grad = None
+            for param in self.adversarial_branch.parameters():
+                param.requires_grad = False
+                param.grad = None
+            for param in self.encoder.parameters():
+                param.requires_grad = True
+            for param in self.reconstruction_decoder.parameters():
+                param.requires_grad = True
+
+            self.recon_mode_flag = True
+
+        return
+
+
+
+
+
+
 
 
     def freeze_encoder(self):
@@ -309,32 +339,10 @@ class ESPnetASRModel(AbsESPnetModel):
             #         param.grad.zero_()
 
             self.encoder_frozen_flag = True
+            self.recon_mode_flag = True
         self.print_flags()
 
 
-
-
-
-    def recon_mode(self):
-        if(self.recon_mode_flag == False):
-            logging.warning("  RECON MODE flag changing ")
-            for param in self.decoder.parameters():
-                param.requires_grad = False
-                param.grad = None
-            for param in self.ctc.ctc_lo.parameters():
-                param.requires_grad = False
-                param.grad = None
-            for param in self.adversarial_branch.parameters():
-                param.requires_grad = False
-                param.grad = None
-            for param in self.encoder.parameters():
-                param.requires_grad = True
-            for param in self.reconstruction_decoder.parameters():
-                param.requires_grad = True
-
-            self.recon_mode_flag = True
-
-        return
 
 
 
@@ -352,6 +360,7 @@ class ESPnetASRModel(AbsESPnetModel):
             #     param.requires_grad = True
 
             self.encoder_frozen_flag = False
+            self.recon_mode_flag = False
 
 
     def freeze_adversarial(self):
@@ -591,10 +600,10 @@ class ESPnetASRModel(AbsESPnetModel):
                 loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att + reconstruction_loss + kld_loss
 
             # Collect Attn branch stats
-            stats["loss_att"] = loss_att.detach() if loss_att is not None else None
-            stats["acc"] = acc_att * 100
-            stats["cer"] = cer_att
-            stats["wer"] = wer_att
+            stats["loss_attention"] = loss_att.detach() if loss_att is not None else None
+            stats["accuracy_asr"] = acc_att * 100
+            stats["cer_attention"] = cer_att
+            stats["wer_attention"] = wer_att
 
 
         # Collect total loss stats

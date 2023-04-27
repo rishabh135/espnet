@@ -22,6 +22,8 @@ from espnet2.asr.lsoftmax import LSoftmaxLinear
 # from speechbrain.nnet.linear import Linear
 # from speechbrain.nnet.normalization import BatchNorm1d
 
+from espnet2.asr.loss_functions import AngularPenaltySMLoss
+
 
 ##############################################################################################################################################################
 ##############################################################################################################################################################
@@ -287,17 +289,20 @@ class SpeakerAdv(torch.nn.Module):
 		self.advunits = advunits
 		self.advlayers = advlayers
 
+
+
+		# https://github.com/cvqluu/Angular-Penalty-Softmax-Losses-Pytorch
+		in_features = eprojs
+		out_features = odim# Number of classes
+		criterion = AngularPenaltySMLoss(in_features, out_features, loss_type='arcface') # loss_type in ['arcface', 'sphereface', 'cosface']
+
+
+
+
+
+
+
 		# self.advnet = Xvector(lin_neurons=advunits, in_channels=eprojs)
-
-		# self.advnet = TDNN(input_dim=eprojs, output_dim=advunits, context_size=9, dilation=2)
-		# self.advnet2 = TDNN(input_dim=advunits, output_dim=advunits, context_size=9, dilation=1)
-		# self.advnet3 = TDNN(input_dim=advunits, output_dim=advunits, context_size=7, dilation=2)
-		# self.advnet4 = TDNN(input_dim=advunits, output_dim=advunits, context_size=7, dilation=1)
-		# self.advnet5 = TDNN(input_dim=advunits, output_dim=advunits, context_size=5, dilation=2)
-		# self.advnet6 = TDNN(input_dim=advunits, output_dim=advunits, context_size=5, dilation=1)
-		# self.advnet5 = TDNN(input_dim=advunits, output_dim=advunits, context_size=3, dilation=2)
-		# self.advnet6 = TDNN(input_dim=advunits, output_dim=advunits, context_size=3, dilation=1)
-
 		# self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout_mid=dropout_mid, dropout_inp=dropout_inp, dropout_out=dropout_out, bidirectional=True)
 		self.advnet = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_mid, bidirectional=True)
 		# self.advnet = DropoutLSTMModel( input_size=eprojs, hidden_size=advunits, n_layers=self.advlayers, dropoutw=dropout_rate, bidirectional=True)
@@ -389,6 +394,9 @@ class SpeakerAdv(torch.nn.Module):
 		labels = labels.contiguous().view(-1)
 		labels = to_cuda(self, labels.long())
 
+
+
+		creiterion_loss = criterion(y_hat, labels)
 
 		loss = F.cross_entropy(y_hat, labels, size_average=True)
 		acc = th_accuracy(y_hat, labels, -1)

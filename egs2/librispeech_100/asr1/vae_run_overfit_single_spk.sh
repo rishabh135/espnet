@@ -28,7 +28,10 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_v2_april_24_one_speaker_distributed"
+
+
+
+project_name="vae_v2_workingvae_april_25_one_speaker"
 
 
 
@@ -51,7 +54,7 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --skip_train false \
     --skip_eval true \
     --lang en \
-    --ngpu 2 \
+    --ngpu 1 \
     --nj 64 \
     --use_xvector true \
     --inference_nj 32 \

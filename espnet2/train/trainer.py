@@ -737,7 +737,7 @@ class Trainer:
 
 
 
-            # logging.warning(' current epoch {}/{} KL annealing restarted {}'.format(current_epoch, options.vae_annealing_cycle, cls.beta_kl_factor))
+        # logging.warning(' current epoch {}/{} KL annealing restarted {}'.format(current_epoch, options.vae_annealing_cycle, cls.beta_kl_factor))
 
 
         for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
@@ -1008,6 +1008,15 @@ class Trainer:
                             scaler.update()
 
                 else:
+                    # reporter.register(
+                    #     {
+                    #         "grad_norm": grad_norm, "clip": torch.where(
+                    #             grad_norm > grad_clip,
+                    #             grad_norm.new_tensor(100),
+                    #             grad_norm.new_tensor(0),
+                    #         ),"loss_scale": scaler.get_scale() if scaler else 1.0,
+                    #     }
+                    #     )
                     all_steps_are_invalid = False
                     with reporter.measure_time("optim_step_time"):
                         for iopt, (optimizer, scheduler) in enumerate(

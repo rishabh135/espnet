@@ -59,11 +59,11 @@ class TransformerTTS(AbsTTS):
         dprenet_layers: int = 2,
         dprenet_units: int = 256,
         elayers: int = 6,
-        eunits: int = 1024,
+        eunits: int = 256,
         adim: int = 512,
         aheads: int = 2,
-        dlayers: int = 3,
-        dunits: int = 256,
+        dlayers: int = 2,
+        dunits: int = 128,
         postnet_layers: int = 2,
         postnet_chans: int = 256,
         postnet_filts: int = 5,
@@ -459,21 +459,19 @@ class TransformerTTS(AbsTTS):
         )
 
         return after_outs
+
         
         # modifiy mod part of groundtruth
         # olens_in = olens
         # if self.reduction_factor > 1:
-        #     assert olens.ge(
-        #         self.reduction_factor
-        #     ).all(), "Output length must be greater than or equal to reduction factor."
+        #     assert olens.ge(self.reduction_factor).all(), "Output length must be greater than or equal to reduction factor."
         #     olens_in = olens.new([olen // self.reduction_factor for olen in olens])
         #     olens = olens.new([olen - olen % self.reduction_factor for olen in olens])
         #     max_olen = max(olens)
         #     ys = ys[:, :max_olen]
         #     labels = labels[:, :max_olen]
-        #     labels = torch.scatter(
-        #         labels, 1, (olens - 1).unsqueeze(1), 1.0
-        #     )  # see #3388
+        #     labels = torch.scatter(labels, 1, (olens - 1).unsqueeze(1), 1.0)  # see #3388
+
 
         # modifiy mod part of groundtruth
         # ys=feats
