@@ -3,6 +3,9 @@ import argparse
 import functools
 import logging
 import os, re
+
+os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+
 from pickle import FALSE
 import sys
 from abc import ABC, abstractmethod
@@ -1182,7 +1185,8 @@ class AbsTask(ABC):
                 args.adversarial_list = ["recon", "adv", "adv", "asradv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * 8 + ["asradv"] * 10
 
             else :
-                epoch_list =  list(map(int, re.findall(r'\d+', args.adv_liststr)))
+                epoch_list = list(map(int, re.findall(r'\d+', args.adv_liststr)))
+                # phase_list = list( re.findall(r  , args.adv_liststr ))
                 logging.warning("->>> adv_liststr {} epoch_list {} ".format(args.adv_liststr, epoch_list))
                 if (sum(epoch_list) !=  args.max_epoch):
                     raise RuntimeError("Please check total_number of epochs {}  are not equivakent to max_epochs {} ".format(sum(epoch_list), args.max_epoch))
@@ -1198,7 +1202,6 @@ class AbsTask(ABC):
 
                 elif(len(epoch_list) == 1):
                     args.adversarial_list = ["recon"] *  epoch_list[0]
-
 
                 else:
                     args.adversarial_list = ["adv"] *  epoch_list[0]

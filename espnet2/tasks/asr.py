@@ -1,6 +1,8 @@
 import argparse
 import logging
 from typing import Callable, Collection, Dict, List, Optional, Tuple
+import os, sys
+os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 
 import numpy as np
 import torch
