@@ -792,8 +792,11 @@ class Trainer:
                         loss_adversarial = retval.get( "loss_adversarial", 0 )
                         reconstruction_loss = retval.get("reconstruction_loss", 0)
                         kld_loss = retval.get("reconstruction_kld_loss", 0)
-                        # vae_loss = retval.get("vae_loss",0)
-                        # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
+                        decay = cls.beta_kl_factor
+                        vae_loss = reconstruction_loss + (decay * kld_loss)
+
+                        # wandb.log({ "beta_kl_factor" : decay } )
+                        # wandb.log({ "vae_loss" : vae_loss.detach() } )
                         if optim_idx is not None and not isinstance(optim_idx, int):
                             if not isinstance(optim_idx, torch.Tensor):
                                 raise RuntimeError(
@@ -833,6 +836,8 @@ class Trainer:
                 ###################################################################################
 
                 stats = {k: v for k, v in stats.items() if v is not None}
+
+
                 if ngpu > 1 or distributed:
                     # Apply weighted averaging for loss and stats
                     loss = (loss * weight.type(loss.dtype)).sum()
