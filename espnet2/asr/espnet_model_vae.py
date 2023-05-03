@@ -620,8 +620,8 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["loss_ctc"] = loss_ctc
         retval["loss_att"] = loss_att
 
-        # retval["feats_plot"] = feats[0].detach().cpu().numpy()
-        # retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
+        retval["feats_plot"] = feats[0].detach().cpu().numpy()
+        retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
 
         # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 

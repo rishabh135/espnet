@@ -547,9 +547,9 @@ class AbsTask(ABC):
             help="Enable resuming if checkpoint is existing",
         )
 
-        group.add_argument('--save_every_epoch', default=20, type=int, help='Number of epochs which will be saved ')
+        group.add_argument('--save_every_epoch', default=5, type=int, help='Number of epochs which will be saved ')
 
-        group.add_argument('--resume_from_checkpoint', default=180, type=int, help='Number of epochs which will be saved ')
+        group.add_argument('--resume_from_checkpoint', default=20, type=int, help='Number of epochs which will be saved ')
 
         group.add_argument(
             "--train_dtype",
@@ -1450,7 +1450,7 @@ class AbsTask(ABC):
                         d2 = today.strftime("Run_%B_%d_")
                         time = datetime.now().strftime("_time__%H_%M")
                         # d = date_time.strftime("%d %B, %Y")
-                        name =  d2 + "__" + time + "__adv_loss_weight:_" + str(args.adv_loss_weight) + "__maxepoch:_" +  str(args.max_epoch)
+                        name =  d2 + "__" + time + "__resume_checkpoint:_" + str(args.resume_from_checkpoint) + "__maxepoch:_" +  str(args.max_epoch)
                         logging.warning("Starting training with wandbname : {} ".format(name))
                     else:
                         name = args.wandb_name
