@@ -292,9 +292,9 @@ class SpeakerAdv(torch.nn.Module):
 
 
 		# https://github.com/cvqluu/Angular-Penalty-Softmax-Losses-Pytorch
-		# in_features = eprojs
-		# out_features = odim# Number of classes
-		# self.criterion = AngularPenaltySMLoss(out_features, out_features, loss_type='arcface') # loss_type in ['arcface', 'sphereface', 'cosface']
+		in_features = eprojs
+		out_features = odim# Number of classes
+		self.criterion = AngularPenaltySMLoss(out_features, out_features, loss_type='arcface') # loss_type in ['arcface', 'sphereface', 'cosface']
 
 
 
@@ -399,9 +399,9 @@ class SpeakerAdv(torch.nn.Module):
 		# logging.warning(" >>>>> y_hat {}  labels {}  ".format(  y_hat.shape, labels.shape) )
 
 
-		# criterion_loss = self.criterion(y_hat, labels)
+		loss = self.criterion(y_hat, labels)
 
-		loss = F.cross_entropy(y_hat, labels, size_average=True)
+		# loss = F.cross_entropy(y_hat, labels, size_average=True)
 		acc = th_accuracy(y_hat, labels, -1)
 
 		return loss, acc

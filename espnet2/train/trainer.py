@@ -729,7 +729,7 @@ class Trainer:
 
 
 
-        fig = plt.figure(figsize=(10,8), dpi=200 )
+        fig = plt.figure(figsize=(14,8), dpi=200 )
 
         # pca = PCA(n_components=10)
         # tsne = TSNE(n_components=2, perplexity=25, verbose=1, random_state=123)
@@ -951,20 +951,25 @@ class Trainer:
                 if(iiter % accum_grad == 0):
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
-                    html_file_name = "./with_working_audio_may_2_all_speakers.png"
+                    aug_feats_plot = retval["aug_feats_plot"]
+                    html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
 
                     # logging.warning(" Uploading utterance : recons {}   ".format(recons_feats_plot.shape))
-                    ax1 = plt.subplot(2, 1, 1)
+                    ax1 = plt.subplot(3, 1, 1)
                     ax1.set_title('Original feats linear')
                     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                    ax2 = plt.subplot(2, 1, 2)
+                    ax2 = plt.subplot(3, 1, 2)
                     ax2.set_title('Reconstructed feats linear')
-                    plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=True, labelbottom=True)
+                    plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                    fig.subplots_adjust(hspace=0.15, bottom=0.00, wspace=0)
+                    ax3 = plt.subplot(3, 1, 3)
+                    ax3.set_title('Augment feats linear')
+                    plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+
+                    fig.subplots_adjust(hspace=0.10, bottom=0.00, wspace=0)
                     plt.tight_layout()
-                    # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+                    plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
                     wandb.log({f"spectrogram plot": wandb.Image(plt)})
                     fig.clf()
 

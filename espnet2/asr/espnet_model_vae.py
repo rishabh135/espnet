@@ -623,7 +623,7 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["feats_plot"] = feats[0].detach().cpu().numpy()
         retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
 
-        # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
+        retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
 
         return retval
@@ -698,15 +698,16 @@ class ESPnetASRModel(AbsESPnetModel):
             # 1. Extract feats
             feats, feats_lengths = self._extract_feats(speech, speech_lengths)
 
-            aug_feats = None
-            aug_feats_lengths = None
-            # # 2. Data augmentation
-            # if self.specaug is not None and self.training:
-            #     aug_feats, aug_feats_lengths = self.specaug(feats, feats_lengths)
+            aug_feats = feats
+            aug_feats_lengths = feats_lengths
+            # 2. Data augmentation
+            if self.specaug is not None and self.training:
+                # logging.warning(f" aug_feats type {type(aug_feats)} ")
+                aug_feats, aug_feats_lengths = self.specaug(aug_feats, aug_feats_lengths)
 
-            # # 3. Normalization for feature: e.g. Global-CMVN, Utterance-CMVN
-            # if self.normalize is not None:
-            #     aug_feats, aug_feats_lengths = self.normalize(aug_feats, aug_feats_lengths)
+            # 3. Normalization for feature: e.g. Global-CMVN, Utterance-CMVN
+            if self.normalize is not None:
+                aug_feats, aug_feats_lengths = self.normalize(aug_feats, aug_feats_lengths)
 
 
 
@@ -723,7 +724,7 @@ class ESPnetASRModel(AbsESPnetModel):
         if self.encoder.interctc_use_conditioning:
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
-            encoder_out, encoder_out_lens, _ = self.encoder(feats, feats_lengths)
+            encoder_out, encoder_out_lens, _ = self.encoder(aug_feats, aug_feats_lengths)
             # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
             # logging.warning(" out_sum {} ".format(out_sum))
         intermediate_outs = None

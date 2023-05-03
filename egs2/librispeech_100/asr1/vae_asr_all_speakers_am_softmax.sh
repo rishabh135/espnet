@@ -1,3 +1,5 @@
+
+
 #!/usr/bin/env bash
 # Set bash to 'debug' mode, it will exit on :
 # -e 'error', -u 'undefined variable', -o ... 'error in pipeline', -x 'print commands',
@@ -45,9 +47,8 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/partial_data_xvector_speed/original_data
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/partial_data_xvector_speed/dump
-
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/dump
 
 
 
@@ -59,29 +60,35 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
-adv_liststr="recon 1000"
-# adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
-
+# adv_liststr="recon 100"
+adv_liststr="asr 15 adv 15 asradv 15 reinit_adv 15"
 
 resume_checkpoint=-1
-max_epoch=1000
-batch_bins=52000000
+max_epoch=60
+batch_bins=33000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
-save_every_epoch=100
-vae_annealing_cycle=25
-plot_iiter=1
+save_every_epoch=5
+vae_annealing_cycle=100
+plot_iiter=128
 latent_dim=64
-accum_grad=1
+accum_grad=128
 
 
-project_name="vae_may_3_utterance_10_encoder_aug_feats"
 
 
-experiment_name="latent_dim_64_with_spembs"
+project_name="vae_all_speakers_may_3_encoder_aug_feats"
+experiment_name="latent_dim_64_with_spembs_max_epochs_60"
+
+
+expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
+
+
+
+
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
