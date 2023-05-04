@@ -65,7 +65,7 @@ adv_liststr="asr 15 adv 15 asradv 15 reinit_adv 15"
 
 resume_checkpoint=-1
 max_epoch=60
-batch_bins=33000000
+batch_bins=31000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0

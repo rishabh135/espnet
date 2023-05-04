@@ -59,12 +59,12 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
-adv_liststr="recon 1000"
+adv_liststr="recon 2000"
 # adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
 
-resume_checkpoint=-1
-max_epoch=1000
+resume_checkpoint=1000
+max_epoch=2000
 batch_bins=52000000
 adv_weight=25.0
 adv_dropout_out=0.0
