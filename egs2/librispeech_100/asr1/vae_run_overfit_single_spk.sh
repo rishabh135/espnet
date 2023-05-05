@@ -32,7 +32,10 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_workingvae_may_5_one_speaker_all_phases"
+
+project_name="vae_workingvae_may_7_one_speaker_3_times_lr"
+
+
 
 
 
@@ -42,7 +45,7 @@ project_name="vae_workingvae_may_5_one_speaker_all_phases"
 
 
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae_single_spk.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 

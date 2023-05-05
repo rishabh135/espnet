@@ -896,48 +896,49 @@ class AbsTask(ABC):
 
 
 
-    # @classmethod
-    # def build_optimizers(
-    #     cls,
-    #     args: argparse.Namespace,
-    #     model: torch.nn.Module,
-    # ) -> List[torch.optim.Optimizer]:
+    @classmethod
+    def build_optimizers(
+        cls,
+        args: argparse.Namespace,
+        model: torch.nn.Module,
+    ) -> List[torch.optim.Optimizer]:
 
-    #     adv_name = str(type(model).__name__)
-    #     logging.warning(" ----->>>>>>>> adv_flag {} asr_lr {} adv_lr {} adv_name {} \n\n".format(args.adv_flag, args.asr_lr, args.adv_lr, adv_name))
+        adv_name = str(type(model).__name__)
+        logging.warning(" ----->>>>>>>> adv_flag {} asr_lr {} adv_lr {} adv_name {} \n\n".format(args.adv_flag, args.asr_lr, args.adv_lr, adv_name))
 
-    #     if cls.num_optimizers != 1:
-    #         raise RuntimeError(
-    #             "build_optimizers() must be overridden if num_optimizers != 1"
-    #         )
+        if cls.num_optimizers != 1:
+            raise RuntimeError(
+                "build_optimizers() must be overridden if num_optimizers != 1"
+            )
 
-    #     optim_class = optim_classes.get(args.optim)
-    #     if optim_class is None:
-    #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+        optim_class = optim_classes.get(args.optim)
+        if optim_class is None:
+            raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
 
 
-    #     if ( args.adv_flag):
-    #         if(args.ngpu > 1):
-    #             param_grp = [
-    #                 {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
-    #                 {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
-    #                 {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
-    #                 {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
-    #             ]
-    #         else:
-    #             param_grp = [
-    #                 {'params': model.encoder.parameters(), 'lr': args.asr_lr},
-    #                 {'params': model.decoder.parameters(), 'lr': args.asr_lr},
-    #                 {'params': model.ctc.parameters(), 'lr': args.asr_lr},
-    #                 {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
+        if ( args.adv_flag):
+            if(args.ngpu > 1):
+                param_grp = [
+                    {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
+                    {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
+                ]
+            else:
+                param_grp = [
+                    {'params': model.encoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.decoder.parameters(), 'lr': args.asr_lr},
+                    {'params': model.recon_decoder.parameters(), 'lr': args.recon_lr},
+                    {'params': model.ctc.parameters(), 'lr': args.asr_lr},
+                    {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
 
-    #         optimi = torch.optim.Adam((param_grp), betas=(0.9,0.999),weight_decay=0.00001)
+            optimi = torch.optim.Adam((param_grp), betas=(0.9,0.999),weight_decay=0.00001)
 
-    #     else:
-    #         optimi = optim_class(model.parameters(), lr=args.asr_lr, weight_decay=0.00001)
+        else:
+            optimi = optim_class(model.parameters(), lr=args.asr_lr, weight_decay=0.00001)
 
-    #     optimizers = [optimi]
-    #     return optimizers
+        optimizers = [optimi]
+        return optimizers
 
 
 
