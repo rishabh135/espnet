@@ -63,7 +63,7 @@ adv_liststr="recon 2000"
 # adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
 
-resume_checkpoint=1000
+resume_checkpoint=1400
 max_epoch=2000
 batch_bins=52000000
 adv_weight=25.0

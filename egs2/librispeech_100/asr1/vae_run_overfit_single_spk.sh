@@ -31,8 +31,8 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_v2_workingvae_may_2_one_speaker"
 
+project_name="vae_workingvae_may_5_one_speaker_all_phases"
 
 
 

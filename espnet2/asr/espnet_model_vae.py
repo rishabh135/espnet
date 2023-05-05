@@ -457,10 +457,11 @@ class ESPnetASRModel(AbsESPnetModel):
         recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
         # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
         # logging.warning(" reconstruction_decoder_summary: {} \n".format(out_sum))
-        reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
-        # logging.warning(" recons_feats shape {} ".format(recons_feats.shape))
-        # sum_recon_kl_loss =  reconstruction_loss + kld_loss
 
+        # logging.warning(" original_feats {} recons_feats shape {} ".format(feats.shape, recons_feats.shape))
+        # # sum_recon_kl_loss =  reconstruction_loss + kld_loss
+
+        reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
 
         # logging.warning(" count how different feats are {} ".format( torch.nonzero(original_feats-feats) ))
         ################################################################################################################################################################################################
@@ -622,7 +623,6 @@ class ESPnetASRModel(AbsESPnetModel):
 
         retval["feats_plot"] = feats[0].detach().cpu().numpy()
         retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
-
         retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
 

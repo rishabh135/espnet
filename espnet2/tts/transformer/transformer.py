@@ -52,6 +52,21 @@ class TransformerTTS(AbsTTS):
         # network structure related
         idim: int,
         odim: int,
+
+        # embed_dim: int = 512,
+        # eprenet_conv_layers: int = 3,
+        # eprenet_conv_chans: int = 256,
+        # eprenet_conv_filts: int = 5,
+        # dprenet_layers: int = 2,
+        # dprenet_units: int = 256,
+        # elayers: int = 6,
+        # eunits: int = 1024,
+        # adim: int = 512,
+        # aheads: int = 4,
+        # dlayers: int = 6,
+        # dunits: int = 1024,
+
+
         embed_dim: int = 512,
         eprenet_conv_layers: int = 3,
         eprenet_conv_chans: int = 256,
@@ -64,6 +79,9 @@ class TransformerTTS(AbsTTS):
         aheads: int = 2,
         dlayers: int = 2,
         dunits: int = 128,
+
+
+
         postnet_layers: int = 2,
         postnet_chans: int = 256,
         postnet_filts: int = 5,
@@ -886,3 +904,37 @@ class TransformerTTS(AbsTTS):
             raise NotImplementedError("support only add or concat.")
 
         return hs
+
+
+
+
+
+# idim: int,
+# odim: int,
+# embed_dim: int = 512,
+# eprenet_conv_layers: int = 3,
+# eprenet_conv_chans: int = 256,
+# eprenet_conv_filts: int = 5,
+# dprenet_layers: int = 2,
+# dprenet_units: int = 256,
+# elayers: int = 6,
+# eunits: int = 256,
+# adim: int = 512,
+# aheads: int = 2,
+# dlayers: int = 2,
+# dunits: int = 128,
+
+
+
+# postnet_layers: int = 2,
+# postnet_chans: int = 256,
+# postnet_filts: int = 5,
+# positionwise_layer_type: str = "conv1d",
+# positionwise_conv_kernel_size: int = 1,
+# use_scaled_pos_enc: bool = True,
+# use_batch_norm: bool = True,
+# encoder_normalize_before: bool = True,
+# decoder_normalize_before: bool = True,
+# encoder_concat_after: bool = False,
+# decoder_concat_after: bool = False,
+# reduction_factor: int = 1,

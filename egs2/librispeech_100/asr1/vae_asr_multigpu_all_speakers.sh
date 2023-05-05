@@ -1,3 +1,5 @@
+
+
 #!/usr/bin/env bash
 # Set bash to 'debug' mode, it will exit on :
 # -e 'error', -u 'undefined variable', -o ... 'error in pipeline', -x 'print commands',
@@ -29,9 +31,9 @@ skip_train=false     # Skip training stages.
 skip_eval=false      # Skip decoding and evaluation stages.
 skip_upload=true     # Skip packing and uploading stages.
 skip_upload_hf=true  # Skip uploading to hugging face stages.
-ngpu=1               # The number of gpus ("0" uses cpu, otherwise use gpu).
+ngpu=               # The number of gpus ("0" uses cpu, otherwise use gpu).
 num_nodes=1          # The number of nodes.
-nj=64                # The number of parallel jobs.
+nj=32                # The number of parallel jobs.
 inference_nj=32      # The number of parallel jobs in decoding.
 gpu_inference=false  # Whether to perform gpu decoding.
 
@@ -45,9 +47,8 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/partial_data_xvector_speed/original_data
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/partial_data_xvector_speed/dump
-
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/dump
 
 
 
@@ -58,29 +59,37 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 adversarial_flag="True"
 vae_flag="True"
-# adv_liststr="asr_adv_asradv"
-# adv_liststr="recon 1620"
-adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
+adv_liststr="asr_adv_asradv"
+# adv_liststr="recon 100"
 
+# adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
+# adv_liststr="adv 40 asradv 40"
 
 resume_checkpoint=-1
-max_epoch=160
-batch_bins=42000000
+max_epoch=80
+batch_bins=12000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
-save_every_epoch=10
-vae_annealing_cycle=30
-plot_iiter=2
-latent_dim=80
-accum_grad=2
+save_every_epoch=5
+vae_annealing_cycle=100
+plot_iiter=800
+latent_dim=64
+accum_grad=128
 
 
 
-project_name="vae_workingvae_may_5_one_speaker_all_phases"
-experiment_name="latent_dim_80_with_spembs"
+
+project_name="vae_multigpu_april_28_angular"
+experiment_name="latent_dim_64_with_spembs_test"
+
+expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
+
+
+
+
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 

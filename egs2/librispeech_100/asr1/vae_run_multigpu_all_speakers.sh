@@ -24,9 +24,8 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
+project_name="vae_multigpu_april_28_angular"
 
-
-project_name="vae_workingvae_may_5_all_speakers"
 
 
 ###################################################################################################################################################################################################
@@ -44,7 +43,6 @@ project_name="vae_workingvae_may_5_all_speakers"
 
 # data_dd=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/data
 
-
 asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
@@ -52,12 +50,13 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
-./vae_asr_all_speakers_am_softmax.sh \
+
+./vae_asr_multigpu_all_speakers.sh \
     --skip_data_prep true \
     --skip_train false \
     --skip_eval false \
     --lang en \
-    --ngpu 1 \
+    --ngpu 2 \
     --nj 32 \
     --use_xvector true \
     --inference_nj 32 \

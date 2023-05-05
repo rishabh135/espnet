@@ -65,7 +65,7 @@ adv_liststr="asr 15 adv 15 asradv 15 reinit_adv 15"
 
 resume_checkpoint=-1
 max_epoch=60
-batch_bins=31000000
+batch_bins=33000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -80,7 +80,7 @@ accum_grad=128
 
 
 
-project_name="vae_all_speakers_may_3_encoder_aug_feats"
+project_name="vae_workingvae_may_5_all_speakers"
 experiment_name="latent_dim_64_with_spembs_max_epochs_60"
 
 
@@ -88,9 +88,6 @@ expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh
 
 
 
-
-
-expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
 
 
