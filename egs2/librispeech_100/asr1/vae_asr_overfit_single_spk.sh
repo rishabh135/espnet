@@ -76,6 +76,7 @@ vae_annealing_cycle=20
 plot_iiter=2
 latent_dim=80
 accum_grad=2
+odim_adv=1
 
 
 
@@ -1395,6 +1396,7 @@ if ! "${skip_train}"; then
                 --adv_loss_weight "${adv_weight}" \
                 --plot_iiter "${plot_iiter}" \
                 --accum_grad "${accum_grad}" \
+                --odim_adv "${odim_adv}" \
                 --latent_dim "${latent_dim}" \
                 --save_every_epoch "${save_every_epoch}" \
                 --vae_annealing_cycle "${vae_annealing_cycle}" \

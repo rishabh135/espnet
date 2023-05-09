@@ -79,7 +79,7 @@ cudnn_benchmark: false
 unused_parameters: true
 optim: adam
 optim_conf:
-    lr: 0.006
+    lr: 0.002
     weight_decay: 0.000001
 scheduler: CosineAnnealingLR
 scheduler_conf:
