@@ -716,9 +716,9 @@ class Trainer:
                 model.unfreeze_adversarial()
                 model.reinit_adv()
         param_group_length = len(optimizers[0].param_groups)
-        current_flr = optimizers[0].param_groups[0]['lr']
-        current_llr = optimizers[0].param_groups[-1]['lr']
-        logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(current_flr), float(current_llr), param_group_length))
+        first_group_lr = optimizers[0].param_groups[0]['lr']
+        last_group_lr = optimizers[0].param_groups[-1]['lr']
+        logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(first_group_lr), float(last_group_lr), param_group_length))
 
         # tmp = float((current_epoch)% options.vae_annealing_cycle)/options.vae_annealing_cycle
         # new_lr = current_flr *0.5*(1+np.cos(tmp * np.pi))
@@ -948,7 +948,7 @@ class Trainer:
                 ###################################################################################
                 ###################################################################################
 
-                if(iiter % accum_grad == 0):
+                if(iiter %  2*accum_grad == 0):
                     feats_plot = retval["feats_plot"]
                     recons_feats_plot = retval["recons_feats_plot"]
                     aug_feats_plot = retval["aug_feats_plot"]
@@ -1007,6 +1007,7 @@ class Trainer:
                         for iopt, optimizer in enumerate(optimizers):
                             if optim_idx is not None and iopt != optim_idx:
                                 continue
+                            logging.warning(f" >> Imp scaler step optimized grad norm infinite")
                             scaler.step(optimizer)
                             scaler.update()
 
@@ -1030,13 +1031,14 @@ class Trainer:
                             if scaler is not None:
                                 # scaler.step() first unscales the gradients of
                                 # the optimizer's assigned params.
+                                logging.warning(f" >> Imp scaler step optimized Grad norm are finite")
                                 scaler.step(optimizer)
                                 # Updates the scale for next iteration.
                                 scaler.update()
                             else:
                                 optimizer.step()
-                            if isinstance(scheduler, AbsBatchStepScheduler):
-                                scheduler.step()
+                            # if isinstance(scheduler, AbsBatchStepScheduler):
+                            #     scheduler.step()
 
 
                 for iopt, optimizer in enumerate(optimizers):

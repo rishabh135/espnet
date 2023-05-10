@@ -860,10 +860,10 @@ class AbsTask(ABC):
 
 
         group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
-        group.add_argument('--adv_lr', default=0.002, type=float,help='Learning rate for adv branch')
+        group.add_argument('--adv_lr', default=0.003, type=float,help='Learning rate for adv branch')
         group.add_argument('--asr_lr', default=0.002, type=float,help='Learning rate for ASR encoder and decoder')
-
-        group.add_argument('--vae_annealing_cycle', default=10, type=int, help='VAE_annealing_cycle')
+        group.add_argument('--recon_lr', default=0.006, type=float,help='Learning rate for reconstruction decoder')
+        group.add_argument('--vae_annealing_cycle', default=50, type=int, help='VAE_annealing_cycle')
 
 
         group.add_argument('--recon_mode', default=False, help='To use the vae mode for the reconstruction decoder')
@@ -904,7 +904,7 @@ class AbsTask(ABC):
     ) -> List[torch.optim.Optimizer]:
 
         adv_name = str(type(model).__name__)
-        logging.warning(" ----->>>>>>>> adv_flag {} asr_lr {} adv_lr {} adv_name {} \n\n".format(args.adv_flag, args.asr_lr, args.adv_lr, adv_name))
+        logging.warning(" ----->>>>>>>> adv_flag {} asr_lr {} adv_lr {} recon_lr {} adv_name {} \n\n".format(args.adv_flag, args.asr_lr, args.adv_lr, args.recon_lr, adv_name))
 
         if cls.num_optimizers != 1:
             raise RuntimeError(
@@ -922,16 +922,17 @@ class AbsTask(ABC):
                     {'params': model.module.encoder.parameters(), 'lr': args.asr_lr},
                     {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
                     {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
-                    {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr}
+                    {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr},
+                    {'params': model.module.reconstruction_decoder.parameters(), 'lr': args.recon_lr}
                 ]
             else:
                 param_grp = [
                     {'params': model.encoder.parameters(), 'lr': args.asr_lr},
                     {'params': model.decoder.parameters(), 'lr': args.asr_lr},
-                    {'params': model.recon_decoder.parameters(), 'lr': args.recon_lr},
                     {'params': model.ctc.parameters(), 'lr': args.asr_lr},
-                    {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr}]
-
+                    {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr},
+                    {'params': model.reconstruction_decoder.parameters(), 'lr': args.recon_lr}
+                    ]
             optimi = torch.optim.Adam((param_grp), betas=(0.9,0.999),weight_decay=0.00001)
 
         else:
@@ -948,31 +949,32 @@ class AbsTask(ABC):
 
 
 
-    @classmethod
-    def build_optimizers(
-        cls,
-        args: argparse.Namespace,
-        model: torch.nn.Module,
-    ) -> List[torch.optim.Optimizer]:
-        if cls.num_optimizers != 1:
-            raise RuntimeError(
-                "build_optimizers() must be overridden if num_optimizers != 1"
-            )
+    # @classmethod
+    # def build_optimizers(
+    #     cls,
+    #     args: argparse.Namespace,
+    #     model: torch.nn.Module,
+    # ) -> List[torch.optim.Optimizer]:
+    #     if cls.num_optimizers != 1:
+    #         raise RuntimeError(
+    #             "build_optimizers() must be overridden if num_optimizers != 1"
+    #         )
 
-        optim_class = optim_classes.get(args.optim)
-        if optim_class is None:
-            raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
-        if args.sharded_ddp:
-            if fairscale is None:
-                raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
-            optim = fairscale.optim.oss.OSS(
-                params=model.parameters(), optim=optim_class, **args.optim_conf
-            )
-        else:
-            optim = optim_class(model.parameters(), **args.optim_conf)
+    #     optim_class = optim_classes.get(args.optim)
+    #     if optim_class is None:
+    #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+    #     if args.sharded_ddp:
+    #         if fairscale is None:
+    #             raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
+    #         optim = fairscale.optim.oss.OSS(
+    #             params=model.parameters(), optim=optim_class, **args.optim_conf
+    #         )
+    #     else:
+    #         optim = optim_class(model.parameters(), **args.optim_conf)
 
-        optimizers = [optim]
-        return optimizers
+    #     optimizers = [optim]
+    #     return optimizers
+
 
     @classmethod
     def exclude_opts(cls) -> Tuple[str, ...]:

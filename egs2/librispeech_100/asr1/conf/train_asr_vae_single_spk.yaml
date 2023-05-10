@@ -81,9 +81,18 @@ optim: adam
 optim_conf:
     lr: 0.002
     weight_decay: 0.000001
-scheduler: CosineAnnealingLR
+    scheduler: warmuplr
 scheduler_conf:
-    warmup_steps: 500
+    warmup_steps: 1500
+    verbose: True
+
+# scheduler: CosineAnnealingLR
+# scheduler_conf:
+#     T_max: 1000
+#     eta_min: 0
+#     last_epoch: -1
+#     verbose: True
+
 
 specaug: specaug
 specaug_conf:

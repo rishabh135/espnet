@@ -59,13 +59,13 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
-adv_liststr="recon 200"
-# adv_liststr="asr 140 adv 40 asradv 40 reinit_adv 40"
+# adv_liststr="recon 200"
+adv_liststr="asr 2 adv 2 asradv 2 reinit_adv 2"
 
 
 resume_checkpoint=-1
-max_epoch=200
-batch_bins=11000000
+max_epoch=8
+batch_bins=38000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -75,12 +75,12 @@ save_every_epoch=20
 vae_annealing_cycle=20
 plot_iiter=2
 latent_dim=80
-accum_grad=2
+accum_grad=1
 odim_adv=1
+asr_lr=0.002
+recon_lr=0.012
 
-
-
-project_name="vae_workingvae_may_7_one_speaker_3_times_lr"
+project_name="vae_workingvae_may_10_one_speaker_3_times_lr"
 
 experiment_name="latent_dim_80_with_spembs"
 
@@ -1397,6 +1397,8 @@ if ! "${skip_train}"; then
                 --plot_iiter "${plot_iiter}" \
                 --accum_grad "${accum_grad}" \
                 --odim_adv "${odim_adv}" \
+                --asr_lr "${asr_lr}" \
+                --recon_lr "${recon_lr}" \
                 --latent_dim "${latent_dim}" \
                 --save_every_epoch "${save_every_epoch}" \
                 --vae_annealing_cycle "${vae_annealing_cycle}" \
