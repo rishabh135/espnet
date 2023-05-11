@@ -25,6 +25,9 @@ from torch.utils.data import DataLoader
 from typeguard import check_argument_types, check_return_type
 
 from espnet import __version__
+
+from espnet2.asr.cosineannealinglr import CosineAnnealingLR2
+
 from espnet2.iterators.abs_iter_factory import AbsIterFactory
 from espnet2.iterators.chunk_iter_factory import ChunkIterFactory
 from espnet2.iterators.multiple_iter_factory import MultipleIterFactory
@@ -149,7 +152,7 @@ scheduler_classes = dict(
     steplr=torch.optim.lr_scheduler.StepLR,
     multisteplr=torch.optim.lr_scheduler.MultiStepLR,
     exponentiallr=torch.optim.lr_scheduler.ExponentialLR,
-    CosineAnnealingLR=torch.optim.lr_scheduler.CosineAnnealingLR,
+    CosineAnnealingLR=CosineAnnealingLR2,
     noamlr=NoamLR,
     warmuplr=WarmupLR,
     cycliclr=torch.optim.lr_scheduler.CyclicLR,
