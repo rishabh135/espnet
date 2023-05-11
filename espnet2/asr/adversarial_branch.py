@@ -301,7 +301,6 @@ class SpeakerAdv(torch.nn.Module):
 
 
 
-
 		# self.advnet = Xvector(lin_neurons=advunits, in_channels=eprojs)
 		# self.advnet = BetterLSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout_mid=dropout_mid, dropout_inp=dropout_inp, dropout_out=dropout_out, bidirectional=True)
 		self.advnet = torch.nn.LSTM(eprojs, advunits, self.advlayers, batch_first=True, dropout=dropout_mid, bidirectional=True)

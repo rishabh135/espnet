@@ -916,7 +916,57 @@ class Trainer:
                         loss /= accum_grad
                         loss.backward()
 
-            if iiter % accum_grad == 0:
+                ######################################################################################################################################################################
+                ######################################################################################################################################################################
+
+                if(iiter %  options.plot_iiter == 0):
+                    feats_plot = retval["feats_plot"]
+                    recons_feats_plot = retval["recons_feats_plot"]
+                    aug_feats_plot = retval["aug_feats_plot"]
+                    html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
+
+                    # logging.warning(" Uploading utterance : recons {}   ".format(recons_feats_plot.shape))
+                    ax1 = plt.subplot(3, 1, 1)
+                    ax1.set_title('Original feats linear')
+                    plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+
+                    ax2 = plt.subplot(3, 1, 2)
+                    ax2.set_title('Reconstructed feats linear')
+                    plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+
+                    ax3 = plt.subplot(3, 1, 3)
+                    ax3.set_title('Augment feats linear')
+                    plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+
+                    fig.subplots_adjust(hspace=0.10, bottom=0.00, wspace=0)
+                    plt.tight_layout()
+                    plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+                    wandb.log({f"spectrogram plot": wandb.Image(plt)})
+                    fig.clf()
+
+                    # if( (current_epoch % 1 == 0) and (iiter % options.plot_iiter == 0 )):
+                    #     with torch.inference_mode():
+                    #         recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+                    #         orig_specs = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+                    #         hifi_gan = HIFIGAN.from_hparams(source="speechbrain/tts-hifigan-libritts-16kHz", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/hifigan/", run_opts={"device":"cuda"})
+                    #         # Running Vocoder (spectrogram-to-waveform)
+                    #         recons_waveforms = hifi_gan.decode_batch(recons_specs)
+                    #         orig_waveforms = hifi_gan.decode_batch(orig_specs)
+                    #         # logging.warning("recons_waveforms {} ".format(recons_waveforms.shape))
+                    #     wandb.log({"Reconstructed_waveform": wandb.Audio(recons_waveforms[0,0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
+                    #     wandb.log({"Originatl_utt ": wandb.Audio(orig_waveforms[0,0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
+                    # IPython.display.Audio(waveforms[0:1].cpu(), rate=vocoder.sample_rate)
+
+                ######################################################################################################################################################################
+                ######################################################################################################################################################################
+
+            # if( (iiter % options.accum_grad) == 0):
+            #     logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach() ))
+
+
+
+
+            if (iiter % accum_grad == 0):
                 if scaler is not None:
                     # Unscales the gradients of optimizer's assigned params in-place
                     for iopt, optimizer in enumerate(optimizers):
@@ -946,50 +996,6 @@ class Trainer:
 
                 ###################################################################################
                 ###################################################################################
-                ###################################################################################
-
-                if(iiter %  2*accum_grad == 0):
-                    feats_plot = retval["feats_plot"]
-                    recons_feats_plot = retval["recons_feats_plot"]
-                    aug_feats_plot = retval["aug_feats_plot"]
-                    html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
-
-                    # logging.warning(" Uploading utterance : recons {}   ".format(recons_feats_plot.shape))
-                    ax1 = plt.subplot(3, 1, 1)
-                    ax1.set_title('Original feats linear')
-                    plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-
-                    ax2 = plt.subplot(3, 1, 2)
-                    ax2.set_title('Reconstructed feats linear')
-                    plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-
-                    ax3 = plt.subplot(3, 1, 3)
-                    ax3.set_title('Augment feats linear')
-                    plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
-
-                    fig.subplots_adjust(hspace=0.10, bottom=0.00, wspace=0)
-                    plt.tight_layout()
-                    plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-                    wandb.log({f"spectrogram plot": wandb.Image(plt)})
-                    fig.clf()
-
-                # if( (current_epoch % 1 == 0) and (iiter % options.plot_iiter == 0 )):
-                #     with torch.inference_mode():
-                #         recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
-                #         orig_specs = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
-                #         hifi_gan = HIFIGAN.from_hparams(source="speechbrain/tts-hifigan-libritts-16kHz", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/hifigan/", run_opts={"device":"cuda"})
-                #         # Running Vocoder (spectrogram-to-waveform)
-                #         recons_waveforms = hifi_gan.decode_batch(recons_specs)
-                #         orig_waveforms = hifi_gan.decode_batch(orig_specs)
-                #         # logging.warning("recons_waveforms {} ".format(recons_waveforms.shape))
-                #     wandb.log({"Reconstructed_waveform": wandb.Audio(recons_waveforms[0,0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
-                #     wandb.log({"Originatl_utt ": wandb.Audio(orig_waveforms[0,0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
-                # IPython.display.Audio(waveforms[0:1].cpu(), rate=vocoder.sample_rate)
-
-
-                if( (iiter % options.accum_grad) == 0):
-                    logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {} grad_norm {} ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach(), grad_norm ))
-
 
 
                 if not torch.isfinite(grad_norm):
@@ -1007,20 +1013,20 @@ class Trainer:
                         for iopt, optimizer in enumerate(optimizers):
                             if optim_idx is not None and iopt != optim_idx:
                                 continue
-                            logging.warning(f" >> Imp scaler step optimized grad norm infinite")
+                            # logging.warning(f" >> Imp scaler step optimized grad norm infinite")
                             scaler.step(optimizer)
                             scaler.update()
 
                 else:
-                    # reporter.register(
-                    #     {
-                    #         "grad_norm": grad_norm, "clip": torch.where(
-                    #             grad_norm > grad_clip,
-                    #             grad_norm.new_tensor(100),
-                    #             grad_norm.new_tensor(0),
-                    #         ),"loss_scale": scaler.get_scale() if scaler else 1.0,
-                    #     }
-                    #     )
+                    reporter.register(
+                            {
+                            "grad_norm": grad_norm, "clip": torch.where(
+                                grad_norm > grad_clip,
+                                grad_norm.new_tensor(100),
+                                grad_norm.new_tensor(0),
+                            ),"loss_scale": scaler.get_scale() if scaler else 1.0,
+                            }
+                        )
                     all_steps_are_invalid = False
                     with reporter.measure_time("optim_step_time"):
                         for iopt, (optimizer, scheduler) in enumerate(
@@ -1031,14 +1037,15 @@ class Trainer:
                             if scaler is not None:
                                 # scaler.step() first unscales the gradients of
                                 # the optimizer's assigned params.
-                                logging.warning(f" >> Imp scaler step optimized Grad norm are finite")
+                                # logging.warning(f" >> Imp scaler step optimized Grad norm are finite")
                                 scaler.step(optimizer)
                                 # Updates the scale for next iteration.
                                 scaler.update()
                             else:
                                 optimizer.step()
-                            # if isinstance(scheduler, AbsBatchStepScheduler):
-                            #     scheduler.step()
+                            if isinstance(scheduler, AbsBatchStepScheduler):
+                                scheduler.step()
+
 
 
                 for iopt, optimizer in enumerate(optimizers):
