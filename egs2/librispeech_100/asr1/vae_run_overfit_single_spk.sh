@@ -33,9 +33,8 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_workingvae_may_10_one_speaker_group_optimizer_3_times"
 
-
+project_name="vae_workingvae_may_7_one_speaker_3_times_lr"
 
 
 

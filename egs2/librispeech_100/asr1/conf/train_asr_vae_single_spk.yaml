@@ -79,33 +79,11 @@ cudnn_benchmark: false
 unused_parameters: true
 optim: adam
 optim_conf:
-    lr: 0.002
+    # lr: 0.006
     weight_decay: 0.000001
-    # scheduler: CosineAnnealingWarmRestarts
-
 scheduler: warmuplr
 scheduler_conf:
-    warmup_steps: 15000
-
-# scheduler_conf:
-#     first_cycle_steps: 200
-#     cycle_mult: 1.0
-#     max_lr: 0.008
-#     min_lr: 0.002
-#     warmup_steps: 100
-#     gamma: 0.8
-
-
-
-# scheduler: CosineAnnealingLR
-# scheduler_conf:
-#     T_max: 1000
-#     eta_min: 0
-#     last_epoch: -1
-#     verbose: True
-
-
-
+    warmup_steps: 500
 
 specaug: specaug
 specaug_conf:
@@ -122,3 +100,48 @@ specaug_conf:
     - 0.
     - 0.05
     num_time_mask: 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# scheduler: CosineAnnealingWarmRestarts
+# scheduler_conf:
+#     T_0: 20
+
+
+# scheduler: CosineAnnealingWarmupRestarts
+# scheduler_conf:
+#     first_cycle_steps: 20
+#     cycle_mult: 1.0
+#     max_lr: 0.008
+#     min_lr: 0.004
+#     warmup_steps: 10
+#     gamma: 0.8
+
+
+
+# scheduler: CosineAnnealingLR
+# scheduler_conf:
+#     T_max: 100
+#     eta_min: 0
+#     last_epoch: -1
+#     verbose: True
+
+
