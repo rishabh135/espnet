@@ -81,14 +81,6 @@ import matplotlib.pyplot as plt
 
 
 
-import torch
-from transformers import AutoFeatureExtractor, Wav2Vec2ConformerForPreTraining
-from transformers.models.wav2vec2_conformer.modeling_wav2vec2_conformer import (
-    _compute_mask_indices,
-    _sample_negative_indices,
-)
-# from datasets import load_dataset
-
 
 
 def draw_mfcc(mfcc_feats, ax, fig, ylabel=True):
@@ -442,14 +434,6 @@ class ESPnetASRModel(AbsESPnetModel):
             # logging.warning("after_projection spembs {} ".format(spembs.shape))
 
         # 1. Encoder
-
-
-
-        self.feature_extractor = AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/", run_opts={"device":"cuda"})
-        # model = Wav2Vec2ConformerForPreTraining.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large")
-
-        # ds = load_dataset("hf-internal-testing/librispeech_asr_dummy", "clean", split="validation")
-        
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
         # logging.warning(" encoder_out {} feats {} ".format( encoder_out.shape, feats.shape))
         # original_feats = feats
@@ -742,11 +726,7 @@ class ESPnetASRModel(AbsESPnetModel):
         if self.encoder.interctc_use_conditioning:
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
-            input_values = self.feature_extractor( feats, return_tensors="pt", sampling_rate=16000).input_values  # Batch size 1
-            logging.warning(f" >>>> IMP : {input_values.shape} ")
-
-
-            # encoder_out, encoder_out_lens, _ = self.encoder(aug_feats, aug_feats_lengths)
+            encoder_out, encoder_out_lens, _ = self.encoder(aug_feats, aug_feats_lengths)
             # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
             # logging.warning(" out_sum {} ".format(out_sum))
         intermediate_outs = None

@@ -26,7 +26,7 @@ from typeguard import check_argument_types, check_return_type
 
 from espnet import __version__
 
-from espnet2.asr.cosineannealinglr import CosineAnnealingLR2
+from espnet2.schedulers.cosineannealing import CosineAnnealingLR2, CosineAnnealingWarmRestarts2, CosineAnnealingWarmupRestarts
 
 from espnet2.iterators.abs_iter_factory import AbsIterFactory
 from espnet2.iterators.chunk_iter_factory import ChunkIterFactory
@@ -157,7 +157,8 @@ scheduler_classes = dict(
     warmuplr=WarmupLR,
     cycliclr=torch.optim.lr_scheduler.CyclicLR,
     onecyclelr=torch.optim.lr_scheduler.OneCycleLR,
-    CosineAnnealingWarmRestarts=torch.optim.lr_scheduler.CosineAnnealingWarmRestarts,
+    CosineAnnealingWarmupRestarts=CosineAnnealingWarmupRestarts,
+    CosineAnnealingWarmRestarts=CosineAnnealingWarmRestarts2,
 )
 # To lower keys
 optim_classes = {k.lower(): v for k, v in optim_classes.items()}

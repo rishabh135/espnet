@@ -59,13 +59,13 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
-adv_liststr="recon 200"
+adv_liststr="recon 20"
 # adv_liststr="asr 2 adv 2 asradv 2 reinit_adv 2"
 
 
 resume_checkpoint=-1
-max_epoch=200
-batch_bins=38000000
+max_epoch=20
+batch_bins=35000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -82,7 +82,7 @@ recon_lr=0.006
 
 
 
-project_name="vae_workingvae_may_10_one_speaker_group_optimizer_3_times"
+project_name="vae_workingvae_may_11_one_speaker_cos_ann_warmup"
 experiment_name="latent_dim_80_with_spembs"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
