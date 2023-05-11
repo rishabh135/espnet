@@ -82,24 +82,23 @@ optim_conf:
     lr: 0.002
     weight_decay: 0.000001
 
-
-# scheduler_conf:
-#     warmup_steps: 15000
-
+scheduler: warmuplr
+scheduler_conf:
+    warmup_steps: 1500
 
 # scheduler: CosineAnnealingWarmRestarts
 # scheduler_conf:
 #     T_0: 20
 
 
-scheduler: CosineAnnealingWarmupRestarts
-scheduler_conf:
-    first_cycle_steps: 200
-    cycle_mult: 1.0
-    max_lr: 0.008
-    min_lr: 0.002
-    warmup_steps: 10
-    gamma: 0.8
+# scheduler: CosineAnnealingWarmupRestarts
+# scheduler_conf:
+#     first_cycle_steps: 20
+#     cycle_mult: 1.0
+#     max_lr: 0.008
+#     min_lr: 0.004
+#     warmup_steps: 10
+#     gamma: 0.8
 
 
 
