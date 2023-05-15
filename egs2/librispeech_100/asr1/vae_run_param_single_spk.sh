@@ -28,7 +28,13 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_workingvae_may_7_one_speaker_3_times_lr"
+
+
+
+
+
+
+project_name="vae_workingvae_may_11_param_groups_speaker_one"
 
 
 
@@ -44,7 +50,7 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
-./vae_asr_overfit_single_spk.sh \
+./vae_asr_param_single_spk.sh \
     --skip_data_prep true \
     --skip_train false \
     --skip_eval true \
@@ -65,4 +71,3 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --valid_set "${valid_set}" \
     --test_sets "${test_sets}" \
     --lm_train_text "${data_dd}/${train_set}/text" \
-    --bpe_train_text "${data_dd}/${train_set}/text" "$@"
