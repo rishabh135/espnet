@@ -78,7 +78,9 @@ latent_dim=64
 accum_grad=1
 
 
-project_name="vae_may_3_utterance_10_encoder_aug_feats"
+
+project_name="vae_may_15_utterance_10_encoder_aug_feats"
+
 
 
 experiment_name="latent_dim_64_with_spembs"

@@ -80,6 +80,12 @@ import matplotlib.pyplot as plt
 
 
 
+from transformers import AutoFeatureExtractor, Wav2Vec2ConformerForPreTraining, Wav2Vec2ConformerModel
+from transformers.models.wav2vec2_conformer.modeling_wav2vec2_conformer import (
+    _compute_mask_indices,
+    _sample_negative_indices,
+)
+
 
 def draw_mfcc(mfcc_feats, ax, fig, ylabel=True):
     mfcc_data= np.swapaxes(mfcc_feats, 0 ,1)
@@ -432,6 +438,47 @@ class ESPnetASRModel(AbsESPnetModel):
             # logging.warning("after_projection spembs {} ".format(spembs.shape))
 
         # 1. Encoder
+        # extract_obj = FeatExtractor( encoder,
+        #     utt_id,
+        #     wav_fn,
+        #     "contextualized",
+        #     model_name,
+        #     task_cfg=task_cfg,
+        #     offset=False,
+        #     mean_pooling=True,
+        # )
+
+        # bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
+        # self.extract_feats_model = bundle.get_model( dl_kwargs={"model_dir":"/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/"} ).to(text.device)
+        # logging.warning(f"{self.extract_feats_model.__class__}")
+        
+        
+        
+        
+
+
+
+        # from transformers import Wav2Vec2ConformerConfig, Wav2Vec2ConformerModel
+
+        # # Initializing a Wav2Vec2Conformer facebook/wav2vec2-conformer-rel-pos-large style configuration
+        # configuration = Wav2Vec2ConformerConfig()
+        # # Initializing a model (with random weights) from the facebook/wav2vec2-conformer-rel-pos-large style configuration
+        # # self.wav2_model = Wav2Vec2ConformerModel(configuration)
+
+        # # Accessing the model configuration
+        # # configuration = model.config
+        # logging.warning(f" {configuration} ")
+        
+        # #  using a pretrained wav2vec2 model
+        # self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
+        
+        # AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/", run_opts={"device":"cuda"})
+        # model = Wav2Vec2ConformerForPreTraining.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large")
+        # ds = load_dataset("hf-internal-testing/librispeech_asr_dummy", "clean", split="validation")
+
+        
+
+        
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
         # logging.warning(" encoder_out {} feats {} ".format( encoder_out.shape, feats.shape))
         # original_feats = feats
@@ -724,9 +771,52 @@ class ESPnetASRModel(AbsESPnetModel):
         if self.encoder.interctc_use_conditioning:
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
+
+
             encoder_out, encoder_out_lens, _ = self.encoder(aug_feats, aug_feats_lengths)
-            # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
-            # logging.warning(" out_sum {} ".format(out_sum))
+            # for row in encoder_out:
+            #     logging.warning(f" Rows for original conformer : {row.shape} ")
+            # logging.warning(f" Original comformer outs {encoder_out.shape} {encoder_out_lens} ")
+
+
+
+
+
+            # # with torch.no_grad():
+            # #     features, _ = self.extract_feats_model.extract_features(feats)
+            # #     # logging.warning(f" >>>> features : Len {  len(features) }  shape { features[0].shape } \n ")
+            # #     # logging.warning(f" >>>> features_lens: {  len(features_lens) }  \n\n shape { features_lens[0].shape } \n ")
+            
+            # # encoder_out = features[5].to(feats.device)
+            # # lens = []
+            # # for row in encoder_out:
+            # #     logging.warning(f" Row SHAPE: {row.shape} ")
+            # #     lens.append(row.shape[0])
+            # # encoder_out_lens = torch.Tensor(lens).to(feats.device)
+            # # logging.warning(f" Pretrained comformer outs {encoder_out.shape}  {encoder_out_lens} ")
+
+            
+
+
+
+
+
+
+
+            # with torch.no_grad():
+            #     tmp_extract_feats = self.wav2_pretrained_model( speech, output_hidden_states=True, return_dict=True)
+            #     logging.warning(f" {dir(tmp_extract_feats)} ")
+            #     logging.warning(f" shape of extracted features {tmp_extract_feats.extract_features.shape}  ")
+            #     # for key, value in tmp_extract_feats.items() :
+            #     #     logging.warning(f" self.wav2_pretrained_model  {key}: {value.shape} ")
+
+
+            #     # last_hidden_states = tmp_extract_feats.last_hidden_state
+
+            # # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
+            
+            
+
         intermediate_outs = None
         if isinstance(encoder_out, tuple):
             intermediate_outs = encoder_out[1]

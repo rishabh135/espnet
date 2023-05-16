@@ -34,7 +34,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_workingvae_may_11_param_groups_speaker_one"
+project_name="vae_workingvae_may_16_param_groups_speaker_one"
 
 
 

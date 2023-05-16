@@ -31,7 +31,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_may_3_utterance_10_encoder_aug_feats"
+project_name="vae_may_15_utterance_10_encoder_aug_feats"
 
 
 
