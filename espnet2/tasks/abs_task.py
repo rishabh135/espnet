@@ -68,6 +68,10 @@ from espnet2.utils.yaml_no_alias_safe_dump import yaml_no_alias_safe_dump
 from espnet.utils.cli_utils import get_commandline_args
 
 
+from espnet2.schedulers.cosine_annealing_lr import CosineAnnealingWarmupRestarts, CosineAnnealingWarmRestarts2, CosineAnnealingLR2
+
+
+
 from datetime import date, datetime
 
 try:
@@ -154,7 +158,8 @@ scheduler_classes = dict(
     warmuplr=WarmupLR,
     cycliclr=torch.optim.lr_scheduler.CyclicLR,
     onecyclelr=torch.optim.lr_scheduler.OneCycleLR,
-    CosineAnnealingWarmRestarts=torch.optim.lr_scheduler.CosineAnnealingWarmRestarts,
+    # CosineAnnealingWarmRestarts=torch.optim.lr_scheduler.CosineAnnealingWarmRestarts,
+    CosineAnnealingWarmupRestarts= CosineAnnealingWarmupRestarts,
 )
 # To lower keys
 optim_classes = {k.lower(): v for k, v in optim_classes.items()}
@@ -862,7 +867,7 @@ class AbsTask(ABC):
         group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
         group.add_argument('--adv_lr', default=0.002, type=float,help='Learning rate for adv branch')
         group.add_argument('--asr_lr', default=0.002, type=float,help='Learning rate for ASR encoder and decoder')
-        group.add_argument('--recon_lr', default=0.003, type=float,help='Learning rate for reconstruction decoder')
+        group.add_argument('--recon_lr', default=0.002, type=float,help='Learning rate for reconstruction decoder')
 
         group.add_argument('--vae_annealing_cycle', default=10, type=int, help='VAE_annealing_cycle')
 
@@ -1036,6 +1041,7 @@ class AbsTask(ABC):
                 # and set it again
                 config[f"{name}_conf"] = conf
         return config
+
 
     @classmethod
     def check_required_command_args(cls, args: argparse.Namespace):

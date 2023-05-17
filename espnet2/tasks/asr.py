@@ -446,6 +446,90 @@ class ASRTask(AbsTask):
 
 
     @classmethod
+    def build_optimizers(
+        cls,
+        args: argparse.Namespace,
+        model: torch.nn.Module,
+    ) -> List[torch.optim.Optimizer]:
+        if cls.num_optimizers != 1:
+            raise RuntimeError(
+                "build_optimizers() must be overridden if num_optimizers != 1"
+            )
+
+        optim_classes = dict(
+            adam=torch.optim.Adam,
+            adamw=torch.optim.AdamW,
+            adadelta=torch.optim.Adadelta,
+            adagrad=torch.optim.Adagrad,
+            adamax=torch.optim.Adamax,
+            asgd=torch.optim.ASGD,
+            lbfgs=torch.optim.LBFGS,
+            rmsprop=torch.optim.RMSprop,
+            rprop=torch.optim.Rprop,
+        )
+
+        optim_class = optim_classes.get(args.optim)
+        if optim_class is None:
+            raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+        if args.sharded_ddp:
+            raise NotImplementedError
+        else:
+            optim_conf = args.optim_conf
+
+            lr_grp = [args.asr_lr, args.adv_lr, args.recon_lr ]
+            logging.warning(f" {lr_grp[0]}, {lr_grp[1]}, {lr_grp[2]}  ")
+            logging.warning(f" asr_lr: {args.asr_lr}  adv_lr: {args.adv_lr} recon_lr: {args.recon_lr}")
+            param_grp = [
+            {'params': model.encoder.parameters(), "lr" : lr_grp[0] },
+            {'params': model.decoder.parameters(), "lr": lr_grp[0] },
+            {'params': model.ctc.parameters(), "lr": lr_grp[0]},
+            {'params': model.adversarial_branch.parameters(), "lr": lr_grp[1]},
+            {'params': model.reconstruction_decoder.parameters(), "lr": lr_grp[2] }
+            ]
+            optim = optim_class(param_grp, **optim_conf)
+
+        optimizers = [optim]
+        return optimizers
+
+
+
+    # @classmethod
+    # def build_optimizers(
+    #     cls,
+    #     args: argparse.Namespace,
+    #     model: torch.nn.Module,
+    # ) -> List[torch.optim.Optimizer]:
+    #     if cls.num_optimizers != 1:
+    #         raise RuntimeError(
+    #             "build_optimizers() must be overridden if num_optimizers != 1"
+    #         )
+
+    #     optim_class = optim_classes.get(args.optim)
+    #     if optim_class is None:
+    #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+    #     if args.sharded_ddp:
+    #         if fairscale is None:
+    #             raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
+    #         optim = fairscale.optim.oss.OSS(
+    #             params=model.parameters(), optim=optim_class, **args.optim_conf
+    #         )
+    #     else:
+    #         optim = optim_class(model.parameters(), **args.optim_conf)
+
+    #     optimizers = [optim]
+    #     return optimizers
+
+
+
+
+
+
+
+
+
+
+
+    @classmethod
     def build_model(cls, args: argparse.Namespace) -> ESPnetASRModel:
         assert check_argument_types()
         if isinstance(args.token_list, str):

@@ -61,10 +61,10 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="recon 50 asr 15 adv 15 asradv 15 reinit_adv 15"
+adv_liststr="recon 80 asr 40 adv 40 asradv 40 reinit_adv 40"
 
 resume_checkpoint=-1
-max_epoch=110
+max_epoch=240
 batch_bins=33000000
 adv_weight=25.0
 adv_dropout_out=0.0
@@ -72,8 +72,8 @@ adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
 save_every_epoch=5
-vae_annealing_cycle=50
-plot_iiter=100
+vae_annealing_cycle=100
+plot_iiter=200
 latent_dim=80
 accum_grad=4
 odim_adv=251
@@ -82,7 +82,8 @@ recon_lr=0.002
 
 
 
-project_name="vae_workingvae_may_10_all_speakers_recon"
+project_name="vae_workingvae_may_16_all_speakers_recon"
+
 experiment_name="latent_dim_80_with_spembs"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.

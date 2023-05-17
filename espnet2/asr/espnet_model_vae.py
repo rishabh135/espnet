@@ -79,7 +79,7 @@ import wandb
 import matplotlib.pyplot as plt
 
 
-
+from transformers import Wav2Vec2ConformerConfig, Wav2Vec2ConformerModel
 from transformers import AutoFeatureExtractor, Wav2Vec2ConformerForPreTraining, Wav2Vec2ConformerModel
 from transformers.models.wav2vec2_conformer.modeling_wav2vec2_conformer import (
     _compute_mask_indices,
@@ -438,15 +438,6 @@ class ESPnetASRModel(AbsESPnetModel):
             # logging.warning("after_projection spembs {} ".format(spembs.shape))
 
         # 1. Encoder
-        # extract_obj = FeatExtractor( encoder,
-        #     utt_id,
-        #     wav_fn,
-        #     "contextualized",
-        #     model_name,
-        #     task_cfg=task_cfg,
-        #     offset=False,
-        #     mean_pooling=True,
-        # )
 
         # bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
         # self.extract_feats_model = bundle.get_model( dl_kwargs={"model_dir":"/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/"} ).to(text.device)
@@ -454,25 +445,22 @@ class ESPnetASRModel(AbsESPnetModel):
         
         
         
-        
 
 
-
-        # from transformers import Wav2Vec2ConformerConfig, Wav2Vec2ConformerModel
-
-        # # Initializing a Wav2Vec2Conformer facebook/wav2vec2-conformer-rel-pos-large style configuration
+        # Initializing a Wav2Vec2Conformer facebook/wav2vec2-conformer-rel-pos-large style configuration
         # configuration = Wav2Vec2ConformerConfig()
-        # # Initializing a model (with random weights) from the facebook/wav2vec2-conformer-rel-pos-large style configuration
-        # # self.wav2_model = Wav2Vec2ConformerModel(configuration)
+        # Initializing a model (with random weights) from the facebook/wav2vec2-conformer-rel-pos-large style configuration
+        # self.wav2_model = Wav2Vec2ConformerModel(configuration)
 
-        # # Accessing the model configuration
-        # # configuration = model.config
+        # Accessing the model configuration
+        # configuration = model.config
         # logging.warning(f" {configuration} ")
-        
-        # #  using a pretrained wav2vec2 model
+        # using a pretrained wav2vec2 model
         # self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
         
-        # AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/", run_opts={"device":"cuda"})
+
+
+        # AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/", run_opts={"device":text.device })
         # model = Wav2Vec2ConformerForPreTraining.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large")
         # ds = load_dataset("hf-internal-testing/librispeech_asr_dummy", "clean", split="validation")
 
