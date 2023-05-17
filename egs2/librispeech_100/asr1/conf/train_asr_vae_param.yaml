@@ -71,12 +71,12 @@ optim_conf:
 
 scheduler: CosineAnnealingWarmupRestarts
 scheduler_conf:
-    first_cycle_steps: 10
+    first_cycle_steps: 20
     cycle_mult: 1.0
-    max_lr: 0.002
-    min_lr: 0.001
-    warmup_steps: 5
-    gamma: 0.8
+    max_lr: 0.008
+    min_lr: 0.002
+    warmup_steps: 10
+    gamma: 0.9
 
 
 
