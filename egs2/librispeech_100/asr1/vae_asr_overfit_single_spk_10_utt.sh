@@ -59,31 +59,40 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
-adv_liststr="recon 2000"
+adv_liststr="recon 200"
 # adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
 
-resume_checkpoint=1400
-max_epoch=2000
-batch_bins=52000000
+
+resume_checkpoint=-1
+max_epoch=200
+batch_bins=42000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
-save_every_epoch=100
-vae_annealing_cycle=25
-plot_iiter=1
-latent_dim=64
-accum_grad=1
+save_every_epoch=20
+vae_annealing_cycle=20
+plot_iiter=8
+latent_dim=80
+accum_grad=4
+
+
+odim_adv=1
+asr_lr=0.002
+recon_lr=0.002
 
 
 
-project_name="vae_may_15_utterance_10_encoder_aug_feats"
+
+project_name="vae_workingvae_may_17_cosine_annealing_warm_UP_param_groups_10_utt"
 
 
 
-experiment_name="latent_dim_64_with_spembs"
+
+
+experiment_name="latent_dim_80_with_spembs"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
@@ -1397,6 +1406,9 @@ if ! "${skip_train}"; then
                 --adv_loss_weight "${adv_weight}" \
                 --plot_iiter "${plot_iiter}" \
                 --accum_grad "${accum_grad}" \
+                --odim_adv "${odim_adv}" \
+                --asr_lr "${asr_lr}" \
+                --recon_lr "${recon_lr}" \
                 --latent_dim "${latent_dim}" \
                 --save_every_epoch "${save_every_epoch}" \
                 --vae_annealing_cycle "${vae_annealing_cycle}" \

@@ -762,26 +762,26 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
             encoder_out, encoder_out_lens, _ = self.encoder(aug_feats, aug_feats_lengths)
-            # for row in encoder_out:
-            #     logging.warning(f" Rows for original conformer : {row.shape} ")
-            # logging.warning(f" Original comformer outs {encoder_out.shape} {encoder_out_lens} ")
+            for row in encoder_out:
+                logging.warning(f" Rows for original conformer : {row.shape} ")
+            logging.warning(f" Original comformer outs {encoder_out.shape} {encoder_out_lens} ")
 
 
 
 
 
-            # # with torch.no_grad():
-            # #     features, _ = self.extract_feats_model.extract_features(feats)
-            # #     # logging.warning(f" >>>> features : Len {  len(features) }  shape { features[0].shape } \n ")
-            # #     # logging.warning(f" >>>> features_lens: {  len(features_lens) }  \n\n shape { features_lens[0].shape } \n ")
+            with torch.no_grad():
+                features, _ = self.extract_feats_model.extract_features(feats)
+                # logging.warning(f" >>>> features : Len {  len(features) }  shape { features[0].shape } \n ")
+                # logging.warning(f" >>>> features_lens: {  len(features_lens) }  \n\n shape { features_lens[0].shape } \n ")
             
-            # # encoder_out = features[5].to(feats.device)
-            # # lens = []
-            # # for row in encoder_out:
-            # #     logging.warning(f" Row SHAPE: {row.shape} ")
-            # #     lens.append(row.shape[0])
-            # # encoder_out_lens = torch.Tensor(lens).to(feats.device)
-            # # logging.warning(f" Pretrained comformer outs {encoder_out.shape}  {encoder_out_lens} ")
+            encoder_out = features[5].to(feats.device)
+            lens = []
+            for row in encoder_out:
+                logging.warning(f" Row SHAPE: {row.shape} ")
+                lens.append(row.shape[0])
+            encoder_out_lens = torch.Tensor(lens).to(feats.device)
+            logging.warning(f" Pretrained comformer outs {encoder_out.shape}  {encoder_out_lens} ")
 
             
 
@@ -791,17 +791,17 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-            # with torch.no_grad():
-            #     tmp_extract_feats = self.wav2_pretrained_model( speech, output_hidden_states=True, return_dict=True)
-            #     logging.warning(f" {dir(tmp_extract_feats)} ")
-            #     logging.warning(f" shape of extracted features {tmp_extract_feats.extract_features.shape}  ")
-            #     # for key, value in tmp_extract_feats.items() :
-            #     #     logging.warning(f" self.wav2_pretrained_model  {key}: {value.shape} ")
+            with torch.no_grad():
+                tmp_extract_feats = self.wav2_pretrained_model( speech, output_hidden_states=True, return_dict=True)
+                logging.warning(f" {dir(tmp_extract_feats)} ")
+                logging.warning(f" shape of extracted features {tmp_extract_feats.extract_features.shape}  ")
+                # for key, value in tmp_extract_feats.items() :
+                #     logging.warning(f" self.wav2_pretrained_model  {key}: {value.shape} ")
 
 
-            #     # last_hidden_states = tmp_extract_feats.last_hidden_state
+                # last_hidden_states = tmp_extract_feats.last_hidden_state
 
-            # # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
+            # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
             
             
 

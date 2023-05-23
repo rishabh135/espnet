@@ -31,7 +31,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_may_15_utterance_10_encoder_aug_feats"
+project_name="vae_workingvae_may_17_cosine_annealing_warm_UP_param_groups_10_utt"
 
 
 
@@ -40,7 +40,7 @@ project_name="vae_may_15_utterance_10_encoder_aug_feats"
 
 
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae_param.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 
