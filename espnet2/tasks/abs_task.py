@@ -86,10 +86,11 @@ if V(torch.__version__) >= V("1.5.0"):
 else:
     from torch.multiprocessing.spawn import SpawnContext as ProcessContext
 
-
+from lion_pytorch import Lion
 optim_classes = dict(
     adam=torch.optim.Adam,
     adamw=torch.optim.AdamW,
+    lion=Lion,
     sgd=SGD,
     adadelta=torch.optim.Adadelta,
     adagrad=torch.optim.Adagrad,

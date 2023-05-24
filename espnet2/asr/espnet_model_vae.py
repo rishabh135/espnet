@@ -439,8 +439,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # 1. Encoder
 
-        # bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
-        # self.extract_feats_model = bundle.get_model( dl_kwargs={"model_dir":"/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/"} ).to(text.device)
+        bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
+        self.torchaudio_model = bundle.get_model( dl_kwargs={"model_dir":"/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/"} ).to(text.device)
         # logging.warning(f"{self.extract_feats_model.__class__}")
         
         
@@ -456,7 +456,8 @@ class ESPnetASRModel(AbsESPnetModel):
         # configuration = model.config
         # logging.warning(f" {configuration} ")
         # using a pretrained wav2vec2 model
-        # self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
+        
+        self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
         
 
 
@@ -488,6 +489,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # if(spembs is not None):
         #     zeros_spembs = torch.zeros_like(spembs)
 
+        logging.warning(f" >>> bayesian_latent: {bayesian_latent.shape}, {encoder_out_lens} {feats.shape} {feats_lengths} ")
 
         recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
         # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
@@ -770,20 +772,18 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-            with torch.no_grad():
-                features, _ = self.extract_feats_model.extract_features(feats)
-                # logging.warning(f" >>>> features : Len {  len(features) }  shape { features[0].shape } \n ")
-                # logging.warning(f" >>>> features_lens: {  len(features_lens) }  \n\n shape { features_lens[0].shape } \n ")
+            # with torch.no_grad():
+            #     features, _ = self.torchaudio_model.extract_features(speech, speech_lengths )
+            #     logging.warning(f" >> Torchaudio features : Len {  len(features) }  shape { features[0].shape } \n ")
+            #     # logging.warning(f" >>>> features_lens: {  len(features_lens) }  \n\n shape { features_lens[0].shape } \n ")
             
-            encoder_out = features[5].to(feats.device)
-            lens = []
-            for row in encoder_out:
-                logging.warning(f" Row SHAPE: {row.shape} ")
-                lens.append(row.shape[0])
-            encoder_out_lens = torch.Tensor(lens).to(feats.device)
-            logging.warning(f" Pretrained comformer outs {encoder_out.shape}  {encoder_out_lens} ")
-
-            
+            # encoder_out = features[11].to(feats.device)
+            # lens = []
+            # for row in encoder_out:
+            #     logging.warning(f" Torch audio Row SHAPE: {row.shape} ")
+            #     lens.append(row.shape[0])
+            # encoder_out_lens = torch.Tensor(lens).to(feats.device)
+            # logging.warning(f" Torchaudio outs: {encoder_out.shape}  {encoder_out_lens} ")
 
 
 
@@ -791,16 +791,26 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-            with torch.no_grad():
-                tmp_extract_feats = self.wav2_pretrained_model( speech, output_hidden_states=True, return_dict=True)
-                logging.warning(f" {dir(tmp_extract_feats)} ")
-                logging.warning(f" shape of extracted features {tmp_extract_feats.extract_features.shape}  ")
-                # for key, value in tmp_extract_feats.items() :
-                #     logging.warning(f" self.wav2_pretrained_model  {key}: {value.shape} ")
+            # with torch.no_grad():
+            #     tmp_extract_feats = self.wav2_pretrained_model( speech, output_hidden_states=True, return_dict=True)
+            #     logging.warning(f" {dir(tmp_extract_feats)} ")
+            #     logging.warning(f" >> Huggingface: extracted features {tmp_extract_feats.extract_features.shape}  {type(tmp_extract_feats)}")
+
+            #     for key, value in tmp_extract_feats.items() :
+            #         logging.warning(f" self.wav2_pretrained_model {len(key)} {len(value)} ")
+            #         # logging.warning(f" self.wav2_pretrained_model  {key}: {value[0].shape} ")
 
 
-                # last_hidden_states = tmp_extract_feats.last_hidden_state
 
+
+
+
+                # logging.warning( f"hiddenstates: { len(tmp_extract_feats.hidden_states)}   ")
+                # logging.warning(f" keyslen: { len(tmp_extract_feats.keys) } ")
+                # logging.warning(f" keys: {tmp_extract_feats.keys[0]} ")
+
+
+            # last_hidden_states = tmp_extract_feats.last_hidden_state
             # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
             
             
