@@ -83,7 +83,9 @@ asr_lr=0.002
 recon_lr=0.002
 
 
-project_name="vae_workingvae_may_17_cosine_annealing_warm_UP_param_groups_one_speaker"
+
+project_name="vae_workingvae_lion_may_23_cos_warmup_param_groups_one_speaker"
+
 experiment_name="latent_dim_80_with_spembs"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
@@ -337,8 +339,10 @@ if [ $# -ne 0 ]; then
     exit 2
 fi
 
+
 . ./path.sh
 . ./cmd.sh
+
 
 
 # Check required arguments

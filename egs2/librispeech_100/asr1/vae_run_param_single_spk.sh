@@ -34,7 +34,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_workingvae_may_17_cosine_annealing_warm_UP_param_groups_one_speaker"
+project_name="vae_workingvae_lion_may_23_cos_warmup_param_groups_one_speaker"
 
 
 
@@ -42,7 +42,7 @@ project_name="vae_workingvae_may_17_cosine_annealing_warm_UP_param_groups_one_sp
 ###################################################################################################################################################################################################
 
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae_param.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae_param_lion.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 

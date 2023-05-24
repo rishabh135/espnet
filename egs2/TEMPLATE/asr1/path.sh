@@ -8,7 +8,8 @@ MAIN_ROOT=$PWD/../../..
 ######################################################################################################################################################
 
 
-KALDI_ROOT=/srv/storage/talc@talc-data.nancy/multispeech/calcul/users/bsrivastava/VPC/voice-privacy-challenge/kaldi/
+KALDI_ROOT=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/kaldi_brij/
+# KALDI_ROOT=/srv/storage/talc@talc-data.nancy/multispeech/calcul/users/bsrivastava/VPC/voice-privacy-challenge/kaldi/
 
 export PATH=$PWD/utils/:$KALDI_ROOT/tools/openfst/bin:$PATH
 [ ! -f $KALDI_ROOT/tools/config/common_path.sh ] && echo >&2 "The standard file $KALDI_ROOT/tools/config/common_path.sh is not present -> Exit!" && exit 1

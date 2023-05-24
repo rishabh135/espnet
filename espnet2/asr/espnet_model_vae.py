@@ -439,8 +439,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # 1. Encoder
 
-        bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
-        self.torchaudio_model = bundle.get_model( dl_kwargs={"model_dir":"/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/"} ).to(text.device)
+        # bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
+        # self.torchaudio_model = bundle.get_model( dl_kwargs={"model_dir":"/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/"} ).to(text.device)
         # logging.warning(f"{self.extract_feats_model.__class__}")
         
         
@@ -457,7 +457,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # logging.warning(f" {configuration} ")
         # using a pretrained wav2vec2 model
         
-        self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
+        # self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
         
 
 
@@ -489,7 +489,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # if(spembs is not None):
         #     zeros_spembs = torch.zeros_like(spembs)
 
-        logging.warning(f" >>> bayesian_latent: {bayesian_latent.shape}, {encoder_out_lens} {feats.shape} {feats_lengths} ")
+        # logging.warning(f" >>> bayesian_latent: {bayesian_latent.shape}, {encoder_out_lens} {feats.shape} {feats_lengths} ")
 
         recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
         # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
@@ -762,11 +762,10 @@ class ESPnetASRModel(AbsESPnetModel):
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
 
-
             encoder_out, encoder_out_lens, _ = self.encoder(aug_feats, aug_feats_lengths)
-            for row in encoder_out:
-                logging.warning(f" Rows for original conformer : {row.shape} ")
-            logging.warning(f" Original comformer outs {encoder_out.shape} {encoder_out_lens} ")
+            # for row in encoder_out:
+            #     logging.warning(f" Rows for original conformer : {row.shape} ")
+            # logging.warning(f" Original comformer outs {encoder_out.shape} {encoder_out_lens} ")
 
 
 
@@ -799,9 +798,6 @@ class ESPnetASRModel(AbsESPnetModel):
             #     for key, value in tmp_extract_feats.items() :
             #         logging.warning(f" self.wav2_pretrained_model {len(key)} {len(value)} ")
             #         # logging.warning(f" self.wav2_pretrained_model  {key}: {value[0].shape} ")
-
-
-
 
 
 

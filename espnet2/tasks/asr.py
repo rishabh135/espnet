@@ -99,6 +99,7 @@ from pprint import pprint
 
 
 
+from lion_pytorch import Lion
 
 
 
@@ -462,6 +463,7 @@ class ASRTask(AbsTask):
             adamw=torch.optim.AdamW,
             adadelta=torch.optim.Adadelta,
             adagrad=torch.optim.Adagrad,
+            lion=Lion,
             adamax=torch.optim.Adamax,
             asgd=torch.optim.ASGD,
             lbfgs=torch.optim.LBFGS,
