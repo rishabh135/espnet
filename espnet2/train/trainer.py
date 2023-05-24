@@ -923,7 +923,7 @@ class Trainer:
                 feats_plot = retval["feats_plot"]
                 recons_feats_plot = retval["recons_feats_plot"]
                 aug_feats_plot = retval["aug_feats_plot"]
-                html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
+                # html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
 
                 # logging.warning(" Uploading utterance : recons {}   ".format(recons_feats_plot.shape))
                 ax1 = plt.subplot(3, 1, 1)
@@ -943,6 +943,7 @@ class Trainer:
                 # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
                 wandb.log({f"spectrogram plot": wandb.Image(plt)})
                 fig.clf()
+                del feats_plot, recons_feats_plot, aug_feats_plot
 
                 # if( (current_epoch % 1 == 0) and (iiter % options.plot_iiter == 0 )):
                 #     with torch.inference_mode():
@@ -1081,6 +1082,8 @@ class Trainer:
             if distributed:
                 iterator_stop.fill_(1)
                 torch.distributed.all_reduce(iterator_stop, ReduceOp.SUM)
+        
+        torch.cuda.empy_cache()
         return all_steps_are_invalid
 
     @classmethod

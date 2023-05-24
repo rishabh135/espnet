@@ -83,8 +83,7 @@ asr_lr=0.002
 recon_lr=0.002
 
 
-
-project_name="vae_workingvae_lion_may_23_cos_warmup_param_groups_one_speaker"
+project_name="vae_workingvae_may_24_param_groups_one_speaker"
 
 experiment_name="latent_dim_80_with_spembs"
 

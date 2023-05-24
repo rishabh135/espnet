@@ -299,5 +299,5 @@ class CosineAnnealingWarmupRestarts( _LRScheduler, AbsBatchStepScheduler ):
         self.last_epoch = math.floor(epoch)
 
         new_lr = self.get_lr()
-        logging.warning(f" new_lr {new_lr[0]} ")
+        # logging.warning(f" Cos Annealing new_lr {new_lr[0]} ")
         self.optimizer.param_groups[-1]['lr'] = new_lr[0]
