@@ -65,7 +65,7 @@ adv_liststr="recon 80 asr 40 adv 40 asradv 40 reinit_adv 40"
 
 resume_checkpoint=-1
 max_epoch=240
-batch_bins=26000000
+batch_bins=16000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -82,7 +82,7 @@ recon_lr=0.002
 
 
 
-project_name="vae_workingvae_may_24_all_speakers_recon"
+project_name="vae_workingvae_may_25_all_speakers_recon"
 
 experiment_name="latent_dim_80_with_spembs"
 

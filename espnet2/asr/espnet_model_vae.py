@@ -761,7 +761,6 @@ class ESPnetASRModel(AbsESPnetModel):
         if self.encoder.interctc_use_conditioning:
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
-
             encoder_out, encoder_out_lens, _ = self.encoder(aug_feats, aug_feats_lengths)
             # for row in encoder_out:
             #     logging.warning(f" Rows for original conformer : {row.shape} ")

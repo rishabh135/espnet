@@ -86,9 +86,8 @@ recon_lr=0.002
 
 
 
-project_name="vae_workingvae_may_17_cosine_annealing_warm_UP_param_groups_10_utt"
 
-
+project_name="vae_workingvae_may_25_cosine_annealing_warm_UP_param_groups_10_utt"
 
 
 

@@ -31,7 +31,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_workingvae_may_17_cosine_annealing_warm_UP_param_groups_10_utt"
+project_name="vae_workingvae_may_25_cosine_annealing_warm_UP_param_groups_10_utt"
 
 
 
