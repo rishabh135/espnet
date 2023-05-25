@@ -47,8 +47,8 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/dump
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_single_speed_version_xvector/original_data
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_single_speed_version_xvector/dump
 
 
 
@@ -59,13 +59,13 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 adversarial_flag="True"
 vae_flag="True"
-# adv_liststr="asr_adv_asradv"
+adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="recon 40 asr 30 adv 30 asradv 30 reinit_adv 10"
+# adv_liststr="recon 80 asr 40 adv 40 asradv 40 reinit_adv 40"
 
 resume_checkpoint=-1
-max_epoch=140
-batch_bins=24000000
+max_epoch=240
+batch_bins=26000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -82,7 +82,7 @@ recon_lr=0.002
 
 
 
-project_name="vae_workingvae_may_25_all_speakers_recon_test"
+project_name="vae_workingvae_may_25_all_spk_single_speed_recon_test"
 
 experiment_name="latent_dim_80_with_spembs"
 
@@ -812,52 +812,64 @@ fi
 # utils/validate_data_dir.sh: Successfully validated data-directory dump/22k/mfcc/tr_no_dev_phn
 # utils/data/get_utt2dur.sh: segments file does not exist so getting durations from wave files
 # utils/data/get_utt2dur.sh: could not get utterance lengths from sphere-file headers, using wav-to-duration
-# utils/data/get_utt2dur.sh: wav-to-duration is not on your path   
+# utils/data/get_utt2dur.sh: wav-to-duration is not on your path
 # https://github.com/kaldi-asr/kaldi/issues/4151 seems to be like its a intel MKL library issue
+# sudo-g5k bash /srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/kaldi_brij/tools/extras/install_mkl.sh
+# sudo-g5k apt install flac sox --yes
+# cd kaldi/tools/; make; cd ../src; ./configure; make
+
+
+
 
 
 # Extract X-vector
 if "${use_xvector}"; then
-    echo "stage 3: x-vector extraction"
+    echo " >>>>>>    stage 3: x-vector extraction"
 
     # Make MFCCs and compute the energy-based VAD for each dataset
     mfccdir=${data_dd}/mfccdir
     vaddir=${data_dd}/mfcc
     nnet_dir=${dumpdir}/nnet/
+    echo "${mfccdir}"
+    for name in ${train_set} ${valid_set} ${test_sets} ; do
+        ${global_dir}/utils/copy_data_dir.sh ${data_dd}/${name} ${data_dd}/${name}_mfcc_16k
+        echo " >>>>>>    stage 3.1: x-vector extraction"
+        ${global_dir}/utils/data/resample_data_dir.sh 16000 ${data_dd}/${name}_mfcc_16k
+        echo " >>>>>>    stage 3.2: x-vector extraction"
+        ${global_dir}/steps/make_mfcc.sh  \
+            --write-utt2num-frames true \
+            --mfcc-config ${global_dir}/conf/mfcc.conf \
+            --nj ${nj} --cmd "$train_cmd" \
+            ${data_dd}/${name}_mfcc_16k ${expdir}/make_mfcc_16k ${mfccdir}
+        echo " >>>>>>    stage 3.3: x-vector extraction"
+        ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
+        echo " >>>>>>    stage 3.4: x-vector extraction"
+        ${global_dir}/steps/compute_vad_decision.sh --nj ${nj} --cmd "$train_cmd" \
+            ${data_dd}/${name}_mfcc_16k ${expdir}/make_vad ${vaddir}
+        echo " >>>>>>    stage 3.5: x-vector extraction"
+        ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
+    done
+    echo " >>>>>>    stage 3: check pretrained model existence"
 
-    # for name in ${train_set} ${valid_set} ${test_sets} ; do
-    #     ${global_dir}/utils/copy_data_dir.sh ${data_dd}/${name} ${data_dd}/${name}_mfcc_16k
-    #     ${global_dir}/utils/data/resample_data_dir.sh 16000 ${data_dd}/${name}_mfcc_16k
-    #     ${global_dir}/steps/make_mfcc.sh  \
-    #         --write-utt2num-frames true \
-    #         --mfcc-config ${global_dir}/conf/mfcc.conf \
-    #         --nj ${nj} --cmd "$train_cmd" \
-    #         ${data_dd}/${name}_mfcc_16k ${expdir}/make_mfcc_16k ${mfccdir}
-    #     ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
-    #     ${global_dir}/steps/compute_vad_decision.sh --nj ${nj} --cmd "$train_cmd" \
-    #         ${data_dd}/${name}_mfcc_16k ${expdir}/make_vad ${vaddir}
-    #     ${global_dir}/utils/fix_data_dir.sh ${data_dd}/${name}_mfcc_16k
-    # done
+    # Check pretrained model existence
+    if [ ! -e ${nnet_dir} ]; then
+        echo "X-vector model does not exist. Download pre-trained model."
+        wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
+        tar xvf ./0008_sitw_v2_1a.tar.gz
+        mv ./0008_sitw_v2_1a/exp/xvector_nnet_1a ${nnet_dir}
+        rm -rf 0008_sitw_v2_1a.tar.gz 0008_sitw_v2_1a
+    fi
+    # Extract x-vector
+    for name in ${train_set} ${valid_set} ${test_sets}; do
+        ${global_dir}/../../../tools/kaldi/egs/sre08/v1/sid/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 4G" --nj ${nj} \
+            ${nnet_dir} ${data_dd}/${name}_mfcc_16k \
+            ${nnet_dir}/xvectors_${name}
+    done
 
-    # # Check pretrained model existence
-    # if [ ! -e ${nnet_dir} ]; then
-    #     echo "X-vector model does not exist. Download pre-trained model."
-    #     wget http://kaldi-asr.org/models/8/0008_sitw_v2_1a.tar.gz
-    #     tar xvf ./0008_sitw_v2_1a.tar.gz
-    #     mv ./0008_sitw_v2_1a/exp/xvector_nnet_1a ${nnet_dir}
-    #     rm -rf 0008_sitw_v2_1a.tar.gz 0008_sitw_v2_1a
-    # fi
-    # # Extract x-vector
-    # for name in ${train_set} ${valid_set} ${test_sets}; do
-    #     ${global_dir}/../../../tools/kaldi/egs/sre08/v1/sid/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 4G" --nj ${nj} \
-    #         ${nnet_dir} ${data_dd}/${name}_mfcc_16k \
-    #         ${nnet_dir}/xvectors_${name}
-    # done
-
-    # Update json
-    # for name in ${train_set} ${valid_set} ${test_sets}; do
-    #     ./local/update_json.sh ${dumpdir}/${name}/data.json ${nnet_dir}/xvectors_${name}/xvector.scp
-    # done
+    Update json
+    for name in ${train_set} ${valid_set} ${test_sets}; do
+        ./local/update_json.sh ${dumpdir}/${name}/data.json ${nnet_dir}/xvectors_${name}/xvector.scp
+    done
 
 
 

@@ -8,7 +8,7 @@ from contextlib import contextmanager
 from dataclasses import is_dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple, Union
-
+from datetime import date, datetime
 from sklearn.manifold import TSNE
 from sklearn.datasets import load_iris
 from numpy import reshape
@@ -919,31 +919,32 @@ class Trainer:
                 ######################################################################################################################################################################
                 ######################################################################################################################################################################
 
-            if( cls.minibatch_counter %  options.plot_iiter == 0):
-                feats_plot = retval["feats_plot"]
-                recons_feats_plot = retval["recons_feats_plot"]
-                aug_feats_plot = retval["aug_feats_plot"]
-                # html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
+            # if( cls.minibatch_counter %  options.plot_iiter == 0):
+            #     feats_plot = retval["feats_plot"]
+            #     recons_feats_plot = retval["recons_feats_plot"]
+            #     aug_feats_plot = retval["aug_feats_plot"]
+            #     # html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
 
-                # logging.warning(" Uploading utterance : recons {}   ".format(recons_feats_plot.shape))
-                ax1 = plt.subplot(3, 1, 1)
-                ax1.set_title('Original feats linear')
-                plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+            #     # logging.warning(" Uploading utterance : recons {}   ".format(recons_feats_plot.shape))
+            #     ax1 = plt.subplot(3, 1, 1)
+            #     ax1.set_title('Original feats linear')
+            #     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                ax2 = plt.subplot(3, 1, 2)
-                ax2.set_title('Reconstructed feats linear')
-                plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+            #     ax2 = plt.subplot(3, 1, 2)
+            #     ax2.set_title('Reconstructed feats linear')
+            #     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                ax3 = plt.subplot(3, 1, 3)
-                ax3.set_title('Augment feats linear')
-                plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+            #     ax3 = plt.subplot(3, 1, 3)
+            #     ax3.set_title('Augment feats linear')
+            #     plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                fig.subplots_adjust(hspace=0.10, bottom=0.00, wspace=0)
-                plt.tight_layout()
-                # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-                wandb.log({f"spectrogram plot": wandb.Image(plt)})
-                fig.clf()
-                del feats_plot, recons_feats_plot, aug_feats_plot
+            #     fig.subplots_adjust(hspace=0.10, bottom=0.00, wspace=0)
+            #     plt.tight_layout()
+            #     # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+            #     wandb.log({f"spectrogram plot": wandb.Image(plt)})
+            #     fig.clf()
+            #     del feats_plot, recons_feats_plot, aug_feats_plot
+
 
                 # if( (current_epoch % 1 == 0) and (iiter % options.plot_iiter == 0 )):
                 #     with torch.inference_mode():
@@ -1072,6 +1073,8 @@ class Trainer:
             # NOTE(kamo): Call log_message() after next()
             reporter.next()
             if iiter % log_interval == 0:
+                ctime = datetime.now().strftime("Time__%H:%M:%S")
+                logging.warning(f" >> {ctime}")
                 logging.warning(reporter.log_message(-log_interval))
                 if summary_writer is not None:
                     reporter.tensorboard_add_scalar(summary_writer, -log_interval)

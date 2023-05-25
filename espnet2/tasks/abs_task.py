@@ -902,55 +902,56 @@ class AbsTask(ABC):
 
 
 
-
     # @classmethod
     # def build_optimizers(
     #     cls,
     #     args: argparse.Namespace,
     #     model: torch.nn.Module,
     # ) -> List[torch.optim.Optimizer]:
-
-    #     adv_name = str(type(model).__name__)
-    #     logging.warning(" ----->>>>>>>> adv_flag {} asr_lr {} adv_lr {} recon_lr {} adv_name {} \n\n".format(args.adv_flag, args.asr_lr, args.adv_lr, args.recon_lr, adv_name))
-
     #     if cls.num_optimizers != 1:
     #         raise RuntimeError(
     #             "build_optimizers() must be overridden if num_optimizers != 1"
     #         )
 
+    #     optim_classes = dict(
+    #         adam=torch.optim.Adam,
+    #         adamw=torch.optim.AdamW,
+    #         adadelta=torch.optim.Adadelta,
+    #         adagrad=torch.optim.Adagrad,
+    #         lion=Lion,
+    #         adamax=torch.optim.Adamax,
+    #         asgd=torch.optim.ASGD,
+    #         lbfgs=torch.optim.LBFGS,
+    #         rmsprop=torch.optim.RMSprop,
+    #         rprop=torch.optim.Rprop,
+    #     )
+
     #     optim_class = optim_classes.get(args.optim)
     #     if optim_class is None:
     #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
-
-
-    #     if ( args.adv_flag):
-    #         if(args.ngpu > 1):
-    #             param_grp = [
-    #                 {'params': model.module.encoder.parameters() },
-    #                 {'params': model.module.decoder.parameters(), 'lr': args.asr_lr},
-    #                 {'params': model.module.ctc.parameters(), 'lr': args.asr_lr},
-    #                 {'params': model.module.adversarial_branch.parameters(), 'lr': args.adv_lr},
-    #                 {'params': model.module.reconstruction_decoder.parameters(), 'lr': args.recon_lr}
-    #             ]
-    #         else:
-    #             param_grp = [
-    #                 {'params': model.encoder.parameters() },
-    #                 {'params': model.decoder.parameters(), 'lr': args.asr_lr},
-    #                 {'params': model.ctc.parameters(), 'lr': args.asr_lr},
-    #                 {'params': model.adversarial_branch.parameters(), 'lr': args.adv_lr},
-    #                 {'params': model.reconstruction_decoder.parameters(), 'lr': args.recon_lr}
-    #                 ]
-
-    #         optimi = torch.optim.Adam(param_grp, lr=args.asr_lr, betas=(0.9,0.999), weight_decay=0.00000001)
+    #     if args.sharded_ddp:
+    #         raise NotImplementedError
     #     else:
-    #         optimi = optim_class(model.parameters(), lr=args.asr_lr, weight_decay=0.00001)
+    #         optim_conf = args.optim_conf
 
-    #     optimizers = [optimi]
+    #         main_parameters = list(model.encoder.parameters()) + list(model.decoder.parameters()) + list(model.ctc.parameters()) + list(model.adversarial_branch.parameters()) + list(model.reconstruction_decoder.parameters())
+    #         remaining_parameters = list((Counter(model.parameters() ) - Counter(main_parameters)).elements())
+    #         # list(filter(lambda p: p  not in main_parameters, model.parameters()))
+    #         # lr_grp = [args.asr_lr, args.adv_lr, args.recon_lr ]
+    #         # logging.warning(f" {lr_grp[0]}, {lr_grp[1]}, {lr_grp[2]}  ")
+    #         logging.warning(f" asr_lr: {args.asr_lr}  adv_lr: {args.adv_lr} recon_lr: {args.recon_lr}")
+
+    #         param_grp = [
+    #         {'params': model.encoder.parameters(), "lr" : args.asr_lr  },
+    #         {'params': model.decoder.parameters(), "lr": args.asr_lr },
+    #         {'params': model.ctc.parameters(), "lr": args.asr_lr },
+    #         {'params': model.adversarial_branch.parameters(), "lr": args.adv_lr },
+    #         {'params': remaining_parameters , "lr": args.asr_lr },
+    #         {'params': model.reconstruction_decoder.parameters(), "lr": args.recon_lr } ]
+    #         optim = optim_class(param_grp, **optim_conf)
+
+    #     optimizers = [optim]
     #     return optimizers
-
-
-
-
 
 
 
@@ -1193,7 +1194,7 @@ class AbsTask(ABC):
         if(args.adv_flag and cls.__name__ == "ASRTask"):
 
             if (args.adv_liststr == "asr_adv_asradv" ):
-                args.adversarial_list = ["recon", "adv", "adv", "asradv", "asr", "asradv", "adv",  "asradv", "asr", "asr", "asradv", "adv", "asradv", "asr", "asradv", "asr", "adv", "asradv", "adv", "asr" ] * 8 + ["asradv"] * 10
+                args.adversarial_list = ["asradv", "recon", "asr", "adv", "asradv", "asr", "asradv", "adv",  "asradv", "asr"  ] * ( int(args.max_epoch/10)) + ["asradv"] * ( int(args.max_epoch%10))
             else :
                 epoch_list = list(map(int, re.findall(r'\d+', args.adv_liststr)))
                 phase_list = list(re.findall( r"[a-zA-Z]+", args.adv_liststr))

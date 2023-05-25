@@ -53,6 +53,7 @@ class TransformerTTS(AbsTTS):
         idim: int,
         odim: int,
 
+
         embed_dim: int = 512,
         eprenet_conv_layers: int = 3,
         eprenet_conv_chans: int = 256,
@@ -60,12 +61,7 @@ class TransformerTTS(AbsTTS):
         dprenet_layers: int = 2,
         dprenet_units: int = 256,
         elayers: int = 6,
-        eunits: int = 1024,
-        adim: int = 512,
-        aheads: int = 4,
-        dlayers: int = 6,
-        dunits: int = 1024,
-
+        eunits: int = 256,
 
         # embed_dim: int = 512,
         # eprenet_conv_layers: int = 3,
@@ -74,11 +70,18 @@ class TransformerTTS(AbsTTS):
         # dprenet_layers: int = 2,
         # dprenet_units: int = 256,
         # elayers: int = 6,
-        # eunits: int = 256,
+        # eunits: int = 1024,
         # adim: int = 512,
-        # aheads: int = 2,
-        # dlayers: int = 2,
-        # dunits: int = 128,
+        # aheads: int = 4,
+        # dlayers: int = 6,
+        # dunits: int = 1024,
+
+
+ 
+        adim: int = 512,
+        aheads: int = 2,
+        dlayers: int = 3,
+        dunits: int = 512,
 
 
 
