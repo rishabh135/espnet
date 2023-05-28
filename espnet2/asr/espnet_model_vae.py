@@ -51,6 +51,7 @@ else:
 
 
 from torchinfo import summary
+from transformers import AutoModelForSequenceClassification
 
 from python_speech_features import mfcc
 from python_speech_features import delta
@@ -79,7 +80,7 @@ import wandb
 import matplotlib.pyplot as plt
 
 
-from transformers import Wav2Vec2ConformerConfig, Wav2Vec2ConformerModel
+from transformers import Wav2Vec2ConformerConfig, Wav2Vec2ConformerModel, Wav2Vec2FeatureExtractor
 from transformers import AutoFeatureExtractor, Wav2Vec2ConformerForPreTraining, Wav2Vec2ConformerModel
 from transformers.models.wav2vec2_conformer.modeling_wav2vec2_conformer import (
     _compute_mask_indices,
@@ -438,13 +439,23 @@ class ESPnetASRModel(AbsESPnetModel):
             # logging.warning("after_projection spembs {} ".format(spembs.shape))
 
         # 1. Encoder
+        # https://huggingface.co/transformers/v4.4.2/model_doc/wav2vec2.html#wav2vec2featureextractor
+        # https://huggingface.co/transformers/v4.4.2/model_doc/wav2vec2.html
 
         # bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
         # self.torchaudio_model = bundle.get_model( dl_kwargs={"model_dir":"/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/"} ).to(text.device)
         # logging.warning(f"{self.extract_feats_model.__class__}")
         
         
-        
+        # self.pretrained_features = transformers.Wav2Vec2FeatureExtractor(attention_mask = )
+
+
+
+        self.wav2_pretrained_model = Wav2Vec2FeatureExtractor.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
+        # .to(text.device)
+
+        # feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
+        # input_speech = self._load_datasamples(2)
 
 
         # Initializing a Wav2Vec2Conformer facebook/wav2vec2-conformer-rel-pos-large style configuration
@@ -765,6 +776,21 @@ class ESPnetASRModel(AbsESPnetModel):
             # for row in encoder_out:
             #     logging.warning(f" Rows for original conformer : {row.shape} ")
             # logging.warning(f" Original comformer outs {encoder_out.shape} {encoder_out_lens} ")
+
+
+
+            with torch.no_grad():
+                features, tmp =  self.wav2_pretrained_model(feats, return_tensors="pt", padding=False)
+                logging.warning(f" features shape {features} \n dirr : {dir(features)} ")
+                # logging.warning(f" >> Torchaudio features : Len {  len(features) }  shape { features[0].shape } \n ")
+                # logging.warning(f" >>>> features_lens: {  len(features_lens) }  \n\n shape { features_lens[0].shape } \n ")
+            encoder_out = features[11].to(feats.device)
+            lens = []
+            for row in encoder_out:
+                logging.warning(f" Torch audio Row SHAPE: {row.shape} ")
+                lens.append(row.shape[0])
+            encoder_out_lens = torch.Tensor(lens).to(feats.device)
+            logging.warning(f" Torchaudio outs: {encoder_out.shape}  {encoder_out_lens} ")
 
 
 

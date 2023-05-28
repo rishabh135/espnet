@@ -100,6 +100,7 @@ from pprint import pprint
 
 
 from lion_pytorch import Lion
+from espnet2.optimizers.sophia import SophiaG
 
 
 

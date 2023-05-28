@@ -87,10 +87,13 @@ else:
     from torch.multiprocessing.spawn import SpawnContext as ProcessContext
 
 from lion_pytorch import Lion
+from espnet2.optimizers.sophia import SophiaG
+
 optim_classes = dict(
     adam=torch.optim.Adam,
     adamw=torch.optim.AdamW,
     lion=Lion,
+    sophia=SophiaG,
     sgd=SGD,
     adadelta=torch.optim.Adadelta,
     adagrad=torch.optim.Adagrad,

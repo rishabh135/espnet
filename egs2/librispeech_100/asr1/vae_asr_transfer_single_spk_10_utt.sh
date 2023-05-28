@@ -85,7 +85,9 @@ asr_lr=0.002
 recon_lr=0.002
 
 
-project_name="vae_transfer_may_23_utterance_10"
+
+project_name="vae_transfer_may_26_utterance_10"
+
 
 experiment_name="latent_dim_64_with_spembs"
 

@@ -962,8 +962,8 @@ class Trainer:
                 ######################################################################################################################################################################
                 ######################################################################################################################################################################
 
-            # if( (iiter % options.accum_grad) == 0):
-            #     logging.warning(" MODE: {} adv_loss_weight {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {}  ".format( adv_mode, options.adv_loss_weight, iiter, current_epoch, adv_flag,  stats["loss"].detach() ))
+            if( (iiter % options.accum_grad) == 0):
+                logging.warning(" MODE: {} minibatch_counter {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {}  ".format( adv_mode, cls.minibatch_counter , iiter, current_epoch, adv_flag,  stats["loss"].detach() ))
 
 
 
@@ -1073,8 +1073,8 @@ class Trainer:
             # NOTE(kamo): Call log_message() after next()
             reporter.next()
             if iiter % log_interval == 0:
-                ctime = datetime.now().strftime("Time__%H:%M:%S")
-                logging.warning(f" >> {ctime}")
+                # ctime = datetime.now().strftime("Time__%H:%M:%S")
+                # logging.warning(f" >> {ctime}")
                 logging.warning(reporter.log_message(-log_interval))
                 if summary_writer is not None:
                     reporter.tensorboard_add_scalar(summary_writer, -log_interval)

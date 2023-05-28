@@ -31,7 +31,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_transfer_may_23_utterance_10"
+project_name="vae_transfer_may_26_utterance_10"
 
 
 
