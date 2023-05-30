@@ -10,9 +10,9 @@ set -o pipefail
 # test_sets="test_clean test_other dev_clean dev_other"
 
 
-train_set="train_clean_100"
-valid_set="train_clean_100"
-test_sets="train_clean_100"
+train_set="train_clean_1_spk_102_utt"
+valid_set="train_clean_1_spk_102_utt"
+test_sets="train_clean_1_spk_102_utt"
 
 asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
@@ -28,7 +28,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_workingvae_may_7_one_speaker_3_times_lr"
+project_name="vae_workingvae_may_30_one_speaker_sophia"
 
 
 
@@ -37,7 +37,7 @@ project_name="vae_workingvae_may_7_one_speaker_3_times_lr"
 
 
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae_single_spk.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae_sophia.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 

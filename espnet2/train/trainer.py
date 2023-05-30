@@ -792,6 +792,10 @@ class Trainer:
                         loss_adversarial = retval.get( "loss_adversarial", 0 )
                         reconstruction_loss = retval.get("reconstruction_loss", 0)
                         kld_loss = retval.get("reconstruction_kld_loss", 0)
+                                                
+                        decay = cls.beta_kl_factor
+                        vae_loss = reconstruction_loss + (decay * kld_loss)
+                        
                         # vae_loss = retval.get("vae_loss",0)
                         # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
                         if optim_idx is not None and not isinstance(optim_idx, int):
@@ -848,68 +852,41 @@ class Trainer:
                     loss *= torch.distributed.get_world_size()
 
                 # loss /= accum_grad
-
+            reporter.register({"beta_kl_factor": decay, "vae_loss": vae_loss.detach()})
             reporter.register(stats, weight)
 
 
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
+
+
                     if (adv_flag == True  and adv_mode == 'asr'):
-                        decay = cls.beta_kl_factor
-                        vae_loss = reconstruction_loss + (decay * kld_loss)
-
-                        wandb.log({ "beta_kl_factor" : decay } )
-                        wandb.log({ "vae_loss" : vae_loss.detach() } )
-
                         total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  *  vae_loss
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
                     elif (adv_flag == True and  adv_mode == 'adv'):
                         loss_adversarial /= accum_grad
-                        # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     elif(adv_flag == True  and adv_mode == 'asradv'):
-                        # loss_adversarial.requires_grad = True
-                        decay = cls.beta_kl_factor
-                        vae_loss = reconstruction_loss + (decay * kld_loss)
-
-                        wandb.log({ "beta_kl_factor" : decay } )
-                        wandb.log({ "vae_loss" : vae_loss.detach() } )
                         total_loss =  (1-options.vae_weight_factor) * loss + options.vae_weight_factor * vae_loss + options.adv_loss_weight * loss_adversarial
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
                     elif (adv_flag == True  and  adv_mode == 'reinit_adv'):
                         loss_adversarial /= accum_grad
-                        # loss_adversarial.requires_grad = True
                         scaler.scale(loss_adversarial).backward()
                     elif (adv_flag == True  and  adv_mode == 'recon'):
-                        # vae_loss = reconstruction_loss + kld_loss
-                        # regularized vae_loss=kl_loss*decay + recon_loss
-                        decay = cls.beta_kl_factor
-                        vae_loss = reconstruction_loss + (decay * kld_loss)
-                        # vae_loss /= accum_grad
-                        wandb.log({ "beta_kl_factor" : decay } )
-                        wandb.log({ "vae_loss" : vae_loss.detach() } )
+                        vae_loss /= accum_grad
                         scaler.scale(vae_loss).backward()
-
                     else:
-                        vae_loss = reconstruction_loss + (decay * kld_loss)
                         total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  *  vae_loss
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
-                        # scaler.scale(loss_adversarial).backward()
-                        # Scales loss.  Calls backward() on scaled loss
-                        # to create scaled gradients.
-                        # Backward passes under autocast are not recommended.
-                        # Backward ops run in the same dtype autocast chose
-                        # for corresponding forward ops.
+
+
+
                 else:
                     if (adv_flag == True and  adv_mode == 'recon'):
-                        decay = cls.beta_kl_factor
-                        vae_loss = reconstruction_loss + (decay * kld_loss)
-                        # vae_loss /= accum_grad
-                        wandb.log({ "beta_kl_factor" : decay } )
-                        wandb.log({ "vae_loss" : vae_loss.detach() } )
+                        vae_loss /= accum_grad
                         # logging.warning("vae_loss {} ".format(vae_loss))
                         vae_loss.backward()
                     else:
@@ -946,6 +923,8 @@ class Trainer:
             #     del feats_plot, recons_feats_plot, aug_feats_plot
 
 
+
+
                 # if( (current_epoch % 1 == 0) and (iiter % options.plot_iiter == 0 )):
                 #     with torch.inference_mode():
                 #         recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
@@ -962,8 +941,9 @@ class Trainer:
                 ######################################################################################################################################################################
                 ######################################################################################################################################################################
 
-            if( (iiter % options.accum_grad) == 0):
+            if( (iiter % options.plot_iiter) == 0):
                 logging.warning(" MODE: {} minibatch_counter {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {}  ".format( adv_mode, cls.minibatch_counter , iiter, current_epoch, adv_flag,  stats["loss"].detach() ))
+
 
 
 
