@@ -61,11 +61,11 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="recon 14 asr 30 adv 30 asradv 30 reinit_adv 30"
+adv_liststr="recon 7 asr 40 adv 40 asradv 40 reinit_adv 40"
 
 resume_checkpoint=-1
-max_epoch=134
-batch_bins=29000000
+max_epoch=167
+batch_bins=22000000
 adv_weight=25.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
@@ -82,7 +82,7 @@ recon_lr=0.002
 
 
 
-project_name="vae_workingvae_may_26_all_speakers_all_recon"
+project_name="vae_workingvae_may_30_all_speakers_all_recon"
 
 experiment_name="latent_dim_80_with_spembs"
 
