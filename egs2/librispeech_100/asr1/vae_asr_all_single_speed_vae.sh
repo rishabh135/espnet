@@ -82,7 +82,8 @@ recon_lr=0.002
 
 
 
-project_name="vae_workingvae_may_25_all_spk_single_speed_recon_test"
+
+project_name="vae_single_speed_dataset"
 
 experiment_name="latent_dim_80_with_spembs"
 
@@ -825,7 +826,11 @@ fi
 # Extract X-vector
 if "${use_xvector}"; then
     echo " >>>>>>    stage 3: x-vector extraction"
-
+    # VERY important step, to run, must do sudo-g5k bash kaldi/tools/extras/install_mkl.sh
+    # cd tools/
+    # make -j 8
+    # cd kaldi/src/
+    # ./configure --shared
     # Make MFCCs and compute the energy-based VAD for each dataset
     mfccdir=${data_dd}/mfccdir
     vaddir=${data_dd}/mfcc
