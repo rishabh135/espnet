@@ -444,19 +444,34 @@ class ESPnetASRModel(AbsESPnetModel):
         # bundle = torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H
         # self.torchaudio_model = bundle.get_model( dl_kwargs={"model_dir":"/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/"} ).to(text.device)
         # logging.warning(f"{self.extract_feats_model.__class__}")
-        
-        
+
+
         # self.pretrained_features = transformers.Wav2Vec2FeatureExtractor(attention_mask = )
 
 
-        configuration = Wav2Vec2ConformerConfig(hidden_size=768)
-        # processor = .from_pretrained("facebook/wav2vec2-large-960h-lv60-self")
-        self.wav2_feature_extractor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
-        self.wav2_model =  Wav2Vec2ConformerModel(configuration).from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/")
-        
+
+        ########################################################################################################################################################################################################################################################################
+        ########################################################################################################################################################################################################################################################################
+        ########################################################################################################################################################################################################################################################################
+
+        # configuration = Wav2Vec2ConformerConfig(hidden_size=768)
+        # # processor = .from_pretrained("facebook/wav2vec2-large-960h-lv60-self")
+        # self.wav2_feature_extractor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
+        # self.wav2_model =  Wav2Vec2ConformerModel(configuration).from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/")
+
+        ########################################################################################################################################################################################################################################################################
+        ########################################################################################################################################################################################################################################################################
+        ########################################################################################################################################################################################################################################################################
+
+
+
+
+
+
+
         # Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
-     
-        
+
+
         # .to(text.device)
 
         # feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
@@ -472,18 +487,18 @@ class ESPnetASRModel(AbsESPnetModel):
         # configuration = model.config
         # logging.warning(f" {configuration} ")
         # using a pretrained wav2vec2 model
-        
+
         # self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
-        
+
 
 
         # AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/", run_opts={"device":text.device })
         # model = Wav2Vec2ConformerForPreTraining.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large")
         # ds = load_dataset("hf-internal-testing/librispeech_asr_dummy", "clean", split="validation")
 
-        
 
-        
+
+
         encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.encode(speech, speech_lengths)
         # logging.warning(" encoder_out {} feats {} ".format( encoder_out.shape, feats.shape))
         # original_feats = feats
@@ -783,45 +798,43 @@ class ESPnetASRModel(AbsESPnetModel):
             # logging.warning(f" Original comformer outs {encoder_out.shape} {encoder_out_lens} ")
 
 
-            # def __call__(
-            #     self,
-            #     raw_speech: Union[np.ndarray, List[float], List[np.ndarray], List[List[float]]],
-            #     padding: Union[bool, str, PaddingStrategy] = False,
-            #     max_length: Optional[int] = None,
-            #     pad_to_multiple_of: Optional[int] = None,
-            #     return_attention_mask: Optional[bool] = None,
-            #     return_tensors: Optional[Union[str, TensorType]] = None,
-            #     sampling_rate: Optional[int] = None,
-            #     **kwargs
-            # ) -> BatchFeature:
+            ########################################################################################################################################################################################################################################################################
+            ########################################################################################################################################################################################################################################################################
+            ########################################################################################################################################################################################################################################################################
 
-            # "wav2_model.wav2vec2.encoder.layers.6.feed_forward.output_dense.weight
-            
-            with torch.no_grad():
-                outs =  self.wav2_feature_extractor( speech, sampling_rate=16000, padding=False ,return_tensors="pt")
-                inp_values = torch.squeeze(outs.input_values)
-                logging.warning(f"  speech: {speech.shape}   input_values: {inp_values.shape} ")
-                batch_size, raw_sequence_length = inp_values.shape
-                sequence_length = self.wav2_model._get_feat_extract_output_lengths(raw_sequence_length)
-                logging.warning(f" >> output_length_sequence: {sequence_length} ")
-                final_outs = self.wav2_model(torch.squeeze(outs.input_values))
-                logging.warning(f" final_outs: {final_outs.last_hidden_state.shape}")
-                logging.warning(f" Dir {dir(final_outs)} \n")
-                logging.warning(f">>>  keys: {final_outs.keys() } ")
-                # for key, value in final_outs.keys():
-                #     logging.warning(f" {key} --> {value.shape} \n {value} ")
-                
-                logging.warning(f"  extract_features {final_outs.extract_features.shape}  ")
-                # logging.warning(f"projected_states {final_outs.projected_states} ")
-                
-                
-                
-                # for key, value in outs.items():
-                #     logging.warning(f" {key} --> {value.shape} \n {value} ")
-                # logging.warning(f" features shape {features} \n dirr : {dir(features)} ")
-                # logging.warning(f" >> Torchaudio features : Len {  len(features) }  shape { features[0].shape } \n ")
-                # logging.warning(f" >>>> features_lens: {  len(features_lens) }  \n\n shape { features_lens[0].shape } \n ")
-            
+            # with torch.no_grad():
+            #     outs =  self.wav2_feature_extractor( speech, sampling_rate=16000, padding=False ,return_tensors="pt")
+            #     inp_values = torch.squeeze(outs.input_values)
+            #     logging.warning(f"  speech: {speech.shape}   input_values: {inp_values.shape} ")
+            #     batch_size, raw_sequence_length = inp_values.shape
+            #     sequence_length = self.wav2_model._get_feat_extract_output_lengths(raw_sequence_length)
+            #     logging.warning(f" >> output_length_sequence: {sequence_length} ")
+            #     final_outs = self.wav2_model(torch.squeeze(outs.input_values))
+
+            #     # logging.warning(f" final_outs: {final_outs.last_hidden_state.shape}")
+
+            #     logging.warning(f" Dir {dir(final_outs)} \n")
+            #     logging.warning(f">>>  keys: {final_outs.keys() } ")
+            #     logging.warning(f"  >>> {len(final_outs)}  {final_outs.fromkeys}")
+            #     logging.warning(f" {final_outs.attentions}")
+            #     logging.warning(f"  extract_features {final_outs.extract_features.shape}  ")
+            #     logging.warning(f">>>> final_outs_hidden_states: {final_outs.hidden_states.shape}")
+
+            ########################################################################################################################################################################################################################################################################
+            ########################################################################################################################################################################################################################################################################
+            ########################################################################################################################################################################################################################################################################
+
+            # for key, value in final_outs.keys():
+            #     logging.warning(f" {key} --> {value.shape} \n {value} ")
+
+            # for key, value in outs.items():
+            #     logging.warning(f" {key} --> {value.shape} \n {value} ")
+            # logging.warning(f" features shape {features} \n dirr : {dir(features)} ")
+            # logging.warning(f" >> Torchaudio features : Len {  len(features) }  shape { features[0].shape } \n ")
+            # logging.warning(f" >>>> features_lens: {  len(features_lens) }  \n\n shape { features_lens[0].shape } \n ")
+
+
+
             # encoder_out = features[11].to(feats.device)
             # lens = []
             # for row in encoder_out:
@@ -838,7 +851,7 @@ class ESPnetASRModel(AbsESPnetModel):
             #     features, _ = self.torchaudio_model.extract_features(speech, speech_lengths )
             #     logging.warning(f" >> Torchaudio features : Len {  len(features) }  shape { features[0].shape } \n ")
             #     # logging.warning(f" >>>> features_lens: {  len(features_lens) }  \n\n shape { features_lens[0].shape } \n ")
-            
+
             # encoder_out = features[11].to(feats.device)
             # lens = []
             # for row in encoder_out:
@@ -871,8 +884,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
             # last_hidden_states = tmp_extract_feats.last_hidden_state
             # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
-            
-            
+
+
 
         intermediate_outs = None
         if isinstance(encoder_out, tuple):
