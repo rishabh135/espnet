@@ -31,7 +31,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_transfer_may_26_utterance_10"
+project_name="vae_xtransfer_may_31_utterance_10"
 
 
 
@@ -40,7 +40,7 @@ project_name="vae_transfer_may_26_utterance_10"
 
 
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae_param.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae_single_spk.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 
