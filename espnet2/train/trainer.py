@@ -729,7 +729,7 @@ class Trainer:
 
 
 
-        fig = plt.figure(figsize=(14,8), dpi=200 )
+        # fig = plt.figure(figsize=(14,8), dpi=200 )
 
         # pca = PCA(n_components=10)
         # tsne = TSNE(n_components=2, perplexity=25, verbose=1, random_state=123)
