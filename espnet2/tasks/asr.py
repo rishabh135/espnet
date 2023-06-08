@@ -469,6 +469,8 @@ class ASRTask(AbsTask):
             frontend_class = frontend_choices.get_class(args.frontend)
             frontend = frontend_class(**args.frontend_conf)
             input_size = frontend.output_size()
+            logging.warning(f" >>>  input_size {input_size} ")
+            
         else:
             # Give features from data-loader
             args.frontend = None
@@ -607,6 +609,7 @@ class ASRTask(AbsTask):
             adv_flag=args.adv_flag,
             grlalpha=args.grlalpha,
             latent_dim=args.latent_dim,
+            embed_input_size = input_size,
             reconstruction_decoder=reconstruction_decoder,
             vocab_size=vocab_size,
             frontend=frontend,

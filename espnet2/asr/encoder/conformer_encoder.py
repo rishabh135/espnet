@@ -307,6 +307,7 @@ class ConformerEncoder(AbsEncoder):
 
         """
         masks = (~make_pad_mask(ilens)[:, None, :]).to(xs_pad.device)
+        logging.warning(f" conformer masks: {masks.shape} ")
 
         if (
             isinstance(self.embed, Conv2dSubsampling)
@@ -322,13 +323,16 @@ class ConformerEncoder(AbsEncoder):
                     xs_pad.size(1),
                     limit_size,
                 )
+            logging.warning(f" conformer before embed masks: {masks.shape} ")
             xs_pad, masks = self.embed(xs_pad, masks)
+            logging.warning(f" conformer after embed masks: {masks.shape} ")
         else:
             xs_pad = self.embed(xs_pad)
 
         intermediate_outs = []
         if len(self.interctc_layer_idx) == 0:
             xs_pad, masks = self.encoders(xs_pad, masks)
+            logging.warning(f" conformer masks: {masks.shape} ")
         else:
             for layer_idx, encoder_layer in enumerate(self.encoders):
                 xs_pad, masks = encoder_layer(xs_pad, masks)
@@ -360,6 +364,7 @@ class ConformerEncoder(AbsEncoder):
             xs_pad = self.after_norm(xs_pad)
 
         olens = masks.squeeze(1).sum(1)
+        logging.warning(f" conformer olens: {olens} ")
         if len(intermediate_outs) > 0:
             return (xs_pad, intermediate_outs), olens, None
         return xs_pad, olens, None
