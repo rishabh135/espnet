@@ -86,7 +86,7 @@ recon_lr=0.002
 
 
 
-project_name="vae_xtransfer_may_31_utterance_10"
+project_name="vae_xtransfer_june_7_utterance_10"
 
 
 

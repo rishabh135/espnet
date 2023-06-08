@@ -479,7 +479,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         # Initializing a Wav2Vec2Conformer facebook/wav2vec2-conformer-rel-pos-large style configuration
-        # configuration = Wav2Vec2ConformerConfig()
+        configuration = Wav2Vec2ConformerConfig(hidden_size = 256)
         # Initializing a model (with random weights) from the facebook/wav2vec2-conformer-rel-pos-large style configuration
         # self.wav2_model = Wav2Vec2ConformerModel(configuration)
 
@@ -488,7 +488,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # logging.warning(f" {configuration} ")
         # using a pretrained wav2vec2 model
 
-        # self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
+        self.wav2_pretrained_model = Wav2Vec2ConformerModel(configuration).from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
 
 
 
@@ -792,9 +792,10 @@ class ESPnetASRModel(AbsESPnetModel):
         if self.encoder.interctc_use_conditioning:
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
-            encoder_out, encoder_out_lens, _ = self.encoder(aug_feats, aug_feats_lengths)
-            # for row in encoder_out:
-            #     logging.warning(f" Rows for original conformer : {row.shape} ")
+            # with torch.no_gra():
+            encoder_out_orig, encoder_out_lens, _ = self.encoder(aug_feats, aug_feats_lengths)
+            # # for row in encoder_out:
+            # #     logging.warning(f" Rows for original conformer : {row.shape} ")
             # logging.warning(f" Original comformer outs {encoder_out.shape} {encoder_out_lens} ")
 
 
@@ -866,17 +867,47 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-            # with torch.no_grad():
-            #     tmp_extract_feats = self.wav2_pretrained_model( speech, output_hidden_states=True, return_dict=True)
-            #     logging.warning(f" {dir(tmp_extract_feats)} ")
-            #     logging.warning(f" >> Huggingface: extracted features {tmp_extract_feats.extract_features.shape}  {type(tmp_extract_feats)}")
+            with torch.no_grad():
+                
+                tmp_extract_feats = self.wav2_pretrained_model( speech, output_hidden_states=True, return_dict=True)
+                # logging.warning(f" {dir(tmp_extract_feats)} ")
+                # from pprint import pprint
+                # pprint(vars(tmp_extract_feats))
+                
+                
+                # last_hidden_state, extract_features, hidden_states
+                
+                # logging.warning(f" >>   {dir(last_hidden_state)}")
+                # logging.warning(f" >>    {dir(extract_features)}")
+                # logging.warning(f" >>  {dir(hidden_states)} ")
+                
+                
+                # for attr in dir(tmp_extract_feats) :
+                #     if not attr.startswith('__'):
+                #         vv = getattr(tmp_extract_feats, attr)
+                #         try:
+                #             vvshape = vv.shape
+                #         except:
+                #             vvshape = None
+                #         logging.warning( f" {str(attr)}  value=  {vvshape} ")
+                
+                
+                
+                # logging.warning(f" >> Huggingface: extracted features {extract_features.extract_features.shape}  {type(tmp_extract_feats)} ")
+                # # logging.warning(f"   {len(tmp_extract_feats.hidden_states)} {tmp_extract_feats.hidden_states[0].shape} {tmp_extract_feats.hidden_states[1].shape}  ")
+                
+                # for i in range( int(len(tmp_extract_feats.hidden_states)/2)):
+                #     logging.warning(f" layer:i {tmp_extract_feats.hidden_states[i].shape}  {tmp_extract_feats.hidden_states[i+1].shape} ")
+                
+                
+                
+                for key, value in tmp_extract_feats.items() :
+                    logging.warning(f" self.wav2_pretrained_model len value {len(key)} {len(value)} ")
+                    # logging.warning(f" self.wav2_pretrained_model  {key}: {value[0].shape} ")
 
-            #     for key, value in tmp_extract_feats.items() :
-            #         logging.warning(f" self.wav2_pretrained_model {len(key)} {len(value)} ")
-            #         # logging.warning(f" self.wav2_pretrained_model  {key}: {value[0].shape} ")
-
-
-
+                # encoder_out_lens = feats_lengths.clone().detach()
+                # encoder_out_lens =  torch.div(encoder_out_lens, 4, rounding_mode="trunc").type(torch.int64)
+                # logging.warning(f" encoder_out_lens {encoder_out_lens}")
                 # logging.warning( f"hiddenstates: { len(tmp_extract_feats.hidden_states)}   ")
                 # logging.warning(f" keyslen: { len(tmp_extract_feats.keys) } ")
                 # logging.warning(f" keys: {tmp_extract_feats.keys[0]} ")
@@ -885,28 +916,28 @@ class ESPnetASRModel(AbsESPnetModel):
             # last_hidden_states = tmp_extract_feats.last_hidden_state
             # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
 
-
-
+        encoder_out = extract_feats.hidden_states[12]
+        logging.warning(f" >>>> encoder_out_pre_training {encoder_out.shape}")
         intermediate_outs = None
-        if isinstance(encoder_out, tuple):
-            intermediate_outs = encoder_out[1]
-            encoder_out = encoder_out[0]
+        # if isinstance(encoder_out, tuple):
+        #     intermediate_outs = encoder_out[1]
+        #     encoder_out = encoder_out[0]
 
         # Post-encoder, e.g. NLU
         if self.postencoder is not None:
             encoder_out, encoder_out_lens = self.postencoder(encoder_out, encoder_out_lens)
 
-        assert encoder_out.size(0) == speech.size(0), (
-            encoder_out.size(),
-            speech.size(0),
-        )
-        assert encoder_out.size(1) <= encoder_out_lens.max(), (
-            encoder_out.size(),
-            encoder_out_lens.max(),
-        )
+        # assert encoder_out.size(0) == speech.size(0), (
+        #     encoder_out.size(),
+        #     speech.size(0),
+        # )
+        # assert encoder_out.size(1) <= encoder_out_lens.max(), (
+        #     encoder_out.size(),
+        #     encoder_out_lens.max(),
+        # )
 
-        if intermediate_outs is not None:
-            return (encoder_out, intermediate_outs), encoder_out_lens
+        # if intermediate_outs is not None:
+        #     return (encoder_out, intermediate_outs), encoder_out_lens
 
         return encoder_out, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths
 
