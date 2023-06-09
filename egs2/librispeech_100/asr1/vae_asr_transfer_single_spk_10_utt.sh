@@ -65,13 +65,13 @@ adv_liststr="recon 200"
 
 resume_checkpoint=-1
 max_epoch=200
-batch_bins=26000000
-adv_weight=25.0
+batch_bins=36000000
+adv_weight=2.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
-save_every_epoch=100
+save_every_epoch=1
 vae_annealing_cycle=25
 plot_iiter=2
 latent_dim=64
@@ -81,12 +81,12 @@ accum_grad=1
 
 
 odim_adv=1
-asr_lr=0.002
+asr_lr=0.008
 recon_lr=0.002
 
 
 
-project_name="vae_xtransfer_june_7_utterance_10"
+project_name="vae_xtransfer_june_8_utt_10_asrlr_008"
 
 
 

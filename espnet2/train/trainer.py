@@ -413,6 +413,9 @@ class Trainer:
             #     logging.warning('KL annealing restarted')
 
 
+
+
+
             # 1. Train and validation for one-epoch
             with reporter.observe("train") as sub_reporter:
                 all_steps_are_invalid = cls.train_one_epoch(
@@ -473,10 +476,22 @@ class Trainer:
                 if trainer_options.use_wandb:
                     reporter.wandb_log()
 
+   
+   
+                model_without_wav2 = {param: model.state_dict()[param] for param in model.state_dict() if (not param.startswith("wav2_pretrained_model")) }
+                
+                # for param_tensor in model.state_dict():
+                #     logging.warning(f" {param_tensor} : {model.state_dict()[param_tensor].size()}  ")
+
+                # logging.warning(f" \n\n ******* now ithout wav2_pretrained_ ")
+                # for param_tensor in model_without_wav2:
+                #     logging.warning(f" {param_tensor} : {model_without_wav2[param_tensor].size()}  ")
+                
+                    
                 # 4. Save/Update the checkpoint
                 torch.save(
                     {
-                        "model": model.state_dict(),
+                        "model": model_without_wav2,
                         "reporter": reporter.state_dict(),
                         "optimizers": [o.state_dict() for o in optimizers],
                         "schedulers": [
@@ -492,7 +507,7 @@ class Trainer:
                     # 4.2 Saving every 5th epoch as the checkpoint
                     torch.save(
                         {
-                            "model": model.state_dict(),
+                            "model": model_without_wav2 ,
                             "reporter": reporter.state_dict(),
                             "optimizers": [o.state_dict() for o in optimizers],
                             "schedulers": [
@@ -503,7 +518,7 @@ class Trainer:
                         }, "{}/{}_checkpoint.pth".format( output_dir, iepoch),)
 
                 # 5. Save and log the model and update the link to the best model
-                torch.save(model.state_dict(), output_dir / f"{iepoch}epoch.pth")
+                torch.save(model_without_wav2, output_dir / f"{iepoch}epoch.pth")
 
                 # Creates a sym link latest.pth -> {iepoch}epoch.pth
                 p = output_dir / "latest.pth"
@@ -729,7 +744,7 @@ class Trainer:
 
 
 
-        # fig = plt.figure(figsize=(14,8), dpi=200 )
+        fig = plt.figure(figsize=(14,8), dpi=200 )
 
         # pca = PCA(n_components=10)
         # tsne = TSNE(n_components=2, perplexity=25, verbose=1, random_state=123)
@@ -896,36 +911,36 @@ class Trainer:
                 ######################################################################################################################################################################
                 ######################################################################################################################################################################
 
-            # if( cls.minibatch_counter %  options.plot_iiter == 0):
-            #     feats_plot = retval["feats_plot"]
-            #     recons_feats_plot = retval["recons_feats_plot"]
-            #     aug_feats_plot = retval["aug_feats_plot"]
-            #     # html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
+            if( cls.minibatch_counter %  options.plot_iiter == 0):
+                feats_plot = retval["feats_plot"]
+                recons_feats_plot = retval["recons_feats_plot"]
+                aug_feats_plot = retval["aug_feats_plot"]
+                # html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
 
-            #     # logging.warning(" Uploading utterance : recons {}   ".format(recons_feats_plot.shape))
-            #     ax1 = plt.subplot(3, 1, 1)
-            #     ax1.set_title('Original feats linear')
-            #     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+                # logging.warning(" Uploading utterance : recons {}   ".format(recons_feats_plot.shape))
+                ax1 = plt.subplot(3, 1, 1)
+                ax1.set_title('Original feats linear')
+                plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-            #     ax2 = plt.subplot(3, 1, 2)
-            #     ax2.set_title('Reconstructed feats linear')
-            #     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+                ax2 = plt.subplot(3, 1, 2)
+                ax2.set_title('Reconstructed feats linear')
+                plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-            #     ax3 = plt.subplot(3, 1, 3)
-            #     ax3.set_title('Augment feats linear')
-            #     plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+                ax3 = plt.subplot(3, 1, 3)
+                ax3.set_title('Augment feats linear')
+                plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-            #     fig.subplots_adjust(hspace=0.10, bottom=0.00, wspace=0)
-            #     plt.tight_layout()
-            #     # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-            #     wandb.log({f"spectrogram plot": wandb.Image(plt)})
-            #     fig.clf()
-            #     del feats_plot, recons_feats_plot, aug_feats_plot
-
-
+                fig.subplots_adjust(hspace=0.10, bottom=0.00, wspace=0)
+                plt.tight_layout()
+                # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+                wandb.log({f"spectrogram plot": wandb.Image(plt)})
+                fig.clf()
+                del feats_plot, recons_feats_plot, aug_feats_plot
 
 
-                # if( (current_epoch % 1 == 0) and (iiter % options.plot_iiter == 0 )):
+
+
+                # if( (current_epoch % 20 == 0) and (iiter % options.plot_iiter == 0 )):
                 #     with torch.inference_mode():
                 #         recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
                 #         orig_specs = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")

@@ -214,8 +214,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-        self.fc_pretrained = torch.nn.Linear(1024, self.final_encoder_dim)
-        self.pretrained_embed = Conv2dSubsampling2(self.embed_input_size, 1024, dropout_rate=0.0)
+        self.fc_pretrained = torch.nn.Linear(768, self.final_encoder_dim)
+        self.pretrained_embed = Conv2dSubsampling2(self.embed_input_size, 768, dropout_rate=0.0)
 
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
@@ -472,10 +472,11 @@ class ESPnetASRModel(AbsESPnetModel):
         ########################################################################################################################################################################################################################################################################
         ########################################################################################################################################################################################################################################################################
 
-        # configuration = Wav2Vec2ConformerConfig(hidden_size=256)
-        # # processor = .from_pretrained("facebook/wav2vec2-large-960h-lv60-self")
-        # self.wav2_feature_extractor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
-        # self.wav2_pretrained_model =  Wav2Vec2ConformerModel(configuration).from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/")
+        configuration = Wav2Vec2Config(hidden_size=768)
+        # processor = .from_pretrained("facebook/wav2vec2-large-960h-lv60-self")
+        self.wav2_feature_extractor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
+        self.wav2_processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/")
+        self.wav2_pretrained_model =  Wav2Vec2Model(configuration).from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/").to(text.device)
 
         ########################################################################################################################################################################################################################################################################
         ########################################################################################################################################################################################################################################################################
@@ -484,13 +485,16 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # "facebook/wav2vec2-conformer-rel-pos-large"
         # Initializing a Wav2Vec2Conformer facebook/wav2vec2-conformer-rel-pos-large style configuration
-        self.feature_extractor = Wav2Vec2FeatureExtractor(feature_size=1, sampling_rate=16000, padding=False, do_normalize=False, return_attention_mask=True)
-        # tokenizer = Wav2Vec2CTCTokenizer.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
-        # processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer = tokenizer)
-        # processor =  Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
-        configuration = Wav2Vec2ConformerConfig()
-        self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
+        # self.feature_extractor = Wav2Vec2FeatureExtractor(feature_size=1, sampling_rate=16000, padding=False, do_normalize=False, return_attention_mask=True)
+        # # tokenizer = Wav2Vec2CTCTokenizer.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
+        # # processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer = tokenizer)
+        # # processor =  Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
+        # configuration = Wav2Vec2ConformerConfig()
+        # self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
 
+        ########################################################################################################################################################################################################################################################################
+        ########################################################################################################################################################################################################################################################################
+        ########################################################################################################################################################################################################################################################################
 
 
 
@@ -716,9 +720,9 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["loss_ctc"] = loss_ctc
         retval["loss_att"] = loss_att
 
-        # retval["feats_plot"] = feats[0].detach().cpu().numpy()
-        # retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
-        # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
+        retval["feats_plot"] = feats[0].detach().cpu().numpy()
+        retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
+        retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
 
         return retval
@@ -823,67 +827,26 @@ class ESPnetASRModel(AbsESPnetModel):
             # logging.warning(f" Original  {encoder_out_lens.shape} ")
 
 
-
-
-
-
-            # inputs= self.feature_extractor(speech, sampling_rate=16000, return_tensors="pt", padding=False)
-            # for key, value in inputs.items():
-            #     logging.warning(f" {key} {value.shape}")
-                
-            # # input_speech = {key: inputs[key].to(feats.device) }
-
+            input_speech = self.wav2_processor(speech, return_tensors="pt", padding=False).input_values.squeeze().to(feats.device)
+            
             with torch.no_grad():
-                tmp_extract_feats = self.wav2_pretrained_model(speech, output_hidden_states=True, output_attentions=True, return_dict=True)
-                logging.warning(f" {dir(tmp_extract_feats)} ")
-
+                tmp_extract_feats = self.wav2_pretrained_model(input_speech, output_hidden_states=True, output_attentions=True, return_dict=True)
                 masks = (~make_pad_mask(feats_lengths)[:, None, :])
                 xs_pad, olens = self.pretrained_embed(feats, masks)
-                # from pprint import pprint
-                # pprint(vars(tmp_extract_feats))
-                # last_hidden_state, extract_features, hidden_states
-                # logging.warning(f" >>   {dir(last_hidden_state)}")
-                # logging.warning(f" >>    {dir(extract_features)}")
-                # logging.warning(f" >>  {dir(hidden_states)} ")
-                
-                
-                # for attr in dir(tmp_extract_feats) :
-                #     if not attr.startswith('__'):
-                #         vv = getattr(tmp_extract_feats, attr)
-                #         try:
-                #             vvshape = vv.shape
-                #         except:
-                #             vvshape = None
-                #         logging.warning( f" {str(attr)}  value=  {vvshape} ")
-                
-                
-                
-                # logging.warning(f" >> Huggingface: extracted features {extract_features.extract_features.shape}  {type(tmp_extract_feats)} ")
-                # # logging.warning(f"   {len(tmp_extract_feats.hidden_states)} {tmp_extract_feats.hidden_states[0].shape} {tmp_extract_feats.hidden_states[1].shape}  ")
-                
-                # for i in range( int(len(tmp_extract_feats.hidden_states)/2)):
-                #     logging.warning(f" layer:i {tmp_extract_feats.hidden_states[i].shape}  {tmp_extract_feats.hidden_states[i+1].shape} ")
-
-                for key, value in tmp_extract_feats.items() :
-                    logging.warning(f" >> keys {key} {len(value)} ")
-                    for idx in range(len(value)):
-                        logging.warning(f"  {value[idx].shape} ")
-                    
-                encoder_out_lens =  olens.squeeze(1).sum(1).to(feats.device)
-                # encoder_out_lens =  torch.ceil(torch.div(encoder_out_lens, 2)).type(torch.int64)
-                logging.warning(f" encoder_out_lens {encoder_out_lens}")
-                # logging.warning( f"hiddenstates: { len(tmp_extract_feats.hidden_states)}   ")
-                # logging.warning(f" keyslen: { len(tmp_extract_feats.keys) } ")
-                # logging.warning(f" keys: {tmp_extract_feats.keys[0]} ")
+                # out_sum = summary(self.wav2_pretrained_model, input_data=[speech], mode="eval", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
+                # logging.warning(f" summary_wav2 {out_sum} ")
 
 
+            # https://huggingface.co/docs/transformers/v4.29.1/en/model_doc/wav2vec2-conformer#transformers.Wav2Vec2ConformerConfig
+            # indexing 7th layer hidden state https://huggingface.co/transformers/v4.5.1/_modules/transformers/models/wav2vec2/modeling_wav2vec2.html#Wav2Vec2Model
             encoder_out = self.fc_pretrained(tmp_extract_feats.hidden_states[12])
-            logging.warning(f" >>>> encoder_out_pre_training {encoder_out.shape} trainable {encoder_out.requires_grad} ")
+            encoder_out_lens =  olens.squeeze(1).sum(1).to(feats.device)
             
             
+            logging.warning(f" >>>> encoder_out_pre_training {encoder_out.shape} encoder_out_trainable {encoder_out.requires_grad}    self.fc_pretrained_requires_grad: {self.fc_pretrained.weight.requires_grad} ")
             # last_hidden_states = tmp_extract_feats.last_hidden_state
             # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
-            
+        
         ############################################################################################################################################
         ############################################################################################################################################
         ############################################################################################################################################
