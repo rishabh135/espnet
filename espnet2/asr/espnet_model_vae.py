@@ -214,7 +214,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-        self.fc_pretrained = torch.nn.Linear(768, self.final_encoder_dim)
+        self.disentangling_mapping_network = torch.nn.Sequential(torch.nn.Linear(768, self.final_encoder_dim), torch.nn.ReLU(), torch.nn.Linear(self.final_encoder_dim, self.final_encoder_dim), torch.nn.ReLU(), torch.nn.Linear(self.final_encoder_dim, self.final_encoder_dim))
         self.pretrained_embed = Conv2dSubsampling2(self.embed_input_size, 768, dropout_rate=0.0)
 
 
@@ -830,20 +830,40 @@ class ESPnetASRModel(AbsESPnetModel):
             input_speech = self.wav2_processor(speech, return_tensors="pt", padding=False).input_values.squeeze().to(feats.device)
             
             with torch.no_grad():
-                tmp_extract_feats = self.wav2_pretrained_model(input_speech, output_hidden_states=True, output_attentions=True, return_dict=True)
+                
+                # last_hidden_state, extract_features, hidden_states
+                # logging.warning(f" >>   {dir(last_hidden_state)}")
+                # logging.warning(f" >>    {dir(extract_features)}")
+                # logging.warning(f" >>  {dir(hidden_states)} ")  attention_mask=olens.squeeze()
+
+
                 masks = (~make_pad_mask(feats_lengths)[:, None, :])
                 xs_pad, olens = self.pretrained_embed(feats, masks)
+                logging.warning(f" input_speech {input_speech.shape} olens {olens.shape}  ")
+                tmp_extract_feats = self.wav2_pretrained_model(input_speech, output_hidden_states=True, output_attentions=True, return_dict=True)
+                extract_output_lengths = self.wav2_pretrained_model._get_feat_extract_output_lengths(speech_lengths)
+                logging.warning(f" >> feats_length: {feats_lengths} speech_lengths {speech_lengths}  extract_output_lengths {extract_output_lengths} ")
+                
+                
                 # out_sum = summary(self.wav2_pretrained_model, input_data=[speech], mode="eval", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
                 # logging.warning(f" summary_wav2 {out_sum} ")
+                logging.warning(f" >>> {dir(tmp_extract_feats)}")
+                for key, value in tmp_extract_feats.items() :
+                    logging.warning(f">> Key: {key}   length: {len(value)} ")
+                    for idx in range(len(value)):
+                        logging.warning(f" {value[idx].shape}")
+
+
 
 
             # https://huggingface.co/docs/transformers/v4.29.1/en/model_doc/wav2vec2-conformer#transformers.Wav2Vec2ConformerConfig
             # indexing 7th layer hidden state https://huggingface.co/transformers/v4.5.1/_modules/transformers/models/wav2vec2/modeling_wav2vec2.html#Wav2Vec2Model
-            encoder_out = self.fc_pretrained(tmp_extract_feats.hidden_states[12])
+            encoder_out_tmp = tmp_extract_feats.hidden_states[6]
+            encoder_out = self.disentangling_mapping_network(encoder_out_tmp)
             encoder_out_lens =  olens.squeeze(1).sum(1).to(feats.device)
             
             
-            logging.warning(f" >>>> encoder_out_pre_training {encoder_out.shape} encoder_out_trainable {encoder_out.requires_grad}    self.fc_pretrained_requires_grad: {self.fc_pretrained.weight.requires_grad} ")
+            logging.warning(f" >>>> encoder_out_pre_training {encoder_out.shape} encoder_out_trainable {encoder_out.requires_grad}    self.disentangling_mapping_network_requires_grad: {self.disentangling_mapping_network[0].weight.requires_grad} ")
             # last_hidden_states = tmp_extract_feats.last_hidden_state
             # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
         

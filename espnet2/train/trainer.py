@@ -479,15 +479,7 @@ class Trainer:
    
    
                 model_without_wav2 = {param: model.state_dict()[param] for param in model.state_dict() if (not param.startswith("wav2_pretrained_model")) }
-                
-                # for param_tensor in model.state_dict():
-                #     logging.warning(f" {param_tensor} : {model.state_dict()[param_tensor].size()}  ")
 
-                # logging.warning(f" \n\n ******* now ithout wav2_pretrained_ ")
-                # for param_tensor in model_without_wav2:
-                #     logging.warning(f" {param_tensor} : {model_without_wav2[param_tensor].size()}  ")
-                
-                    
                 # 4. Save/Update the checkpoint
                 torch.save(
                     {

@@ -59,21 +59,21 @@ dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
-adv_liststr="recon 200"
+adv_liststr="recon 800"
 # adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
 
 resume_checkpoint=-1
-max_epoch=200
-batch_bins=36000000
+max_epoch=800
+batch_bins=46000000
 adv_weight=2.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
-save_every_epoch=1
-vae_annealing_cycle=25
-plot_iiter=2
+save_every_epoch=50
+vae_annealing_cycle=50
+plot_iiter=20
 latent_dim=64
 accum_grad=1
 
@@ -81,12 +81,12 @@ accum_grad=1
 
 
 odim_adv=1
-asr_lr=0.008
+asr_lr=0.010
 recon_lr=0.002
 
 
 
-project_name="vae_xtransfer_june_8_utt_10_asrlr_008"
+project_name="vae_xtransfer_june_9_utt_10_asrlr_010"
 
 
 

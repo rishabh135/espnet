@@ -28,10 +28,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-
-
-
-project_name="vae_xtransfer_june_8_utt_10_asrlr_008"
+project_name="vae_xtransfer_june_9_utt_10_asrlr_010"
 
 
 
