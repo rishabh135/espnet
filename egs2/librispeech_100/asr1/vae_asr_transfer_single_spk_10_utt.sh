@@ -86,8 +86,10 @@ recon_lr=0.002
 
 
 
-project_name="vae_xtransfer_june_9_utt_10_asrlr_010"
 
+
+
+project_name="vae_xtransfer_june_13_utt_10_asrlr_010"
 
 
 experiment_name="latent_dim_64_with_spembs"

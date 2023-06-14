@@ -79,11 +79,12 @@ cudnn_benchmark: false
 unused_parameters: true
 optim: adam
 optim_conf:
-    # lr: 0.006
+    lr: 0.020
     weight_decay: 0.000001
 scheduler: warmuplr
 scheduler_conf:
-    warmup_steps: 50
+    warmup_steps: 20
+
 
 specaug: specaug
 specaug_conf:
