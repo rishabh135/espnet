@@ -214,8 +214,8 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-        # self.disentangling_mapping_network = torch.nn.Sequential(torch.nn.Linear(768, self.final_encoder_dim), torch.nn.ReLU(), torch.nn.Linear(self.final_encoder_dim, self.final_encoder_dim), torch.nn.ReLU(), torch.nn.Linear(self.final_encoder_dim, self.final_encoder_dim))
-        # self.pretrained_embed = Conv2dSubsampling2(self.embed_input_size, 768, dropout_rate=0.0)
+        self.disentangling_mapping_network = torch.nn.Sequential(torch.nn.Linear(768, self.final_encoder_dim), torch.nn.ReLU(), torch.nn.Linear(self.final_encoder_dim, self.final_encoder_dim), torch.nn.ReLU(), torch.nn.Linear(self.final_encoder_dim, self.final_encoder_dim))
+        self.pretrained_embed = Conv2dSubsampling2(self.embed_input_size, 768, dropout_rate=0.0)
 
 
         if not hasattr(self.encoder, "interctc_use_conditioning"):
@@ -472,11 +472,11 @@ class ESPnetASRModel(AbsESPnetModel):
         ########################################################################################################################################################################################################################################################################
         ########################################################################################################################################################################################################################################################################
 
-        # configuration = Wav2Vec2Config(hidden_size=768)
+        configuration = Wav2Vec2Config(hidden_size=768)
         # # processor = .from_pretrained("facebook/wav2vec2-large-960h-lv60-self")
-        # self.wav2_feature_extractor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
-        # self.wav2_processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/")
-        # self.wav2_pretrained_model =  Wav2Vec2Model(configuration).from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/").to(text.device)
+        self.wav2_feature_extractor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
+        self.wav2_processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/")
+        self.wav2_pretrained_model =  Wav2Vec2Model(configuration).from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/").to(text.device)
 
         ########################################################################################################################################################################################################################################################################
         ########################################################################################################################################################################################################################################################################
@@ -824,7 +824,7 @@ class ESPnetASRModel(AbsESPnetModel):
             encoder_out, encoder_out_lens, _ = self.encoder( feats, feats_lengths, ctc=self.ctc )
         else:
             encoder_out, encoder_out_lens, _ = self.encoder(aug_feats, aug_feats_lengths)
-            # logging.warning(f" Original  {encoder_out_lens.shape} ")
+            logging.warning(f" Original  {encoder_out_lens.shape} ")
 
 
 
@@ -835,8 +835,8 @@ class ESPnetASRModel(AbsESPnetModel):
             ############################################################################################################################################
 
 
-            # input_speech = self.wav2_processor(speech, return_tensors="pt", padding=False).input_values.squeeze().to(feats.device)
-            # with torch.no_grad():
+            input_speech = self.wav2_processor(speech, return_tensors="pt", padding=False).input_values.squeeze().to(feats.device)
+            with torch.no_grad():
                 
             #     # last_hidden_state, extract_features, hidden_states
             #     # logging.warning(f" >>   {dir(last_hidden_state)}")
@@ -844,11 +844,11 @@ class ESPnetASRModel(AbsESPnetModel):
             #     # logging.warning(f" >>  {dir(hidden_states)} ")  attention_mask=olens.squeeze()
 
 
-            #     masks = (~make_pad_mask(feats_lengths)[:, None, :])
-            #     xs_pad, olens = self.pretrained_embed(feats, masks)
-            #     # logging.warning(f" input_speech {input_speech.shape} olens {olens.shape}  ")
-            #     tmp_extract_feats = self.wav2_pretrained_model(input_speech, output_hidden_states=True, output_attentions=True, return_dict=True)
-            #     extract_output_lengths = self.wav2_pretrained_model._get_feat_extract_output_lengths(speech_lengths)
+                masks = (~make_pad_mask(feats_lengths)[:, None, :])
+                xs_pad, olens = self.pretrained_embed(feats, masks)
+                # logging.warning(f" input_speech {input_speech.shape} olens {olens.shape}  ")
+                tmp_extract_feats = self.wav2_pretrained_model(input_speech, output_hidden_states=True, output_attentions=True, return_dict=True)
+                extract_output_lengths = self.wav2_pretrained_model._get_feat_extract_output_lengths(speech_lengths)
                 
                 
                 
@@ -874,9 +874,9 @@ class ESPnetASRModel(AbsESPnetModel):
 
             # https://huggingface.co/docs/transformers/v4.29.1/en/model_doc/wav2vec2-conformer#transformers.Wav2Vec2ConformerConfig
             # indexing 7th layer hidden state https://huggingface.co/transformers/v4.5.1/_modules/transformers/models/wav2vec2/modeling_wav2vec2.html#Wav2Vec2Model
-            # encoder_out_tmp = tmp_extract_feats.hidden_states[6]
-            # encoder_out = self.disentangling_mapping_network(encoder_out_tmp)
-            # encoder_out_lens =  olens.squeeze(1).sum(1).to(feats.device)
+            encoder_out_tmp = tmp_extract_feats.hidden_states[6]
+            encoder_out = self.disentangling_mapping_network(encoder_out_tmp)
+            encoder_out_lens =  olens.squeeze(1).sum(1).to(feats.device)
             
             
             # logging.warning(f" >>>> encoder_out_pre_training {encoder_out.shape} encoder_out_trainable {encoder_out.requires_grad}    self.disentangling_mapping_network_requires_grad: {self.disentangling_mapping_network[0].weight.requires_grad} ")
