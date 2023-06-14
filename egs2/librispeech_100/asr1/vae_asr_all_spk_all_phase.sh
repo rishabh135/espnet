@@ -63,7 +63,7 @@ vae_flag="True"
 # adv_liststr="recon 100"
 adv_liststr="recon 5 asr 30 adv 30 asradv 30 reinit_adv 30"
 
-resume_checkpoint=35
+resume_checkpoint=30
 max_epoch=125
 batch_bins=28000000
 adv_weight=1.0
@@ -71,7 +71,7 @@ adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
-save_every_epoch=5
+save_every_epoch=1
 vae_annealing_cycle=100
 plot_iiter=200
 latent_dim=80
