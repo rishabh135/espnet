@@ -65,7 +65,7 @@ adv_liststr="recon 5 asr 30 adv 30 asradv 30 reinit_adv 30"
 
 resume_checkpoint=35
 max_epoch=125
-batch_bins=33000000
+batch_bins=28000000
 adv_weight=1.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0

@@ -198,6 +198,9 @@ class TrainerOptions:
     adv_loss_weight: float
     vae_weight_factor: float
     plot_iiter: int
+    asr_lr: float
+    adv_lr: float
+    recon_lr: float
 
 class Trainer:
     """Trainer having a optimizer.
@@ -725,7 +728,7 @@ class Trainer:
         param_group_length = len(optimizers[0].param_groups)
         first_group_lr = optimizers[0].param_groups[0]['lr']
         last_group_lr = optimizers[0].param_groups[-1]['lr']
-        logging.warning(" --->>>>>  adv_mode {}  trainer {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.save_every_epoch, adv_name, float(first_group_lr), float(last_group_lr), param_group_length))
+        logging.warning(" --->>>>>  adv_mode {} asr_lr {}  adv_lr {}  adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.asr_lr, options.adv_lr, adv_name, float(first_group_lr), float(last_group_lr), param_group_length))
 
         # tmp = float((current_epoch)% options.vae_annealing_cycle)/options.vae_annealing_cycle
         # new_lr = current_flr *0.5*(1+np.cos(tmp * np.pi))
@@ -903,31 +906,31 @@ class Trainer:
                 ######################################################################################################################################################################
                 ######################################################################################################################################################################
 
-            if( cls.minibatch_counter %  options.plot_iiter == 0):
-                feats_plot = retval["feats_plot"]
-                recons_feats_plot = retval["recons_feats_plot"]
-                aug_feats_plot = retval["aug_feats_plot"]
-                # html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
+            # if( cls.minibatch_counter %  options.plot_iiter == 0):
+            #     feats_plot = retval["feats_plot"]
+            #     recons_feats_plot = retval["recons_feats_plot"]
+            #     aug_feats_plot = retval["aug_feats_plot"]
+            #     # html_file_name = "./with_working_audio_may_3_encoder_aug_feats.png"
 
-                # logging.warning(" Uploading utterance : recons {}   ".format(recons_feats_plot.shape))
-                ax1 = plt.subplot(3, 1, 1)
-                ax1.set_title('Original feats linear')
-                plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+            #     # logging.warning(" Uploading utterance : recons {}   ".format(recons_feats_plot.shape))
+            #     ax1 = plt.subplot(3, 1, 1)
+            #     ax1.set_title('Original feats linear')
+            #     plot_spectrogram(ax1, feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                ax2 = plt.subplot(3, 1, 2)
-                ax2.set_title('Reconstructed feats linear')
-                plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+            #     ax2 = plt.subplot(3, 1, 2)
+            #     ax2.set_title('Reconstructed feats linear')
+            #     plot_spectrogram(ax2, recons_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                ax3 = plt.subplot(3, 1, 3)
-                ax3.set_title('Augment feats linear')
-                plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
+            #     ax3 = plt.subplot(3, 1, 3)
+            #     ax3.set_title('Augment feats linear')
+            #     plot_spectrogram(ax3, aug_feats_plot.T, fs=16000, mode='linear', frame_shift=10, bottom=False, labelbottom=False)
 
-                fig.subplots_adjust(hspace=0.10, bottom=0.00, wspace=0)
-                plt.tight_layout()
-                # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
-                wandb.log({f"spectrogram plot": wandb.Image(plt)})
-                fig.clf()
-                del feats_plot, recons_feats_plot, aug_feats_plot
+            #     fig.subplots_adjust(hspace=0.10, bottom=0.00, wspace=0)
+            #     plt.tight_layout()
+            #     # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
+            #     wandb.log({f"spectrogram plot": wandb.Image(plt)})
+            #     fig.clf()
+            #     del feats_plot, recons_feats_plot, aug_feats_plot
 
 
 

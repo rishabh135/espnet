@@ -720,9 +720,9 @@ class ESPnetASRModel(AbsESPnetModel):
         retval["loss_ctc"] = loss_ctc
         retval["loss_att"] = loss_att
 
-        retval["feats_plot"] = feats[0].detach().cpu().numpy()
-        retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
-        retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
+        # retval["feats_plot"] = feats[0].detach().cpu().numpy()
+        # retval["recons_feats_plot"] = recons_feats[0].detach().cpu().numpy()
+        # retval["aug_feats_plot"] = aug_feats[0].detach().cpu().numpy()
 
 
         return retval
@@ -839,19 +839,22 @@ class ESPnetASRModel(AbsESPnetModel):
 
                 masks = (~make_pad_mask(feats_lengths)[:, None, :])
                 xs_pad, olens = self.pretrained_embed(feats, masks)
-                logging.warning(f" input_speech {input_speech.shape} olens {olens.shape}  ")
+                # logging.warning(f" input_speech {input_speech.shape} olens {olens.shape}  ")
                 tmp_extract_feats = self.wav2_pretrained_model(input_speech, output_hidden_states=True, output_attentions=True, return_dict=True)
                 extract_output_lengths = self.wav2_pretrained_model._get_feat_extract_output_lengths(speech_lengths)
-                logging.warning(f" >> feats_length: {feats_lengths} speech_lengths {speech_lengths}  extract_output_lengths {extract_output_lengths} ")
+                # logging.warning(f" >> feats_length: {feats_lengths} speech_lengths {speech_lengths}  extract_output_lengths {extract_output_lengths} ")
                 
                 
                 # out_sum = summary(self.wav2_pretrained_model, input_data=[speech], mode="eval", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
                 # logging.warning(f" summary_wav2 {out_sum} ")
-                logging.warning(f" >>> {dir(tmp_extract_feats)}")
-                for key, value in tmp_extract_feats.items() :
-                    logging.warning(f">> Key: {key}   length: {len(value)} ")
-                    for idx in range(len(value)):
-                        logging.warning(f" {value[idx].shape}")
+
+
+                
+                # logging.warning(f" >>> {dir(tmp_extract_feats)}")
+                # for key, value in tmp_extract_feats.items() :
+                #     logging.warning(f">> Key: {key}   length: {len(value)} ")
+                #     for idx in range(len(value)):
+                #         logging.warning(f" {value[idx].shape}")
 
 
 
@@ -863,7 +866,7 @@ class ESPnetASRModel(AbsESPnetModel):
             encoder_out_lens =  olens.squeeze(1).sum(1).to(feats.device)
             
             
-            logging.warning(f" >>>> encoder_out_pre_training {encoder_out.shape} encoder_out_trainable {encoder_out.requires_grad}    self.disentangling_mapping_network_requires_grad: {self.disentangling_mapping_network[0].weight.requires_grad} ")
+            # logging.warning(f" >>>> encoder_out_pre_training {encoder_out.shape} encoder_out_trainable {encoder_out.requires_grad}    self.disentangling_mapping_network_requires_grad: {self.disentangling_mapping_network[0].weight.requires_grad} ")
             # last_hidden_states = tmp_extract_feats.last_hidden_state
             # out_sum = summary(self.encoder, input_data=[feats, feats_lengths],mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
         
