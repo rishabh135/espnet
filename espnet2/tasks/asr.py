@@ -502,24 +502,33 @@ class ASRTask(AbsTask):
             preencoder = None
 
         # 4. Encoder
-        encoder_class = encoder_choices.get_class(args.encoder)
-        encoder = encoder_class(input_size=input_size, **args.encoder_conf)
-
-
+        # encoder_class = encoder_choices.get_class(args.encoder)
+        # encoder = encoder_class(input_size=input_size, **args.encoder_conf)
+        
 
 
 
         # 5. Post-encoder block
         # NOTE(kan-bayashi): Use getattr to keep the compatibility
-        encoder_output_size = encoder.output_size()
-        if getattr(args, "postencoder", None) is not None:
-            postencoder_class = postencoder_choices.get_class(args.postencoder)
-            postencoder = postencoder_class(
-                input_size=encoder_output_size, **args.postencoder_conf
-            )
-            encoder_output_size = postencoder.output_size()
-        else:
-            postencoder = None
+        
+        # encoder_output_size = 256
+        
+        # encoder_output_size = encoder.output_size()
+        # logging.warning(f" encoder_output_size  {encoder_output_size} ")
+        # if getattr(args, "postencoder", None) is not None:
+        #     postencoder_class = postencoder_choices.get_class(args.postencoder)
+        #     postencoder = postencoder_class(
+        #         input_size=encoder_output_size, **args.postencoder_conf
+        #     )
+        #     encoder_output_size = postencoder.output_size()
+        # else:
+        #     postencoder = None
+
+
+        encoder = None
+        postencoder = None
+        encoder_output_size = 256
+
 
         # 5. Decoder
         decoder_class = decoder_choices.get_class(args.decoder)

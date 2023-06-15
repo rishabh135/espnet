@@ -146,7 +146,7 @@ class ESPnetASRModel(AbsESPnetModel):
         specaug: Optional[AbsSpecAug],
         normalize: Optional[AbsNormalize],
         preencoder: Optional[AbsPreEncoder],
-        encoder: AbsEncoder,
+        encoder: Optional[AbsEncoder],
         adversarial_branch: Optional[SpeakerAdv],
         postencoder: Optional[AbsPostEncoder],
         decoder: AbsDecoder,
@@ -218,12 +218,11 @@ class ESPnetASRModel(AbsESPnetModel):
         self.pretrained_embed = Conv2dSubsampling2(self.embed_input_size, 1024, dropout_rate=0.0)
 
 
-        if not hasattr(self.encoder, "interctc_use_conditioning"):
-            self.encoder.interctc_use_conditioning = False
-        if self.encoder.interctc_use_conditioning:
-            self.encoder.conditioning_layer = torch.nn.Linear(
-                vocab_size, self.encoder.output_size()
-            )
+        if(self.encoder is not None):
+            if not hasattr(self.encoder, "interctc_use_conditioning"):
+                self.encoder.interctc_use_conditioning = False
+            if self.encoder.interctc_use_conditioning:
+                self.encoder.conditioning_layer = torch.nn.Linear(vocab_size, self.encoder.output_size())
 
         self.use_transducer_decoder = joint_network is not None
 
@@ -857,7 +856,7 @@ class ESPnetASRModel(AbsESPnetModel):
                 masks = (~make_pad_mask(feats_lengths)[:, None, :])
                 xs_pad, olens = self.pretrained_embed(feats, masks)
                 # logging.warning(f" input_speech {input_speech.shape} olens {olens.shape}  ")
-                tmp_extract_feats = self.wav2_pretrained_model(input_speech.input_values, attention_mask=input_speech.attention_mask, output_hidden_states=True, output_attentions=True, return_dict=True)
+                tmp_extract_feats = self.wav2_pretrained_model(input_speech.input_values.squeeze().to(feats.device), output_hidden_states=True, output_attentions=True, return_dict=True)
                 extract_output_lengths = self.wav2_pretrained_model._get_feat_extract_output_lengths(speech_lengths)
                 logging.warning(f" extracted_output_lengths: {extract_output_lengths}   ")
                 
