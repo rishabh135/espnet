@@ -472,11 +472,15 @@ class ESPnetASRModel(AbsESPnetModel):
         ########################################################################################################################################################################################################################################################################
         ########################################################################################################################################################################################################################################################################
 
-        # configuration = Wav2Vec2Config(hidden_size=768)
         # # processor = .from_pretrained("facebook/wav2vec2-large-960h-lv60-self")
-        # self.wav2_feature_extractor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
-        # self.wav2_processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/")
-        # self.wav2_pretrained_model =  Wav2Vec2Model(configuration).from_pretrained("facebook/wav2vec2-base-960h", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/").to(text.device)
+        # cache_d = "/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/"
+                
+        # configuration = Wav2Vec2Config(hidden_size=768)
+        
+        # model_name = "facebook/wav2vec2-base-960h"
+        # self.wav2_feature_extractor = Wav2Vec2Processor.from_pretrained(model_name, cache_dir=cache_d )
+        # self.wav2_processor = Wav2Vec2Processor.from_pretrained(model_name, cache_dir=cache_d)
+        # self.wav2_pretrained_model =  Wav2Vec2Model(configuration).from_pretrained(model_name, cache_dir=cache_d).to(text.device)
 
         ########################################################################################################################################################################################################################################################################
         ########################################################################################################################################################################################################################################################################
@@ -489,8 +493,11 @@ class ESPnetASRModel(AbsESPnetModel):
         # # tokenizer = Wav2Vec2CTCTokenizer.from_pretrained("facebook/wav2vec2-conformer-rel-pos-large", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
         # # processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer = tokenizer)
         # # processor =  Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" )
-        # configuration = Wav2Vec2ConformerConfig()
-        # self.wav2_pretrained_model = Wav2Vec2ConformerModel.from_pretrained("facebook/wav2vec2-conformer-rope-large-960h-ft", cache_dir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/wav2vec2conf/" ).to(text.device)
+
+        # configuration = Wav2Vec2ConformerConfig(hidden_size=768)
+        # model_name = "facebook/wav2vec2-conformer-rope-large-960h-ft"
+        # self.wav2_processor = Wav2Vec2Processor.from_pretrained(model_name)
+        # self.wav2_pretrained_model = Wav2Vec2ConformerModel(configuration).from_pretrained( model_name, cache_dir=cache_d).to(text.device)
 
         ########################################################################################################################################################################################################################################################################
         ########################################################################################################################################################################################################################################################################
