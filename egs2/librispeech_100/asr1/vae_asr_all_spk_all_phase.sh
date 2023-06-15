@@ -66,16 +66,16 @@ vae_flag="True"
 # adv_liststr="recon 100"
 adv_liststr="recon 4 asr 20 adv 20 asradv 20 reinit_adv 20"
 
-resume_checkpoint=35
+resume_checkpoint=-1
 max_epoch=84
-batch_bins=31000000
+batch_bins=22000000
 adv_weight=2.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 vae_weight_factor=0.8
 save_every_epoch=1
-vae_annealing_cycle=100
+vae_annealing_cycle=200
 plot_iiter=200
 latent_dim=80
 accum_grad=4
@@ -84,7 +84,8 @@ asr_lr=0.002
 recon_lr=0.002
 
 
-project_name="vae_xworkingvae_june_15_all_speakers_speed_one"
+project_name="vae_xworkingvae_single_speed_larger_conformer_june_16"
+
 experiment_name="latent_dim_80_with_spembs"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.

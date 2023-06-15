@@ -16,20 +16,19 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 
 
-
 data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_single_speed_version_xvector/original_data
 
 
-# project_name="vae_workingvae_may_25_all_speakers_recon"
+project_name="vae_xworkingvae_june_16_all_speakers_speed_one"
 
 
-project_name="vae_single_speed_dataset"
+
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_all_spk_vae.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_single_speed_all_spk.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 
@@ -37,7 +36,7 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ./vae_asr_all_single_speed_vae.sh \
-    --skip_data_prep false \
+    --skip_data_prep true \
     --skip_train false \
     --skip_eval false \
     --lang en \
@@ -58,5 +57,3 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --test_sets "${test_sets}" \
     --lm_train_text "${data_dd}/${train_set}/text" \
 
-
-# --speed_perturb_factors "1.0" \

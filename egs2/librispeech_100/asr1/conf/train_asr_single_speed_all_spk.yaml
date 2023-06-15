@@ -1,9 +1,9 @@
 encoder: conformer
 encoder_conf:
     output_size: 256
-    attention_heads: 4
-    linear_units: 1024
-    num_blocks: 12
+    attention_heads: 2
+    linear_units: 512
+    num_blocks: 1
     dropout_rate: 0.1
     positional_dropout_rate: 0.1
     attention_dropout_rate: 0.1
@@ -27,24 +27,6 @@ decoder_conf:
     self_attention_dropout_rate: 0.1
     src_attention_dropout_rate: 0.1
 
-# recon_decoder: transformer
-# recon_decoder_conf:
-#     attention_heads: 2
-#     linear_units: 1024
-#     num_blocks: 3
-#     dropout_rate: 0.1
-#     positional_dropout_rate: 0.1
-#     self_attention_dropout_rate: 0.1
-#     src_attention_dropout_rate: 0.1
-
-# recon_decoder: transducer
-# decoder_conf:
-#     rnn_type: lstm
-#     num_layers: 1
-#     hidden_size: 512
-#     dropout: 0.1
-#     dropout_embed: 0.1
-
 model_conf:
     ctc_weight: 0.3
     lsm_weight: 0.1
@@ -62,16 +44,16 @@ num_workers: 8
 sort_in_batch: descending       # how to sort data in making batch
 sort_batch: descending          # how to sort created batches
 batch_type: numel
-batch_bins: 16000000
+batch_bins: 60000000
 accum_grad: 4
-max_epoch: 130
+max_epoch: 230
 patience: none
 init: none
 best_model_criterion:
 -   - valid
     - acc
     - max
-keep_nbest_models: 2
+keep_nbest_models: 3
 
 use_amp: true
 cudnn_deterministic: true
@@ -79,11 +61,11 @@ cudnn_benchmark: false
 unused_parameters: true
 optim: adam
 optim_conf:
-    # lr: 0.006
+    lr: 0.002
     weight_decay: 0.000001
 scheduler: warmuplr
 scheduler_conf:
-    warmup_steps: 50
+    warmup_steps: 15000
 
 specaug: specaug
 specaug_conf:
@@ -100,48 +82,3 @@ specaug_conf:
     - 0.
     - 0.05
     num_time_mask: 5
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# scheduler: CosineAnnealingWarmRestarts
-# scheduler_conf:
-#     T_0: 20
-
-
-# scheduler: CosineAnnealingWarmupRestarts
-# scheduler_conf:
-#     first_cycle_steps: 20
-#     cycle_mult: 1.0
-#     max_lr: 0.008
-#     min_lr: 0.004
-#     warmup_steps: 10
-#     gamma: 0.8
-
-
-
-# scheduler: CosineAnnealingLR
-# scheduler_conf:
-#     T_max: 100
-#     eta_min: 0
-#     last_epoch: -1
-#     verbose: True
-
-

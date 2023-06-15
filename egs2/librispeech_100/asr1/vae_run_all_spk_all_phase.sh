@@ -26,13 +26,13 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 # project_name="vae_workingvae_may_30_all_speakers_all_recon"
 
 
-project_name="vae_xworkingvae_june_15_all_speakers_speed_one"
+project_name="vae_xworkingvae_single_speed_larger_conformer_june_16"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_all_spk_vae.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae_single_spk_large_conformer.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 
