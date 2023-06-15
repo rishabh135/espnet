@@ -17,13 +17,16 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_single_speed_version_xvector/original_data
 
 
 
 # project_name="vae_workingvae_may_26_all_speakers_all_recon"
 
-project_name="vae_workingvae_may_30_all_speakers_all_recon"
+# project_name="vae_workingvae_may_30_all_speakers_all_recon"
+
+
+project_name="vae_xworkingvae_june_15_all_speakers_speed_one"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
@@ -47,7 +50,6 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --inference_nj 32 \
     --nbpe 5000 \
     --max_wav_duration 30 \
-    --speed_perturb_factors "0.9 1.0 1.1" \
     --audio_format "flac.ark" \
     --feats_type raw \
     --use_lm false \

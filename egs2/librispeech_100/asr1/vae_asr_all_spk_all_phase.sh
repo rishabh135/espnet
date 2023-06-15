@@ -47,8 +47,11 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/dump
+
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_single_speed_version_xvector/original_data
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_single_speed_version_xvector/dump
+
+
 
 
 
@@ -61,12 +64,12 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="recon 5 asr 30 adv 30 asradv 30 reinit_adv 30"
+adv_liststr="recon 4 asr 20 adv 20 asradv 20 reinit_adv 20"
 
 resume_checkpoint=35
-max_epoch=125
-batch_bins=28000000
-adv_weight=0.5
+max_epoch=84
+batch_bins=31000000
+adv_weight=2.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
@@ -81,9 +84,7 @@ asr_lr=0.002
 recon_lr=0.002
 
 
-
-project_name="vae_workingvae_may_30_all_speakers_all_recon"
-
+project_name="vae_xworkingvae_june_15_all_speakers_speed_one"
 experiment_name="latent_dim_80_with_spembs"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
