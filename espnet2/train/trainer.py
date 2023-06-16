@@ -197,6 +197,7 @@ class TrainerOptions:
     resume_from_checkpoint: int
     adv_loss_weight: float
     vae_weight_factor: float
+    asr_weight_factor: float
     plot_iiter: int
     asr_lr: float
     adv_lr: float
@@ -872,14 +873,14 @@ class Trainer:
 
 
                     if (adv_flag == True  and adv_mode == 'asr'):
-                        total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  *  vae_loss
+                        total_loss = options.vae_weight_factor * vae_loss + options.asr_weight_factor *  loss
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
                     elif (adv_flag == True and  adv_mode == 'adv'):
                         loss_adversarial /= accum_grad
                         scaler.scale(loss_adversarial).backward()
                     elif(adv_flag == True  and adv_mode == 'asradv'):
-                        total_loss =  (1-options.vae_weight_factor) * loss + options.vae_weight_factor * vae_loss + options.adv_loss_weight * loss_adversarial
+                        total_loss =  options.asr_weight_factor * loss + options.vae_weight_factor * vae_loss + options.adv_loss_weight * loss_adversarial
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
                     elif (adv_flag == True  and  adv_mode == 'reinit_adv'):
@@ -889,7 +890,7 @@ class Trainer:
                         vae_loss /= accum_grad
                         scaler.scale(vae_loss).backward()
                     else:
-                        total_loss = (1 - options.vae_weight_factor) * loss + options.vae_weight_factor  *  vae_loss
+                        total_loss = options.asr_weight_factor * loss + options.vae_weight_factor  *  vae_loss
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
 
