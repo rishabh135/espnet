@@ -64,19 +64,19 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="asr 80 adv 40 asradv 40 reinit_adv 5"
+adv_liststr="recon 5 asr 40 adv 40 asradv 40 reinit_adv 5"
 
 resume_checkpoint=-1
-max_epoch=165
+max_epoch=130
 batch_bins=29000000
 adv_weight=5.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
-vae_weight_factor=2.0
-asr_weight_factor=1.0
+vae_weight_factor=5.0
+asr_weight_factor=0.5
 save_every_epoch=2
-vae_annealing_cycle=20
+vae_annealing_cycle=5
 plot_iiter=200
 latent_dim=80
 accum_grad=4
@@ -85,10 +85,9 @@ asr_lr=0.002
 recon_lr=0.002
 
 
-project_name="vae_xworkingvae_single_speed_freezing_remaining_june_18"
 
-
-experiment_name="asr_40_adv_40"
+project_name="v13_single_speed_with_recon_weight_june_18"
+experiment_name="recon_5_asr_40_adv_40_asradv_40_reinit_adv_5"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 

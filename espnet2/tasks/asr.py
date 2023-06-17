@@ -225,6 +225,33 @@ class ASRTask(AbsTask):
     trainer = Trainer
 
 
+    # @classmethod
+    # def build_optimizers(
+    #     cls,
+    #     args: argparse.Namespace,
+    #     model: torch.nn.Module,
+    # ) -> List[torch.optim.Optimizer]:
+    #     if cls.num_optimizers != 1:
+    #         raise RuntimeError(
+    #             "build_optimizers() must be overridden if num_optimizers != 1"
+    #         )
+
+    #     optim_class = optim_classes.get(args.optim)
+    #     if optim_class is None:
+    #         raise ValueError(f"must be one of {list(optim_classes)}: {args.optim}")
+    #     if args.sharded_ddp:
+    #         if fairscale is None:
+    #             raise RuntimeError("Requiring fairscale. Do 'pip install fairscale'")
+    #         optim = fairscale.optim.oss.OSS(
+    #             params=model.parameters(), optim=optim_class, **args.optim_conf
+    #         )
+    #     else:
+    #         optim = optim_class(model.parameters(), **args.optim_conf)
+
+    #     optimizers = [optim]
+    #     return optimizers
+
+
 
 
     @classmethod
@@ -444,6 +471,10 @@ class ASRTask(AbsTask):
         retval = ()
         # assert check_return_type(retval)
         return retval
+
+
+
+
 
 
 

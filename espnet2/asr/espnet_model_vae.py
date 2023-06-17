@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+from collections import Counter
 from distutils import text_file
 import logging
 from contextlib import contextmanager
@@ -308,6 +308,22 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
+
+    def freeze_remaining(self):
+        main_parameters = list(self.encoder.parameters()) + list(self.decoder.parameters()) + list(self.ctc.parameters()) + list(self.adversarial_branch.parameters()) + list(self.reconstruction_decoder.parameters())
+        remaining_parameters = list((Counter(self.parameters() ) - Counter(main_parameters)).elements())
+        for param in remaining_parameters:
+            param.requires_grad = False
+            param.grad = None
+
+    def unfreeze_remaining(self):
+        main_parameters = list(self.encoder.parameters()) + list(self.decoder.parameters()) + list(self.ctc.parameters()) + list(self.adversarial_branch.parameters()) + list(self.reconstruction_decoder.parameters())
+        remaining_parameters = list((Counter(self.parameters() ) - Counter(main_parameters)).elements())
+        for param in remaining_parameters:
+            param.requires_grad = True
+
+
+
     def recon_mode(self):
         if(self.recon_mode_flag == False):
             logging.warning("  RECON MODE flag changing ")
@@ -324,6 +340,8 @@ class ESPnetASRModel(AbsESPnetModel):
                 param.requires_grad = True
             for param in self.reconstruction_decoder.parameters():
                 param.requires_grad = True
+                
+              
 
             self.recon_mode_flag = True
 
@@ -357,11 +375,23 @@ class ESPnetASRModel(AbsESPnetModel):
             for param in self.reconstruction_decoder.parameters():
                 param.requires_grad = False
                 param.grad = None
+            
+            for param in self.fc_spemb.parameters():
+                param.requires_grad = False
+                param.grad=None
+            for param in self.fc_var.parameters():
+                param.requires_grad = False
+                param.grad=None
+            for param in self.fc_mu.parameters():
+                param.requires_grad = False
+                param.grad=None
+
+            
             # for param in self.criterion_att.parameters():
             #     param.requires_grad = False
             #     if param.grad is not None:
             #         param.grad.zero_()
-
+            self.freeze_remaining()
             self.encoder_frozen_flag = True
             self.recon_mode_flag = True
         self.print_flags()
@@ -380,6 +410,16 @@ class ESPnetASRModel(AbsESPnetModel):
                 param.requires_grad = True
             for param in self.reconstruction_decoder.parameters():
                 param.requires_grad = True
+
+            for param in self.fc_spemb.parameters():
+                param.requires_grad = True
+            for param in self.fc_var.parameters():
+                param.requires_grad = True
+            for param in self.fc_mu.parameters():
+                param.requires_grad = True
+
+
+
             # for param in self.criterion_att.parameters():
             #     param.requires_grad = True
 
@@ -395,6 +435,7 @@ class ESPnetASRModel(AbsESPnetModel):
                 # if param.grad is not None:
                 #     # p.grad.detach_()
                 #     param.grad.zero_()
+            self.freeze_remaining()
             self.adversarial_frozen_flag = True
         self.print_flags()
 
@@ -629,7 +670,7 @@ class ESPnetASRModel(AbsESPnetModel):
             retval["loss_adversarial"]= loss_adv if loss_adv is not None else None
 
             stats["accuracy_adversarial"]= acc_adv * 100 if acc_adv is not None else None
-            retval["accuracy_adversarial"]= acc_adv if acc_adv is not None else None
+            retval["accuracy_adversarial"]= acc_adv * 100 if acc_adv is not None else None
 
 
 

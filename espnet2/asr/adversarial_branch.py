@@ -398,8 +398,6 @@ class SpeakerAdv(torch.nn.Module):
 		# logging.warning(" >>>>> y_hat {}  labels {}  ".format(  y_hat.shape, labels.shape) )
 
 
-		# loss = self.criterion(y_hat, labels)
-
 		loss = F.cross_entropy(y_hat, labels, size_average=True)
 		acc = th_accuracy(y_hat, labels, -1)
 

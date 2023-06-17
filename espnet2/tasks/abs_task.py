@@ -163,7 +163,7 @@ scheduler_classes = dict(
     cycliclr=torch.optim.lr_scheduler.CyclicLR,
     onecyclelr=torch.optim.lr_scheduler.OneCycleLR,
     # CosineAnnealingWarmRestarts=torch.optim.lr_scheduler.CosineAnnealingWarmRestarts,
-    CosineAnnealingWarmupRestarts= CosineAnnealingWarmupRestarts,
+    # CosineAnnealingWarmupRestarts= CosineAnnealingWarmupRestarts,
 )
 # To lower keys
 optim_classes = {k.lower(): v for k, v in optim_classes.items()}
@@ -867,7 +867,7 @@ class AbsTask(ABC):
         group.add_argument('--vae_weight_factor', default= 1.0, type=float, help='weightage of reconstruction_decoder for asr tasks')
 
 
-        group.add_argument('--asr_weight_factor', default= 0.1, type=float, help='weightage of asr_loss for asr+recon tasks')
+        group.add_argument('--asr_weight_factor', default= 1.0, type=float, help='weightage of asr_loss for asr+recon tasks')
 
         group.add_argument('--grlalpha', default=0.5, type=float,help='Gradient reversal layer scale param')
         group.add_argument('--adv_lr', default=0.002, type=float,help='Learning rate for adv branch')
@@ -960,7 +960,6 @@ class AbsTask(ABC):
 
 
 
-
     @classmethod
     def build_optimizers(
         cls,
@@ -982,10 +981,19 @@ class AbsTask(ABC):
                 params=model.parameters(), optim=optim_class, **args.optim_conf
             )
         else:
-            optim = optim_class(model.parameters(), **args.optim_conf)
+            if args.exclude_weight_decay:
+                optim = configure_optimizer(
+                    model,
+                    optim_class,
+                    args.optim_conf,
+                    args.exclude_weight_decay_conf,
+                )
+            else:
+                optim = optim_class(model.parameters(), **args.optim_conf)
 
         optimizers = [optim]
         return optimizers
+
 
 
 

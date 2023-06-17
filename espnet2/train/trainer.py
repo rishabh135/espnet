@@ -470,6 +470,7 @@ class Trainer:
                     if isinstance(optimizer, fairscale.optim.oss.OSS):
                         optimizer.consolidate_state_dict()
 
+
             if not distributed_option.distributed or distributed_option.dist_rank == 0:
                 # 3. Report the results
                 logging.warning(reporter.log_message())
@@ -483,12 +484,10 @@ class Trainer:
 
    
    
-                model_without_wav2 = {param: model.state_dict()[param] for param in model.state_dict() if (not param.startswith("wav2_pretrained_model")) }
-
                 # 4. Save/Update the checkpoint
                 torch.save(
                     {
-                        "model": model_without_wav2,
+                        "model": model.state_dict(),
                         "reporter": reporter.state_dict(),
                         "optimizers": [o.state_dict() for o in optimizers],
                         "schedulers": [
@@ -504,7 +503,7 @@ class Trainer:
                     # 4.2 Saving every 5th epoch as the checkpoint
                     torch.save(
                         {
-                            "model": model_without_wav2 ,
+                            "model": model.state_dict(),
                             "reporter": reporter.state_dict(),
                             "optimizers": [o.state_dict() for o in optimizers],
                             "schedulers": [
@@ -515,7 +514,7 @@ class Trainer:
                         }, "{}/{}_checkpoint.pth".format( output_dir, iepoch),)
 
                 # 5. Save and log the model and update the link to the best model
-                torch.save(model_without_wav2, output_dir / f"{iepoch}epoch.pth")
+                torch.save(model.state_dict(), output_dir / f"{iepoch}epoch.pth")
 
                 # Creates a sym link latest.pth -> {iepoch}epoch.pth
                 p = output_dir / "latest.pth"
