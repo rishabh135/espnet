@@ -755,7 +755,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
         # Collect total loss stats
-        stats["loss"] = loss.detach()
+        stats["loss_asr"] = loss.detach()
         # stats["recons_loss"] = reconstruction_loss.detach()
         # stats["recons_kld_loss"] = kld_loss.detach()
 

@@ -82,13 +82,15 @@ latent_dim=80
 accum_grad=4
 odim_adv=251
 asr_lr=0.002
+adv_lr=0.002
 recon_lr=0.002
 
 
-project_name="vae_xworkingvae_single_speed_freezing_remaining_june_18"
+
+project_name="vae_xworkingvae_single_speed_lr_check_june_18"
 
 
-experiment_name="asr_40_adv_40"
+experiment_name="asr_80_adv_40"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 
@@ -1404,6 +1406,7 @@ if ! "${skip_train}"; then
                 --accum_grad "${accum_grad}" \
                 --odim_adv "${odim_adv}" \
                 --asr_lr "${asr_lr}" \
+                --adv_lr "${adv_lr}" \
                 --recon_lr "${recon_lr}" \
                 --latent_dim "${latent_dim}" \
                 --save_every_epoch "${save_every_epoch}" \

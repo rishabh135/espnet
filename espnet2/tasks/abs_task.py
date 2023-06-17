@@ -827,6 +827,21 @@ class AbsTask(ABC):
         )
 
         group = parser.add_argument_group("Optimizer related")
+        group.add_argument(
+            "--exclude_weight_decay",
+            type=str2bool,
+            default=False,
+            help="Exclude weight decay in optimizer for model bias, normalization, "
+            "or other special parameters",
+        )
+        group.add_argument(
+            "--exclude_weight_decay_conf",
+            action=NestedDictAction,
+            default=dict(),
+            help="The keyword arguments for configuring weight decay in optimizer. "
+            "e.g., 'bias_weight_decay': False will set zero weight decay for bias "
+            "params. See also espnet2.optimizers.optim_groups.configure_optimizer.",
+        )
         for i in range(1, cls.num_optimizers + 1):
             suf = "" if i == 1 else str(i)
             group.add_argument(
@@ -855,6 +870,7 @@ class AbsTask(ABC):
                 default=dict(),
                 help="The keyword arguments for lr scheduler",
             )
+
 
 
         group = parser.add_argument_group("Adversarial part related related")
@@ -947,8 +963,8 @@ class AbsTask(ABC):
 
     #         param_grp = [
     #         {'params': model.encoder.parameters(), "lr" : args.asr_lr  },
-    #         {'params': model.decoder.parameters(), "lr": args.asr_lr },
-    #         {'params': model.ctc.parameters(), "lr": args.asr_lr },
+    #         {'params': model.decoder.parameters(), "lr": 3*args.asr_lr },
+    #         {'params': model.ctc.parameters(), "lr": 3*args.asr_lr },
     #         {'params': model.adversarial_branch.parameters(), "lr": args.adv_lr },
     #         {'params': remaining_parameters , "lr": args.asr_lr },
     #         {'params': model.reconstruction_decoder.parameters(), "lr": args.recon_lr } ]
