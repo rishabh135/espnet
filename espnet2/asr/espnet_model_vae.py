@@ -196,8 +196,8 @@ class ESPnetASRModel(AbsESPnetModel):
         self.encoder_frozen_flag = False
         self.adversarial_frozen_flag = False
         self.reinit_adv_flag = False
-        self.recon_mode_flag = False
-
+        # self.recon_mode_flag = False
+        self.recon_freeze_flag = False
 
 
 
@@ -303,10 +303,24 @@ class ESPnetASRModel(AbsESPnetModel):
             self.reinit_adv_flag = True
 
     def print_flags(self,):
-        logging.warning(" encoder frozen : {} adversarial_frozen : {} self.recon_frozen {} ".format(self.encoder_frozen_flag, self.adversarial_frozen_flag, self.recon_mode_flag ))
+        logging.warning(" encoder frozen : {} adversarial_frozen : {} self.recon_frozen {} ".format(self.encoder_frozen_flag, self.adversarial_frozen_flag, self.recon_freeze_flag ))
 
 
 
+    def freeze_recon(self):
+        if(not self.recon_freeze_flag):
+            for param in self.reconstruction_decoder.parameters():
+                param.requires_grad = False
+                if param.grad is not None:
+                    param.grad.zero_()
+            self.recon_freeze_flag = True
+
+
+    def unfreeze_recon(self):
+        if( self.recon_freeze_flag):
+            for param in self.reconstruction_decoder.parameters():
+                param.requires_grad = True
+            self.recon_freeze_flag = False
 
 
     def freeze_remaining(self):
@@ -314,7 +328,8 @@ class ESPnetASRModel(AbsESPnetModel):
         remaining_parameters = list((Counter(self.parameters() ) - Counter(main_parameters)).elements())
         for param in remaining_parameters:
             param.requires_grad = False
-            param.grad = None
+            if param.grad is not None:
+                param.grad.zero_()
 
     def unfreeze_remaining(self):
         main_parameters = list(self.encoder.parameters()) + list(self.decoder.parameters()) + list(self.ctc.parameters()) + list(self.adversarial_branch.parameters()) + list(self.reconstruction_decoder.parameters())
@@ -324,33 +339,38 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-    def recon_mode(self):
-        if(self.recon_mode_flag == False):
-            logging.warning("  RECON MODE flag changing ")
-            for param in self.decoder.parameters():
-                param.requires_grad = False
-                param.grad = None
-            for param in self.ctc.ctc_lo.parameters():
-                param.requires_grad = False
-                param.grad = None
-            for param in self.adversarial_branch.parameters():
-                param.requires_grad = False
-                param.grad = None
-            for param in self.encoder.parameters():
-                param.requires_grad = True
-            for param in self.reconstruction_decoder.parameters():
-                param.requires_grad = True
+    # def recon_mode(self):
+    #     if(self.recon_mode_flag == False):
+    #         logging.warning("  RECON MODE flag changing ")
+    #         for param in self.decoder.parameters():
+    #             param.requires_grad = False
+    #             param.grad = None
+    #         for param in self.ctc.ctc_lo.parameters():
+    #             param.requires_grad = False
+    #             param.grad = None
+    #         for param in self.adversarial_branch.parameters():
+    #             param.requires_grad = False
+    #             param.grad = None
+    #         for param in self.encoder.parameters():
+    #             param.requires_grad = True
+    #         for param in self.reconstruction_decoder.parameters():
+    #             param.requires_grad = True
                 
               
 
-            self.recon_mode_flag = True
+    #         self.recon_mode_flag = True
 
-        return
-
-
+    #     return
 
 
 
+
+
+    
+    # for param in self.criterion_att.parameters():
+    #     param.requires_grad = False
+    #     if param.grad is not None:
+    #         param.grad.zero_()
 
 
 
@@ -358,46 +378,42 @@ class ESPnetASRModel(AbsESPnetModel):
         if not self.encoder_frozen_flag:
             for param in self.encoder.parameters():
                 param.requires_grad = False
-                param.grad = None
-                # if param.grad is not None:
-                #     param.grad.zero_()
+                if param.grad is not None:
+                    param.grad.zero_()
             for param in self.decoder.parameters():
                 param.requires_grad = False
-                param.grad = None
-                # if param.grad is not None:
-                #     param.grad.zero_()
+                if param.grad is not None:
+                    param.grad.zero_()
 
             for param in self.ctc.ctc_lo.parameters():
                 param.requires_grad = False
-                param.grad = None
-                # if param.grad is not None:
-                #     param.grad.zero_()
-            for param in self.reconstruction_decoder.parameters():
-                param.requires_grad = False
-                param.grad = None
-            
+                if param.grad is not None:
+                    param.grad.zero_()
+
+
             for param in self.fc_spemb.parameters():
                 param.requires_grad = False
-                param.grad=None
+                if param.grad is not None:
+                    param.grad.zero_()
             for param in self.fc_var.parameters():
                 param.requires_grad = False
-                param.grad=None
+                if param.grad is not None:
+                    param.grad.zero_()
             for param in self.fc_mu.parameters():
                 param.requires_grad = False
-                param.grad=None
-
-            
-            # for param in self.criterion_att.parameters():
-            #     param.requires_grad = False
-            #     if param.grad is not None:
-            #         param.grad.zero_()
+                if param.grad is not None:
+                    param.grad.zero_()
+                    
+        
             self.freeze_remaining()
             self.encoder_frozen_flag = True
-            self.recon_mode_flag = True
         self.print_flags()
 
 
 
+
+    # for param in self.criterion_att.parameters():
+    #     param.requires_grad = True
 
 
     def unfreeze_encoder(self):
@@ -408,8 +424,7 @@ class ESPnetASRModel(AbsESPnetModel):
                 param.requires_grad = True
             for param in self.ctc.ctc_lo.parameters():
                 param.requires_grad = True
-            for param in self.reconstruction_decoder.parameters():
-                param.requires_grad = True
+
 
             for param in self.fc_spemb.parameters():
                 param.requires_grad = True
@@ -418,24 +433,18 @@ class ESPnetASRModel(AbsESPnetModel):
             for param in self.fc_mu.parameters():
                 param.requires_grad = True
 
-
-
-            # for param in self.criterion_att.parameters():
-            #     param.requires_grad = True
-
             self.encoder_frozen_flag = False
-            self.recon_mode_flag = False
+            # self.recon_mode_flag = False
 
 
+
+     
     def freeze_adversarial(self):
         if not self.adversarial_frozen_flag:
             for param in self.adversarial_branch.parameters():
                 param.requires_grad = False
-                param.grad = None
-                # if param.grad is not None:
-                #     # p.grad.detach_()
-                #     param.grad.zero_()
-            self.freeze_remaining()
+                if param.grad is not None:
+                    param.grad.zero_()
             self.adversarial_frozen_flag = True
         self.print_flags()
 
@@ -445,7 +454,6 @@ class ESPnetASRModel(AbsESPnetModel):
             for param in self.adversarial_branch.parameters():
                 param.requires_grad = True
             self.adversarial_frozen_flag = False
-
 
 
 
@@ -602,7 +610,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # logging.warning(f" >>> bayesian_latent: {bayesian_latent.shape}, {encoder_out_lens} {feats.shape} {feats_lengths} ")
 
         recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
-        # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=1)
+        # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=4)
         # logging.warning(" reconstruction_decoder_summary: {} \n".format(out_sum))
 
         # logging.warning(" original_feats {} recons_feats shape {} ".format(feats.shape, recons_feats.shape))

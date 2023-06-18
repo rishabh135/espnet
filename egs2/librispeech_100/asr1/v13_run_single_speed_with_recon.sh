@@ -22,14 +22,13 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="v13_xperiment_diff_lr_june_18"
-
+project_name="v13_only_asr_check"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 
 
-asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr_vae_warmup_500.yaml
+asr_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/train_asr.yaml
 inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_asr.yaml
 
 

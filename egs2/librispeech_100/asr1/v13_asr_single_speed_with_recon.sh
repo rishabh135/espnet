@@ -64,16 +64,16 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 5"
+adv_liststr="asr 40 adv 40"
 
 resume_checkpoint=-1
-max_epoch=125
+max_epoch=80
 batch_bins=29000000
 adv_weight=5.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
-vae_weight_factor=2.0
+vae_weight_factor=0.0
 asr_weight_factor=1.0
 save_every_epoch=2
 vae_annealing_cycle=10
@@ -82,16 +82,16 @@ latent_dim=80
 accum_grad=4
 odim_adv=251
 asr_lr=0.002
-ctc_lr=0.008
-adv_lr=0.004
-recon_lr=0.008
+ctc_lr=0.004
+adv_lr=0.002
+recon_lr=0.002
 
 
 
-project_name="v13_xperiment_diff_lr_june_18"
+project_name="v13_only_asr_check"
 
 
-experiment_name="asr_80_adv_40"
+experiment_name="asr_40"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 

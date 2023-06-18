@@ -412,14 +412,6 @@ class Trainer:
 
             reporter.set_epoch(iepoch)
 
-            # logging.warning(" current epochj {}" .format(iepoch))
-            # if ((iepoch % trainer_options.vae_annealing_cycle) == 0):
-            #     cls.beta_kl_factor = 0.1
-            #     logging.warning('KL annealing restarted')
-
-
-
-
 
             # 1. Train and validation for one-epoch
             with reporter.observe("train") as sub_reporter:
@@ -687,28 +679,39 @@ class Trainer:
         iterator_stop = torch.tensor(0).to("cuda" if ngpu > 0 else "cpu")
 
         start_time = time.perf_counter()
+        
+        
+
+        
+        
         if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
             if options.ngpu > 1:
                 model.module.freeze_adversarial()
+                model.module.freeze_recon()
                 model.module.unfreeze_encoder()
             else:
                 model.freeze_adversarial()
+                model.freeze_recon()
                 model.unfreeze_encoder()
 
         elif (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'adv'):
             if options.ngpu > 1:
                 model.module.freeze_encoder()
+                model.module.freeze_recon()
                 model.module.unfreeze_adversarial()
             else:
                 model.freeze_encoder()
+                model.freeze_recon()
                 model.unfreeze_adversarial()
 
         elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
             if (options.ngpu > 1):
                 model.module.unfreeze_encoder()
+                model.module.freeze_recon()
                 model.module.unfreeze_adversarial()
             else:
                 model.unfreeze_encoder()
+                model.freeze_recon()
                 model.unfreeze_adversarial()
 
 
@@ -721,6 +724,7 @@ class Trainer:
         elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'reinit_adv'):
             if options.ngpu > 1:
                 model.module.freeze_encoder()
+                model.module.freeze_recon()
                 model.module.unfreeze_adversarial()
             else:
                 model.freeze_encoder()
@@ -730,6 +734,9 @@ class Trainer:
         first_group_lr = optimizers[0].param_groups[0]['lr']
         last_group_lr = optimizers[0].param_groups[-1]['lr']
         logging.warning(" --->>>>>  adv_mode {} asr_lr {}  adv_lr {}  adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.asr_lr, options.adv_lr, adv_name, float(first_group_lr), float(last_group_lr), param_group_length))
+
+
+
 
         # tmp = float((current_epoch)% options.vae_annealing_cycle)/options.vae_annealing_cycle
         # new_lr = current_flr *0.5*(1+np.cos(tmp * np.pi))
@@ -759,7 +766,7 @@ class Trainer:
                 cls.beta_kl_factor = 0.1
 
             # cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 20 * len(utt_id)))
-            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/(  (options.vae_annealing_cycle-4)  ))
+            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/(  (options.vae_annealing_cycle-2)  ))
             
             # logging.warning(" cls.beta_kl_factor {} len(utt_id) {}  ".format(cls.beta_kl_factor, len(utt_id) ))
             # logging.warning(" prinitng iiter {} ")
@@ -863,14 +870,12 @@ class Trainer:
                     loss *= torch.distributed.get_world_size()
 
                 # loss /= accum_grad
-            reporter.register({"beta_kl_factor": decay, "vae_loss": vae_loss.detach()})
+            reporter.register({"beta_kl_factor": decay, "cls_minibatch_counter": cls.minibatch_counter, "vae_loss": vae_loss.detach()})
             reporter.register(stats, weight)
 
 
             with reporter.measure_time("backward_time"):
                 if scaler is not None:
-
-
                     if (adv_flag == True  and adv_mode == 'asr'):
                         total_loss = options.vae_weight_factor * vae_loss + options.asr_weight_factor *  loss
                         total_loss /= accum_grad
@@ -954,10 +959,14 @@ class Trainer:
 
             if( (iiter % options.plot_iiter) == 0):
                 logging.warning(" MODE: {} minibatch_counter {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {}  ".format( adv_mode, cls.minibatch_counter , iiter, current_epoch, adv_flag,  stats["loss"].detach() ))
+                # logging.warning(f" ----> ctc  non_zero weight_grad { torch.count_nonzero(model.ctc.ctc_lo.weight.grad) }   weight_grad_shape {  model.ctc.ctc_lo.weight.grad.shape   }  ctc  non_zero_bias grad {  torch.count_nonzero( model.ctc.ctc_lo.bias.grad)  }" )
+                # logging.warning(f" ----->  encoder weight non_zero_grad { torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad) }  weight_grad_shape { model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape  }  encoder non_zero bias grad { torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   }" )
+                # logging.warning(f" ----> recon weight non_zero_grad { model.reconstruction_decoder.encoder.encoders[0].feed_forward.w_1.weight.grad  }  weight_grad_shape { model.reconstruction_decoder.encoder.encoders[0].feed_forward.w_1.bias.grad }" )
 
 
 
 
+            
 
             if (iiter % accum_grad == 0):
                 if scaler is not None:
