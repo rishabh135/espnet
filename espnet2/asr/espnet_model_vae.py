@@ -207,10 +207,10 @@ class ESPnetASRModel(AbsESPnetModel):
         # self.spk_embed_dim is present determined on how we calculated the xvector, dont change it
         self.spk_embed_dim = 512
 
-        self.fc_mu = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
-        self.fc_var = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
-        self.fc_spemb = torch.nn.Linear(self.spk_embed_dim , self.latent_dim)
-        self.decoder_input_projection = torch.nn.Linear(self.latent_dim, self.latent_dim//2 )
+        # self.fc_mu = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
+        # self.fc_var = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
+        # self.fc_spemb = torch.nn.Linear(self.spk_embed_dim , self.latent_dim)
+        # self.decoder_input_projection = torch.nn.Linear(self.latent_dim, self.latent_dim//2 )
 
 
 
@@ -308,7 +308,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
     def freeze_recon(self):
-        if(not self.recon_freeze_flag):
+        if(not self.recon_freeze_flag and (self.reconstruction_decoder is not None) ):
             for param in self.reconstruction_decoder.parameters():
                 param.requires_grad = False
                 if param.grad is not None:
@@ -317,14 +317,18 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
     def unfreeze_recon(self):
-        if( self.recon_freeze_flag):
+        if( self.recon_freeze_flag and (self.reconstruction_decoder is not None)):
             for param in self.reconstruction_decoder.parameters():
                 param.requires_grad = True
             self.recon_freeze_flag = False
 
 
     def freeze_remaining(self):
-        main_parameters = list(self.encoder.parameters()) + list(self.decoder.parameters()) + list(self.ctc.parameters()) + list(self.adversarial_branch.parameters()) + list(self.reconstruction_decoder.parameters())
+        if((self.reconstruction_decoder is not None)):
+            main_parameters = list(self.encoder.parameters()) + list(self.decoder.parameters()) + list(self.ctc.parameters()) + list(self.adversarial_branch.parameters()) + list(self.reconstruction_decoder.parameters())
+        else:
+            main_parameters = list(self.encoder.parameters()) + list(self.decoder.parameters()) + list(self.ctc.parameters()) + list(self.adversarial_branch.parameters())
+            
         remaining_parameters = list((Counter(self.parameters() ) - Counter(main_parameters)).elements())
         for param in remaining_parameters:
             param.requires_grad = False
@@ -332,7 +336,10 @@ class ESPnetASRModel(AbsESPnetModel):
                 param.grad.zero_()
 
     def unfreeze_remaining(self):
-        main_parameters = list(self.encoder.parameters()) + list(self.decoder.parameters()) + list(self.ctc.parameters()) + list(self.adversarial_branch.parameters()) + list(self.reconstruction_decoder.parameters())
+        if((self.reconstruction_decoder is not None)):
+            main_parameters = list(self.encoder.parameters()) + list(self.decoder.parameters()) + list(self.ctc.parameters()) + list(self.adversarial_branch.parameters()) + list(self.reconstruction_decoder.parameters())
+        else:
+            main_parameters = list(self.encoder.parameters()) + list(self.decoder.parameters()) + list(self.ctc.parameters()) + list(self.adversarial_branch.parameters())
         remaining_parameters = list((Counter(self.parameters() ) - Counter(main_parameters)).elements())
         for param in remaining_parameters:
             param.requires_grad = True
@@ -390,21 +397,20 @@ class ESPnetASRModel(AbsESPnetModel):
                 if param.grad is not None:
                     param.grad.zero_()
 
+            if((self.reconstruction_decoder is not None)):
+                for param in self.fc_spemb.parameters():
+                    param.requires_grad = False
+                    if param.grad is not None:
+                        param.grad.zero_()
+                for param in self.fc_var.parameters():
+                    param.requires_grad = False
+                    if param.grad is not None:
+                        param.grad.zero_()
+                for param in self.fc_mu.parameters():
+                    param.requires_grad = False
+                    if param.grad is not None:
+                        param.grad.zero_()
 
-            for param in self.fc_spemb.parameters():
-                param.requires_grad = False
-                if param.grad is not None:
-                    param.grad.zero_()
-            for param in self.fc_var.parameters():
-                param.requires_grad = False
-                if param.grad is not None:
-                    param.grad.zero_()
-            for param in self.fc_mu.parameters():
-                param.requires_grad = False
-                if param.grad is not None:
-                    param.grad.zero_()
-                    
-        
             self.freeze_remaining()
             self.encoder_frozen_flag = True
         self.print_flags()
@@ -425,13 +431,13 @@ class ESPnetASRModel(AbsESPnetModel):
             for param in self.ctc.ctc_lo.parameters():
                 param.requires_grad = True
 
-
-            for param in self.fc_spemb.parameters():
-                param.requires_grad = True
-            for param in self.fc_var.parameters():
-                param.requires_grad = True
-            for param in self.fc_mu.parameters():
-                param.requires_grad = True
+            if((self.reconstruction_decoder is not None)):
+                for param in self.fc_spemb.parameters():
+                    param.requires_grad = True
+                for param in self.fc_var.parameters():
+                    param.requires_grad = True
+                for param in self.fc_mu.parameters():
+                    param.requires_grad = True
 
             self.encoder_frozen_flag = False
             # self.recon_mode_flag = False
@@ -499,7 +505,7 @@ class ESPnetASRModel(AbsESPnetModel):
 
           # for data-parallel
         text = text[:, : text_lengths.max()]
-        if(spembs is not None):
+        if( (spembs is not None) and  (self.reconstruction_decoder is not None)):
             # logging.warning("before_projection spembs {} ".format(spembs.shape))
             spembs = self.fc_spemb(spembs)
             # logging.warning("after_projection spembs {} ".format(spembs.shape))
@@ -591,10 +597,12 @@ class ESPnetASRModel(AbsESPnetModel):
         # original_feats = feats
         # Split the result into mu and var components
         # of the latent Gaussian distribution
-        mu = self.fc_mu(encoder_out)
-        log_var = self.fc_var(encoder_out)
-        z = self.reparameterize(mu, log_var)
-        bayesian_latent = z
+
+        if((self.reconstruction_decoder is not None)):
+            mu = self.fc_mu(encoder_out)
+            log_var = self.fc_var(encoder_out)
+            z = self.reparameterize(mu, log_var)
+            bayesian_latent = z
 
 
         ################################################################################################################################################################################################
@@ -609,14 +617,16 @@ class ESPnetASRModel(AbsESPnetModel):
 
         # logging.warning(f" >>> bayesian_latent: {bayesian_latent.shape}, {encoder_out_lens} {feats.shape} {feats_lengths} ")
 
-        recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
+        if((self.reconstruction_decoder is not None)):
+            recons_feats = self.reconstruction_decoder( text=bayesian_latent, text_lengths=encoder_out_lens, feats=feats, feats_lengths=feats_lengths, spembs = spembs )
+            reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
+
         # out_sum = summary(self.reconstruction_decoder, input_data=[bayesian_latent, encoder_out_lens, feats, feats_lengths, spembs], mode="train", col_names=['input_size', 'output_size', 'num_params', 'trainable'], row_settings=['var_names'], depth=4)
         # logging.warning(" reconstruction_decoder_summary: {} \n".format(out_sum))
 
         # logging.warning(" original_feats {} recons_feats shape {} ".format(feats.shape, recons_feats.shape))
         # # sum_recon_kl_loss =  reconstruction_loss + kld_loss
 
-        reconstruction_loss , kld_loss = self.vae_loss_function(recons_feats, feats, mu, log_var)
 
         # logging.warning(" count how different feats are {} ".format( torch.nonzero(original_feats-feats) ))
         ################################################################################################################################################################################################
@@ -681,12 +691,12 @@ class ESPnetASRModel(AbsESPnetModel):
             retval["accuracy_adversarial"]= acc_adv * 100 if acc_adv is not None else None
 
 
+        if((self.reconstruction_decoder is not None)):
+            retval["reconstruction_loss"] = reconstruction_loss
+            stats["reconstuction_loss"] = reconstruction_loss.detach()
 
-        retval["reconstruction_loss"] = reconstruction_loss
-        stats["reconstuction_loss"] = reconstruction_loss.detach()
-
-        retval["reconstruction_kld_loss"] = kld_loss
-        stats["KLD_loss"] = kld_loss.detach()
+            retval["reconstruction_kld_loss"] = kld_loss
+            stats["KLD_loss"] = kld_loss.detach()
 
         # retval["vae_loss"]= sum_recon_kl_loss
         # stats["sum_kl_recon_loss"] = sum_recon_kl_loss.detach()
@@ -753,7 +763,7 @@ class ESPnetASRModel(AbsESPnetModel):
             elif self.ctc_weight == 1.0:
                 loss = loss_ctc
             else:
-                loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att + reconstruction_loss + kld_loss
+                loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_att 
 
             # Collect Attn branch stats
             stats["loss_attention"] = loss_att.detach() if loss_att is not None else None

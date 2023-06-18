@@ -870,7 +870,10 @@ class Trainer:
                     loss *= torch.distributed.get_world_size()
 
                 # loss /= accum_grad
-            reporter.register({"beta_kl_factor": decay, "cls_minibatch_counter": cls.minibatch_counter, "vae_loss": vae_loss.detach()})
+
+  
+            # "vae_loss": vae_loss.detach()
+            reporter.register({"beta_kl_factor": decay, "cls_minibatch_counter": cls.minibatch_counter })
             reporter.register(stats, weight)
 
 
