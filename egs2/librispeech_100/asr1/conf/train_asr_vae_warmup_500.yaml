@@ -27,23 +27,6 @@ decoder_conf:
     self_attention_dropout_rate: 0.1
     src_attention_dropout_rate: 0.1
 
-# recon_decoder: transformer
-# recon_decoder_conf:
-#     attention_heads: 2
-#     linear_units: 1024
-#     num_blocks: 3
-#     dropout_rate: 0.1
-#     positional_dropout_rate: 0.1
-#     self_attention_dropout_rate: 0.1
-#     src_attention_dropout_rate: 0.1
-
-# recon_decoder: transducer
-# decoder_conf:
-#     rnn_type: lstm
-#     num_layers: 1
-#     hidden_size: 512
-#     dropout: 0.1
-#     dropout_embed: 0.1
 
 model_conf:
     ctc_weight: 0.3
@@ -80,10 +63,10 @@ unused_parameters: true
 optim: adam
 optim_conf:
     lr: 0.002
-    weight_decay: 0.000001
+    weight_decay: 0.00000001
 scheduler: warmuplr
 scheduler_conf:
-    warmup_steps: 10
+    warmup_steps: 1500
 
 specaug: specaug
 specaug_conf:

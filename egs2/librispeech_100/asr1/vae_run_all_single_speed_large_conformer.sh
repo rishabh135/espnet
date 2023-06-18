@@ -21,7 +21,9 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vae_xworkingvae_single_speed_lr_check_june_18"
+# project_name="vae_xworkingvae_single_speed_lr_check_june_18"
+project_name="vae_xworkingvae_single_speed_diff_lr_june_19"
+
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################

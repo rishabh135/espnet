@@ -64,30 +64,31 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="asr 80 adv 40 asradv 40 reinit_adv 5"
+adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
 
 resume_checkpoint=-1
-max_epoch=165
+max_epoch=160
 batch_bins=29000000
 adv_weight=5.0
 adv_dropout_out=0.0
 adv_dropout_mid=0.0
 adv_dropout_inp=0.0
-vae_weight_factor=2.0
-asr_weight_factor=1.0
+vae_weight_factor=5.0
+asr_weight_factor=0.2
 save_every_epoch=2
-vae_annealing_cycle=20
+vae_annealing_cycle=10
 plot_iiter=200
 latent_dim=80
 accum_grad=4
 odim_adv=251
 asr_lr=0.002
-adv_lr=0.002
-recon_lr=0.002
+adv_lr=0.004
+recon_lr=0.01
+ctc_lr=0.008
 
 
 
-project_name="vae_xworkingvae_single_speed_lr_check_june_18"
+project_name="vae_xworkingvae_single_speed_diff_lr_june_19"
 
 
 experiment_name="asr_80_adv_40"
@@ -1407,6 +1408,7 @@ if ! "${skip_train}"; then
                 --odim_adv "${odim_adv}" \
                 --asr_lr "${asr_lr}" \
                 --adv_lr "${adv_lr}" \
+                --ctc_lr "${ctc_lr}" \
                 --recon_lr "${recon_lr}" \
                 --latent_dim "${latent_dim}" \
                 --save_every_epoch "${save_every_epoch}" \
