@@ -196,7 +196,7 @@ class ESPnetASRModel(AbsESPnetModel):
         self.encoder_frozen_flag = False
         self.adversarial_frozen_flag = False
         self.reinit_adv_flag = False
-        # self.recon_mode_flag = False
+        self.recon_mode_flag = False
         self.recon_freeze_flag = False
 
 
@@ -207,13 +207,13 @@ class ESPnetASRModel(AbsESPnetModel):
         # self.spk_embed_dim is present determined on how we calculated the xvector, dont change it
         self.spk_embed_dim = 512
 
-        # self.fc_mu = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
-        # self.fc_var = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
-        # self.fc_spemb = torch.nn.Linear(self.spk_embed_dim , self.latent_dim)
+        self.fc_mu = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
+        self.fc_var = torch.nn.Linear(self.final_encoder_dim , self.latent_dim)
+        self.fc_spemb = torch.nn.Linear(self.spk_embed_dim , self.latent_dim)
+
+
+
         # self.decoder_input_projection = torch.nn.Linear(self.latent_dim, self.latent_dim//2 )
-
-
-
         # self.disentangling_mapping_network = torch.nn.Sequential(torch.nn.Linear(768, self.final_encoder_dim), torch.nn.ReLU(), torch.nn.Linear(self.final_encoder_dim, self.final_encoder_dim), torch.nn.ReLU(), torch.nn.Linear(self.final_encoder_dim, self.final_encoder_dim))
         # self.pretrained_embed = Conv2dSubsampling2(self.embed_input_size, 768, dropout_rate=0.0)
 
@@ -346,28 +346,31 @@ class ESPnetASRModel(AbsESPnetModel):
 
 
 
-    # def recon_mode(self):
-    #     if(self.recon_mode_flag == False):
-    #         logging.warning("  RECON MODE flag changing ")
-    #         for param in self.decoder.parameters():
-    #             param.requires_grad = False
-    #             param.grad = None
-    #         for param in self.ctc.ctc_lo.parameters():
-    #             param.requires_grad = False
-    #             param.grad = None
-    #         for param in self.adversarial_branch.parameters():
-    #             param.requires_grad = False
-    #             param.grad = None
-    #         for param in self.encoder.parameters():
-    #             param.requires_grad = True
-    #         for param in self.reconstruction_decoder.parameters():
-    #             param.requires_grad = True
-                
-              
+    def recon_mode(self):
+        if(self.recon_mode_flag == False):
+            logging.warning("  RECON MODE flag changing ")
+            self.freeze_remaining()
+            for param in self.decoder.parameters():
+                param.requires_grad = False
+                if param.grad is not None:
+                    param.grad.zero_()
+            for param in self.ctc.ctc_lo.parameters():
+                param.requires_grad = False
+                if param.grad is not None:
+                    param.grad.zero_()
+            for param in self.adversarial_branch.parameters():
+                param.requires_grad = False
+                if param.grad is not None:
+                    param.grad.zero_()
 
-    #         self.recon_mode_flag = True
 
-    #     return
+            for param in self.encoder.parameters():
+                param.requires_grad = True
+            for param in self.reconstruction_decoder.parameters():
+                param.requires_grad = True
+
+            self.recon_mode_flag = True
+        return
 
 
 

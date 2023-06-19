@@ -658,6 +658,9 @@ class Trainer:
         else:
             adv_name = str(type(model).__name__)
 
+        if(cls.beta_kl_factor is None or (cls.beta_kl_factor > 0.2)):
+            cls.beta_kl_factor = 0.1
+
 
         # for name, layer in model.named_modules():
         #     logging.warning( " {} ".format(name))
@@ -679,19 +682,15 @@ class Trainer:
         iterator_stop = torch.tensor(0).to("cuda" if ngpu > 0 else "cpu")
 
         start_time = time.perf_counter()
-        
-        
 
-        
-        
         if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
             if options.ngpu > 1:
                 model.module.freeze_adversarial()
-                model.module.freeze_recon()
+                # model.module.freeze_recon()
                 model.module.unfreeze_encoder()
             else:
                 model.freeze_adversarial()
-                model.freeze_recon()
+                # model.freeze_recon()
                 model.unfreeze_encoder()
 
         elif (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'adv'):
@@ -707,11 +706,11 @@ class Trainer:
         elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
             if (options.ngpu > 1):
                 model.module.unfreeze_encoder()
-                model.module.freeze_recon()
+                # model.module.freeze_recon()
                 model.module.unfreeze_adversarial()
             else:
                 model.unfreeze_encoder()
-                model.freeze_recon()
+                # model.freeze_recon()
                 model.unfreeze_adversarial()
 
 
@@ -760,13 +759,14 @@ class Trainer:
 
         for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
             assert isinstance(batch, dict), type(batch)
-            
-            cls.minibatch_counter += 1
-            if ((cls.minibatch_counter % options.vae_annealing_cycle) == 0):
-                cls.beta_kl_factor = 0.1
 
-            # cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/( 20 * len(utt_id)))
-            cls.beta_kl_factor  = min(1, cls.beta_kl_factor + 1.0/(  (options.vae_annealing_cycle-2)  ))
+            if ( iiter % options.vae_annealing_cycle == 0):
+                cls.beta_kl_factor = 0.1
+            else:
+                cls.beta_kl_factor  = min(1, cls.beta_kl_factor + (1.0/(50.0) ) )
+
+            
+            # cls.minibatch_counter += 1
             
             # logging.warning(" cls.beta_kl_factor {} len(utt_id) {}  ".format(cls.beta_kl_factor, len(utt_id) ))
             # logging.warning(" prinitng iiter {} ")
@@ -810,10 +810,9 @@ class Trainer:
                         loss_adversarial = retval.get( "loss_adversarial", 0 )
                         reconstruction_loss = retval.get("reconstruction_loss", 0)
                         kld_loss = retval.get("reconstruction_kld_loss", 0)
-                                                
                         decay = cls.beta_kl_factor
                         vae_loss = reconstruction_loss + (decay * kld_loss)
-                        
+
                         # vae_loss = retval.get("vae_loss",0)
                         # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
                         if optim_idx is not None and not isinstance(optim_idx, int):
@@ -871,9 +870,8 @@ class Trainer:
 
                 # loss /= accum_grad
 
-  
-            # "vae_loss": vae_loss.detach()
-            reporter.register({"beta_kl_factor": decay, "cls_minibatch_counter": cls.minibatch_counter })
+            # , "vae_loss": vae_loss.detach()
+            reporter.register({"beta_kl_factor": decay, "iiter": iiter, "vae_loss": vae_loss.detach() })
             reporter.register(stats, weight)
 
 

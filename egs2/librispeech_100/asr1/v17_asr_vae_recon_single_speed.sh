@@ -64,33 +64,33 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="asr 60 adv 40"
+adv_liststr="asr 40 recon 10 adv 40 asradv 40 reinit_adv 10"
 
-resume_checkpoint=40
-max_epoch=100
-batch_bins=62000000
+resume_checkpoint=20
+max_epoch=140
+batch_bins=29000000
 adv_weight=5.0
-adv_dropout_out=0.0
-adv_dropout_mid=0.0
-adv_dropout_inp=0.0
-vae_weight_factor=0.0
+vae_weight_factor=2.0
 asr_weight_factor=1.0
 save_every_epoch=2
-vae_annealing_cycle=20
+vae_annealing_cycle=100
 plot_iiter=200
 latent_dim=80
 accum_grad=2
 odim_adv=251
 asr_lr=0.002
-ctc_lr=0.02
-adv_lr=0.008
-recon_lr=0.002
+ctc_lr=0.004
+adv_lr=0.004
+recon_lr=0.006
 
 
 
+adv_dropout_out=0.0
+adv_dropout_mid=0.0
+adv_dropout_inp=0.0
 
 
-project_name="vz_v14_without_recon_diff_lr"
+project_name="vz_v17_order_change_diff_lr_june_22"
 
 
 
