@@ -64,13 +64,13 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="asr 40 adv 40 asradv 20 reinit_adv 10"
+adv_liststr="recon 5 asr 60 adv 50 asradv 20 reinit_adv 10"
 
 resume_checkpoint=-1
-max_epoch=110
-batch_bins=45000000
+max_epoch=145
+batch_bins=39000000
 adv_weight=5.0
-vae_weight_factor=2.0
+vae_weight_factor=5.0
 asr_weight_factor=1.0
 save_every_epoch=2
 vae_annealing_cycle=50
@@ -80,8 +80,8 @@ accum_grad=2
 odim_adv=251
 asr_lr=0.002
 ctc_lr=0.008
-adv_lr=0.006
-recon_lr=0.01
+adv_lr=0.008
+recon_lr=0.010
 
 
 
@@ -94,9 +94,10 @@ project_name="vz_v15_with_recon_diff_lr_june_21"
 
 
 
-experiment_name="asr_40"
 
-expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
+experiment_name="recon_5_asr_60_adv_50_asradv_20_reinit_adv_10"
+
+expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to dump features.
 
 
 
@@ -1413,6 +1414,7 @@ if ! "${skip_train}"; then
                 --ctc_lr "${ctc_lr}" \
                 --adv_lr "${adv_lr}" \
                 --recon_lr "${recon_lr}" \
+                --experiment_name "${experiment_name}"\
                 --latent_dim "${latent_dim}" \
                 --save_every_epoch "${save_every_epoch}" \
                 --vae_annealing_cycle "${vae_annealing_cycle}" \

@@ -658,8 +658,6 @@ class Trainer:
         else:
             adv_name = str(type(model).__name__)
 
-        if(cls.beta_kl_factor is None or (cls.beta_kl_factor > 0.2)):
-            cls.beta_kl_factor = 0.1
 
 
         # for name, layer in model.named_modules():
@@ -746,7 +744,7 @@ class Trainer:
 
 
 
-        fig = plt.figure(figsize=(14,8), dpi=200 )
+        # fig = plt.figure(figsize=(14,8), dpi=200 )
 
         # pca = PCA(n_components=10)
         # tsne = TSNE(n_components=2, perplexity=25, verbose=1, random_state=123)
@@ -760,14 +758,12 @@ class Trainer:
         for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
             assert isinstance(batch, dict), type(batch)
 
-            if ( iiter % options.vae_annealing_cycle == 0):
+            if  ( round( iiter) % options.vae_annealing_cycle == 0):
                 cls.beta_kl_factor = 0.1
             else:
-                cls.beta_kl_factor  = min(1, cls.beta_kl_factor + (1.0/(50.0) ) )
+                cls.beta_kl_factor  = min(1, (cls.beta_kl_factor + (1.0/ (options.vae_annealing_cycle-2) )) )
 
-            
             # cls.minibatch_counter += 1
-            
             # logging.warning(" cls.beta_kl_factor {} len(utt_id) {}  ".format(cls.beta_kl_factor, len(utt_id) ))
             # logging.warning(" prinitng iiter {} ")
             # logging.warning( "iiter : {}   utt_id {} utt_idlen {} ".format(iiter, utt_id, len(utt_id)))
@@ -812,7 +808,6 @@ class Trainer:
                         kld_loss = retval.get("reconstruction_kld_loss", 0)
                         decay = cls.beta_kl_factor
                         vae_loss = reconstruction_loss + (decay * kld_loss)
-
                         # vae_loss = retval.get("vae_loss",0)
                         # logging.warning(" retval : loss_without {}  weight {} loss_adversarial {} \n".format(loss, weight, loss_adversarial))
                         if optim_idx is not None and not isinstance(optim_idx, int):
@@ -871,7 +866,7 @@ class Trainer:
                 # loss /= accum_grad
 
             # , "vae_loss": vae_loss.detach()
-            reporter.register({"beta_kl_factor": decay, "iiter": iiter, "vae_loss": vae_loss.detach() })
+            reporter.register({"beta_kl_factor": cls.beta_kl_factor, "iiter": iiter, "vae_loss": vae_loss.detach() })
             reporter.register(stats, weight)
 
 
@@ -958,8 +953,9 @@ class Trainer:
                 ######################################################################################################################################################################
                 ######################################################################################################################################################################
 
-            if( (iiter % options.plot_iiter) == 0):
-                logging.warning(" MODE: {} minibatch_counter {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {}  ".format( adv_mode, cls.minibatch_counter , iiter, current_epoch, adv_flag,  stats["loss"].detach() ))
+            # if( (iiter % options.plot_iiter) == 0):
+            #     logging.warning(" MODE: {} minibatch_counter {} iiter {} current_epoch {} adv_flag {}  >>   asr_loss {}  ".format( adv_mode, cls.minibatch_counter , iiter, current_epoch, adv_flag,  stats["loss"].detach() ))
+                
                 # logging.warning(f" ----> ctc  non_zero weight_grad { torch.count_nonzero(model.ctc.ctc_lo.weight.grad) }   weight_grad_shape {  model.ctc.ctc_lo.weight.grad.shape   }  ctc  non_zero_bias grad {  torch.count_nonzero( model.ctc.ctc_lo.bias.grad)  }" )
                 # logging.warning(f" ----->  encoder weight non_zero_grad { torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.weight.grad) }  weight_grad_shape { model.encoder.encoders[2].feed_forward.w_1.weight.grad.shape  }  encoder non_zero bias grad { torch.count_nonzero(model.encoder.encoders[2].feed_forward.w_1.bias.grad)   }" )
                 # logging.warning(f" ----> recon weight non_zero_grad { model.reconstruction_decoder.encoder.encoders[0].feed_forward.w_1.weight.grad  }  weight_grad_shape { model.reconstruction_decoder.encoder.encoders[0].feed_forward.w_1.bias.grad }" )

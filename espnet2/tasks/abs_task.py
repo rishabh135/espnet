@@ -894,6 +894,7 @@ class AbsTask(ABC):
         group.add_argument('--recon_lr', default=0.02, type=float,help='Learning rate for reconstruction decoder')
 
         group.add_argument('--vae_annealing_cycle', default=10, type=int, help='VAE_annealing_cycle')
+        group.add_argument('--experiment_name', default="", type=str,help='name used for experiment while logging onto wandb')
 
 
         # group.add_argument('--recon_mode', default=False, help='To use the vae mode for the reconstruction decoder')
@@ -968,7 +969,7 @@ class AbsTask(ABC):
             # list(filter(lambda p: p  not in main_parameters, model.parameters()))
             # lr_grp = [args.asr_lr, args.adv_lr, args.recon_lr ]
             # logging.warning(f" {lr_grp[0]}, {lr_grp[1]}, {lr_grp[2]}  ")
-            logging.warning(f" asr_lr: {args.asr_lr}  adv_lr: {args.adv_lr} recon_lr: {args.recon_lr}")
+            logging.warning(f" asr_lr: {args.asr_lr}  adv_lr: {args.adv_lr} recon_lr: {args.recon_lr} ctc_lr: {args.ctc_lr}")
 
             param_grp = [
             {'params': model.encoder.parameters(), "lr" : args.asr_lr  },
@@ -1483,7 +1484,7 @@ class AbsTask(ABC):
                         d2 = today.strftime("Run_%B_%d_")
                         time = datetime.now().strftime("_time__%H_%M")
                         # d = date_time.strftime("%d %B, %Y")
-                        name =  d2 + "__" + time + "__resume_checkpoint:_" + str(args.resume_from_checkpoint) + "__maxepoch:_" +  str(args.max_epoch)
+                        name =  args.experiment_name + d2 + "__" + time + "__resume_checkpoint:_" + str(args.resume_from_checkpoint) + "__maxepoch:_" +  str(args.max_epoch)
                         logging.warning("Starting training with wandbname : {} ".format(name))
                     else:
                         name = args.wandb_name
