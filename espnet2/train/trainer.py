@@ -684,11 +684,9 @@ class Trainer:
         if (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asr'):
             if options.ngpu > 1:
                 model.module.freeze_adversarial()
-                # model.module.freeze_recon()
                 model.module.unfreeze_encoder()
             else:
                 model.freeze_adversarial()
-                # model.freeze_recon()
                 model.unfreeze_encoder()
 
         elif (adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'adv'):
@@ -704,13 +702,10 @@ class Trainer:
         elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'asradv'):
             if (options.ngpu > 1):
                 model.module.unfreeze_encoder()
-                # model.module.freeze_recon()
                 model.module.unfreeze_adversarial()
             else:
                 model.unfreeze_encoder()
-                # model.freeze_recon()
                 model.unfreeze_adversarial()
-
 
         elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'recon'):
             if (options.ngpu > 1):
@@ -729,10 +724,13 @@ class Trainer:
                 model.freeze_remaining()
                 model.unfreeze_adversarial()
                 model.reinit_adv()
+
+
+
         param_group_length = len(optimizers[0].param_groups)
         first_group_lr = optimizers[0].param_groups[0]['lr']
         last_group_lr = optimizers[0].param_groups[-1]['lr']
-        logging.warning(" --->>>>>  adv_mode {} asr_lr {}  adv_lr {}  adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.asr_lr, options.adv_lr, adv_name, float(first_group_lr), float(last_group_lr), param_group_length))
+        logging.warning(" --->>>>>  adv_mode {} asr_lr {}  adv_lr {} ctc_lr {} recon_lr {} adv_name {} current_lr_first_group {:.6f} last_group_lr {:.6f} param_length {} \n".format(adv_mode, options.asr_lr,  options.adv_lr, options.ctc_lr, options.recon_lr, adv_name, float(first_group_lr), float(last_group_lr), param_group_length))
 
 
 
@@ -760,7 +758,7 @@ class Trainer:
         for iiter, (utt_id, batch) in enumerate(reporter.measure_iter_time(iterator, "iter_time"), 1):
             assert isinstance(batch, dict), type(batch)
 
-            if  ( round( iiter) % options.vae_annealing_cycle == 0):
+            if  ( (round(iiter/10)*10) % options.vae_annealing_cycle == 0):
                 cls.beta_kl_factor = 0.1
             else:
                 cls.beta_kl_factor  = min(1, (cls.beta_kl_factor + (1.0/ (options.vae_annealing_cycle-2) )) )
