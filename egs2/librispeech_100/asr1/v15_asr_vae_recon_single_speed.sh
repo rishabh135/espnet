@@ -68,7 +68,7 @@ adv_liststr="recon 5 asr 60 adv 50 asradv 20 reinit_adv 10"
 
 resume_checkpoint=-1
 max_epoch=145
-batch_bins=39000000
+batch_bins=29000000
 adv_weight=5.0
 vae_weight_factor=5.0
 asr_weight_factor=1.0
@@ -90,7 +90,8 @@ adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 
 
-project_name="vz_v15_with_recon_diff_lr_june_21"
+
+project_name="vz_v15_with_recon"
 
 
 
@@ -203,9 +204,9 @@ inference_tag=    # Suffix to the result dir for decoding.
 inference_config= # Config for decoding.
 inference_args=   # Arguments for decoding, e.g., "--lm_weight 0.1".
                   # Note that it will overwrite args in inference config.
-inference_lm=valid.loss.ave.pth       # Language model path for decoding.
-inference_ngram=${ngram_num}gram.bin
-inference_asr_model=valid.acc.ave.pth # ASR model path for decoding.
+inference_lm=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/lm/valid.loss.ave.pth       # Language model path for decoding.
+inference_ngram=inference_lm=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/lm/${ngram_num}gram.bin
+inference_asr_model=inference_lm=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/lm/valid.acc.ave.pth # ASR model path for decoding.
                                       # e.g.
                                       # inference_asr_model=train.loss.best.pth
                                       # inference_asr_model=3epoch.pth

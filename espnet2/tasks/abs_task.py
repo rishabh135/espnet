@@ -1479,16 +1479,16 @@ class AbsTask(ABC):
                         d2 = today.strftime("%B_%d_")
                         project =  args.project_name + cls.__name__
 
-                    if args.wandb_name is None:
+                    if (args.wandb_name is None or args.wandb_name == ""):
                         today = date.today()
                         d2 = today.strftime("Run_%B_%d_")
                         time = datetime.now().strftime("_time__%H_%M")
                         # d = date_time.strftime("%d %B, %Y")
                         name =  args.experiment_name + d2 + "__" + time + "__resume_checkpoint:_" + str(args.resume_from_checkpoint) + "__maxepoch:_" +  str(args.max_epoch)
-                        logging.warning("Starting training with wandbname : {} ".format(name))
                     else:
                         name = args.wandb_name
 
+                    logging.warning("Starting training with wandbname : {} ".format(name))
                     wandb.init(
                         entity=args.wandb_entity,
                         project=project,

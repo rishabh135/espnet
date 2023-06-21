@@ -350,25 +350,27 @@ class ESPnetASRModel(AbsESPnetModel):
         if(self.recon_mode_flag == False):
             logging.warning("  RECON MODE flag changing ")
             self.freeze_remaining()
-            for param in self.decoder.parameters():
-                param.requires_grad = False
-                if param.grad is not None:
-                    param.grad.zero_()
-            for param in self.ctc.ctc_lo.parameters():
-                param.requires_grad = False
-                if param.grad is not None:
-                    param.grad.zero_()
-            for param in self.adversarial_branch.parameters():
-                param.requires_grad = False
-                if param.grad is not None:
-                    param.grad.zero_()
+            self.freeze_adversarial()
+            self.freeze_encoder()
+            
+            # for param in self.decoder.parameters():
+            #     param.requires_grad = False
+            #     if param.grad is not None:
+            #         param.grad.zero_()
+            # for param in self.ctc.ctc_lo.parameters():
+            #     param.requires_grad = False
+            #     if param.grad is not None:
+            #         param.grad.zero_()
+            # for param in self.adversarial_branch.parameters():
+            #     param.requires_grad = False
+            #     if param.grad is not None:
+            #         param.grad.zero_()
 
 
             for param in self.encoder.parameters():
                 param.requires_grad = True
             for param in self.reconstruction_decoder.parameters():
                 param.requires_grad = True
-
             self.recon_mode_flag = True
         return
 

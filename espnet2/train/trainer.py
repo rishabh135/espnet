@@ -725,6 +725,8 @@ class Trainer:
                 model.module.unfreeze_adversarial()
             else:
                 model.freeze_encoder()
+                model.freeze_recon()
+                model.freeze_remaining()
                 model.unfreeze_adversarial()
                 model.reinit_adv()
         param_group_length = len(optimizers[0].param_groups)

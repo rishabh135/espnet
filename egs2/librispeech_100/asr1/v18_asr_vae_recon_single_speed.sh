@@ -64,24 +64,24 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 60"
-wandb_name="Run_June_19____time__01_55__resume_checkpoint:_-1__maxepoch:_130"
-resume_checkpoint=130
-max_epoch=180
-batch_bins=31000000
+adv_liststr="asr 40 adv 50 asradv 20 recon 10 reinit_adv 40"
+wandb_name=""
+resume_checkpoint=-1
+max_epoch=160
+batch_bins=29000000
 adv_loss_weight=5.0
 vae_weight_factor=10.0
 asr_weight_factor=1.0
 save_every_epoch=2
-vae_annealing_cycle=100
+vae_annealing_cycle=50
 plot_iiter=200
 latent_dim=80
 accum_grad=2
 odim_adv=251
 asr_lr=0.002
-ctc_lr=0.008
-adv_lr=0.004
-recon_lr=0.006
+ctc_lr=0.02
+adv_lr=0.02
+recon_lr=0.01
 
 
 
@@ -90,12 +90,11 @@ adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 
 
-project_name="vz_v16_with_recon_diff_lr_june_21"
+
+project_name="vz_v18_with_recon_diff_lr_june_20"
 
 
-
-
-experiment_name="asr_40"
+experiment_name="diff_lr_separate_recon_mode"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${experiment_name}/exp # Directory to dump features.
 

@@ -21,7 +21,7 @@ data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fres
 
 
 
-project_name="vz_v15_with_recon_diff_lr_june_21"
+project_name="vz_v15_with_recon"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
@@ -42,7 +42,7 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
     --ngpu 4 \
     --nj 32 \
     --use_xvector true \
-    --inference_nj 32 \
+    --inference_nj 256 \
     --nbpe 5000 \
     --max_wav_duration 30 \
     --audio_format "flac.ark" \
