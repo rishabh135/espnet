@@ -201,6 +201,7 @@ class TrainerOptions:
     plot_iiter: int
     asr_lr: float
     adv_lr: float
+    ctc_lr: float
     recon_lr: float
 
 class Trainer:
@@ -1104,7 +1105,7 @@ class Trainer:
         model.eval()
 
         adv_flag = options.adv_flag
-
+       
         # [For distributed] Because iteration counts are not always equals between
         # processes, send stop-flag to the other processes if iterator is finished
         iterator_stop = torch.tensor(0).to("cuda" if ngpu > 0 else "cpu")
@@ -1123,10 +1124,13 @@ class Trainer:
                 continue
 
             retval = model(**batch)
+            # logging.warning(f" Inside validation part {type(retval)}  ")
             if isinstance(retval, dict):
                 # stats = retval["stats"]
                 # weight = retval["weight"]
                 stats = retval.get("stats")
+                # for key, value in stats.items():
+                #     logging.warning(f" key {key}  ")
                 weight = retval.get("weight")
             else:
                 if(adv_flag):

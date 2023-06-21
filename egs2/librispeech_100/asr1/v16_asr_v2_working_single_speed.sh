@@ -64,11 +64,11 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="asr 40 adv 40 asradv 40 reinit_adv 40"
+adv_liststr="asr 40 adv 70 asradv 30 reinit_adv 40"
 wandb_name=""
-resume_checkpoint=-1
-max_epoch=160
-batch_bins=29000000
+resume_checkpoint=90
+max_epoch=180
+batch_bins=31000000
 adv_loss_weight=5.0
 vae_weight_factor=10.0
 asr_weight_factor=1.0
@@ -90,7 +90,8 @@ adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 
 
-project_name="vzz_v16_v2_with_recon_multigpu_diff_lr_june_22"
+project_name="vzz_v16_v2_diff_lr_june_22"
+
 
 
 

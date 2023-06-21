@@ -66,11 +66,13 @@ vae_flag="True"
 # adv_liststr="recon 100"
 adv_liststr="asr 40 adv 40 recon 10 asradv 40 reinit_adv 10"
 
-resume_checkpoint=-1
+
+wandb_name=""
+resume_checkpoint=30
 max_epoch=140
-batch_bins=29000000
+batch_bins=31000000
 adv_weight=5.0
-vae_weight_factor=5.0
+vae_weight_factor=10.0
 asr_weight_factor=1.0
 save_every_epoch=2
 vae_annealing_cycle=50
@@ -81,7 +83,11 @@ odim_adv=251
 asr_lr=0.002
 ctc_lr=0.008
 adv_lr=0.008
-recon_lr=0.01
+recon_lr=0.006
+
+
+
+
 
 
 
@@ -1410,6 +1416,7 @@ if ! "${skip_train}"; then
                 --accum_grad "${accum_grad}" \
                 --odim_adv "${odim_adv}" \
                 --asr_lr "${asr_lr}" \
+                --wandb_name "${wandb_name}"  \
                 --ctc_lr "${ctc_lr}" \
                 --adv_lr "${adv_lr}" \
                 --recon_lr "${recon_lr}" \

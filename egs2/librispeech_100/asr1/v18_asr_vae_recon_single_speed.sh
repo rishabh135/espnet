@@ -79,9 +79,9 @@ latent_dim=80
 accum_grad=2
 odim_adv=251
 asr_lr=0.002
-ctc_lr=0.02
-adv_lr=0.02
-recon_lr=0.01
+ctc_lr=0.008
+adv_lr=0.008
+recon_lr=0.008
 
 
 
