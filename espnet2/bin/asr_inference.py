@@ -285,7 +285,8 @@ class Speech2Text:
         batch = to_device(batch, device=self.device)
 
         # b. Forward Encoder
-        enc, encoder_out_lens, feats, feats_lengths = self.asr_model.encode(**batch)
+        # enc, encoder_out_lens, feats, feats_lengths = self.asr_model.encode(**batch)
+        enc, encoder_out_lens, feats, feats_lengths, aug_feats, aug_feats_lengths = self.asr_model.encode(**batch)
         # enc, _ = self.asr_model.encode(**batch)
         if isinstance(enc, tuple):
             enc = enc[0]

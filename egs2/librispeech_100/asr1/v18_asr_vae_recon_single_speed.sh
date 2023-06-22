@@ -64,23 +64,23 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="asr 40 adv 50 asradv 20 recon 10 reinit_adv 40"
+adv_liststr="recon 10 asr 40 adv 60 asradv 20 reinit_adv 40"
 wandb_name=""
 resume_checkpoint=-1
-max_epoch=160
+max_epoch=170
 batch_bins=29000000
 adv_loss_weight=5.0
 vae_weight_factor=10.0
 asr_weight_factor=1.0
-save_every_epoch=2
-vae_annealing_cycle=50
+save_every_epoch=10
+vae_annealing_cycle=200
 plot_iiter=200
 latent_dim=80
 accum_grad=2
 odim_adv=251
 asr_lr=0.002
 ctc_lr=0.008
-adv_lr=0.008
+adv_lr=0.002
 recon_lr=0.008
 
 
@@ -91,7 +91,7 @@ adv_dropout_inp=0.0
 
 
 
-project_name="vz_v18_with_recon_diff_lr_june_20"
+project_name="vz_v18_with_recon_diff_lr_june_22"
 
 
 experiment_name="diff_lr_separate_recon_mode"

@@ -17,11 +17,10 @@ asr_tag=conformer_lr2e-3_warmup15k_amp_nondeterministic
 
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_single_speed_version_xvector/original_data
 
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
 
-
-project_name="vz_v18_with_recon_diff_lr_june_22"
+project_name="vzzz_v20_all_speakers_multigpu_june_23"
 
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
@@ -34,18 +33,19 @@ inference_config=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/conf/decode_a
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
 ###################################################################################################################################################################################################
-/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/v18_asr_vae_recon_single_speed.sh \
+./v20_asr_vae_recon_all_spk_all_speed.sh \
     --skip_data_prep true \
     --skip_train false \
     --skip_eval false \
     --lang en \
-    --ngpu 1 \
-    --nj 32 \
+    --ngpu 2 \
+    --nj 64 \
     --use_xvector true \
     --inference_nj 32 \
     --nbpe 5000 \
     --max_wav_duration 30 \
     --audio_format "flac.ark" \
+    --speed_perturb_factors "0.9 1.0 1.1" \
     --feats_type raw \
     --use_lm false \
     --asr_tag "${asr_tag}" \

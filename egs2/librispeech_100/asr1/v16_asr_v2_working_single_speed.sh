@@ -66,7 +66,7 @@ vae_flag="True"
 # adv_liststr="recon 100"
 adv_liststr="asr 40 adv 70 asradv 30 reinit_adv 40"
 wandb_name=""
-resume_checkpoint=90
+resume_checkpoint=-1
 max_epoch=180
 batch_bins=31000000
 adv_loss_weight=5.0
@@ -201,9 +201,9 @@ inference_tag=    # Suffix to the result dir for decoding.
 inference_config= # Config for decoding.
 inference_args=   # Arguments for decoding, e.g., "--lm_weight 0.1".
                   # Note that it will overwrite args in inference config.
-inference_lm=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/valid.loss.ave.pth       # Language model path for decoding.
+inference_lm=valid.loss.ave.pth       # Language model path for decoding.
 inference_ngram=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${ngram_num}gram.bin
-inference_asr_model=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/valid.acc.ave.pth # ASR model path for decoding.
+inference_asr_model=train.accuracy_asr.ave.pth # ASR model path for decoding.
                                       # e.g.
                                       # inference_asr_model=train.loss.best.pth
                                       # inference_asr_model=3epoch.pth

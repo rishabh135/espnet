@@ -50,7 +50,7 @@ max_epoch: 230
 patience: none
 init: none
 best_model_criterion:
--   - train
+-   - valid
     - accuracy_asr
     - max
 

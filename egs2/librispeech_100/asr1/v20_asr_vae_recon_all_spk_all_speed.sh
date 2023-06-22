@@ -33,8 +33,8 @@ skip_upload=true     # Skip packing and uploading stages.
 skip_upload_hf=true  # Skip uploading to hugging face stages.
 ngpu=1               # The number of gpus ("0" uses cpu, otherwise use gpu).
 num_nodes=1          # The number of nodes.
-nj=32                # The number of parallel jobs.
-inference_nj=32      # The number of parallel jobs in decoding.
+nj=128                # The number of parallel jobs.
+inference_nj=128      # The number of parallel jobs in decoding.
 gpu_inference=false  # Whether to perform gpu decoding.
 
 
@@ -46,10 +46,10 @@ global_dir=/home/rgupta/dev/espnet/egs2/librispeech_100/asr1/ # used primarily t
 
 
 
+data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/original_data
+dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_with_speed_version_xvector/dump
 
 
-data_dd=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_single_speed_version_xvector/original_data
-dumpdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/data_single_speed_version_xvector/dump
 
 
 
@@ -64,23 +64,23 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="recon 4 asr 40 adv 50 asradv 30 reinit_adv 40"
+adv_liststr="asr 40 adv 70 asradv 30 reinit_adv 40"
 wandb_name=""
 resume_checkpoint=-1
-max_epoch=164
-batch_bins=31000000
+max_epoch=180
+batch_bins=61000000
 adv_loss_weight=5.0
 vae_weight_factor=10.0
 asr_weight_factor=1.0
-save_every_epoch=2
-vae_annealing_cycle=50
+save_every_epoch=5
+vae_annealing_cycle=500
 plot_iiter=200
 latent_dim=80
 accum_grad=2
 odim_adv=251
 asr_lr=0.002
 ctc_lr=0.008
-adv_lr=0.008
+adv_lr=0.004
 recon_lr=0.006
 
 
@@ -90,10 +90,8 @@ adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 
 
-project_name="vzz_v15_multigpu_with_recon_june_22"
 
-
-
+project_name="vzzz_v20_all_speakers_multigpu_june_23"
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to dump features.
 
@@ -201,9 +199,9 @@ inference_tag=    # Suffix to the result dir for decoding.
 inference_config= # Config for decoding.
 inference_args=   # Arguments for decoding, e.g., "--lm_weight 0.1".
                   # Note that it will overwrite args in inference config.
-inference_lm=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/valid.loss.ave.pth       # Language model path for decoding.
-inference_ngram=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${ngram_num}gram.bin
-inference_asr_model=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/valid.acc.ave.pth # ASR model path for decoding.
+inference_lm=valid.loss.ave.pth       # Language model path for decoding.
+inference_ngram=${ngram_num}gram.bin
+inference_asr_model=valid.accuracy_asr.ave.pth # ASR model path for decoding.
                                       # e.g.
                                       # inference_asr_model=train.loss.best.pth
                                       # inference_asr_model=3epoch.pth
