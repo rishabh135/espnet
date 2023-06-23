@@ -714,7 +714,7 @@ class Trainer:
             else:
                 model.recon_mode()
 
-        elif(adv_flag == True and adv_name == "ESPnetASRModel" and adv_mode == 'reinit_adv'):
+        elif(adv_flag == True and adv_name == "ESPnetASRModel" and (adv_mode == 'reinit' or adv_mode == 'reinit_adv') ):
             if options.ngpu > 1:
                 model.module.freeze_encoder()
                 model.module.freeze_recon()
@@ -745,7 +745,7 @@ class Trainer:
 
 
 
-        # fig = plt.figure(figsize=(14,8), dpi=200 )
+        fig = plt.figure(figsize=(14,8), dpi=200 )
 
         # pca = PCA(n_components=10)
         # tsne = TSNE(n_components=2, perplexity=25, verbose=1, random_state=123)
@@ -884,7 +884,7 @@ class Trainer:
                         total_loss =  options.asr_weight_factor * loss + options.vae_weight_factor * vae_loss + options.adv_loss_weight * loss_adversarial
                         total_loss /= accum_grad
                         scaler.scale(total_loss).backward()
-                    elif (adv_flag == True  and  adv_mode == 'reinit_adv'):
+                    elif (adv_flag == True  and  (adv_mode == 'reinit' or adv_mode == 'reinit_adv') ):
                         loss_adversarial /= accum_grad
                         scaler.scale(loss_adversarial).backward()
                     elif (adv_flag == True  and  adv_mode == 'recon'):
@@ -909,7 +909,7 @@ class Trainer:
                 ######################################################################################################################################################################
                 ######################################################################################################################################################################
 
-            # if( cls.minibatch_counter %  options.plot_iiter == 0):
+            # if(  (round(iiter/10)*10) %  options.plot_iiter == 0):
             #     feats_plot = retval["feats_plot"]
             #     recons_feats_plot = retval["recons_feats_plot"]
             #     aug_feats_plot = retval["aug_feats_plot"]
@@ -933,23 +933,21 @@ class Trainer:
             #     # plt.savefig( '{}'.format(html_file_name), bbox_inches='tight' )
             #     wandb.log({f"spectrogram plot": wandb.Image(plt)})
             #     fig.clf()
-            #     del feats_plot, recons_feats_plot, aug_feats_plot
 
-
-
-
-                # if( (current_epoch % 20 == 0) and (iiter % options.plot_iiter == 0 )):
-                #     with torch.inference_mode():
-                #         recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
-                #         orig_specs = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
-                #         hifi_gan = HIFIGAN.from_hparams(source="speechbrain/tts-hifigan-libritts-16kHz", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/hifigan/", run_opts={"device":"cuda"})
-                #         # Running Vocoder (spectrogram-to-waveform)
-                #         recons_waveforms = hifi_gan.decode_batch(recons_specs)
-                #         orig_waveforms = hifi_gan.decode_batch(orig_specs)
-                #         # logging.warning("recons_waveforms {} ".format(recons_waveforms.shape))
-                #     wandb.log({"Reconstructed_waveform": wandb.Audio(recons_waveforms[0,0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
-                #     wandb.log({"Originatl_utt ": wandb.Audio(orig_waveforms[0,0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
+            #     if(  (round(iiter/10)*10) % options.plot_iiter == 0) :
+            #         with torch.inference_mode():
+            #             recons_specs = torch.Tensor(np.expand_dims(recons_feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+            #             orig_specs = torch.Tensor(np.expand_dims(feats_plot, axis=0).transpose(0, 2, 1)).to("cuda")
+            #             hifi_gan = HIFIGAN.from_hparams(source="speechbrain/tts-hifigan-libritts-16kHz", savedir="/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/pretrained_vocoder/hifigan/", run_opts={"device":"cuda"})
+            #             # Running Vocoder (spectrogram-to-waveform)
+            #             recons_waveforms = hifi_gan.decode_batch(recons_specs)
+            #             orig_waveforms = hifi_gan.decode_batch(orig_specs)
+            #             # logging.warning("recons_waveforms {} ".format(recons_waveforms.shape))
+            #         wandb.log({"Reconstructed_waveform": wandb.Audio(recons_waveforms[0,0].detach().cpu().numpy() , caption="reconstructed_utt", sample_rate=16000)})
+            #         wandb.log({"Originatl_utt ": wandb.Audio(orig_waveforms[0,0].detach().cpu().numpy() , caption="Original_utt", sample_rate=16000)})
+                
                 # IPython.display.Audio(waveforms[0:1].cpu(), rate=vocoder.sample_rate)
+                # del feats_plot, recons_feats_plot, aug_feats_plot
 
                 ######################################################################################################################################################################
                 ######################################################################################################################################################################

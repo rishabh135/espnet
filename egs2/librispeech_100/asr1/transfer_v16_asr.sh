@@ -64,17 +64,17 @@ adversarial_flag="True"
 vae_flag="True"
 # adv_liststr="asr_adv_asradv"
 # adv_liststr="recon 100"
-adv_liststr="asr 40 adv 70 asradv 30 reinit 40 asr 5"
-wandb_name=""
-resume_checkpoint=180
-max_epoch=185
-batch_bins=21000000
+adv_liststr="asr 40 adv 70 asradv 40 reinit 60 "
+wandb_name="Xfinal_June_23_time__13:48__resume_checkpoint:_110__maxepoch:_210"
+resume_checkpoint=110
+max_epoch=210
+batch_bins=31000000
 adv_loss_weight=5.0
-vae_weight_factor=10.0
+vae_weight_factor=2.0
 asr_weight_factor=1.0
-save_every_epoch=2
-vae_annealing_cycle=50
-plot_iiter=20
+save_every_epoch=5
+vae_annealing_cycle=200
+plot_iiter=200
 latent_dim=80
 accum_grad=2
 odim_adv=251
@@ -90,9 +90,7 @@ adv_dropout_mid=0.0
 adv_dropout_inp=0.0
 
 
-project_name="vzz_v16_v2_diff_lr_june_22"
-
-
+project_name="xfinal_v16_v2_working_june_23"
 
 
 expdir=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/exp # Directory to dump features.
@@ -203,7 +201,7 @@ inference_args=   # Arguments for decoding, e.g., "--lm_weight 0.1".
                   # Note that it will overwrite args in inference config.
 inference_lm=valid.loss.ave.pth       # Language model path for decoding.
 inference_ngram=/srv/storage/talc2@talc-data2.nancy/multispeech/calcul/users/rgupta/fresh_libri_100/${project_name}/${ngram_num}gram.bin
-inference_asr_model=train.accuracy_asr.ave.pth # ASR model path for decoding.
+inference_asr_model=valid.accuracy_asr.ave.pth # ASR model path for decoding.
                                       # e.g.
                                       # inference_asr_model=train.loss.best.pth
                                       # inference_asr_model=3epoch.pth
