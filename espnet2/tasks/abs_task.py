@@ -1239,7 +1239,7 @@ class AbsTask(ABC):
                 phase_list = list(re.findall( r"[a-zA-Z]+", args.adv_liststr))
                 logging.warning(f" Phase_list {phase_list} epoch_list: {epoch_list} ")
                 # logging.warning("->>> adv_liststr {} epoch_list {} ".format(args.adv_liststr, epoch_list))
-                if (sum(epoch_list) !=  args.max_epoch):
+                if (sum(epoch_list) !=  args.max_epoch or  (len(epoch_list) != len(phase_list)) ):
                     raise RuntimeError("Please check total_number of epochs {}  are not equivakent to max_epochs {} ".format(sum(epoch_list), args.max_epoch))
                 else:
                     args.adversarial_list = []
